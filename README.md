@@ -1,7 +1,7 @@
 # estate
 A plugin for the e107 Content management System to manage Real Estate Agencies, Agents, and Listings
 
-The _Estate_ plugin is not ready yet. I have a lot to do before it can be published. The Current repository should be mostly usable if anyone wants to try it out.
+The _Estate_ plugin is not ready yet. I have a lot to do before it can be published. The Current repository should be mostly usable if anyone wants to try it out. A live production site can be viewed here https://www.sandpiperhome.org
 
 This plugin started as a way for an individual Real Estate agent to easily list their properties for sale and has evolved into one that can handle multiple agents and agencies. 
 
