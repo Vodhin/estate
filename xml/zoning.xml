@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.2.0 (git)" timestamp="1686146168" >
+	<database>
+	<dbTable name="estate_zoning">
+		<item>
+			<field name="zoning_idx">1</field>
+			<field name="zoning_name">Residential</field>
+		</item>
+		<item>
+			<field name="zoning_idx">2</field>
+			<field name="zoning_name">Commercial</field>
+		</item>
+		<item>
+			<field name="zoning_idx">3</field>
+			<field name="zoning_name">Industrial</field>
+		</item>
+	</dbTable>
+	</database>
+</e107Export>

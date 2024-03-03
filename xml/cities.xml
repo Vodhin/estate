@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.2.0 (git)" timestamp="1686146168" >
+	<database>
+	<dbTable name="estate_city">
+		<item>
+			<field name="city_idx">1</field>
+			<field name="city_county">1</field>
+			<field name="city_name">Port St. Lucie</field>
+			<field name="city_zip">34952,34983,34985,34953</field>
+			<field name="city_timezone">America/New_York</field>
+			<field name="city_url"></field>
+		</item>
+		<item>
+			<field name="city_idx">2</field>
+			<field name="city_county">2</field>
+			<field name="city_name">Stuart</field>
+			<field name="city_zip">34994,34995,34996,34997</field>
+			<field name="city_timezone">America/New_York</field>
+			<field name="city_url"></field>
+		</item>
+		<item>
+			<field name="city_idx">3</field>
+			<field name="city_county">2</field>
+			<field name="city_name">Jupiter</field>
+			<field name="city_zip">33458,33468,33469,33477,33478</field>
+			<field name="city_timezone">America/New_York</field>
+			<field name="city_url"></field>
+		</item>
+		<item>
+			<field name="city_idx">4</field>
+			<field name="city_county">1</field>
+			<field name="city_name">Spanish Lakes</field>
+			<field name="city_zip">34952</field>
+			<field name="city_timezone">America/New_York</field>
+			<field name="city_url"></field>
+		</item>
+	</dbTable>
+	</database>
+</e107Export>

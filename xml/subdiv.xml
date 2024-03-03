@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.2.0 (git)" timestamp="1686146168" >
+	<database>
+	<dbTable name="estate_subdiv">
+		<item>
+			<field name="subd_idx">1</field>
+			<field name="subd_city">1</field>
+			<field name="subd_name">Sandpiper Bay</field>
+			<field name="subd_url"></field>
+			<field name="subd_hoaname">Sandpiper Bay Community</field>
+			<field name="subd_hoaweb"></field>
+			<field name="subd_hoareq">0</field>
+			<field name="subd_hoafee">75</field>
+			<field name="subd_hoafrq">4</field>
+			<field name="subd_hoaappr">0</field>
+		</item>
+		<item>
+			<field name="subd_idx">2</field>
+			<field name="subd_city">1</field>
+			<field name="subd_name">Tarpon Bay</field>
+			<field name="subd_url"></field>
+			<field name="subd_hoaname"></field>
+			<field name="subd_hoaweb"></field>
+			<field name="subd_hoareq">1</field>
+			<field name="subd_hoafee">750</field>
+			<field name="subd_hoafrq">4</field>
+			<field name="subd_hoaappr">0</field>
+		</item>
+		<item>
+			<field name="subd_idx">3</field>
+			<field name="subd_city">2</field>
+			<field name="subd_name">Golden Gate</field>
+			<field name="subd_url"></field>
+			<field name="subd_hoaname"></field>
+			<field name="subd_hoaweb"></field>
+			<field name="subd_hoareq">0</field>
+			<field name="subd_hoafee">0</field>
+			<field name="subd_hoafrq">0</field>
+			<field name="subd_hoaappr">0</field>
+		</item>
+		<item>
+			<field name="subd_idx">4</field>
+			<field name="subd_city">1</field>
+			<field name="subd_name">Spanish Lakes Riverfront</field>
+			<field name="subd_url">www.spanishlakes.com</field>
+			<field name="subd_hoaname"></field>
+			<field name="subd_hoaweb"></field>
+			<field name="subd_hoareq">1</field>
+			<field name="subd_hoafee">0</field>
+			<field name="subd_hoafrq">0</field>
+			<field name="subd_hoaappr">0</field>
+		</item>
+	</dbTable>
+	</database>
+</e107Export>

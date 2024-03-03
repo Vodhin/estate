@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.2.0 (git)" timestamp="1686146168" >
+	<database>
+	<dbTable name="estate_featcats">
+		<item>
+			<field name="featcat_idx">1</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Exterior</field>
+		</item>
+		<item>
+			<field name="featcat_idx">2</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Bedroom</field>
+		</item>
+		<item>
+			<field name="featcat_idx">3</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Living Space</field>
+		</item>
+		<item>
+			<field name="featcat_idx">4</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Kitchen</field>
+		</item>
+		<item>
+			<field name="featcat_idx">5</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Tomb</field>
+		</item>
+		<item>
+			<field name="featcat_idx">6</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Laundry</field>
+		</item>
+		<item>
+			<field name="featcat_idx">7</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Parking</field>
+		</item>
+		<item>
+			<field name="featcat_idx">8</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Bathroom</field>
+		</item>
+		<item>
+			<field name="featcat_idx">9</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Yard</field>
+		</item>
+		<item>
+			<field name="featcat_idx">10</field>
+			<field name="featcat_zone">1</field>
+			<field name="featcat_lev">2</field>
+			<field name="featcat_name">Back Yard</field>
+		</item>
+	</dbTable>
+	</database>
+</e107Export>

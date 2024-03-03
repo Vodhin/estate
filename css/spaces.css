@@ -1,0 +1,582 @@
+/* CSS Document */
+
+#estViewBoxSpacesCont{
+  display: block;
+  position:relative;
+  width: 100%;
+  background-clip: content-box;
+  background-origin: padding-box;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  }
+
+
+#estViewSpaceImgPvwSlider{
+  display:block;
+  position:relative; 
+  /*min-height: 96px;*/
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  }
+
+#estViewSpaceImgCont{
+  display: block;
+  position: relative;
+  width: 100%;
+  text-align: center;
+  }
+
+.estViewSpaceImgBlock{
+  display: none;
+  position: relative;
+  width: 100%;
+  overflow:hidden;
+  }
+
+#estViewSpaceImgCont div.estViewSpaceImgBlock:first-child{
+  display: block;
+  }
+
+
+#estArrBordR{
+  display: block;
+  position: absolute;
+  top:10px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  transform: rotate(45deg);
+  vertical-align: middle;
+  z-index: -1;
+  }
+
+.estViewSpTxt{
+  width: 96%;
+  margin: 0px 2%;
+  text-transform: uppercase;
+  line-height: 1.2em;
+  text-align: left;
+  }
+
+
+
+#estViewSpaceImgPvwSlider,
+#estArrBordR{background-color: #A8B8BD;}
+
+.estViewSpaceBtn{border-color:#A8B8BD;}
+
+
+
+
+
+
+div.estViewSpTxt ul{
+  text-indent: 0px;
+  padding: 0px 0px 0px 22px;
+  margin: 0px 0px 8px 0px;
+  }
+
+
+#estViewBoxSpacesCont div#estViewBoxSpacesCapt,
+#estViewBoxSpacesCont div#estViewSpacePvwCont,
+#estViewBoxSpacesCont div#estViewSpaceImgPvwCont{
+  display:none;
+  }
+
+
+
+#estViewSpaceImgCont div.estImgSlide{
+  width: 98%;
+  height: 52vh;
+  border-radius: 5px;
+  }
+
+
+
+
+
+
+#estViewBoxSpacesCont div#estViewSpaceBtnCont div#estViewSpaceBtns{
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-content: stretch;
+  padding-top: 0px;
+  }
+
+
+#estViewBoxSpacesCont div.estSpaceGroup{
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid rgba(128,128,128,0.75);
+  padding-bottom: 12px;
+  flex: auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  }
+
+#estViewBoxSpacesCont div.estSpaceGroup:last-child{
+  border-bottom: none;
+  padding-bottom: 0px;
+  }
+
+#estViewBoxSpacesCont div.estSpaceGroup h3{
+  flex: 100%;
+  }
+
+
+#estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+  display:block;
+  height:192px;
+  }
+#estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt{
+  display:block;
+  }
+
+#estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt ul li{
+  white-space: normal;
+  font-size: 0.8em;
+  }
+
+
+
+#estViewSpaceBtns div.estSpaceGroup h3{
+  margin-top: 8px;
+  margin-left: 1%;
+  width: 99%;
+  }
+
+
+#estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn{
+  display: flex;
+  position: relative;
+  max-width: 32%;
+  flex: 32%;
+  flex-direction: column;
+  margin: 3px;
+  padding: 0px 6px 6px 6px;
+  border: none;
+  cursor: auto;
+  }
+
+
+
+
+.estViewSpaceImgBlock div.estSpTtl,
+.estViewSpaceBtn div.estSpTtl{
+  display: block;
+  position: relative;
+  width: 98%;
+  font-weight: bold;
+  margin-top: 4px;
+  margin-left: 2%;
+  text-transform: uppercase;
+  text-align:left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  }
+
+
+.estViewSpaceBtn.noPics{
+  border-left: 0px solid #B7CACF;
+  cursor:auto;
+  }
+
+
+.estViewSpaceBtn.noPics div.estImgSlide{
+  display:none;
+  }
+
+
+.estViewSpaceBtn div.estImgSlide{
+  display:none;
+  width: 100%;
+  height: 212px;
+  margin-bottom: 0px;
+  background-clip: content-box;
+  background-origin: padding-box;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  }
+
+
+
+
+@media screen and (orientation:portrait){
+  .dummy{}
+  #estViewSpaceImgCont div.estImgSlide{
+    width: 100%;
+    height: 25vh;
+    }
+  }
+
+
+
+@media screen and (min-device-width:728px) and (orientation:portrait){
+  .dummy{}
+  #estGalCont div.estImgSlide {
+    width: 100%;
+    height: 60vh;
+    }
+  }
+
+
+/*DINAMIC SPACES LAYOUT*/
+@media only screen and (min-device-width:1024px){
+  .dummy{}
+  
+  #estViewBoxSpacesCont div.estSpaceGroup,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup{
+    border-bottom: none;
+    padding-bottom: 0px;
+    }
+  
+  
+  #estViewBoxSpacesCont.estSpaceDynamic h3{
+    margin-bottom: 6px;
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div#estViewBoxSpacesCapt{
+    display:block;
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpacePvwCont{
+    display: flex;
+    flex: 65%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-clip: content-box;
+    background-origin: padding-box;
+    border: 0.35em solid transparent;
+    border-radius: 8px;
+    padding-top: 0px;
+    overflow: hidden;
+    }
+  
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+    flex: 100%;
+    width: 100%;
+    max-width: unset;
+    background-color: rgba(207,207,207,0.45);
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    border-left-width: 9px;
+    border-left-style: solid;
+    border-left-color: #FFFFFF;
+    border-radius: 5px;
+    padding: 8px 6px 8px 6px;
+    margin: 2px 0px 2px 0px;
+    cursor: pointer;
+    }
+  
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.estBGGrad2{
+    background-color:transparent;
+    background-image: linear-gradient(0deg, rgba(0,0,0,0.08), rgba(64,64,64,0.07));
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn:hover{
+    border-left-color:#04caf7;
+    }
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.actv,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.actv:hover{
+    border-left-color:#34b6cb;
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div.estBGGrad1 div.estViewSpaceBtn.actv,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estBGGrad1 div.estViewSpaceBtn.actv:hover{
+    border-left-color:#FFFFFF;
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estImgSlide,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estViewSpTxt{
+    display:none !important;
+    }
+  
+  
+  .estSideMenu div.estViewSpaceBtn{
+    width:100% !important;
+    margin-bottom: 2px;
+    }
+  .estSideMenu div.estViewSpaceBtn div.estImgSlide,
+  .estSideMenu div.estViewSpaceBtn div.estViewSpTxt{
+    display:none !important;
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estViewSpTxt ul li{
+    white-space: nowrap;
+    margin-right: 10px;
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpaceImgPvwCont{
+    display:block;
+    position:relative;
+    min-height: 500px;
+    background-color: transparent;
+    background-image: none;
+    margin-right: 16px;
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+    /*z-index: -3;*/
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpaceBtnCont{
+    display: flex;
+    flex: 34%;
+    min-width: 300px;
+    flex-direction: column;
+    align-items: center;
+    background-clip: content-box;
+    background-origin: padding-box;
+    border: 0.35em solid transparent;
+    border-radius: 8px;
+    overflow: unset;
+    }
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup{
+    display: flex;
+    width: 100%;
+    margin-bottom: 12px;
+    flex: auto;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    }
+  
+  }
+
+
+
+
+
+@media only screen and (min-device-width:1024px) and (max-device-height:1024px) and (orientation:landscape){
+  .dummy{}
+  #estViewSpaceImgCont div.estImgSlide{
+    /*height: 40vh;*/
+    }
+  }
+
+@media only screen and (min-device-width:1024px) and (max-device-height:768px) and (orientation:landscape){
+  .dummy{}
+  #estViewSpaceImgCont div.estImgSlide{
+    /*height: 45vh;*/
+    }
+  }
+
+
+
+
+@media only screen and (min-device-width:992px) and (max-device-width:1023px){
+  .dummy{}
+  
+  }
+
+@media only screen and (min-device-width:768px) and (max-device-width:991px){
+  .dummy{}
+  
+  #estPlugMenu1,
+  .estSideMenu{
+    display:none !important;
+    }
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+    display: flex;
+    position: relative;
+    max-width: 48%;
+    flex: 50%;
+    flex-direction: column;
+    margin: 3px 1%;
+    padding: 0px 1% 6px 1%;
+    border: none;
+    cursor: auto;
+    }
+  
+  }
+
+
+@media only screen and (min-device-width:640px) and (max-device-width:767px){
+  .dummy{}
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+    display: flex;
+    position: relative;
+    max-width: 48%;
+    flex: 50%;
+    flex-direction: column;
+    margin: 6px 1%;
+    padding: 0px 1% 6px 1%;
+    border: none;
+    cursor: auto;
+    }
+  }
+
+
+@media only screen and (min-device-width:544px) and (max-device-width:639px){
+  .dummy{}
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+    height: 320px;
+    }
+  }
+
+
+@media only screen and (min-device-width:480px) and (max-device-width:543px){
+  .dummy{}
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+    height: 256px;
+    }
+  }
+
+@media only screen and (min-device-width:100px) and (max-device-width:479px){
+  .dummy{}
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+    height: 192px;
+    }
+  }
+
+
+
+
+@media only screen and (min-device-width:100px) and (max-device-width:639px){
+  .dummy{}
+  
+  #estViewBoxSpacesCont,
+  #estViewBoxSpacesCont.estSpaceDynamic{
+    background-image:none !important;
+    background-color:transparent !important;
+    }
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+    display: flex;
+    position: relative;
+    max-width: unset;
+    flex: 100%;
+    flex-direction: column;
+    margin: 8px auto;
+    padding: 0px 1% 6px 1%;
+    border: none;
+    cursor: auto;
+    }
+  
+  
+  
+  
+  
+  
+  
+  #estViewBoxSpacesCont div.estImgSlide{
+    width: 100%;
+    height: 256px;
+    }
+  }
+
+
+
+
+
+
+
+/*
+
+  .dummy{}
+  
+  #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpacePvwCont{
+    display:none;
+    }
+  
+  #estViewBoxSpacesCont div#estViewSpaceBtnCont{
+    flex:100%;
+    height:unset;
+    min-height:unset;
+    background-image: none !important;
+    }
+  
+  
+  #estViewBoxSpacesCont div.estSpaceGroup,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup{
+    display: flex;
+    width:100%;
+    flex: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    }
+    
+  #estViewBoxSpacesCont div.estSpaceGroup h3,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup h3{
+    flex: 100%;
+    margin-top: 12px;
+    }
+  
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+    flex: 100%;
+    max-width: unset;
+    border: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    border-left: none;
+    padding: 8px 6px 8px 6px;
+    margin: 8px 0px 12px 0px;
+    cursor: auto;
+    }
+  
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estSpTtl,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estSpTtl{
+    display:block;
+    margin: 6px 0px 0px 6px;
+    }
+
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+    display:block;
+    height:192px;
+    }
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estSpTtl,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estSpTtl{
+    font-weight: bold;
+    font-size: 1.35em;
+    }
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt{
+    display:block;
+    position:relative;
+    text-transform: none;
+    }
+  
+  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt ul li,
+  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt ul li{
+    white-space: normal;
+    font-size: 0.8em;
+    }
+  
+  }
+
+*/
+
+
+

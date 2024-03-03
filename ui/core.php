@@ -1,0 +1,2355 @@
+<?php
+if(!defined('e107_INIT')){exit;}
+if(!ADMIN){exit;}
+if(!getperms('P')){exit;}
+
+
+class estateCore{
+  
+	private $permList = array();
+	private $estData = array();
+	public $modArray,$prefs;
+  
+  
+  public function __construct($update= false){
+    $this->e107 = e107::getInstance();
+    $sql = e107::getDB();
+		$tp = e107::getParser();
+    $msg = e107::getMessage();
+    
+		$this->prefs = e107::getPlugConfig('estate');
+    $setup = $this->prefs->get('firsttime');
+    
+    if($setup == 2){
+      $ESTATEUCLASSES = array(
+        'ESTATE_ADMIN' => "userclass_description='".EST_PLUGNAME." ".EST_GEN_ADMINISTRATOR."', userclass_editclass='250', userclass_parent='254', userclass_visibility='250', userclass_icon='fas-building-user.glyph' WHERE userclass_id='".intval(ESTATE_ADMIN)."' LIMIT 1",
+        'ESTATE_MANAGER' => "userclass_description='".EST_PLUGNAME." ".EST_GEN_MANAGER."', userclass_editclass='250', userclass_parent='254', userclass_visibility='250', userclass_icon='fas-users-between-lines.glyph' WHERE userclass_id='".intval(ESTATE_MANAGER)."' LIMIT 1",
+        'ESTATE_AGENT' => "userclass_description='".EST_PLUGNAME." ".EST_GEN_AGENT."', userclass_editclass='250', userclass_parent='254', userclass_visibility='250', userclass_icon='fas-house-chimney-user.glyph' WHERE userclass_id='".intval(ESTATE_AGENT)."' LIMIT 1"
+        );
+      
+      
+      foreach($ESTATEUCLASSES as $eck=>$ecv){
+        if($sql->update("userclass_classes",$ecv)){$ucsuc .= '<div>'.EST_GEN_UPDATED.' '.EST_GEN_USERCLASS.' '.$eck.' </div>';}
+        else{
+          $dberr = $sql->getLastErrorText();
+          if($dberr){$ucerr .= '<p>'.EST_GEN_UPDATE.' '.EST_GEN_USERCLASS.' '.$eck.' '.EST_GEN_FAILED.': '.$ecv.' <div>'.$dberr.'</div></p>';}
+          else{$dbinf .= '<div>'.EST_GEN_UPDATE.' '.EST_GEN_USERCLASS.' '.$eck.' - '.EST_GEN_UPTODATE.'</div>';}
+          unset($dberr);
+          }
+        }
+      $msg->addWarning(EST_INSTSETUCLEVOK);
+      
+      if($ucsuc){$msg->addSuccess($ucsuc);}
+      if($dbinf){$msg->addInfo($dbinf);}
+      if($ucerr){$msg->addWarning(EST_INSTSETUCLEVNOK1.': '.$ucerr.' '.EST_INSTSETUCLEVNOK2);}
+      if(!$ucerr){
+        $this->prefs->set('firsttime',1);
+        $this->prefs->save();
+        }
+      unset($ucsuc,$dbinf,$ucerr);
+      }
+    
+    if(!empty($_POST['estFirsttimeDone'])){
+		  $this->prefs->removePref('firsttime');
+      $this->prefs->save();
+      
+      $FUSERS = array();
+      $sql->gen("SELECT user_id,user_name,user_class FROM #user WHERE user_admin='1' AND user_perms='0'");
+      while($row = $sql->fetch()){array_push($FUSERS,$row);}
+      
+      if(count($FUSERS)){
+        foreach($FUSERS as $k=>$v){
+          $user_class = explode(',',$v['user_class']);
+          if(!in_array(ESTATE_ADMIN,$user_class)){array_push($user_class,ESTATE_ADMIN);}
+          if($sql->update("user","user_class='".implode(',',array_map("trim",array_filter($user_class)))."' WHERE user_id='".intval($v['user_id'])."' LIMIT 1")){
+            $msg->addSuccess($v['user_name'].' '.EST_INSTADDEDMAINADMIN);
+            }
+          }
+        }
+      }
+    
+    }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  private function estqry(){
+    //$setup = $this->prefs->get('setup');
+    $URK = array();
+    if(e_QUERY){
+      $QRYX = str_replace('amp;', '', explode('&',e_QUERY));
+      foreach($QRYX as $x=>$y){
+        $z = explode('=',$y);
+        $URK[strtolower($z[0])] = $z[1];
+        }
+      unset($x,$y,$z);
+      if(!isset($URK['id'])){$URK['id'] = 0;}
+      if(!isset($URK['uid'])){$URK['uid'] = USERID;}
+      }
+    return $URK;
+    }
+  
+  
+  
+  public function estGetUserById($UID=0){
+    $sql = e107::getDB();
+    if(intval($UID) > 0){
+      $tp = e107::getParser();
+      
+      $ret1 = array();
+      $ret2 = array();
+      $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_class,user_admin,user_perms,user_signature,user_image FROM #user WHERE user_id = '".intval($UID)."'");
+      $ret1 = $sql->fetch();
+      $ret1['user_profimg'] = $tp->toAvatar($ret1,array('type'=>'url'));
+      
+      $ret2 = $this->getAgentData($UID);
+      
+      if(intval($ret2['agent_idx']) == 0){
+        $ret2['agent_uid'] = intval($UID);
+        if(trim($ret2['agent_name']) == ''){$ret2['agent_name'] = (trim($ret1['user_login']) !== '' ? $ret1['user_login'] : $ret1['user_name']);}
+        $agent['agent_txt1'] = $agent['user_signature'];
+        }
+      return array_merge($ret1, $ret2);
+      }
+    }
+  
+  public function estGetUsers($mode=0){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $ret1 = array();
+    
+    if($sql->select('estate_agents', '*', '')){
+      //while($row = $sql->fetch()){$AGNT[$row['agent_uid']] = $row;}
+      }
+    
+    $usrClasses = $this->getUsrClassIds(1);
+    //,user_signature
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_image FROM #user WHERE user_admin='1'".($mode == 1 ? "" : " AND user_class IN (".$usrClasses.")").((EST_USERPERM === 4 || USERID === 1) ? "" : " AND NOT user_perms='0'").(USERID === 1 ? "" : " AND NOT user_id='1'")." ORDER BY user_name ASC");
+    
+    while($rows = $sql->fetch()){
+      $UID = $rows['user_id'];
+      $rows['user_profimg'] = $tp->toAvatar($rows,array('type'=>'url'));
+      if($rows['user_perms'] === '0'){
+        if(USERID === $UID || USERID === 1){
+          $ret1[$UID] = $rows;
+          if($AGNT[$UID]){array_merge($ret1[$UID], $AGNT[$UID]);}
+          }
+        }
+      else{
+        $UPERMS = explode('.',$rows['user_perms']);
+        if(in_array(EST_PLUGID,$UPERMS)){
+          $ret1[$UID] = $rows;
+          if($AGNT[$UID]){array_merge($ret1[$UID], $AGNT[$UID]);}
+          }
+        }
+      }
+    //unset($AGNT);
+    return $ret1;
+    }
+  
+  public function estGetAllUsers(){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $ret = array();
+    
+    
+    if($sql->select('estate_agents', '*', '')){
+      while($row = $sql->fetch()){$AGNT[$row['agent_uid']] = $row;}
+      }
+    
+    $ui=0;
+    $usrClasses = $this->getUsrClassIds(1);
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image FROM #user WHERE user_class IN (".$usrClasses.") ORDER BY user_name ASC");
+    while($rows = $sql->fetch()){
+      $rows['user_profimg'] = $tp->toAvatar($rows,array('type'=>'url'));
+      $rows['dta'] = $AGNT[$rows['user_id']];
+      $ret[$ui] = $rows;
+      $ui++;
+      }
+    
+    unset($usrClasses,$AGNT,$ui);
+    return $ret;
+    }
+  
+  
+  
+  
+  public function estGetAgencyById($id){
+    if(EST_USERPERM < 3 && EST_AGENCYID !== intval($id)){
+      return;
+      }
+    $sql = e107::getDB();
+    $sql->gen("SELECT * FROM #estate_agencies WHERE agency_idx='".intval($id)."' LIMIT 1");
+    return $sql->fetch();
+    }
+  
+  
+  
+  public function estGetAgencyFull(){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $ret = array();
+    
+    $agents = array();
+    
+    $sql->gen("SELECT #estate_agents.*,user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image FROM #estate_agents JOIN #user ON user_id = agent_uid ORDER BY agent_name ASC");
+    while($rows = $sql->fetch()){
+      $agents[$rows['agent_agcy']][$rows['agent_idx']] = $this->estUserAgentData($rows);
+      }
+    
+    $ui = 0;
+    $sql->gen("SELECT * FROM #estate_agencies ORDER BY agency_name ASC");
+    while($rows = $sql->fetch()){
+      $rows['logo'] = $this->estAgecnyThmUrl($rows);
+      $rows['agents'] = array();
+      if(count($agents[$rows['agency_idx']])){
+        $ai = 0;
+        foreach($agents[$rows['agency_idx']] as $k=>$v){
+          $rows['agents'][$ai] = $v;
+          $ai++;
+          }
+        }
+      $ret[$ui] = $rows;
+      $ui++;
+      }
+    
+    return $ret;
+    }
+  
+  
+  public function estGetAllAgencies($mode=0){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $ret = array();
+    
+    
+    if($mode == 1){
+      $sql->gen("SELECT agent_agcy, COUNT('agent_idx') AS agency_agtct FROM #estate_agents GROUP BY agent_agcy");
+      while($rows = $sql->fetch()){$AGT[$rows['agent_agcy']] = $rows['agency_agtct'];}
+      $sql->gen("SELECT prop_agency, COUNT('prop_idx') AS agency_lstct FROM #estate_properties GROUP BY prop_agency");
+      while($rows = $sql->fetch()){$LST[$rows['prop_agency']] = $rows['agency_lstct'];}
+      }
+    
+    $QRY = "SELECT * FROM #estate_agencies";
+    if(EST_USERPERM < 3){
+      if(intval(EST_AGENCYID) > 0){
+        $QRY .= " WHERE agency_idx='".intval(EST_AGENCYID)."'";
+        }
+      }
+    
+    $sql->gen($QRY." ORDER BY agency_name ASC");
+    
+    $dberr = $sql->getLastErrorText($dberr);
+    if($dberr){e107::getMessage()->addError($dberr);}
+    //$ret['error'] = $dberr;
+    
+    $ui=0;
+    while($rows = $sql->fetch()){
+      $rows['agency_altimg'] = $this->estAgecnyThmUrl($rows);
+      $rows['agency_agtct'] = $AGT[$rows['agency_idx']];
+      $rows['agency_listct'] = $LST[$rows['agency_idx']];
+      
+      $ret[$ui] = $rows;
+      $ui++;
+      }
+    unset($ui);
+    return $ret;
+    }
+  
+  
+  
+  
+  public function estGetAllAgents(){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $ret = array();
+    $ui=0;
+    
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.* FROM #estate_agents JOIN #user ON user_id = agent_uid ORDER BY agent_name ASC");
+    while($rows = $sql->fetch()){
+      $rows['user_profimg'] = $tp->toAvatar($rows,array('type'=>'url'));
+      $AGTCLSES = explode(",",$rows['user_class']);
+      if(in_array(ESTATE_ADMIN,$AGTCLSES)){
+        $rows['user_role'] = EST_GEN_MAIN." ".EST_GEN_ADMIN;
+        $rows['user_mgr'] = 4;
+        }
+      elseif(in_array(ESTATE_MANAGER,$AGTCLSES)){
+        $rows['user_role'] = EST_GEN_MANAGER;
+        $rows['user_mgr'] = 3;
+        }
+      elseif(in_array(ESTATE_AGENT,$AGTCLSES)){
+        $rows['user_role'] = EST_GEN_AGENT;
+        $rows['user_mgr'] = 2;
+        }
+      else{
+        $rows['user_role'] = "Unknown";
+        $rows['user_mgr'] = 2;
+        }
+
+      $ret[$ui] = $rows;
+      $ui++;
+      }
+    unset($ui);
+    return $ret;
+    }
+  
+  
+  public function estGetAgentById($AGTID,$UID=USERID){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_agents LEFT JOIN #estate_agencies ON agent_agcy=agency_idx LEFT JOIN #user ON user_id=agent_uid WHERE ".(intval($AGTID) > 0 ? "agent_idx='".intval($AGTID)."'" : "agent_uid='".intval($UID)."'")." LIMIT 1");
+    $rows = $sql->fetch();
+    if(intval($rows['agent_imgsrc']) == 1 && trim($rows['agent_image']) !== ""){$rows['agent_profimg'] = EST_PTHABS_AGENT.$tp->toHTML($rows['agent_image']);}
+    else{$rows['agent_profimg'] = $tp->toAvatar($rows,array('type'=>'url'));}
+    
+    $rows['agent_propct'] = intval(0);
+    if(intval($rows['agent_idx']) > 0){
+      if($sql->gen("SELECT COUNT('prop_idx') AS agent_propct FROM #estate_properties WHERE prop_agent ='".intval($rows['agent_idx'])."' GROUP BY prop_agent")){
+        $apc = $sql->fetch();
+        $rows['agent_propct'] = $apc['agent_propct'];
+        }
+      }
+      
+    return $rows;
+    }
+  
+  
+	public function getAgentData($UID){
+    $sql = e107::getDB();
+    $ret = array();
+    $TQRY = "
+    SELECT #estate_agents.*, #estate_agencies.*
+    FROM #estate_agents 
+    LEFT JOIN #estate_agencies
+    ON agent_agcy = agency_idx
+    WHERE agent_uid = '".$UID."'
+    LIMIT 1";
+    if($sql->gen($TQRY)){
+      $ret = $sql->fetch();
+      }
+    return $ret;
+    }
+  
+  
+  public function estAgentEdit($id=0,$uid=0){ //seems to be obsolete
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    
+    if(intval($uid) > 0){
+      $where = "agent_uid = '".intval($uid)."'";
+      }
+    else{
+      $qry = $this->estqry();
+      if(intval($id) == 0 && intval($qry['uid']) > 0 && intval($qry['uid']) !== USERID){
+        $where = "agent_uid = '".intval($qry['uid'])."'";
+        }
+      else{
+        $where = ($id > 0 ? "agent_idx = '".$id."'" : "agent_uid = '".USERID."'");
+        }
+      }
+    
+    
+    $TQRY = "
+      SELECT #estate_agents.*, #estate_agencies.*
+      FROM #estate_agents 
+      LEFT JOIN #estate_agencies
+      ON agent_agcy = agency_idx
+      WHERE ".$where."
+      LIMIT 1";
+      
+    if($sql->gen($TQRY)){
+      $ret = $sql->fetch();
+      $ret['perm'] = intval(EST_USERPERM);
+      return $ret;
+      //e107::getMessage()->addInfo($EST_AGENT['agent_name']);
+      }
+    
+    
+    $sql->gen("SELECT user_id,user_name,user_login,user_email,user_admin,user_perms,user_class,user_signature,user_image FROM #user WHERE user_id='".$UID."'");
+    $EST_USERS = $sql->fetch();
+    $EST_USERS['user_profimg'] = $tp->toAvatar($EST_USERS,array('type'=>'url'));
+    extract($EST_USERS);
+    return;
+    }
+  
+  
+  public function estGetCompDta($id=0){}
+  
+  public function estAgecnyThmUrl($v){
+    $tp = e107::getParser();
+    $pref = e107::pref();
+    if(intval($v['agency_imgsrc']) == 1 && trim($v['agency_image']) !== ''){return EST_PTHABS_AGENCY.$tp->toHTML($v['agency_image']);}
+    else{return $tp->thumbUrl($pref['sitelogo'],false,false,true);}
+    }
+  
+  public function estCompThmUrl($company_imgsrc,$company_image,$v){
+    $tp = e107::getParser();
+    $pref = e107::pref();
+    if(intval($v['agency_imgsrc']) == 1 && trim($v['agency_image']) !== ''){return EST_PTHABS_AGENCY.$tp->toHTML($v['agency_image']);}
+    else{return $tp->thumbUrl($pref['sitelogo'],false,false,true);}
+    }
+  
+  
+  
+  public function estGetCompLocs($disp){
+    $ret = array();
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    
+    if($disp == 1){
+      if($sql->select('estate_agencies', '*', '')){
+  			while($row = $sql->fetch()){
+          $ret[$row['agency_idx']] = $row;
+          }
+        
+        if($sql->select('estate_agents', '*', '')){
+          while($row = $sql->fetch()){$ret[$row['agent_agcy']]['agents'][$row['agent_idx']] = $row;}
+          }
+        
+        if($sql->select('estate_properties', '*', 'prop_idx > "0" ORDER BY prop_name ASC')){
+          while($row = $sql->fetch()){
+            $ret[$row['prop_agency']]['prop'][$row['prop_idx']] = $row;
+            $ret[$row['prop_agency']]['aprop'][$row['prop_agent']][$row['prop_zoning']][$row['prop_status']][$row['prop_idx']] = $row;
+            //prop_listype 
+            }
+          }
+        }
+      }
+    else{
+      if($sql->select('estate_agencies', '*', '')){
+  			while($row = $sql->fetch()){
+          $ret[$row['agency_idx']] = $row;
+          }
+        }
+      }
+    return $ret;
+    }
+  
+  public function estSectLevel(){
+    return array('Subdivision','Property','Spaces');
+    }
+  
+  
+  public function estGetZoning(){
+    $ret = array();
+    $sql = e107::getDB();
+    if($sql->select('estate_zoning', '*', '')){
+			while($row = $sql->fetch()){$ret[$row['zoning_idx']] = $row['zoning_name'];}
+      }
+      
+    return $ret;
+    }
+  
+  
+  public function estGetListings($mode,$cid=0,$agy=0,$agt=0){
+    $ret = array();
+    if($cid > 0){
+      $sql = e107::getDB();
+      if($mode == 1){
+        if($sql->select('estate_properties', 'prop_idx,prop_name,prop_status,prop_zoning', 'prop_idx > "0" ORDER BY prop_zoning ASC, prop_idx ASC')){
+    			while($row = $sql->fetch()){$ret[$row['prop_zoning']][$row['prop_idx']] = $row;} //[$row['prop_status']]
+          }
+        }
+      else{}
+      }
+    return $ret;
+    }
+  
+  
+  
+  public function estGetAgents($mode,$cid=0,$agy=0,$agt=0){
+  //may be dead.
+    $ret = array();
+    if($cid > 0){
+      $sql = e107::getDB();
+      if($sql->select('estate_agents', 'agent_idx,agent_name,agent_uid', '')){
+  			while($row = $sql->fetch()){$ret['agts'][$row['agent_idx']] = $row;}
+        }
+      }
+    return $ret;
+    }
+  
+  
+  
+  
+  
+  
+  
+  public function estAgencyPHPPopoverform($dta){
+    $tp = e107::getParser();
+    $dtaStr = $this->estDataStr($dta);
+    extract($dta);
+    
+    $text = '
+      <div id="estAgenciesAvail" class="estPopBoxTab"'.$dtaStr.'>
+        <button id="estAgencyRemUsr" class="btn btn-primary btn-sm" data-agyid="0" style="display:none;" title="'.EST_GEN_REMOVEAGT.'" data-conf="'.EST_GEN_REMOVEAGTC1.'"=>'.EST_GEN_REMOVEAGTLOC.'</button>';
+    unset($dtaStr);
+    
+    $locs = $this->estGetCompLocs(0);
+    if(count($locs)){
+      foreach($locs as $k=>$v){
+        $dtaStr = $this->estDataStr($v);
+        $image = $this->estCompThmUrl($company_imgsrc,$company_image,$v);
+        $text .= '
+        <button class="btn btn-primary btn-sm estAgntUserBtn" style="background-image:url(\''.$image.'\')"'.$dtaStr.'">
+          <div class="estAgntUserDta">
+            <h4>'.$tp->toHTML($v['agency_name']).'</h4>
+            <div class="caddr">'.$tp->toHTML($v['agency_addr']).'</div>
+          </div>
+        </button>';
+        unset($dtaStr);
+        }
+      }
+    $text .= '
+      </div>';
+    return $text;
+    }
+  
+  
+  
+  
+  public function est_PropNameAddr($dta){
+    $tp = e107::getParser();
+    $addr2 = $dta->get('prop_addr2');
+    $addr = $dta->get('prop_addr1').($addr2 !== '' ? '<br />'.$addr2 : '').'<br />'.$dta->get('prop_city').', '.$dta->get('prop_state').' '.$dta->get('prop_zip');
+    
+    return '<div>'.$tp->toHTML($dta->get('prop_name')).'</div><div>'.$tp->toHTML($addr).'</div>';
+    }
+  
+  
+  
+  public function estUserAgentTbl($dta){
+    $tp = e107::getParser();
+    $agency_idx = intval($dta['agency_idx']);
+    //return $agency_idx;
+    
+    if($agency_idx == 0){
+      return $this->estNoCompID(EST_GEN_ADDUSERS);
+      }
+    
+    $cDtaStr = $this->estDataStr($dta);
+    
+    $locs = $this->estGetCompLocs(0);
+    $agents = $this->getAllAgents();
+    
+    //return count($agents);
+    
+    if(count($agents) == 0){
+      return EST_ERR_NOUSERSINCLASS;
+      }
+    
+    $OCCT = 0;
+    if(count($agents)){
+      foreach($agents as $k=>$v){
+        $agtimg = $tp->toAvatar($v,array('type'=>'url'));
+        $dtaStr = $this->estDataStr($v);
+        if($v['agency_idx']){
+          if($v['agent_imgsrc'] == 1 && trim($v['agent_image'] !== '')){$agtimg = EST_PTHABS_AGENT.$tp->toHTML($v['agent_image']);}
+          
+          if($v['agent_agcy'] == $agency_idx){
+            $AGENTBTNS .= '
+              <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
+                <div class="estAgntUserDta">
+                  <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
+                  <h4 class="agentName">'.$tp->toHTML($v['agent_name']).'</h4>
+                  <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
+                  <div>
+                    <span class="agency">'.$tp->toHTML($v['agency_name']).'</span>
+                  </div>
+                </div>
+              </button>';
+            }
+          else{
+            $USERBTNS .= '
+              <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
+                <div class="estAgntUserDta">
+                  <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
+                  <h4 class="agentName">'.$tp->toHTML($v['agent_name']).'</h4>
+                  <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
+                  <div>
+                    <span class="agency">'.$tp->toHTML($v['agency_name']).'</span>
+                  </div>
+                </div>
+              </button>';
+            }
+          }
+        else{
+          $USERBTNS .= '
+              <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
+                <div class="estAgntUserDta">
+                  <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
+                  <h4 class="agentName"></h4>
+                  <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
+                  <div>
+                    <span class="agency"></span>
+                  </div>
+                </div>
+              </button>';
+          }
+        unset($dtaStr);
+        }
+      }
+    
+    $text .= '
+    <table id="estUserAgentTab" class="table">
+      <colgroup style="width:50%"></colgroup>
+      <colgroup style="width:50%"></colgroup>
+      <thead>
+        <tr>
+          <th class="noPADTB VAM"><div class="WD100 VAM">'.EST_GEN_USERSAVAIL.'</div></th>
+          <th>'.EST_GEN_USERSASSIGNED.'</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="TAC noPAD">
+            <div class="estAgntUserTarg userAvail"'.$cDtaStr.'>'.$USERBTNS.'</div>
+          </td>
+          <td class="TAC noPAD">
+            <div class="estAgntUserTarg userAssigned"'.$cDtaStr.'>'.$AGENTBTNS.'</div>
+          <td>
+        </tr>
+      </tbody>
+    </table>';
+    unset($cDtaStr);
+    return $text;
+    }
+  
+  
+  public function estAgencyForm($dta,$tab=-1){
+    $pref = e107::pref();
+    $tp = e107::getParser();
+    $frm = e107::getForm(false, true);
+    $timeZones = systemTimeZones();
+    
+    extract($dta);
+        
+    if(trim($agency_timezone) == ''){$agency_timezone = vartrue($pref['timezone'], 'UTC');}
+    if(intval($agency_idx) == 0){$agency_pub = 1;}
+    
+    $agency_altimg = $tp->thumbUrl($pref['sitelogo'],false,false,true);
+    $LOGOIMG = $agency_altimg;
+    if(intval($agency_imgsrc) == 1){
+      if(trim($agency_image) !== ''){$LOGOIMG = EST_PTHABS_AGENCY.$tp->toHTML($agency_image);}
+      else{$agency_imgsrc = 0;}
+      }
+    
+    //if(intval($agency_imgsrc) == 1 && trim($agency_image) !== ''){$image = EST_PTHABS_AGENCY.$tp->toHTML($agency_image);}
+    //else{$image = $tp->thumbUrl($pref['sitelogo'],false,false,true);}
+    //estContactUDB
+    
+    $text .= '
+      '.$frm->hidden('agency_idx',intval($agency_idx)).'
+      '.$frm->hidden('agency_image',$tp->toFORM($agency_image)).'
+      '.$frm->hidden('agency_imgsrc',intval($agency_imgsrc)).'
+      '.$frm->hidden('agency_altimg',$agency_altimg).'
+        <table id="estCompany1" class="table estFormSubTable">
+        <colgroup style="width:20%"></colgroup>
+        <colgroup style="width:60%"></colgroup>
+        <colgroup style="width:20%"></colgroup>';
+    if($tab == -1){
+      $text .= '
+          <thead>
+            <tr>
+              <th colspan="2">'.(intval($agency_idx) == 0 ? EST_GEN_NEW.' ' : '').EST_GEN_AGENCY.' '.EST_GEN_PROFILE.'</th>
+              <th class="TAC">'.EST_GEN_AGENCY.' '.EST_GEN_LOGO.'</th>
+            </tr>
+          </thead>';
+      }
+          
+    $text .= '
+        <tbody>
+          <tr>
+            <td>'.EST_GEN_AGENCY.' '.EST_GEN_NAME.'*</td>
+            <td>
+            '.$frm->text('agency_name', $tp->toFORM($agency_name), 100, array('size' => 'xxlarge','placeholder'=>EST_GEN_AGENCY.' '.EST_GEN_NAME)).'
+            '.$frm->hidden('agency_altimg',$agency_altimg).'
+            </td>
+            <td rowspan="4" class="TAC">
+              <div id="estAgencyImg" class="estAgentAvatar" style="background-image:url(\''.$LOGOIMG.'?'.rand(99,99999).'\')">
+                <img class="estSecretImg" src="'.$LOGOIMG.'?'.rand(99,99999).'" alt="" style="display:none;" />
+                <input type="file" id="estAvatarUpload" name="estAvatarUpload" data-targ="agency_image" accept="image/jpeg, image/png, image/gif" class="ui-state-valid estInitFile" style="display:none;">
+              </div>
+            </td>
+          </tr>
+          
+          <tr>
+            <td>'.EST_GEN_PROFILEVISIB.'</td>
+            <td>'.$frm->flipswitch('agency_pub', intval($agency_pub),array('off'=>EST_GEN_HIDDEN,'on'=>EST_GEN_PUBLIC)).'</td>
+          </tr>
+          
+          <tr>
+            <td>'.EST_GEN_TIMEZONE.'</td>
+            <td>'.$frm->select('agency_timezone', $timeZones,$agency_timezone,'size=xlarge').'</td>
+          </tr>
+          <tr>
+            <td>'.EST_GEN_ADDRESS.'</td>
+            <td>'.$frm->textarea('agency_addr',$tp->toFORM($agency_addr),3,80,array('size' => 'xxlarge','placeholder'=>EST_PLCH96),true).'</td>
+          </tr>
+          <tr>
+            <td>'.EST_GEN_INFO.'</td>
+            <td colspan="2">'.$frm->textarea('agency_txt1',$tp->toFORM($agency_txt1),3,80,array('size' => 'xxlarge','placeholder'=>EST_PLCH85),true).'</td>
+          </tr>';
+          
+          if($tab == -1){
+            
+            $text .='
+        <tr>
+          <td>'.EST_GEN_CONTACTS.'</td>
+          <td class="posREL">
+            <div id="estAgentPHPform2" class="">';
+        $text .= $this->estContactForm(5,$agency_idx,2);
+        $text .='
+            </div>
+          </td>
+          <td>&nbsp;</td>
+        </tr>';
+            
+            
+            }
+          $text .= $this->estMap('agency',$agency_addr,$agency_lat,$agency_lon,$agency_geoarea,$agency_zoom);
+          $text .= '
+        </tbody>
+      </table>';
+      
+    return $text;
+    }
+  
+  
+  
+  
+  private function estAgentUIDSelect($agent_uid){
+    $agent_uid = intval($agent_uid);
+    $tp = e107::getParser();
+    $frm = e107::getForm(false, true);
+    $TRS = array();
+    $TRS[0] = EST_GEN_AGENT.' '.EST_GEN_USERLOGIN;
+    $TRS[1] = $frm->select_open('agent_uid',array('value'=>intval($agent_uid),'size'=>'xlarge estSelectDta'));
+    
+    $sql = e107::getDB();
+    if($sql->select('estate_agents', '*', '')){while($row = $sql->fetch()){$AGNT[$row['agent_uid']] = $row;}}
+    
+    $users = $this->estGetUsers(1);
+    foreach($users as $k=>$v){
+      foreach($v as $dk=>$dv){$usrDtaStr .= ' data-'.$dk.'="'.$tp->toJS($dv).'"';}
+      
+      if(intval($v['user_id']) === $agent_uid){$selected = ' selected="selected"';}
+      else{
+        if(intval($v['user_id']) === 1 && $agent_uid !== 1){$disabled = ' disabled="disabled"';}
+        if($AGNT[$v['user_id']] &&$v['user_id'] !== $agent_uid ){
+          $disabled = ' disabled="disabled"';
+          foreach($AGNT[$v['user_id']] as $dk=>$dv){$usrDtaStr .= ' data-'.$dk.'="'.$tp->toJS($dv).'"';}
+          }
+        }
+      
+      $TRS[1] .= '<option value="'.intval($v['user_id']).'"'.$selected.$disabled.$usrDtaStr.'>'.$tp->toHTML(trim($v['user_login']) !== '' ? $v['user_login'] : $v['user_name']).' ('.$tp->toHTML($v['user_email']).')</option>';
+      
+      unset($usrDtaStr,$selected,$disabled);
+      }
+    $TRS[1] .= $frm->select_close();
+    return $TRS;
+    }
+  
+  private function estAgentCompSelect($company_idx){}
+  
+  public function estDataStr($dta){
+    $tp = e107::getParser();
+    $dtaStr = '';
+    foreach($dta as $k=>$v){$dtaStr .= ' data-'.$k.'="'.$v.'"';}
+    unset($dta,$k,$v);
+    return $dtaStr;
+    }
+  
+  private function estUserAgentData($dta){
+    $tp = e107::getParser();
+    $sql = e107::getDB();
+    if(!$dta){$dta = array();}
+    
+    if(!$dta['user_id']){
+      $dta1 = $sql->db_FieldList('user');
+      foreach($dta1 as $k=>$v){$dta[$v]='';}
+      unset($dta1);
+      }
+    if(!$dta['agent_idx']){
+      $dta1 = $sql->db_FieldList('estate_agents');
+      foreach($dta1 as $k=>$v){$dta[$v]='';}
+      unset($dta1);
+      }
+    
+    if(intval($dta['user_id']) === 0){
+      $dta['user_admin'] = 1;
+      $dta['user_class'] = ESTATE_AGENT;
+      $dta['user_perms'] = EST_PLUGID;
+      $dta['user_visits'] = 0;
+      }
+    
+    if(intval($dta['agent_idx']) === 0){
+      $dta['agent_idx'] = intval(0);
+      $dta['agent_name'] = $dta['user_name'];
+      $dta['agent_agcy'] = (intval($dta['agent_agcy']) > 0 ? intval($dta['agent_agcy']) : intval(EST_AGENCYID));
+      $dta['agent_lev'] = intval(1);
+      $dta['agent_uid'] = intval($dta['user_id']);
+      $dta['agent_img'] = '';
+      $dta['agent_imgsrc'] = intval(0);
+      $dta['agent_txt1'] = $dta['user_signature'];
+      }
+    //estDBUp
+    
+    $dta['user_profimg'] = $tp->toAvatar($dta,array('type'=>'url'));
+    $dta['agent_altimg'] = '../..'.$dta['user_profimg'];
+    $dta['user_image'] = $dta['user_profimg'];
+    if($dta['agent_imgsrc'] == 1 && trim($dta['agent_image'] !== '')){
+      $dta['agent_profimg'] = EST_PTHABS_AGENT.$tp->toHTML($dta['agent_image']);
+      }
+    else{$dta['agent_profimg'] = $dta['agent_altimg'];}
+    return $dta;
+    }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  public function estUserList($id=0){
+    if(EST_USERPERM < 2){return;}
+    $tp = e107::getParser();
+    $sql = e107::getDB();
+    
+    if(count($GLOBALS['EST_CLASSES']) > 0){
+      //ADMINPERMS
+      
+      $TBLS = array(
+        0=>array('capt'=>EST_GEN_YOURSELF,'body'=>''),
+        1=>array('capt'=>EST_GEN_ADMINUSERS,'body'=>''),
+        2=>array('capt'=>EST_GEN_NONADMINUSERS,'body'=>'')
+        );
+      
+      if(intval(USERID) !== 1){$WHERE = "WHERE NOT user_id=1";}
+      if(intval($id) > 0){
+        $WHERE = ($WHERE ? $WHERE.' AND agent_agcy="'.intval($id).'"' : 'WHERE agent_agcy="'.intval($id).'"').' OR agent_agcy IS NULL';
+        }
+      
+      $sql->gen("SELECT prop_agent, COUNT('prop_idx') AS agent_propct FROM #estate_properties WHERE prop_agent > 0 GROUP BY prop_agent");
+      while($lai = $sql->fetch()){$AGL[$lai['prop_agent']] = $lai['agent_propct'];}
+      unset($lai);
+      
+      $URES = $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_class,user_admin,user_perms,user_image, #estate_agents.*, #estate_agencies.* FROM #user LEFT OUTER JOIN #estate_agents ON agent_uid = user_id LEFT JOIN #estate_agencies ON agency_idx=agent_agcy $WHERE");
+      
+      $dberr = $sql->getLastErrorText();
+      if($dberr){e107::getMessage()->addError($dberr);}
+      if($URES){
+        while($uv = $sql->fetch()){
+          $UID = intval($uv['user_id']);
+          $AGTID = intval($uv['agent_idx']);
+          $XRP = explode('.',$uv['user_perms']);
+          $XRC = explode(',',$uv['user_class']);
+          $XGO = 0; // if > 0 then omit results
+          $YGO = 0;
+          if(intval($id) > 0 && intval($uv['agent_agcy']) == 0){
+            $uv['agent_agcy'] = intval($id);
+            }
+          
+          if(intval(USERID) !== 1 && in_array('0',$XRP) && USERID !== $UID){$XGO++;}
+          
+          if($AGTID > 0){
+            if(EST_USERPERM == 2){
+              if(intval($uv['agent_agcy']) > 0 && intval($uv['agent_agcy']) !== intval(EST_AGENCYID)){$XGO++;}
+              }
+            }
+          
+          if(EST_USERPERM == 3){
+            if(in_array(ESTATE_ADMIN,$XRC) && USERID !== $UID){$XGO++;}
+            }
+          
+          if(EST_USERPERM == 2){
+            if(in_array(ESTATE_ADMIN,$XRC) || in_array(ESTATE_MANAGER,$XRC) && USERID !== $UID){$XGO++;}
+            if(intval($uv['user_admin']) > 0){
+              foreach($XRC as $tk=>$tv){
+                if(!in_array($tv,EST_USERMANAGE)){$XGO++;}
+                }
+              }
+            }
+            
+          
+          $uv['agent_propct'] = intval($AGL[$AGTID]);
+          
+          $dtaStr = $this->estDataStr($uv);
+          
+          if($UID === intval(USERID)){$TKY = 0; $YGO = 1;}
+          elseif($XGO == 0){
+            $YGO = 1;
+            if(intval($uv['user_admin']) > 0){$TKY = 1;}
+            else{$TKY = 2;}
+            }
+          
+          if($YGO == 1){
+            $TBLS[$TKY]['body'] .= '
+          <tr id="estUserTR-'.$UID.'" class="estUserData estUserTbl'.$TKY.'" '.$dtaStr.'>
+            <td class="TAR">'.$tp->toAvatar($uv).'</td>
+            <td>
+              <div class="FWB">'.$tp->toHTML($uv['user_name']).'</div>
+              <div class="smalltxt WSNWRP">'.$tp->toHTML($uv['user_loginname']).' ('.$tp->toHTML($uv['user_email']).')</div>
+              <div class="smalltxt WSNWRP estUsrAdmStat"></div>
+            </td>
+            <td>
+              <div class="WSNWRP"><input type="checkbox" id="estMainAdminCB-'.$UID.'" class="estMainAdminCB" value="'.EST_PLUGID.'" /> <label for="estMainAdminCB-'.$UID.'" title="'.EST_TT_ADMPERMIS1.'" >'.EST_GEN_ADMINAREA.' '.EST_GEN_ACCESS.'</label></div>
+              <div class="WSNWRP"><input type="checkbox" id="estOwnerPostCB-'.$UID.'" class="estOwnerPostCB" value="'.EST_PLUGID.'" disabled="disabled" /> <label for="estOwnerPostCB-'.$UID.'" title="'.EST_TT_FRONTENDFORM.'" > '.EST_GEN_FRONTENDACCESS.'</label></div>
+            </td>
+            <td><select id="estUCls-'.$UID.'" class="estAllUserClass"></select></td>
+            <td>
+              <button class="btn btn-default btn-sm estUserAgentEdit">';
+            
+            if($AGTID > 0){
+              $TBLS[$TKY]['body'] .= '<i class="S32 profImg" style="background-image:url('.($uv['agent_imgsrc'] == 1 ? EST_PTHABS_AGENT.$tp->toHTML($uv['agent_image']) : $tp->toAvatar($uv,array('type'=>'url'))).')"></i>';
+              }
+            else{
+              $TBLS[$TKY]['body'] .= '<i class="S32 e-edit-32"></i>';
+              }
+            $TBLS[$TKY]['body'] .= '<div><span></span><span></span><span></span></div></button>
+            </td>
+          </tr>';
+            }
+          
+          unset($UID,$XRP,$XRC,$XGO,$YGO,$TKY);
+          }
+        }
+      
+      
+      foreach($TBLS as $TK=>$TBL){
+        if($TBL['body']){
+          $text .= '
+          <table id="estMainUserList'.$TK.'" class="table adminlist table-striped">
+            <colgroup style="width:5%"></colgroup>
+            <colgroup style="width:30%"></colgroup>
+            <colgroup style="width:25%"></colgroup>
+            <colgroup style="width:20%"></colgroup>
+            <colgroup style="width:20%"></colgroup>
+            '.$CG.'
+            <thead>
+              <tr>
+                <th colspan="2">'.$TBL['capt'].'</th>
+                <th>'.EST_GEN_PERMISSIONS.'</th>
+                <th>'.EST_GEN_ADMINACCLEVEL.'</th>
+                <th>'.EST_GEN_AGENT.' & '.EST_GEN_AGENCY.'</th>
+              </tr>
+            </thead>
+            <tbody class="estUserTBody">
+            '.$TBL['body'].'
+            </tbody>
+          </table>';
+          }
+        }
+      unset($TBLS,$TK,$TBL);
+      }
+    return '<div id="estAgentUserTableDiv">'.$text.'</div>';
+    }
+  
+  
+  
+  
+  public function estAgencyList($fltr=0){
+    $tp = e107::getParser();
+    $sql = e107::getDB();
+    $agencies = $this->estGetAllAgencies(1);
+    
+    if(count($agencies) == 0){
+      return '
+      <div class="s-message alert alert-block alert-dismissible fade in show info  alert-info" style="width: 96%; margin: 16px auto 0px auto;">
+        <h4 class="s-message-title">'.EST_ERR_NOAGENCIES0.'</h4>
+        <div class="s-message-body">
+          <div class="s-message-item">'.EST_ERR_NOAGENCIES1.' '.EST_ERR_NOAGENCIES2.'</div>
+          <div class="s-message-item"><button id="estNewAgencyBtn" type="button" class="btn btn-default" title="'.LAN_CREATE.'"><i class="S16 e-add-16"></i></button></div>
+        </div>
+      </div>';
+      }
+    else{
+      
+      /*
+      <button type="button" name="estFilterAgencies" value="1" id="estFilterAgencies" class="btn btn-default" title="Filter"><span><i class="fa fa-filter"></i></span></button>
+      */
+      
+      if($fltr == 1){
+        $text .= '
+        <fieldset id="admin-ui-list-filter" class="e-filter" style="margin:4px;">
+          <div class="row-fluid">
+            <div class="left form-inline span8 col-md-8">
+							<span id="" class="form-group has-feedback has-feedback-left">
+                <select name="estLocFltr1" id="estLocFltr1" class="form-control e-tip tbox select input-xlarge filter ui-state-valid" title="" data-original-title="Filter">
+                  <option value="">All Locations</option>
+                  <option value="none">- '.EST_GEN_MISSING.' '.EST_GEN_ADDRESS.' -</option>
+                </select>
+                <button id="estNewAgencyBtn" type="button" class="btn btn-default" title="'.LAN_CREATE.'"><i class="S16 e-add-16"></i></button>
+							</span>
+            </div>
+            <div class="span4 col-md-4 text-right"></div>
+          </div>
+        </fieldset>';
+        }
+      
+            //<th>'.EST_GEN_PROFILEVISIB.'</th>
+      $text .= '
+      <table class="table adminlist table-striped estCustomTable1">
+        <colgroup style="width:5%"></colgroup>
+        <colgroup style="width:20%"></colgroup>
+        <colgroup style="width:35%"></colgroup>
+        <colgroup style="width:20%"></colgroup>
+        <colgroup style="width:20%"></colgroup>
+        <thead>
+          <tr>
+            <th>'.EST_GEN_LOGO.'</th>
+            <th>'.EST_GEN_NAME.'</th>
+            <th colspan="2">'.EST_GEN_DETAILS.'</th>
+            <th class="TAC">'.LAN_OPTIONS.'</th>
+          </tr>
+        </thead>
+        <tbody id="estAgyListTB">';
+        $LOCADDR = array();
+        foreach($agencies as $ak=>$av){
+          extract($av);
+          
+          if(trim($agency_addr) !== ''){
+            $adr1 = explode("\n",$agency_addr);
+            $adr2 = explode(" ",str_replace(",","",$adr1[(count($adr1) - 1)]));
+            $eky = $adr2[(count($adr2) - 2)];
+            foreach($adr2 as $k=>$v){if($k < (count($adr2) - 1)){$addrKey .= ($addrKey ? ' ' : '').$v;}}
+            if(!$LOCADDR[$eky]){$LOCADDR[$eky] = array($addrKey);}
+            elseif(!in_array($addrKey,$LOCADDR[$eky])){array_push($LOCADDR[$eky],$addrKey);}
+            }
+          
+          $LOGOIMG = $agency_altimg;
+          if(intval($agency_imgsrc) == 1){
+            if(trim($agency_image) !== ''){$LOGOIMG = EST_PTHABS_AGENCY.$tp->toHTML($agency_image);}
+            else{$agency_imgsrc = 0;}
+            }
+          
+          
+          $EDTBTN = '';
+
+          $DELBTN = '';
+          
+          $text .= '
+          <tr class="estAgyLocTr" data-addr="'.($addrKey ? $tp->toJS($addrKey) : 'none').'">
+            <td><img class="img-rounded rounded user-avatar" alt="'.$LOGOIMG.'" src="'.$LOGOIMG.'" loading="lazy"></td>
+            <td>
+              <h4>'.$agency_name.'</h4>
+              <p>'.$tp->toHTML($agency_addr).'</p>
+            </td>
+            <td>
+              <div>'.intval($agency_agtct).' '.(intval($agency_agtct) == 1 ? EST_GEN_AGENT : EST_GEN_AGENTS).'</div>
+              <div>'.intval($agency_listct).' '.(intval($agency_listct) == 1 ? EST_GEN_LISTING : EST_GEN_LISTINGS).'</div>
+            </td>
+            <td>
+              &nbsp;
+            </td>
+            <td class="center last options">
+    					<div class="btn-group FLEXREV">
+                <button type="submit" name="etrigger_delete['.intval($agency_idx).']" data-placement="left" value="'.intval($agency_idx).'" id="etrigger-delete-1-'.intval($agency_idx).'" class="action delete btn btn-default" '.(count($agencies) < 2 ? 'title="'.EST_GEN_REMAGENCYX.'" disabled="disabled"' : ' title="'.EST_GEN_DELETE.' '.$tp->toJS($agency_name).'"data-confirm="'.EST_GEN_REMAGENCY1.'"').'><i class="S32 e-delete-32"></i></button>
+                <a href="'.e_SELF.'?mode=estate_agencies&action=edit&id='.intval($agency_idx).'" class="btn btn-default btn-secondary" data-modal-caption="" title="'.EST_GEN_EDIT.' '.$tp->toJS($agency_name).'" data-placement="left"><i class="S32 e-edit-32"></i></a><button type="button" name="" data-placement="left" value="'.intval($agency_pub).'" id="" class="btn btn-default estAgyVisibBtn" data-idx="'.intval($agency_idx).'"><i class="far '.(intval($agency_pub) ? 'fa-eye' : 'fa-eye-slash').' WD32px"></i></button>
+              </div>
+    				</td>
+          </tr>';
+          unset($addrKey);
+          }
+        $text .= '
+        </tbody>
+      </table>
+      <div id="estAddrOpts" style="display:none;">';
+      //sort($LOCADDR);
+      
+      foreach($LOCADDR as $k=>$v){
+        $text .= '<optgroup label="'.$tp->toJS($k).'">'.$tp->toHTML($k).'</optgroup>';
+        foreach($v as $sk=>$sv){
+          $text .= '<option value="'.$tp->toJS($sv).'">'.$tp->toHTML($sv).'</option>';
+          }
+        }
+      $text .= '
+      </div>';
+      return $text;
+      }
+    }
+  
+  public function estAgentPHPform($dta){}
+  
+  
+  public function estAgentForm($dta){
+    $tp = e107::getParser();
+    $frm = e107::getForm(false, true);
+		$pref = e107::getPref();
+    
+    if($dta === 'anu'){
+      $ANU = true;
+      $dta = array();
+      //$UserHandler = new UserHandler;
+      }
+    //estGetAgentById
+    $dta = $this->estUserAgentData($dta);
+    
+    if($GLOBALS['PDTA']){
+      foreach($GLOBALS['PDTA'] as $k=>$v){
+        $dta[$k] = $v;
+        }
+      }
+    
+    
+    $dtaStr = $this->estDataStr($dta);
+    extract($dta);
+    $UID = intval($user_id);
+    
+    $XRP = explode('.',$user_perms);
+    $XRC = explode(',',$user_class);
+    $XGO = 0; // if > 0 then omit results
+    $agent_agcy = intval($agent_agcy);
+    
+    if(in_array('0',$XRP) && USERID !== $UID){$XGO++;}
+    
+    if(EST_USERPERM == 3){
+      if(in_array(ESTATE_ADMIN,$XRC) && USERID !== $UID){$XGO++;}
+      }
+    
+    if(EST_USERPERM == 2 && intval($agent_idx) !== 0 && USERID !== $UID){
+      foreach($XRC as $tk=>$tv){
+        if(!in_array($tv,EST_USERMANAGE)){$XGO++;}
+        }
+      }
+    
+    if(USERID !== 1 && $XGO > 0){
+      return '<div class="estStopForm">You do not have permissions to edit this Agent</div>';
+      }
+    
+    //estInitUpl
+    /*
+    if($agent_imgsrc == 1 && trim($agent_image) == '' && intval($agent_idx) > 0){
+      foreach(EST_IMGTYPES as $fk=>$FEXT){
+        $THUMBFILE = EST_PTHABS_AGENT.'agent-'.intval($agent_idx).$FEXT;
+        if(file_exists($THUMBFILE) && is_file($THUMBFILE)){$agent_image = 'agent-'.intval($agent_idx).$FEXT;}
+        clearstatcache();
+        }
+      }
+    */
+    
+    if($agent_imgsrc == 1){$AGENTIMAGE = EST_PTHABS_AGENT.$tp->toHTML($agent_image);}
+    else{$AGENTIMAGE = (trim($agent_altimg) !== '' ? $agent_altimg : $user_profimg);}
+    
+    if(USERID === $UID){
+      $agent_lev = (intval($agent_lev) > 0 ? intval($agent_lev) : (intval(EST_USERPERM) > 0 ? intval(EST_USERPERM) : 1));
+      }
+    
+    
+    
+    if(in_array('0',$XRP)){$AGTLEVNAME = EST_ULVMAINADMIN;}
+    elseif(in_array(ESTATE_ADMIN,$XRC)){$AGTLEVNAME = EST_ULVADMIN;}
+    elseif(in_array(ESTATE_MANAGER,$XRC)){$AGTLEVNAME = EST_ULVMANAGER;}
+    else{$AGTLEVNAME = EST_ULVAGENT;}
+    
+    $TRS = array();
+    switch(EST_USERPERM){
+      case 4 : // Main Admin
+      case 3 : //Estate Admin
+        if(!isset($ANU)){$TRS[0] = $this->estAgentUIDSelect($agent_uid);}
+        $HELES .= $frm->hidden('agent_lev',intval($agent_lev));
+        break;
+      case 2 : //Manager
+        if(!isset($ANU)){$HELES .= $frm->hidden('agent_uid',intval($agent_uid));}
+        $HELES .= $frm->hidden('agent_lev',intval($agent_lev));
+        break;
+      default : //Agent
+        $HELES .= $frm->hidden('agent_uid',intval($agent_uid));
+        $HELES .= $frm->hidden('agent_lev',intval($agent_lev));
+        break;
+      }
+    
+    $HELES .= $frm->hidden('estNewUserPost',intval($GLOBALS['ESTNEWUSRPOST']));
+    
+    if(isset($ANU)){
+      $HELES .= $frm->hidden('estNewUserKey',1);
+      $HELES .= $frm->hidden('estProfileKey',6);
+      //estNewUserPost
+      $TRS[0][0] = LAN_USER_02.'*'; //user_loginname
+      $TRS[0][1] = $frm->text('user_loginname', $user_loginname, varset($pref['loginname_maxlength'], 30), array('size'=>'xlarge', 'required'=>1));
+      $TRS[1][0] = LAN_USER_03; //user_login
+      $TRS[1][1] = $frm->text('user_login',$user_login, 30, array('size'=>'xlarge'));
+      $TRS[2][0] = LAN_PASSWORD.'*';
+      $TRS[2][1] = $frm->password('password', '', 128, array('size' => 'xlarge', 'class' => 'tbox e-password', 'generate' => 1, 'strength' => 1, 'autocomplete' => 'new-password'));
+      $TRS[3][0] = LAN_EMAIL.'*';
+      $TRS[3][1] = $frm->text('user_email',$user_email, 100, array('size'=>'xlarge'));
+      //$TRS[4][0] = LAN_USER_10;
+      //$TRS[4][1] = 'user_hideemail';
+      }
+    
+    $dataStr = $this->estDataStr($dta);
+    
+    
+    
+    $text = '
+    '.$frm->hidden('agent_idx',intval($agent_idx)).'
+    '.$HELES.'
+    '.$frm->hidden('agent_image',$tp->toFORM($agent_image)).'
+    '.$frm->hidden('agent_imgsrc',intval($agent_imgsrc)).'
+    '.$frm->hidden('agent_altimg',$agent_altimg).'
+    <table id="'.($UID > 0 ? 'estAgentFormTable' : 'estNewUserFormTable').'" class="table estFormSubTable adminform" '.$dataStr.'>
+      <colgroup style="width:20%"></colgroup>
+      <colgroup style="width:60%"></colgroup>
+      <colgroup style="width:20%"></colgroup>
+      <thead>
+        <tr>
+          <th>'.(intval($agent_idx) == 0 ? EST_GEN_NEW.' ' : '').EST_GEN_AGENT.' '.EST_GEN_PROFILE.': </th>
+          <th>'.(isset($ANU) ? EST_GEN_NEW.' '.LAN_USER : $user_login.' ['.$user_name.'] ('.$tp->toHTML($user_email).')').'</th>
+          <th class="TAC">'.EST_GEN_PROFILE.' '.EST_GEN_IMAGE.'</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>'.(isset($ANU) ? LAN_USER.' '.LAN_USER_01.'<br />' : '').EST_GEN_AGENT.' '.EST_GEN_NAME.'*</td>
+          <td>'.$frm->text('agent_name', $tp->toFORM($agent_name), 100, array('size' => 'xxlarge','placeholder'=>EST_GEN_AGENT.' '.EST_GEN_NAME)).'</td>
+          <td rowspan="'.(count($TRS) > 1 ? 5 : 4).'" class="TAC">
+            <div id="agtAvatar" class="estAgentAvatar'.(isset($ANU) ? ' estNUAvatar' : '').'" style="background-image:url(\''.$AGENTIMAGE.'?'.rand(99,99999).'\')">
+              <img class="estSecretImg" src="'.$AGENTIMAGE.'?'.rand(99,99999).'" alt="" style="display:none;" />
+              <input type="file" id="'.(isset($ANU) ? 'file_userfile[avatar]" name="file_userfile[avatar]' : 'estAvatarUpload" name="estAvatarUpload').'" data-targ="agent_image" accept="image/jpeg, image/png, image/gif" class="ui-state-valid estInitFile noDISP">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>'.EST_GEN_ADMINACCLEVEL.'</td>
+          <td>'.$AGTLEVNAME.'</td>
+        </tr>
+        
+        
+        <tr>
+          <td>'.EST_GEN_LISTINGS.'</td>
+          <td>'.intval($agent_propct).' '.(intval($agent_propct) == 1  ? EST_GEN_LISTING : EST_GEN_LISTINGS).'</td>
+        </tr>
+        
+        <tr>
+          <td>'.EST_GEN_AGENCY.'</td>
+          <td>';
+    
+    
+      $agencies = $this->estGetAllAgencies();
+      
+      if(count($agencies) == 0){$text .= EST_ERR_NOAGENCIES1;}
+      elseif(count($agencies) === 1){
+        $text .= $frm->hidden('agent_agcy',intval($agencies[0]['agency_idx']));
+        $text .= $tp->toHTML($agencies[0]['agency_name']);
+        if(intval($agencies[0]['agency_idx']) !== intval($agent_agcy)){
+          $text .= ' <span class="smalltxt estTxtErr">'.EST_GEN_UPDATEREQ.'<span>';
+          }
+        }
+      else{
+        foreach($agencies as $k=>$v){
+          foreach($v as $dk=>$dv){$dtaStr .= ' data-'.$dk.'="'.$tp->toJS($dv).'"';}
+          $AGYOPTS .= '<option value="'.intval($v['agency_idx']).'"'.$dtaStr.' '.(intval($v['agency_idx']) == $agent_agcy ? 'selected="selected"' : '').'>'.$tp->toHTML($v['agency_name']).'</option>';
+          unset($dtaStr);
+          }
+        
+        if($agent_agcy == 0){
+          if(intval(EST_USERPERM) === 2 && USERID !== $UID){$text .= $frm->hidden('agent_agcy',$agent_agcy);}
+          }
+        
+        if(intval(EST_USERPERM) > 1 || $agent_agcy == 0){
+          $text .= $frm->select_open('agent_agcy',array('value'=>$agent_agcy,'size'=>'xxlarge')); //estSelectDta
+          $text .= $AGYOPTS;
+          $text .= $frm->select_close();
+          }
+        else{
+          $text .= $frm->hidden('agent_agcy',$agent_agcy);
+          if($agent_agcy > 0){
+            $agyr = e107::getDB()->retrieve('estate_agencies', '*','agency_idx="'.$agent_agcy.'" LIMIT 1',true);
+            }
+          $text .= (trim($agyr[0]['agency_name']) !== '' ? $tp->toHTML($agyr[0]['agency_name']) : EST_GEN_NOTASSIGNEDAGENCY);
+          }
+        unset($AGYOPTS);
+        }
+        
+      $text .= '
+          </td>
+        </tr>';
+      
+      
+      if(count($TRS)){
+        foreach($TRS as $k=>$v){
+          $text .= '
+            <tr>
+              <td>'.$v[0].'</td>
+              <td'.($k > (count($TRS) - 3) ? ' colspan="2"' : '').'>'.$v[1].'</td>
+            </tr>';
+          }
+        }
+      
+      
+      $text .= '
+        <tr>
+          <td>'.(isset($ANU) ? LAN_USER.' '.LAN_USER_09.'<br />' : '').EST_GEN_AGENT.' '.EST_GEN_INFO.'</td>
+          <td>'.$frm->textarea('agent_txt1',$tp->toFORM($agent_txt1),3,80,array('size' => 'xxlarge','placeholder'=>EST_PLCH75),true).'</td>
+        </tr>';
+    
+    if(!isset($ANU)){
+      $text.= '
+        <tr>
+          <td>'.EST_GEN_CONTACTS.'</td>
+          <td class="posREL">
+            <div id="estAgentPHPform2" class="">';
+        $text .= $this->estContactForm(6,$agent_idx,2);
+        $text .= '
+            </div>
+          </td>
+          <td>&nbsp;</td>
+        </tr>';
+      }
+      
+      
+        
+      $text .= '
+      </tbody>
+		</table>';
+    return $text;
+    }
+  
+  
+  
+  
+  
+  
+  public function estGetCompFeatures($zoning_idx=0){
+    $ret = array();
+    if($zoning_idx > 0){
+      $sql = e107::getDB();
+      $TQRY = "
+        SELECT #estate_zoning.*, #estate_featcats.*, #estate_features.*, #estate_listypes.*, #estate_group.*
+        FROM #estate_zoning 
+        LEFT JOIN #estate_featcats
+        ON featcat_zone = zoning_idx
+        LEFT JOIN #estate_features
+        ON feature_cat = featcat_idx
+        LEFT JOIN #estate_listypes
+        ON listype_zone = zoning_idx
+        LEFT JOIN #estate_group
+        ON group_zone = zoning_idx
+        WHERE zoning_idx = '".$zoning_idx."'
+        ORDER BY featcat_lev ASC, featcat_name ASC, feature_name ASC";
+      
+      if($sql->gen($TQRY)){
+        $lev = $this->estSectLevel();
+  			while($row = $sql->fetch()){
+          $ret['name'] = $row['zoning_name'];
+          $ret['ltype'][$row['listype_idx']] = $row['listype_name'];
+          $ret['grps'][$row['group_lev']][$row['group_idx']]['lev'] = $lev[$row['group_lev']];
+          $ret['grps'][$row['group_lev']][$row['group_idx']]['name'] = $row['group_name'];
+          $ret['feat'][$row['featcat_lev']][$row['featcat_idx']]['name'] = $row['featcat_name'];
+          $ret['feat'][$row['featcat_lev']][$row['featcat_idx']]['dta'][$row['feature_idx']]['name'] = $row['feature_name'];
+          $ret['feat'][$row['featcat_lev']][$row['featcat_idx']]['dta'][$row['feature_idx']]['ele'] = intval($row['feature_ele']);
+          $ret['feat'][$row['featcat_lev']][$row['featcat_idx']]['dta'][$row['feature_idx']]['opts'] = $row['feature_opts'];
+          }
+        }
+      }
+    return $ret;
+    }
+  
+  
+  
+  
+  
+  
+  //public function estGetAgentData($id=0){}
+  
+  
+	public function estGetCompContacts($id=0){
+    $sql = e107::getDB();
+    $RES = array();
+    
+    if($sql->select('estate_contacts', '*','')){
+      $ci = 0;
+			while($row = $sql->fetch()){
+        $row['contact_key'] = str_replace(" ","_",strtoupper($row['contact_key']));
+        $RES[$ci] = $row;
+        $ci++;
+        }
+      }
+    return $RES;
+    }
+  
+  
+  
+	public function estGetContDta($key,$id){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+		$key = (int)$key;
+		$id = (int)$id;
+    $ret = array();
+    
+    $CONTKEYS = $this->estGetContKeys();
+		
+    if($sql->select('estate_contacts', '*', 'contact_tabkey="'.$key.'" AND contact_tabidx="'.$id.'" ORDER BY contact_key ASC')){
+			while($row = $sql->fetch()){
+        $row['contact_key'] = str_replace(" ","_",strtoupper($row['contact_key']));
+        $ret[$row['contact_key']][$row['contact_idx']] = $row;
+        }
+      }
+    if(intval($id) == 0){
+      if(intval($key) == 6){
+        if(!$ret[$CONTKEYS[0]]){$ret[$CONTKEYS[0]][0]['contact_data'] = '';}
+        if(!$ret[$CONTKEYS[1]]){$ret[$CONTKEYS[1]][0]['contact_data'] = USEREMAIL;}
+        }
+      if(intval($key) == 5){
+        if(!$ret[$CONTKEYS[2]]){$ret[$CONTKEYS[2]][0]['contact_data'] = '';}
+        if(!$ret[$CONTKEYS[3]]){$ret[$CONTKEYS[3]][0]['contact_data'] = '';}
+        }
+      }
+      
+    $dberr = $sql->getLastErrorText();
+    if($dberr){e107::getMessage()->addError($dberr);}
+    unset($dberr);
+		
+    return $ret;
+    }
+  
+  
+  
+  public function estGetContKeys(){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $CONTKEYS = EST_CONTKEYS;//array(EST_GEN_MOBILE,EST_GEN_EMAIL,EST_GEN_OFFICE,EST_GEN_FAX,EST_GEN_WEBSITE,EST_GEN_LINKIN,EST_GEN_TWITER,EST_GEN_FACEBOOK);
+    foreach($CONTKEYS as $CK=>$CV){
+      $CK = str_replace(" ","_",$CK);
+      $CV = str_replace(" ","_",$CV);
+      $CONTKEYS[$CK] = strtoupper($CV);
+      }
+    
+    $sql->gen("SELECT contact_key FROM #estate_contacts GROUP BY contact_key");
+    while($rows = $sql->fetch()){
+      $QKEY = strtoupper(str_replace(" ","_",$rows['contact_key']));
+      if(!in_array($QKEY,$CONTKEYS)){array_push($CONTKEYS,$QKEY);}
+      }
+    return $CONTKEYS;
+    }
+  
+  public function estContactFldNames($CV){
+    return 'contact_'.preg_replace("/[^a-z0-9_-]/", "", str_replace(" ", "_", strtolower($CV)));
+    }
+  
+  
+  
+  public function estMap($section,$addr,$lat,$lon,$geoarea,$zoom=14){
+    $tp = e107::getParser();
+    $frm = e107::getForm(false, true);
+    
+    return '
+          <tr>
+            <td>
+              <div id="est_'.$section.'_SrchRes" class="estMapBtnCont"></div>
+            </td>
+            <td>
+              <div class="estInptCont form-group has-feedback-left estMapSearchCont">
+                <input type="text" id="'.$section.'_addr_lookup" name="'.$section.'_addr_lookup" class="tbox form-control input-xxlarge estMapLookupAddr" value="'.$tp->toFORM($addr).'" placeholder="'.EST_PLCH15.'"/>
+                <button id="est_'.$section.'_SrchBtn" class="btn btn-default estMapSearchBtn">'.LAN_SEARCH.'</button>
+              </div>
+              <div id="est_'.$section.'_MapCont" class="estMapCont"><div id="est_'.$section.'_Map" class="estMap"></div></div>
+              '.$frm->hidden($section.'_lat',$tp->toFORM($lat)).'
+              '.$frm->hidden($section.'_lon',$tp->toFORM($lon)).'
+              '.$frm->hidden($section.'_geoarea',$tp->toFORM($geoarea)).'
+              '.$frm->hidden($section.'_zoom',intval($zoom)).'
+            </td>
+            <td>
+              <p>'.EST_GEN_MAPHLP1.'</p>
+              <p>'.EST_GEN_MAPHLP2.'</p>
+              <p>'.EST_GEN_MAPHLP3.'</p>
+              <p>'.EST_GEN_MAPHLP4.'</p>
+              <p>'.EST_GEN_MAPHLP5.'</p>
+            </td>
+          </tr>';
+    }
+  
+  
+  
+  public function estNoCompID($txt){
+    return '
+    <div class="s-message alert alert-block alert-dismissible fade in show info  alert-info" style="width: 96%; margin: 16px auto 0px auto;">
+      <h4 class="s-message-title">'.EST_ERR_COMPIDZERO.'</h4>
+		  <div class="s-message-body">
+			 <div class="s-message-item">'.EST_ERR_COMPIDZERO1.' '.$txt.'</div>
+      </div>
+    </div>';
+    }
+  
+  
+  
+  public function estGetPresetsForm($zi,$newZone=''){
+    $tp = e107::getParser();
+    $frm = e107::getForm(false, true);
+    
+    $dtaset = $this->estGetCompFeatures($zi);
+    $zoning = $this->estGetZoning();
+    
+    $lev = $this->estSectLevel();
+    krsort($lev);
+    
+    $mct = 8;
+    if(trim($newZone) !== ''){$NEWZPT = '<option value="'.$zi.'" class="estNewZoneopt">'.$tp->toHTML($newZone).'</option>';}
+    
+    $mct = 6;
+    $text = '
+        <table id="estPresetsTable-'.$zi.'" class="table estFormSubTable estPresetsTable">
+          <tbody>
+            <tr>
+              <td>
+                <div class="estHlpFLeft"><i class="admin-ui-help-tip far fa-question-circle" data-original-title="" title="" aria-describedby="tooltip874908"><!-- --></i><div class="field-help TAL" data-placement="left" style="display:none"><p><b>'.EST_PROP_LISTYPE.'</b><br />'.EST_HLP_LISTTYPE0.'</p></div></div>'.$zoning[$zi].' '.EST_GEN_LISTYPES.' <button class="btn btn-primary btn-sm estPresetsNewListTypeBtn" title="'.EST_GEN_ADDNEW.' '.EST_PROP_LISTYPE.'" data-zi="'.$zi.'"  data-mx="'.$mct.'">'.EST_GEN_NEW.' '.EST_PROP_LISTYPE.'</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div id="estPresetsListTypeCont-'.$zi.'" class="estPresetsListCont">
+                  <div class="estPresetsListDiv">
+                    <ul class="estPresetsListUL" data-nkey="['.$zi.']">';
+
+    $lict = 0;
+    $dCt = 0;
+    $dMx = count($dtaset['ltype']);
+    if($dMx > 0){
+      foreach($dtaset['ltype'] as $lk=>$lv){
+        if($lk > 0){
+          $dCt++;
+          $text .= '
+                      <li class="estPresetDataLI1">
+                        <input type="checkbox" name="listype_keep['.$zi.']['.$lk.']" value="1" checked="checked" />
+                        <input type="hidden" name="listype_name['.$zi.']['.$lk.']" value="'.$tp->toFORM($lv).'" />
+                        <a data-inpt="listype_name['.$zi.']['.$lk.']" contenteditable="true">'.$tp->toHTML($lv).'</a>
+                      </li>';
+          $lict++;
+          if($lict == $mct){
+            $lict = 0;
+            $text .= '
+                  </ul>
+                </div>';
+            if($dCt < $dMx){
+              $text .='
+                <div class="estPresetsListDiv">
+                  <ul class="estPresetsListUL">';
+              }
+            }
+          }
+        }
+      }
+    if($lict !== 0){
+      $text .= '
+                    </ul>
+                  </div>';
+          }
+      $text .= '
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="estHlpFLeft"><i class="admin-ui-help-tip far fa-question-circle" data-original-title="" title="" aria-describedby="tooltip874908"><!-- --></i><div class="field-help TAL" data-placement="left" style="display:none"><p><b>'.EST_GEN_SPACES.' '.EST_GEN_GROUP.'</b><br />'.EST_HLP_SPACESGRP0.'</p></div></div>'.EST_GEN_SPACES.' '.EST_GEN_GROUP.'<button class="btn btn-primary btn-sm estPresetsNewGroupBtn" title="'.EST_GEN_ADDNEW.' '.EST_GEN_GROUP.'" data-zi="'.$zi.'" data-lk="2" data-mx="'.$mct.'">'.EST_GEN_NEW.' '.EST_GEN_GROUP.'</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div id="estPresetsGroupCont-'.$zi.'-2" class="estPresetsListCont">
+                  <div class="estPresetsListDiv">
+                    <ul class="estPresetsListUL">';
+    
+    $lict = 0;
+    $dCt = 0;
+    $dMx = count($dtaset['grps'][2]);
+      if(count($dtaset['grps'][2])){
+          foreach($dtaset['grps'][2] as $gk=>$gv){
+            if($gk > 0){
+              $text .= '
+                      <li class="estPresetDataLI1">
+                        <input type="checkbox" name="group_name_keep['.$zi.'][2]['.$gk.']" value="1" checked="checked" />
+                        <input type="hidden" name="group_name['.$zi.'][2]['.$gk.']" value="'.$tp->toFORM($gv['name']).'" />
+                        <a data-inpt="group_name['.$zi.'][2]['.$gk.']" contenteditable="true">'.$tp->toHTML($gv['name']).'</a>
+                      </li>';
+              $lict++;
+              if($lict == $mct){
+                $lict = 0;
+                $text .= '
+                    </ul>
+                  </div>';
+                if($dCt < $dMx){
+                  $text .='
+                  <div class="estPresetsListDiv">
+                    <ul class="estPresetsListUL">';
+                  }
+                }
+              }
+            }
+          }
+      
+        if($lict !== 0){
+          $text .= '
+                      </ul>
+                    </div>';
+              }
+        $text .= '
+                </div>
+              </td>
+            </tr>';
+        
+    foreach($lev as $lk=>$lv){
+      $text .= '
+            <tr>
+              <td>
+                <div class="estHlpFLeft"><i class="admin-ui-help-tip far fa-question-circle" data-original-title="" title="" aria-describedby="tooltip874908"><!-- --></i><div class="field-help TAL" data-placement="left" style="display:none"><p>'.EST_HLP_FEATURES0.'</p><p>'.EST_HLP_FEATURES1.'</p><p>'.EST_HLP_FEATURES2.'</p></div></div>'.EST_GEN_FEATURESFOR.' '.$lv.' <button class="btn btn-primary btn-sm estPresetsNewBtn" title="'.EST_GEN_ADDNEW.' '.$lv.' '.EST_GEN_FEATURE.' '.EST_GEN_CATEGORY.'" data-zi="'.$zi.'" data-lk="'.$lk.'" data-mx="'.$mct.'">'.EST_GEN_NEW.'</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div id="estPresetsListCont-'.$zi.'-'.$lk.'" class="estPresetsListCont">
+                  <div class="estPresetsListDiv">
+                    <ul class="estPresetsListUL" data-nkey="['.$zi.']['.$lk.']">';
+      
+      $lict = 0;
+      $dMx = count($dtaset['feat'][$lk]);
+      if($dMx > 0){
+        $dCt = 0;
+        foreach($dtaset['feat'][$lk] as $fk=>$fv){
+          $dCt++;
+          $text .= '
+                      <li class="estPresetDataLI1 subListUL">
+                        <input type="checkbox" name="featcat_keep['.$zi.']['.$lk.']['.$fk.']" value="1" checked="checked" />
+                        <input type="hidden" name="featcat_name['.$zi.']['.$lk.']['.$fk.']" value="'.$tp->toFORM($fv['name']).'" />
+                        <a data-inpt="featcat_name['.$zi.']['.$lk.']['.$fk.']" contenteditable="true">'.$tp->toHTML($fv['name']).'</a>
+                        <ul class="estPresetListLI1ul" data-nkey="['.$zi.']['.$lk.']['.$fk.']">';
+          
+            if(count($fv['dta'])){
+              foreach($fv['dta'] as $dk=>$dv){
+                if($dk > 0){
+                  if(trim($dv['opts']) == ''){$dv['ele'] = intval(0);}
+                  else{
+                    $oi = 0;
+                    $opts = explode(',',$dv['opts']);
+                    if(count($opts)){
+                      foreach($opts as $ok=>$ov){
+                        if(trim($ov) !==''){
+                          $OPTLI .= '
+                              <li class="estPresetDataLI3"><input type="checkbox" checked="checked" /><a contenteditable="true">'.$ov.'</a></li>';
+                          $oi++;
+                          }
+                        }
+                      }
+                    if($oi > 0){$dv['ele'] = 1;}
+                    else{
+                      $dv['ele'] = 0;
+                      $dv['opts'] = '';
+                      }
+                    }
+                  $text .= '
+                          <li class="estPresetDataLI2">
+                            <input type="checkbox" name="feature_keep['.$zi.']['.$lk.']['.$fk.']['.$dk.']" value="1" checked="checked" />
+                            <input type="hidden" name="feature_name['.$zi.']['.$lk.']['.$fk.']['.$dk.']" value="'.$tp->toFORM($dv['name']).'" />
+                            <input type="hidden" name="feature_ele['.$zi.']['.$lk.']['.$fk.']['.$dk.']" value="'.intval($dv['ele']).'" />
+                            <input type="hidden" name="feature_opts['.$zi.']['.$lk.']['.$fk.']['.$dk.']" value="'.$tp->toFORM($dv['opts']).'" />
+                            <a data-inpt="feature_name['.$zi.']['.$lk.']['.$fk.']['.$dk.']" contenteditable="true">'.$dv['name'].'</a>
+                            <div class="estPresetsDataSw '.($dv['ele'] == 1 ? 'actv' : 'inact').'" title="'.EST_GEN_ENABLE.' '.$tp->toHTML($dv['name']).' '.EST_GEN_OPTIONS.'"><div></div></div>
+                            <ul class="estPresetListLI2ul '.($dv['ele'] == 1 ? 'actv' : 'inact').'" data-nkey="['.$zi.']['.$lk.']['.$fk.']">'.$OPTLI.'
+                              <button class="btn btn-primary btn-sm estNopt2"'.($dv['ele'] == 0 ? ' style="display:none;"' : '').'> + '.EST_OPTION.'</button>
+                            </ul>
+                          </li>';
+                  }
+                unset($OPTLI);
+                }
+              }
+            
+            $text .= '
+                        <button class="btn btn-primary btn-sm estNopt1"> + '.$tp->toHTML($fv['name']).' '.EST_GEN_ITEM.'</button>
+                      </ul>
+                    </li>';
+          
+            $lict++;
+            if($lict == $mct){
+              $lict = 0;
+              $text .= '
+                    </ul>
+                  </div>';
+              if($dCt < $dMx){
+                $text .='
+                  <div class="estPresetsListDiv">
+                    <ul class="estPresetsListUL">';
+                }
+              }
+            }
+          }
+      
+      if($lict !== 0){
+            $text .= '
+                    </ul>
+                  </div>';
+        }
+      
+      $text .= '
+                </div>
+              </td>
+            </tr>';
+      }
+    
+    $text .= '
+          </tbody>
+        </table>'.$NEWZPT;
+    return $text;
+    unset($ltd1,$text,$lk,$lv,$fk,$fv,$dk,$dv,$ok,$ov,$NEWZPT);
+      
+    }
+  
+  
+  
+  
+  
+  public function estContactTR($key,$idx,$CK,$CV,$contdta){
+    $tp = e107::getParser();
+    $dtaStr = $this->estDataStr($contdta);
+    //$contfld = $this->estContactFldNames($CV);
+    $text = '
+            <tr class="estContList"'.$dtaStr.'>
+              <td class="noPAD noBORD">
+                <div class="contactD1"><input type="text" name="contact_key['.$key.']['.$idx.']"  value="'.$tp->toFORM($contdta['contact_key']).'" class="tbox form-control btn-primary contTypeTxt" max="25" style="display: none;" /><button class="btn btn-primary contType" title="'.EST_GEN_CLKCUSTOM.'">'.$tp->toHTML($contdta['contact_key']).'</button><input type="text" name="contact_data['.$key.']['.$idx.']" id="contact_data['.$key.']['.$idx.']'.'" value="'.$tp->toFORM($contdta['contact_data']).'" class="tbox form-control input-xlarge xlarge contData contact_data-'.$key.'-'.$CK.' ILBLK" max="100" placeholder="'.$tp->toHTML($contdta['contact_key']).'" /><button class="btn btn-default estContMove" title="'.EST_GEN_SORT.'"><i class="S16 e-sort-16"></i></button><button class="btn btn-default estContGo" title="'.EST_GEN_DELETE.'" style="color: rgb(204, 0, 0);"><i class="fa fa-close"></i></button></div>
+              </td>
+            </tr>';
+    unset($dtaStr);
+    return $text;
+    }
+  
+  
+  
+  
+  public function estContactForm($key,$id,$cust=0,$email=null){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $frm = e107::getForm(false, true);
+    
+    if($id == 0){
+      $MTX1 = array('','','','','',EST_ERR_AGYIDZERO,EST_ERR_AGENTIDZERO);
+      $MTX2 = array('','','','','',EST_ERR_AGYIDZERO1,EST_ERR_AGENTIDZERO1);
+      $errtxt[0] = $MTX1[$key];
+      $errtxt[1] = $MTX2[$key].' '.EST_GEN_CONTACTS;
+      unset($MTX1,$MTX2);
+      }
+    
+    $CONTKEYS = $this->estGetContKeys();
+    if(count($CONTKEYS) == 0){
+      $errtxt[0] = EST_ERR_NOCONTKEYS;
+      $errtxt[1] = EST_ERR_NOCONTKEYS1;
+      }
+    
+    if($errtxt){
+      return '
+      <div class="s-message alert alert-block alert-dismissible fade in show info  alert-info" style="width: 96%; margin: 16px auto 0px auto;"><h4 class="s-message-title">'.$errtxt[0].'</h4><div class="s-message-body"><div class="s-message-item">'.$errtxt[1].'</div></div></div>';
+      }
+      
+    
+    
+    $tblKeys = $this->estGetSectTlbKeys($key);
+    $CONTARR = $this->estGetContDta($key,$id);
+    
+    $text = '
+      <table id="est'.$tblKeys[3].'-contacts" class="table estContTabl estContInMain" data-idx="'.$id.'" data-key="'.$key.'">
+        <tbody>';
+    
+    foreach($CONTKEYS as $CK=>$CV){
+      foreach($CONTARR[$CV] as $idx=>$contdta){
+        $text .= $this->estContactTR($key,$idx,$CK,$CV,$contdta);
+        }
+      }
+    
+    $text .= '
+        </tbody>
+        <tfoot>
+          <tr class="estContList">
+            <td class="noPADLR">
+              <div class="contactD1"><input type="text" name="contact_key['.$key.'][0]" value="'.EST_GEN_NEW.'" class="tbox form-control btn-default contTypeTxt" style="display: none;" /><button class="btn btn-primary contType" title="'.EST_GEN_CLKCUSTOM.'">'.EST_GEN_NEW.'</button><input type="text" name="contact_data['.$key.'][0]" class="tbox form-control input-xlarge xlarge contData ILBLK" value="" /><button id="estNewContactBtn" class="btn btn-default estContGo" title="'.EST_GEN_SAVE.'" style="color: rgb(0, 204, 0);"><i class="fa fa-save"></i></button></div>
+            </td>
+          </tr>
+        </tfoot>
+			</table>';
+    return $text;
+      
+    }
+  
+  
+  private function getContSects(){
+    
+    }
+  
+  
+  
+  public function estGetSectTlbKeys($id=null){
+    $tkeys = array(
+      0=>array('estate_properties','prop_idx','prop_name',EST_GEN_PROPERTY),
+      1=>array('estate_subdiv','subd_idx','subd_name',EST_GEN_SUBDIVISION),
+      2=>array('estate_owners','owner_idx','owner_name',EST_GEN_SELLER),
+      3=>array('estate_clients','client_idx','client_name',EST_GEN_CLIENT),
+      4=>array('estate_clients','client_idx','client_name',EST_GEN_CLIENT),
+      5=>array('estate_agencies','agency_idx','agency_name',EST_GEN_AGENCY),
+      6=>array('estate_agents','agent_idx','agent_name',EST_GEN_AGENT)
+      );
+    if($id !== null){return $tkeys[$id];}
+    else{return $tkeys;}
+    }
+  
+  
+  
+  private function getUsrClassIds($mode=0){
+    if($mode == 1){
+      $RET = array();
+      foreach($GLOBALS['EST_CLASSES'] as $k=>$v){array_push($RET,$v);}
+      unset($k,$v);
+      return implode(',',$RET);
+      }
+    else{
+      $UCLS = $GLOBALS['EST_CLASSES'];
+      foreach($UCLS as $k=>$v){$UCLS[$k] = e107::getUserClass()->ucGetClassIDFromName($k);}
+      unset($k,$v);
+      return $UCLS;
+      }
+    }
+  
+  
+  
+  
+  public function getAllAgents(){
+    $sql = e107::getDB();
+    $ret = array();
+    
+    $ret = $this->estGetUsers();
+    
+    $TQRY = "
+      SELECT #estate_agents.*, #estate_agencies.* 
+      FROM #estate_agents
+      LEFT JOIN #estate_agencies
+      ON agent_agcy = agency_idx";
+    
+    if($sql->gen($TQRY)){
+      while($rows = $sql->fetch()){
+        $uid = intval($rows['agent_uid']);
+        if($ret[$uid]){
+          $ret[$uid]['agency_idx'] = intval($rows['agency_idx']);
+          $ret[$uid]['agency_name'] = $rows['agency_name'];
+          $ret[$uid]['agency_image'] = $rows['agency_image'];
+          $ret[$uid]['agency_imgsrc'] = intval($rows['agency_imgsrc']);
+          $ret[$uid]['agent_idx'] = intval($rows['agent_idx']);
+          $ret[$uid]['agent_name'] = $rows['agent_name'];
+          $ret[$uid]['agent_agcy'] = intval($rows['agent_agcy']);
+          $ret[$uid]['agent_lev'] = intval($rows['agent_lev']);
+          $ret[$uid]['agent_uid'] = $uid;
+          $ret[$uid]['agent_image'] = $rows['agent_image'];
+          $ret[$uid]['agent_imgsrc'] = intval($rows['agent_imgsrc']);
+          $ret[$uid]['agent_txt1'] = $rows['agent_txt1'];
+          }
+        }
+      }
+    return $ret;
+    }
+  
+  
+  public function estAgentUserSelect($id=0){
+    $sql = e107::getDB();
+    $frm = e107::getForm(false, true); 
+    $tp = e107::getParser();
+    
+    //$agent_uid = (intval($agent_uid) > 0 ? intval($agent_uid) : USERID);
+    
+    //$agents = $this->getAllAgents();
+    
+    //$uperm = 1;
+    $uperm = EST_USERPERM;
+    
+    $users = $this->estGetUsers();
+    if(count($users) > 0){
+      if($uperm > 1){
+        $text = $frm->select_open('agent_uid',array('value'=>intval($id),'size'=>'xxlarge'));
+        if($uperm > 2){
+          foreach($users as $uk=>$uv){
+            $text .= '
+            <option value="'.intval($uv['user_id']).'" data-altimg="'.$tp->toJS($uv['user_profimg']).'"';
+            if(intval($uv['user_id']) == intval($id)){$text .= ' selected="selected"';}
+            $text .= '>'.$tp->toHTML(trim($uv['user_login']) !== '' ? $uv['user_login'] : $uv['user_name']).' ('.$tp->toHTML($uv['user_email']).')';
+            $text .= '</option>';
+            }
+          }
+        elseif($uperm == 2){
+          $text .= '';
+          }
+        $text .= $frm->select_close();
+        }
+      elseif($uperm == 1){
+        $id = USERID;
+        $text .= $frm->hidden('agent_uid',intval($id));
+        $text .= $tp->toHTML(trim($users[$id]['user_login']) !== '' ? $users[$id]['user_login'] : $users[$id]['user_name']).' ('.$tp->toHTML($users[$id]['user_email']).')';
+        }
+      }
+    else{
+      $text = EST_ERR_NOUSERSINCLASS;
+      }
+    
+    return $text;
+    }
+  
+  
+  
+  
+  
+  
+  public function estContactUDB($tk,$DBIDX){
+		if(intval($DBIDX) > 0){
+      $sql = e107::getDB();
+      $tp = e107::getParser();
+      $msg = e107::getMessage();
+      
+      if($_POST['contact_key'][$tk]){
+        $tx = $this->estGetSectTlbKeys($tk);
+        $ti = 0;
+        foreach($_POST['contact_key'][$tk] as $idx=>$contact_key){
+          $ti++;
+          $contact_key = strtoupper(trim($tp->toDB($contact_key)));
+          $contact_data = trim($tp->toDB($_POST['contact_data'][$tk][$idx]));
+          //$msg->addInfo('<div>'.$ti.'[IDX '.$idx.'] '.$contact_key.': '.$contact_data.'</div>');
+          
+          if($idx > 0){
+            if($sql->update("estate_contacts","contact_key='$contact_key', contact_data='$contact_data' WHERE contact_idx='$idx' LIMIT 1")){
+              $cmsg .= '<li>'.EST_GEN_UPDATED.' '.$tp->toHTML($contact_key).': '.$tp->toHTML($contact_data).'</li>';
+              }
+            }
+          else{
+            if($contact_data !== ''){
+              if($sql->insert("estate_contacts","'0','".intval($tk)."','".intval($DBIDX)."','".$contact_key."','".$ti."','".$contact_data."'")){
+                $cmsg .= '<li>'.EST_GEN_NEW.' '.$tp->toHTML($contact_key).': '.$tp->toHTML($contact_data).'</li>';
+                $ti++;
+                }
+              else{
+                $emsg .= '<li>'.EST_ERR_FAILADDNEW.' '.EST_GEN_CONTACT.': '.$tp->toHTML($contact_data).'</li>';
+                }
+              }
+            }
+          }
+        
+  
+        $dberr = $sql->getLastErrorText();
+        if($dberr){
+          $msg->addError('<div>'.$dberr.'</div>');
+          unset($dberr);
+          }
+        if($cmsg){
+          $msg->addSuccess('<div>'.$tx[3].' '.EST_GEN_CONTACTS.'<ul>'.$cmsg.'</ul></div>');
+          unset($cmsg);
+          }
+        
+        if($emsg){
+          $msg->addWarning('<div>'.$tx[3].' '.EST_GEN_CONTACTS.'<ul>'.$emsg.'</ul></div>');
+          unset($emsg);
+          }
+        }
+      }
+    }
+  
+  public function estDBUp($tk,$PDTA){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $msg = e107::getMessage();
+    $tx = $this->estGetSectTlbKeys($tk);
+    $DBIDX = 0;
+    $TBLS = estTablStruct();
+    $FLDS = array();
+    $RES = array();
+    
+    foreach($TBLS[$tx[0]] as $fn=>$fld){
+      if($fn == $tx[1]){
+        $DBIDX = intval($PDTA[$fn]);
+        $FLDS[$fn] = $DBIDX;
+        }
+      else{
+        if($fld['str'] == 'int'){$FLDS[$fn] = intval($PDTA[$fn]);}
+        else{$FLDS[$fn] = $tp->toDB($PDTA[$fn]);}
+        }
+      }
+    
+    if($DBIDX > 0){
+      $FLDS['WHERE'] = $tx[1].'='.$DBIDX.' LIMIT 1';
+      if($tk == 6){
+        if(trim($FLDS['agent_image']) !== ''){
+          $ORPH = estChkOrphanFiles('media/agent','agent-'.intval($DBIDX),(intval($FLDS['agent_imgsrc']) == 1 ? $FLDS['agent_image'] : ''));
+          foreach($ORPH as $mk=>$mv){$msg->addInfo($mv);}
+          }
+        }
+      elseif($tk == 5){
+        if(trim($FLDS['agency_image']) !== ''){
+          $ORPH = estChkOrphanFiles('media/agency','agency-'.intval($DBIDX),(intval($FLDS['agency_imgsrc']) == 1 ? $FLDS['agency_image'] : ''));
+          foreach($ORPH as $mk=>$mv){$msg->addInfo($mv);}
+          }
+        }
+      
+      if($sql->update($tx[0], $FLDS)){$msg->addInfo('<div>'.EST_UPDATED.' '.$tx[3].' '.$tp->toHTML($FLDS[$tx[2]]).'</div>');}
+      $FLDS[$tx[1]] = intval($DBIDX);
+      unset($FLDS['WHERE']);
+      }
+    else{
+      $DBIDX = $sql->insert($tx[0], $FLDS);
+      if($DBIDX > 0){
+        $FLDS[$tx[1]] = intval($DBIDX);
+        $msg->addInfo('<div>'.EST_GEN_ADDEDNEW.' '.$tx[3].': '.$tp->toHTML($FLDS[$tx[2]]).'</div>');
+        }
+      }
+    
+    $RES = $FLDS;
+    
+    $dberr = $sql->getLastErrorText();
+    if($dberr){
+      $msg->addError('<div>'.$dberr.'</div>');
+      $RES['error'] = true;
+      unset($dberr);
+      }
+    else{
+      $this->estContactUDB($tk,$DBIDX);
+      if($DBIDX == 0){
+        $msg->addError('<div>NO DB INDEX</div>');
+        $RES['error'] = true;
+        }
+      }
+    return $RES;
+    }
+  
+  
+  public function buildEventCal($PROPID,$CALSTART=null){
+    $tp = e107::getParser();
+    $sql = e107::getDB();
+    $sql->gen('SELECT prop_agent,prop_datecreated,prop_dateprevw,prop_datelive,prop_datepull FROM #estate_properties WHERE prop_idx = '.intval($PROPID));
+    $row = $sql->fetch();
+    extract($row);
+    
+    $calDays = $this->getCalDays();
+    
+    $PROPSTART = mktime(0,0,0,date("m",$prop_datecreated),date("d",$prop_datecreated),date("Y",$prop_datecreated));
+    
+    $ESTTODAY = mktime(0,0,0, date("m"), date("d"), date("Y"));
+    
+    if($CALSTART === null){$CALSTART  = mktime(0, 0, 0, date("m"),1, date("Y"));}
+    $PREVMONTH  = mktime(0, 0, 0, date("m",$CALSTART)-1,1, date("Y",$CALSTART));
+    $NEXTMONTH  = mktime(0, 0, 0, date("m",$CALSTART)+1,1, date("Y",$CALSTART));
+    $CALEND = mktime(0,0,0, date("m",$CALSTART), date("d",$CALSTART)+date('t',$CALSTART), date("Y",$CALSTART));
+    
+    $THISMONTH = $CALSTART;
+    
+    $MSDOW = date('w',$CALSTART);
+    if($MSDOW > 0){$CALSTART = strtotime(date('Y-m-d', strtotime('-'.$MSDOW.' day', $CALSTART)));}
+    
+    $MEDOW = date('w',$CALEND);
+    if($MEDOW !== 6){$CALEND = strtotime(date('Y-m-d', strtotime('+'.(7-$MEDOW).' day', $CALEND)));}
+    
+    $NEXTDAY = new DateTime(date("Y-m-d H:i:s",$CALSTART));
+    
+    $ESTDAYCT = intval(abs($CALSTART - $CALEND) / 86400);
+    
+    
+    
+    
+    $text = $this->getCalTbl('start');
+    $text .= $this->getCalTbl('head',array('curm'=>$THISMONTH,'nextm'=>$NEXTMONTH,'prevm'=>$PREVMONTH));
+    $dta = array('id'=>'estEvtCaltb','class'=>'estCheckered','data-calstart'=>$CALSTART);
+    $text .= $this->getCalTbl('body',$dta);
+    
+    
+    $GRSQ = 1;
+    for($i=0; $i < (ceil($ESTDAYCT / 7)); $i++){
+      $CALACTD = 0;
+      if(count($calDays) > 0){
+        foreach($calDays as $k=>$v){
+          $TSTDAYX = date_timestamp_get($NEXTDAY);
+          if($GRSQ > date('w',$CALSTART) && $TSTDAYX < $CALEND){
+            $CALTDCSS = 'estCalDay ';
+            
+            if($NEXTDAY->format('m') !== $MNTH){
+              $MNTH = $NEXTDAY->format('m');
+              }
+            
+            $MDAYN = $NEXTDAY->format('m/d');
+            $YMD = $NEXTDAY->format('Ymd');
+            
+            
+            if($TSTDAYX < $PROPSTART){
+              $CALTDCSS .= 'estDead';
+              }
+            else{
+              $CALTDCSS .= 'estLive'.($TSTDAYX == $ESTTODAY ? ' estToday' : '');
+              $CALACTD++;
+              
+              }
+            //$YMD
+            $CALTD .= '
+              <td id="estCalTD-'.$TSTDAYX.'" class="'.$CALTDCSS.'">
+                <div class="estCalDayBox">
+                  <div class="estCalDayNo">'.$MDAYN.'</div>
+                  <div id="estCalDta-'.$TSTDAYX.'" class="estCalDtaCont" data-dno="'.$k.'" data-ud="'.$TSTDAYX.'"></div>
+                </div>
+              </td>';
+            unset($CALDAYSTY,$MDAYN);
+            $NEXTDAY->modify('+1 day');
+            }
+          else{
+            $CALTD .= '<td class="estCalDay" data-grdsq="'.$GRSQ.'">&nbsp;</td>';
+            unset($CALTDCSS,$MDAYN);
+            }
+          $GRSQ++;
+          }
+        }
+      if($CALACTD > 0){
+        $text .= '<tr data-trno="'.$i.'">'.$CALTD.'</tr>'; 
+        }
+      unset($CALTD,$CALACTD);
+      }
+    
+    $text .= $this->getCalTbl('end',array('tag'=>'tbody'));
+    unset($CALSTART,$CALEND,$THISMONTH,$PREVMONTH,$NEXTMONTH,$MSDOW,$MEDOW,$NEXTDAY,$ESTDAYCT);
+    
+    return $text;
+    }
+  
+  
+  
+  
+  function getCalDays(){
+    return array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
+    }
+  
+  function getCalFldTime($nam,$val,$toggl,$hint){
+    return '<input type="time" name="'.$nam.'" class="estPrefInptTime" value="'.$val.'"'.($hint ? ' title="'.$hint.'"' : '' ).($toggl == 1? '' : ' disabled="disabled"').'/>';
+    }
+  
+  function getCalFldTog($nam,$labl,$val){
+    return '<input type="hidden" name="'.$nam.'" id="'.$nam.'" value="'.$val.'" /><button class="estPrefCalActDay btn '.($val == 1 ? 'btn-primary' : 'btn-default').' btn-sm"'.($hint ? ' title="'.$hint.'"' : '' ).' data-for="'.$nam.'">'.$labl.'</button>';
+    }
+  
+  
+  
+  function getCalTbl($sect,$dta=null){
+    $calDays = $this->getCalDays();
+    
+    if($sect == 'start'){
+      $TBL = '<table class="estCalTbl">';
+      if(count($calDays) > 0){foreach($calDays as $k=>$v){$TBL .= '<colgroup></colgroup>';}}
+      return $TBL;
+      }
+    elseif($sect == 'head'){
+      if(count($calDays) > 0){
+        if($dta !== null){
+          if($dta['prevm']){
+            $CALNAV .= '<button class="btn btn-default estNoRBord" data-month="'.$dta['prevm'].'">'.date('F',$dta['prevm']).'</button>';
+            }
+          
+          $CALNAV .= '<button class="btn btn-default estNoLRBord" data-month="'.$dta['curm'].'">'.date('F Y',$dta['curm']).'</button>';
+          
+          if($dta['nextm']){
+            $CALNAV .= '<button class="btn btn-default estNoLBord" data-month="'.$dta['nextm'].'">'.date('F',$dta['nextm']).'</button>';
+            }
+          $CALNAV .= 
+          $txt .= '<tr><th colspan="7"><div id="estEvtNavBar">'.$CALNAV.'</div></th></tr>';
+          }
+        $txt .= '<tr>';
+        foreach($calDays as $k=>$v){$txt .= '<th>'.$v.'</th>';}
+        $txt .= '</tr>';
+        }
+      return '<thead>'.$txt.'</thead>';
+      }
+    elseif($sect == 'body'){
+      if($dta !== null && count($dta) > 0){foreach($dta as $k=>$v){$tb .= ' '.$k.'="'.$v.'"';}}
+      return '<tbody'.$tb.'>';
+      }
+    elseif($sect == 'end'){
+      if($dta['tag']){return '</'.$dta['tag'].'></table>';}
+      else{return '</table>';}
+      }
+    elseif($sect == 'tr'){
+      if(count($calDays) > 0){
+        foreach($calDays as $k=>$v){
+          $TBL .= '<td class="estCalDay">';
+          if($dta['deftime']){
+            $tm = $dta['deftime'];
+            $TBL .= $this->getCalFldTog($tm['n'].'['.$k.'][0]',$tm['l'],intval($tm['v'][$k][0]));
+            $TBL .= $this->getCalFldTime($tm['n'].'['.$k.'][1]',($tm['v'][$k][1] ? $tm['v'][$k][1] : '09:00'),intval($tm['v'][$k][0]),$tm['h'][0]);
+            $TBL .= $this->getCalFldTime($tm['n'].'['.$k.'][2]',($tm['v'][$k][2] ? $tm['v'][$k][2] : '17:00'),intval($tm['v'][$k][0]),$tm['h'][1]);
+            }
+          $TBL .= '</td>';
+          }
+        }
+      return '<tr>'.$TBL.'</tr>';
+      }
+    }
+  
+  
+  
+  public function estCropImg($THMBFILEDIR,$FILENAME,$DST_X=0,$DST_Y=0,$SRC_X,$SRC_Y,$DST_WIDTH,$DST_HEIGHT,$ROTATE=0,$SCALE_X=1,$SCALE_Y=1){
+  
+    if(!is_writable($THMBFILEDIR)){
+      $RES['error'] = EST_GEN_DIRECTORY.': '.$THMBFILEDIR.' '.EST_GEN_ISNOTACCESS;
+      }
+    
+    if(!file_exists($THMBFILEDIR."/".$FILENAME)){
+      $RES['error'] .= ' '.EST_GEN_FILENOTFOUND.': '.$THMBFILEDIR."/".$FILENAME;
+      }
+    if(!is_file($THMBFILEDIR."/".$FILENAME)){
+      $RES['error'] .= ' '.EST_GEN_NOTAFILE.': '.$THMBFILEDIR."/".$FILENAME;
+      }
+    
+    if($RES['error']){
+      return $RES;
+      }
+    
+    $SRC_PTH_FILE = realpath($THMBFILEDIR)."/".$FILENAME;
+    
+    list($SRC_WIDTH,$SRC_HEIGHT,$SRC_TYPE,$SRC_HTML_DIMS) = getimagesize($SRC_PTH_FILE);
+    
+    $DEST_TYPE = $SRC_TYPE;
+    $SRC_RES = ($SRC_WIDTH * $SRC_HEIGHT);
+    
+    $RES['img']['actual'] = array($SRC_WIDTH,$SRC_HEIGHT,$SRC_TYPE,$SRC_HTML_DIMS,$SRC_RES);
+    clearstatcache();
+    
+    
+    //$BORDER_S = intval($_POST['bs']);
+    
+    
+    
+    /*
+    $IMFORIENT = ($SRC_HEIGHT > $SRC_WIDTH ? "protrait" : "landscape");
+    $Fsetting = array(0,800,600,0,90);
+    $IMFSCALE = round(($SRC_RES / ($Fsetting[1] * $Fsetting[2])),2);
+    
+    $MIN_W = 512;
+    $MIN_H = 512;
+    $CONSTRAIN = 0;
+    
+    if($SRC_WIDTH < $MIN_W || $SRC_HEIGHT < $MIN_H){
+      $IMDATA .= "<p>Image is smaller than the desired size. Cropping & upscaling will not work. New size will be $SRC_WIDTH x $SRC_HEIGHT</p>";
+      $MIN_W = $SRC_WIDTH;
+      $MIN_H = $SRC_HEIGHT;
+      }
+    
+    //"Allow Stretch/Squeez","Standardize Aspect Ratio","Match Source Aspect Ratio, width","Match Source Aspect Ratio, height"
+    // cropperjs:  "ratioDim: { x: $SRC_WIDTH, y: $SRC_HEIGHT },";
+    switch($CONSTRAIN){
+      case 0 :
+        break;
+      case 1 :
+        break;
+      case 2 :
+        if($IMFORIENT == "protrait"){$MIN_W = ceil(($SRC_WIDTH/$SRC_HEIGHT) * $MIN_H);}
+        else{$MIN_H = ceil(($SRC_HEIGHT/$SRC_WIDTH) * $MIN_W);}
+        break;
+      case 3 :
+        if($IMFORIENT == "protrait"){$MIN_W = ceil(($SRC_WIDTH/$SRC_HEIGHT) * $MIN_H);}
+        else{$MIN_H = ceil(($SRC_HEIGHT/$SRC_WIDTH) * $MIN_W);}
+        break;
+      }
+    
+    */
+    
+    
+    $isimg = 0;
+    switch($SRC_TYPE){
+      case 1 : $SRCIMG = imagecreatefromgif($SRC_PTH_FILE); $isimg = 1; break;
+      case 2 : $SRCIMG = imagecreatefromjpeg($SRC_PTH_FILE); $isimg = 2; break;
+      case 3 : $SRCIMG = imagecreatefrompng($SRC_PTH_FILE); $isimg = 3; break;
+      }
+    
+    if($isimg == 0){
+      $RES['error'] = EST_GEN_FILE.' '.$FILENAME.' '.EST_ERR_NOTANIMG.' ('.EST_GEN_TYPE.': '.$SRC_TYPE.')';
+      return $RES;
+      }
+    
+    
+    //cropbtns
+    if($SCALE_X == -1 && $SCALE_Y == -1){imageflip($SRCIMG,IMG_FLIP_BOTH);}
+    elseif($SCALE_X == -1){imageflip($SRCIMG,IMG_FLIP_HORIZONTAL);}
+    elseif($SCALE_Y == -1){imageflip($SRCIMG,IMG_FLIP_VERTICAL);}
+    
+    if($ROTATE !== 0){
+      $SRCIMG = imagerotate($SRCIMG,$ROTATE,0);
+      }
+      
+      
+    /*
+    $BORDER = array('s'=>0,'r'=>255,'g'=>255,'b'=>255);
+    if($BORDER['s'] > 0){
+      $DST_X = $BORDER['s'];
+      $DST_Y = $BORDER['s'];
+      $DST_WIDTH = $DST_WIDTH + ($BORDER['s'] * 2);
+      $DST_HEIGHT = $DST_HEIGHT + ($BORDER['s'] * 2);
+      $DESTIMG = imagecreatetruecolor($DST_WIDTH,$DST_HEIGHT);
+      $bgColor = imagecolorallocate($DESTIMG, $BORDER['r'],$BORDER['g'],$BORDER['b']);
+      imagefilledrectangle($DESTIMG,0,0,$DST_WIDTH,$DST_HEIGHT,$bgColor);
+      unset($bgColor);
+      }
+    else{
+      $DESTIMG = imagecreatetruecolor($DST_WIDTH,$DST_HEIGHT);
+      }
+    */
+    
+    //$XFINAL = ($SRC_WIDTH - $SRC_X);
+    //$YFINAL = ($SRC_HEIGHT - $SRC_Y);
+    
+    
+    $XFINAL = ($DST_WIDTH - $SRC_X);
+    $YFINAL = ($DST_HEIGHT - $SRC_Y);
+    
+    $RES['img']['crop'] = array(
+      'dsth'=>$DST_HEIGHT,
+      'dstw'=>$DST_WIDTH,
+      'dstx'=>$DST_X,
+      'dsty'=>$DST_Y,
+      'rot'=>$ROTATE,
+      'scalex'=>$SCALE_X,
+      'scaley'=>$SCALE_Y,
+      'srch'=>$YFINAL,
+      'srcw'=>$XFINAL,
+      'srcx'=>$SRC_X,
+      'srcy'=>$SRC_Y
+      );
+    
+    
+      
+    $DESTIMG = imagecreatetruecolor($DST_WIDTH,$DST_HEIGHT);
+    //$DESTIMG = imagecreatetruecolor($XFINAL,$YFINAL);
+      
+    switch($DEST_TYPE){
+      case 1 :
+        imagecopyresampled($DESTIMG,$SRCIMG,$DST_X,$DST_Y,$SRC_X,$SRC_Y,$DST_WIDTH,$DST_HEIGHT,$XFINAL,$YFINAL);
+        imagegif($DESTIMG,$SRC_PTH_FILE,80);
+        break;
+      case 2 :
+        imagecopyresampled($DESTIMG,$SRCIMG,$DST_X,$DST_Y,$SRC_X,$SRC_Y,$DST_WIDTH,$DST_HEIGHT,$XFINAL,$YFINAL);
+        imagejpeg($DESTIMG,$SRC_PTH_FILE,85);
+        break;
+      case 3 :
+        $alpha_channel = imagecolorallocatealpha($DESTIMG, 0, 0, 0, 127);
+        imagecolortransparent($DESTIMG, $alpha_channel); 
+        imagefill($DESTIMG, 0, 0, $alpha_channel);
+        imagecopy($DESTIMG,$SRCIMG,0,0,$SRC_X,$SRC_Y,$XFINAL,$YFINAL);
+        imagesavealpha($DESTIMG,true);
+        imagepng($DESTIMG,$SRC_PTH_FILE,9);
+        break;
+      }
+    
+    imagedestroy($SRCIMG);
+    imagedestroy($DESTIMG);
+    clearstatcache();
+    return $RES;
+    }
+  
+  
+  public function estHelpMenu($SECT,$hlpmode,$hlpactn){}
+  
+  
+  }
+
+?>

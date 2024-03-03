@@ -1,0 +1,1180 @@
+*{box-sizing: border-box;}
+
+
+/*div.container{background-color: inherit;}*/
+
+#estateCont{
+  display: block;
+  position: relative;
+  width: 99%;
+  line-height: 1.5em;
+  text-align: left;
+  margin: 0px auto 0px auto;
+  z-index: 0;
+  }
+
+#estMapCont a, #estateCont a{color:unset;}
+#estMapCont a:hover, #estateCont a:hover{text-decoration:none;}
+
+
+#estMobTst{
+  display:none;
+  }
+
+.estSideMenu{
+  display: block;
+  position: relative;
+  width: 100%;
+  }
+
+#estSideMenuFeat{
+  overflow-y: auto;
+  overflow-x: hidden;
+  }
+
+.estBGGrad1, .estBGGrad2{background-image: linear-gradient(0deg, rgba(0,0,0,0.05), rgba(64,64,64,0.15));}
+
+#estMiniSrc{
+  display:none;
+  }
+#estMiniNav{
+  display:block;
+  position:relative;
+  float:right;
+  }
+
+
+#estMiniNav a{
+  margin-left:8px;
+  cursor:pointer;
+  }
+
+#estMiniNav p{
+  display:none;
+  position:absolute;
+  top: 20px;
+  right: 0px;
+  background-color:#FFFFFF;
+  min-height:64px;
+  min-width: 128px;
+  margin:0px;
+  padding: 6px 4px 6px 4px;
+  z-index: 1010;
+  box-shadow: 1px 1px 2px #0000009C;
+  -webkit-box-shadow: 1px 1px 2px #0000009C;
+  -moz-box-shadow: 1px 1px 2px #0000009C;
+  }
+
+#estMiniNav p a.btn{
+  width: 94%;
+  text-align: left;
+  margin: 4px 4px;
+  white-space: nowrap;
+  }
+
+.estExpBtn{
+  display:block;
+  position:absolute;
+  top:0px;
+  right:0px;
+  width:40px;
+  background-color: transparent;
+  border:none;
+  padding-top: inherit;
+  padding-bottom: inherit;
+  outline:none;
+  cursor:pointer;
+  }
+
+.estExpBtn.estEBopen{transform: rotate(180deg);}
+
+.estAdmView{
+  color:#89776F;
+  font-style:italic;
+  cursor:pointer;
+  }
+
+.estModlNam{
+  font-style: italic;
+  font-size: 1.15em;
+  }
+
+.estPrefScale75{
+  width: 133% !important;
+  transform-origin: top left;
+  transform: scale(0.75);
+  }
+
+/*
+#estViewBoxTopPlay:checked ~ #estViewBoxTop div.estSSPlayPause{
+  display:none;
+  background-position: 3px 0px;
+  }
+*/
+
+.estSSPlayPause{
+  display:none;
+  position:absolute;
+  top:0px;
+  right:0px;
+  width:32px;
+  height:32px;
+  z-index: 2;
+  background-image:url('../images/icon_playpause.png');
+  background-position: -34px 0px;
+  background-size: 64px 34px;
+  background-repeat: no-repeat;
+  background-clip: padding-box;
+  filter: drop-shadow(0px 0px 4px #F5F5F5);
+  opacity: 0.65;
+  }
+
+
+#estViewBoxTop{
+  display: block;
+  position:relative;
+  width: 100%;
+  height: 384px;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center center;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  }
+
+#estViewBoxTop.estSlideshow{cursor:pointer;}
+
+#estViewBoxTop.estSSPaused{
+  animation-play-state: paused;
+  }
+
+#estViewBoxTop div.estSSPlayPause{
+  width:64px;
+  height:64px;
+  background-position: -66px 0px;
+  background-size: 128px 64px;
+  }
+
+#estViewBoxTop.estSSPaused div.estSSPlayPause{
+  display:block;
+  }
+
+
+#estViewBoxSpacesCont div.estImgSlide.estSSPaused{
+  animation-play-state: paused;
+  }
+
+#estViewBoxSpacesCont div.estImgSlide.estSSPaused div.estSSPlayPause{
+  display:block;
+  }
+
+.estImgSlide{
+  display:block;
+  position:relative;
+  width: auto;
+  height: 65vh;
+  max-height: 480px;
+  margin: 0px auto 0px auto;
+  background-color: rgba(35,35,35,0.12);
+  background-image: url('../images/imgnotavail.png');
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center center;
+  border-radius: 5px;
+  }
+
+.estImgSlide div.estSSict{
+  display:block;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  background-color:rgba(250,250,250,0.75);
+  color:#353535;
+  text-align:center;
+  padding:3px  8px 3px 8px;
+  }
+
+
+.estViewBox{
+  display: flex;
+  position: relative;
+  flex-wrap: wrap;
+  box-sizing: content-box;
+  width: 100%;
+  min-height:256px;
+  padding: 8px 0px 32px 0px;
+  margin:auto;
+  }
+
+.estViewBoxMid{
+  display: flex;
+  flex: 99%;
+  background-clip: content-box;
+  background-origin: padding-box;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  }
+
+.estViewBoxBot{
+  display: flex;
+  flex: 99%;
+  background-clip: content-box;
+  background-origin: padding-box;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  }
+
+.flexRev{
+  flex-direction: row-reverse;
+  align-items: stretch;
+  }
+
+.flexStretch{align-items: stretch;}
+
+.estViewBoxCont{
+  width: 96%;
+  }
+
+.estViewSect{
+  display:block;
+  position:relative;
+  border-bottom: 1px dotted #555555;
+  padding:6px 0px 16px 0px;
+  margin:0px 0px 16px 0px;
+  }
+.estViewBoxCont div.estViewSect:last-child{
+  border-bottom: none !important;
+  }
+
+
+h3{
+  text-align: left;
+  margin-bottom: 0px;
+  letter-spacing: 0px;
+  margin-top: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  text-align:left;
+  text-transform:uppercase;
+  }
+
+h3.sumCapt{
+  background-color:transparent;
+  white-space:normal;
+  text-align:left;
+  margin-bottom: 0px;
+  }
+
+
+
+
+
+
+
+#estViewBoxSummarySB{
+  display: flex;
+  flex: 34%;
+  min-width: 320px;
+  flex-direction: column;
+  align-items: center;
+  background-clip: content-box;
+  background-origin: padding-box;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  }
+
+#estViewBoxSummaryOverview{
+  display: flex;
+  flex: 65%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-clip: content-box;
+  background-origin: padding-box;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  }
+
+#estViewBoxSummaryOverview h4{
+  margin-top:8px;
+  margin-bottom:0px;
+  }
+
+#estInfoModule1{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 8px;
+  }
+
+#estInfoModule1 div.estInfoCard{
+  padding-right: 24px;
+  }
+
+.estDet2Cont{
+  display:block;
+  position:relative;
+  width:100%;
+  }
+.estDet2Cont div{
+  display:block;
+  position:relative;
+  width:99%;
+  line-height:1.5em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+
+.estDet2Cont div::before{
+  content : '• ';
+  position:relative;
+  }
+
+#estAgntModule{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  }
+
+.estAgCard{
+  display: block;
+  position: relative;
+  margin-bottom: 16px;
+  }
+
+.estAgCardInner{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: flex-start;
+  }
+
+.estSecretImg{
+  display:none;
+  }
+
+.estAgtAvatar{
+  display: block;
+  position: relative;
+  min-width: 96px; 
+  height: 112px;
+  border: 1px solid #333333;
+  border-radius: 5px;
+  background-image: linear-gradient(0deg, rgba(35,35,35,0.12), rgba(75,75,75,0.12));
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center top;
+  }
+
+.estCompLogo{
+  display:block;
+  position:relative;
+  min-width: 96px; 
+  height: 96px;
+  border: 0px solid transparent;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  }
+
+
+.estAgtInfo1{
+  display: block;
+  position: relative;
+  width: 68%;
+  margin-left: 8px;
+  }
+
+.estAgtInfo1 p{
+  font-size: 0.9em;
+  width: 100%;
+  margin: 2px 0px;
+  line-height: 1.15em;
+  }
+
+
+.estAgtInfo1 h3,
+.estAgtInfo1 h4,
+.estAgtInfo1 h5{
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  padding-top: 0px !important;
+  line-height:unset !important;
+  text-transform: uppercase;
+  }
+.estAgtInfo1 h3{font-size: 1.25em;}
+.estAgtInfo1 h4{font-size: 1.15em;}
+
+.estAgtInfo1 h3 span{
+  display: block;
+  font-size: 0.8em;
+  margin-bottom: 8px;
+  }
+
+
+#estAgCompanyCont{
+  margin-top: 8px;
+  }
+
+#estAgCompanyCont img{
+  display: block;
+  position: relative;
+  width: 96px;
+  margin:4px auto;
+  }
+
+.estAgContact{
+  display:block;
+  position:relative;
+  line-height: 1.5em;
+  }
+
+
+
+
+ul.estDet2Cont{
+  text-indent: 0px;
+  padding: 0px 0px 0px 22px;
+  margin: 0px 0px 8px 0px;
+  }
+
+
+.estSideMenu ul{
+  line-height:1.15em;
+  }
+
+
+
+
+
+
+.estViewOverFlowVis{
+  overflow-x:visible;
+  }
+
+
+#estOHCont{
+  display:block;
+  position:relative;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 0px;
+  }
+.estOHItem{
+  display: block;
+  position: relative;
+  width: 100%;
+  background-color: #cfcfcf;
+  border: 0px solid transparent;
+  overflow: hidden;
+  border-radius: 5px;
+  padding: 0px;
+  margin: 4px 0px 4px 0px;
+  }
+
+.estOHItem h4{
+  display: block;
+  position: relative;
+  width: 100%;
+  background-color: #a8b8bd;
+  text-transform: uppercase;
+  font-size: 1.20em;
+  line-height:1.15;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 4px 2% 4px 2%;
+  margin: 0px;
+  }
+
+.estOHItem h5{
+  display:block;
+  position:relative;
+  width:96%;
+  font-size: 1.20em;
+  margin: 6px 2% 0px 2%;
+  text-transform: uppercase;
+  }
+.estOHItem p{
+  display:block;
+  position:relative;
+  width:96%;
+  margin: 0px 2% 10px 2%;
+  }
+
+
+
+#estMapCont{
+  display:block;
+  position:relative;
+  text-align:center;
+  width: 99%;
+  border-radius: 5px;
+  margin: 0px auto 12px auto;
+  padding: 1px 0px;
+  }
+
+
+#estMap{
+  display:block;
+  position:relative;
+  width: 94%;
+  height: 416px;
+  margin:16px auto;
+  }
+
+.estMapPopClk{
+  display:block;
+  position:relative;
+  width: 112px;
+  margin: 0px 0px;
+  padding:0px;
+  text-align:center;
+  }
+.estMapPopThm,
+.estMapPopAgyThm{
+  display:block;
+  position:relative;
+  width: 100%;
+  height: 72px;
+  margin: 0px 0px 6px 0px;
+  background-image: linear-gradient(0deg, rgba(35,35,35,0.12), rgba(75,75,75,0.12));
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center center;
+  }
+.estMapPopAgyThm{
+  height: 72px;
+  background-size: contain;
+  }
+
+.estMapPopH1{
+  display: block;
+  position: relative;
+  width: 100%;
+  margin: 0px 0px 4px 0px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1.1;
+  text-transform: uppercase;
+  }
+
+.estMapPopH2{
+  display: block;
+  position: relative;
+  width: 100%;
+  margin: 0px 0px 3px 0px;
+  text-align: left;
+  font-size: 9px;
+  text-transform: uppercase;
+  line-height: 1.1;
+  }
+.estMapPopAddr{
+  display: block;
+  position: relative;
+  width: 100%;
+  margin: 0px 0px 3px 0px;
+  text-align: left;
+  font-size: 9px;
+  white-space:normal;
+  text-transform: uppercase;
+  line-height: 1.1;
+  }
+.estMapPopH2 ul{
+  text-indent: 0px;
+  padding: 0px 0px 0px 6px;
+  margin: 0px 0px 8px 0px;
+  line-height: 1.25;
+  }
+
+
+.estMapPopH1.estPosR{
+  background-color:#FFFFFF;
+  z-index:2;
+  }
+
+.estPosL{
+  position:absolute;
+  left:0px;
+  }
+.estPosR{
+  position:absolute;
+  right:0px;
+  }
+
+
+
+/*
+#estGalSect{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  }
+*/
+
+#estGalCont{
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: auto;
+  /* max-height: 2000px; */
+  margin: auto;
+  overflow: visible;
+  text-align: left;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: flex-start;
+  align-items: flex-start;
+  }
+
+
+
+
+#estGalCont img{
+  display: inline-block;
+  position: relative;
+  height: 80vh;
+  margin: 0px auto 16px auto;
+  border-radius: 5px;
+  }
+
+
+
+
+/*LIST PAGE CSS*/
+
+.estListPropCont{
+  display:inline-block;
+  position:relative;
+  width:31%;
+  background-color: rgba(64,64,64,0.15);
+  margin:auto;
+  padding: 0px 1% 0px 1%;
+  }
+
+.estListBlock {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background-color: rgba(64,64,64,0.1);
+  text-align: left;
+  margin: 0px 0px 12px 0px;
+  overflow: hidden;
+  border-radius: 5px;
+  }
+
+.estListPropHead {
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 25%;
+  width: 75%;
+  height: 33%;
+  line-height: 1.2em;
+  background-color: rgba(64,64,64,0.1);
+  z-index: 5;
+  }
+
+.estListPropHead div:first-child{
+  display: block;
+  position: relative;
+  width: 70%;
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 6px;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  }
+
+.estListPropHead div:last-child{
+  display: block;
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 29%;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: right;
+  }
+.estListPropHead div:last-child span{
+  display: block;
+  position: absolute;
+  top: 24px;
+  right: 0px;
+  font-size:0.85em;
+  }
+
+
+
+
+.estListPropImg {
+  display: block;
+  position: absolute;
+  width: 25%;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  background-image: linear-gradient(0deg, rgba(35,35,35,0.12), rgba(75,75,75,0.12));
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center center;
+  overflow: hidden;
+  }
+
+.estListPropImgBanner1{
+  display: block;
+  position: absolute;
+  top: 32px;
+  left: -64px;
+  width: 256px;
+  text-align: center;
+  z-index: 10;
+  line-height: 1;
+  padding: 4px 6px;
+  background-color: #B30000;
+  color: #FFFFFF;
+  transform: rotate(317deg);
+  }
+
+
+.estListPropImgBanner1 h5, .estListPropImgBanner2 h5{
+  display:block;
+  position:relative;
+  width:96%;
+  font-size: 1em;
+  margin: 0px;
+  text-transform: uppercase;
+  }
+.estListPropImgBanner1 p, .estListPropImgBanner2 p{
+  display: block;
+  position: relative;
+  width: 96%;
+  font-size: 0.9em;
+  margin: 3px 2% 3px 2%;
+  }
+
+
+.estPriceDrop{
+  display:inline-block;
+  position:relative;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 0.9em;
+  padding: 0px 3px;
+  /*opacity:0.85;*/
+  }
+
+.estListPropInfo{
+  display: block;
+  position: absolute;
+  top: 33%;
+  left: 25%;
+  width: 75%;
+  height: 67%;
+  }
+
+.estILBullets{
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0px 6px 0px 6px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  }
+
+.estListSummary{
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0px 6px 0px 6px;
+  }
+
+
+
+.estMarkRed{
+  filter: hue-rotate(152deg);
+  }
+.estMarkOrange{
+  filter: hue-rotate(177deg);
+  }
+.estMarkGreen{
+  filter: hue-rotate(266deg);
+  }
+
+
+#estateCont.estListTiles{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-start;
+  align-items: stretch;
+  }
+
+#estateCont.estListTiles a{
+  display:flex;
+  margin: 2px 0.25%;
+  padding: 6px 4px;
+  }
+
+#estateCont.estListTile30 a{
+  flex: 30%;
+  max-width: 33%;
+  }
+#estateCont.estListTile45 a{
+  flex: 45%;
+  max-width: 50%;
+  }
+
+.estFLEX30{
+  flex: 30%;
+  max-width: 33%;
+  }
+.estFLEX45{
+  flex: 45%;
+  max-width: 50%;
+  }
+
+div.estListBlock.estListTiles{
+  height:100%;
+  }
+
+div.estListBlock.estListTiles div.estListPropHead{
+  position: relative;
+  width: 100%;
+  top: unset;
+  left: unset;
+  height: unset;
+  padding-bottom: 12px;
+  }
+
+div.estListBlock.estListTiles div.estListPropHead div:first-child{
+  width: 100%;
+  }
+
+
+div.estListBlock.estListTiles div.estListPropHead div:last-child {
+  display: block;
+  position: relative;
+  top: 4px;
+  right: unset;
+  left: 6px;
+  width: 100%;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: left;
+}
+
+
+div.estListBlock.estListTiles div.estListPropHead div:last-child span {
+  display: block;
+  position: absolute;
+  top: 2px;
+  right: 12px;
+  font-size: 0.85em;
+  }
+
+
+div.estListBlock.estListTiles div.estListPropImg{
+  position: relative;
+  width: 100%;
+  top: unset;
+  left: unset;
+  height: 256px;
+  border: 6px solid transparent;
+  background-position: top center;
+  }
+
+
+
+div.estListBlock.estListTiles div.estListPropInfo{
+  position: relative;
+  width: 100%;
+  top: unset;
+  left: unset;
+  height: unset;
+  padding-bottom: 32px;
+  }
+
+#estLayoutPrefECont{
+  display:block;
+  position:absolute;
+  top:5px;
+  left:5px;
+  width: 500px;
+  height: 350px;
+  background-color:#CCCCCC;
+  z-index:100;
+  }
+
+
+
+.FR{
+  float:right;
+  }
+
+.WSNWRP{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+
+
+.FWB{font-weight:bold;}
+.TAL{text-align:left !important;}
+.TAC{text-align:center !important;}
+.TAR{text-align:right !important;}
+
+.FS95EM{font-size:0.95em;}
+.FS9EM{font-size:0.9em;}
+.FS85EM{font-size:0.85em;}
+.FS8EM{font-size:0.8em;}
+.FS75EM{font-size:0.75em;}
+.FS7EM{font-size:0.7em;}
+
+.FSITAL{font-style:italic;}
+
+.WD100{width:100%;}
+.WD96{width:96%;}
+.WD48{width:48%;}
+.WD32{width: 32%;}
+
+.noPAD{
+  padding:0px 0px 0px 0px !important;
+  }
+
+.noPADTB{
+  padding-top:0px !important;
+  padding-bottom:0px !important;
+  }
+
+.noPADLR{
+  padding-left:0px !important;
+  padding-right:0px !important;
+  }
+
+
+
+@media screen and (orientation:landscape){
+  .dummy{}
+  }
+
+
+@media screen and (orientation:portrait){
+  .dummy{}
+
+  }
+
+
+
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1023px){
+  .dummy{}
+
+  }
+
+@media only screen and (min-device-width:1024px) and (max-device-width:1365px) and (orientation:portrait){
+  .dummy{}
+
+  }
+
+@media only screen and (min-device-width:1024px) and (max-device-width:1365px) and (orientation:landscape){
+  .dummy{}
+
+  }
+
+
+
+
+
+@media only screen and (min-device-width:1024px){
+  .dummy{}
+  
+  }
+
+
+
+
+
+@media only screen and (min-device-width:100px) and (max-device-width:480px){
+  .dummy{}
+  
+  .noMobile{display:none;}
+  
+  #estMiniNav{
+    
+    }
+  
+  #estMobTst{
+    display:block;
+    width:1px;
+    height:1px;
+    }
+  
+  #estViewBoxTop{
+    display: block;
+    height: 256px;
+    }
+  
+  #estViewBoxTop div.estSSPlayPause{
+    width:48px;
+    height:48px;
+    background-position: -48px 0px;
+    background-size: 96px 48px;
+    }
+  
+  .estViewBoxMid,
+  .estViewBoxBot{
+    display: block;
+    }
+  
+  .estViewBoxCont{
+    margin: 6px 2%;
+    }
+  
+  #estViewBoxMap div.estViewSect{
+    border-bottom: none;
+    padding: 6px 0px 0px 0px;
+    margin: 0px 0px 16px 0px;
+    }
+  
+  #estMap{
+    width: 100%;
+    height: 256px;
+    margin:16px auto 0px auto;
+    }
+  
+  
+  
+  #estPlugMenu1,
+  .estSideMenu{
+    display:none !important;
+    }
+  
+  
+  #estGalCont img{
+    display: block;
+    position: relative;
+    width: 99%;
+    height: unset;
+    margin: 0px auto 16px auto;
+    }
+  
+  
+  
+  #estateCont.estListTiles{
+    display:flex;
+    }
+  #estateCont.estListTiles a {
+    display: block;
+    width:100%;
+    margin: 2px auto;
+    padding: 6px 4px;
+    }
+  
+  
+  .estFLEX30,
+  .estFLEX45,
+  #estateCont.estListTile30 a,
+  #estateCont.estListTile45 a{
+    flex: 100%;
+    max-width: 100%;
+    }
+  
+  .estListBlock{
+    height:unset;
+    }
+  
+  .estListPropHead{
+    position: relative;
+    width: 100%;
+    top: unset;
+    left: unset;
+    padding-bottom: 6px;
+    }
+  
+  .estListPropHead div:first-child{
+    width: 100%;
+    }
+  
+  .estListPropHead div:last-child {
+    position: relative;
+    right: unset;
+    top: unset;
+    width: 100%;
+    text-align: left;
+    padding-left: 6px;
+    }
+  
+  .estListPropHead div:last-child span {
+    display: block;
+    position: absolute;
+    top: 0px;
+    right: 6px;
+    font-size: 0.85em;
+    }
+  
+  
+  .estListPropImg{
+    position: relative;
+    width: 100%;
+    top: unset;
+    left: unset;
+    height: 224px;
+    border: 6px solid transparent;
+    }
+  
+  
+  .estListPropInfo{
+    position: relative;
+    width: 100%;
+    top: unset;
+    left: unset;
+    height: unset;
+    padding-bottom: 32px;
+    }
+  
+  .estILBullets{
+    white-space: normal;
+    /*margin-bottom: 12px;*/
+    }
+  
+  }
+
+
+

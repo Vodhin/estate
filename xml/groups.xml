@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.2.0 (git)" timestamp="1686146168" >
+	<database>
+	<dbTable name="estate_group">
+		<item>
+			<field name="group_idx">1</field>
+			<field name="group_zone">1</field>
+			<field name="group_lev">2</field>
+			<field name="group_name">Main Floor</field>
+		</item>
+		<item>
+			<field name="group_idx">2</field>
+			<field name="group_zone">1</field>
+			<field name="group_lev">2</field>
+			<field name="group_name">Second Floor</field>
+		</item>
+		<item>
+			<field name="group_idx">3</field>
+			<field name="group_zone">1</field>
+			<field name="group_lev">2</field>
+			<field name="group_name">Third Floor</field>
+		</item>
+		<item>
+			<field name="group_idx">4</field>
+			<field name="group_zone">1</field>
+			<field name="group_lev">2</field>
+			<field name="group_name">Basement</field>
+		</item>
+		<item>
+			<field name="group_idx">5</field>
+			<field name="group_zone">1</field>
+			<field name="group_lev">2</field>
+			<field name="group_name">Exterior</field>
+		</item>
+	</dbTable>
+	</database>
+</e107Export>

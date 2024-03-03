@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e107Plugin name="Estate Agency" lan="EST_PLUGNAME" version="1.5" date="2024-02-21" compatibility="2.3" installRequired="true" >
+	<author name="Vodhin" url="estate.vodhin.org" email="e107@vodhin.org" />
+	<description lan="EST_PLUGDESCRIPT">A plugin for managing Real Estate listings</description>
+	<keywords>
+		<word>estate</word>
+		<word>realestate</word>
+		<word>real</word>
+		<word>property</word>
+		<word>agency</word>
+		<word>listing</word>
+	</keywords>
+	<category>content</category>
+	<copyright>2022</copyright>
+	<adminLinks>
+		<link url="admin_config.php" description="EST_PLUGCONFIG1" icon="icons/icon_32.png" iconSmall="icons/icon_16.png" icon128="icons/icon_128.png" primary="true" >EST_PLUGCONFIG1</link>
+		<link url="admin_config.php?pref" description="Preferences"  icon="settings" perm="mainadmin" >Preferences</link>
+	</adminLinks>
+	<pluginPrefs>
+		<pref name='addnewuser'>3</pref>
+		<pref name='adminonly'>0</pref>
+		<pref name='country'>us</pref>
+		<pref name='helpinfull'>1</pref>
+		<pref name='firsttime'>2</pref>
+		<pref name='layout_list'>estListTiles estListTile45</pref>
+		<pref name='layout_list_map'>1</pref>
+		<pref name='layout_list_mapagnt'>1</pref>
+		<pref name='layout_view_agent'>flexRev</pref>
+		<pref name='layout_view_agntbg'>estBGGrad2</pref>
+		<pref name='layout_view_gallbg'>estBGGrad1</pref>
+		<pref name='layout_view_map'>1</pref>
+		<pref name='layout_view_mapagnt'>0</pref>
+		<pref name='layout_view_mapbg'>estBGGrad1</pref>
+		<pref name='layout_view_spaces'>dynamic</pref>
+		<pref name='layout_view_spaces_ss'>1</pref>
+		<pref name='layout_view_spacesbg'>estBGGrad1</pref>
+		<pref name='layout_view_spacetilebg'>estBGGrad2</pref>
+		<pref name='layout_view_spacedynbg'>estBGGrad2</pref>
+		<pref name='layout_view_summbg'>estBGGrad1</pref>
+		<pref name='pref_addr_lookup'>New York, NY</pref>
+		<pref name='map_height'>320</pref>
+    <pref name='map_jssrc'>1</pref>
+		<pref name='map_key'>sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=</pref>
+		<pref name='map_url'>https://unpkg.com/leaflet@1.9.2/dist/leaflet.js</pref>
+		<pref name='pref_lat'>40.71272810</pref>
+		<pref name='pref_lon'>-74.00601520</pref>
+		<pref name='pref_zoom'>10</pref>
+		<pref name='public_act'>255</pref>
+		<pref name='public_apr'>1</pref>
+		<pref name='public_exp'>30</pref>
+		<pref name='public_imgct'>12</pref>
+		<pref name='map_width'>640</pref>
+		<pref name='sched_agt_times'><![CDATA[array (
+  0 => 
+  array (
+    0 => '1',
+    1 => '11:00',
+    2 => '16:00',
+  ),
+  1 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  2 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  3 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  4 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  5 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  6 => 
+  array (
+    0 => '1',
+    1 => '10:00',
+    2 => '18:00',
+  ),
+)]]></pref>
+		<pref name='sched_evt_lengths'><![CDATA[Array(
+      0 => 01:30,
+      1 => 05:00,
+      2 => 02:30
+      )]]></pref>
+		<pref name='sched_pub_times'><![CDATA[array (
+  0 => 
+  array (
+    0 => '0',
+  ),
+  1 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  2 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  3 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  4 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  5 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+  6 => 
+  array (
+    0 => '1',
+    1 => '09:00',
+    2 => '17:00',
+  ),
+)]]></pref>
+		<pref name='slideshow_act'>1</pref>
+		<pref name='slideshow_delay'>5</pref>
+		<pref name='slideshow_time'>4</pref>
+		<pref name='view_template'>default</pref>
+	</pluginPrefs>
+	<siteLinks>
+		<link name="Listings" url="{e_PLUGIN}estate/listings.php" sef='' lan="EST_PLUGNAME">Listings</link>
+	</siteLinks>
+	<userClasses>
+		<class name="Estate Admin" description="Estate Administrator" />
+		<class name="Estate Manager" description="Estate Agency Manager" />
+		<class name="Estate Agent" description="Estate Agent" />
+	</userClasses>
+	
+</e107Plugin>

@@ -1,0 +1,394 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.2.0 (git)" timestamp="1686146168" >
+	<database>
+  	<dbTable name="estate_zoning">
+  		<item>
+  			<field name="zoning_idx">1</field>
+  			<field name="zoning_name">Residential</field>
+  		</item>
+  		<item>
+  			<field name="zoning_idx">2</field>
+  			<field name="zoning_name">Commercial</field>
+  		</item>
+  		<item>
+  			<field name="zoning_idx">3</field>
+  			<field name="zoning_name">Industrial</field>
+  		</item>
+  	</dbTable>
+	
+  	<dbTable name="estate_listypes">
+  		<item>
+  			<field name="listype_idx">1</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Apartment</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">2</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Condominimum</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">3</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Duplex</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">4</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Land</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">5</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Mobile/Manufactured</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">6</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Multi-Family</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">7</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Single Family</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">8</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Single Family Detached</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">9</field>
+  			<field name="listype_zone">2</field>
+  			<field name="listype_name">Office Space</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">10</field>
+  			<field name="listype_zone">2</field>
+  			<field name="listype_name">Retail Space</field>
+  		</item>
+  	</dbTable>
+    
+  	<dbTable name="estate_featcats">
+  		<item>
+  			<field name="featcat_idx">1</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Exterior</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">2</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Bedroom</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">3</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Living Space</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">4</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Kitchen</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">5</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Tomb</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">6</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Laundry</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">7</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Parking</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">8</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Bathroom</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">9</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Yard</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">10</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Back Yard</field>
+  		</item>
+  	</dbTable>
+    <dbTable name="estate_features">
+  		<item>
+  			<field name="feature_idx">1</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">2</field>
+  			<field name="feature_name">Closets</field>
+  			<field name="feature_opts">Walk In,Standard</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">2</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">2</field>
+  			<field name="feature_name">Ensuite</field>
+  			<field name="feature_opts">Tub,Shower,Single Sink,Double Sink,Spa,Bidet</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">3</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Ceiling</field>
+  			<field name="feature_opts">cathedral,vaulted</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">4</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Fireplace</field>
+  			<field name="feature_opts">wood stove,pellet stove,corner,2 sided,large,small</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">5</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Play Area</field>
+  			<field name="feature_opts">enclosed,fenced in</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">6</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">5</field>
+  			<field name="feature_name">Locking Gate</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">7</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">5</field>
+  			<field name="feature_name">False Burial Alarm</field>
+  			<field name="feature_opts">Bellpull,Buzzer,Strobe</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">8</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">8</field>
+  			<field name="feature_name">Ensuite</field>
+  			<field name="feature_opts">Tub/Shower Combo,Tub,Walk-in Shower,Single Sink,Double Sink,Makeup Vanity,Bidet,Dressing Room</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">9</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Refrigerator</field>
+  			<field name="feature_opts">French Door,Ice Maker</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">10</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Dishwasher</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">11</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Range</field>
+  			<field name="feature_opts">Gas,Electric</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">12</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Microwave</field>
+  			<field name="feature_opts">Countertop,Wall,Over Range</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">13</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Appliances</field>
+  			<field name="feature_opts">Refrigerator,Range,Dishwasher,Disposal,Compactor,Microwave</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">14</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">10</field>
+  			<field name="feature_name">Pool</field>
+  			<field name="feature_opts">Spa,Waterfall,Fountain,Lanai</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">15</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">1</field>
+  			<field name="feature_name">Dock</field>
+  			<field name="feature_opts">Water,Electric,Tiki,Private,Community</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">16</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Washer</field>
+  			<field name="feature_opts">Top Load,Front Load</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">17</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Dryer</field>
+  			<field name="feature_opts">Gas,Electric</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">18</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Cabinets</field>
+  			<field name="feature_opts">Upper,Lower</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">19</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Counter</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">20</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Sink</field>
+  			<field name="feature_opts">Utility,Sink</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">21</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">8</field>
+  			<field name="feature_name">Shower</field>
+  			<field name="feature_opts">Tub/Shower Combination,Walk in,Rain Head</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">22</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">8</field>
+  			<field name="feature_name">Hamper</field>
+  			<field name="feature_opts">Built-in,Storage Area</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">23</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">10</field>
+  			<field name="feature_name">Screened Porch</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">24</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">1</field>
+  			<field name="feature_name">Carport</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">25</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Wet Bar</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">26</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Eat-in Dining Area</field>
+  			<field name="feature_opts">Counter Seating,Kitchen table</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">27</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Built-in Book Case</field>
+  			<field name="feature_opts">Lower closets,Shelves,Lighting</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">28</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Built-in Cabinets</field>
+  			<field name="feature_opts">Upper Glass Doors,Lower Cabinets,Lighting</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">29</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Sunroom</field>
+  			<field name="feature_opts">Wall Air-Conditioner,Glass Windows,Roll Shades,Exterior Door</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">30</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">2</field>
+  			<field name="feature_name">Pool/Patio access</field>
+  			<field name="feature_opts">Main Patio,Private Patio</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">31</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Oven</field>
+  			<field name="feature_opts">Single,Double,Built-In,Wall Mounted</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">32</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Passepartout</field>
+  			<field name="feature_opts">Den,Dining Area,Patio/Pool</field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_group">
+  		<item>
+  			<field name="group_idx">1</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Main Floor</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">2</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Second Floor</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">3</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Third Floor</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">4</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Basement</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">5</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Exterior</field>
+  		</item>
+  	</dbTable>
+    
+	</database>
+</e107Export>

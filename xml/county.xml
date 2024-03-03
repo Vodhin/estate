@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.2.0 (git)" timestamp="1686146168" >
+	<database>
+	<dbTable name="estate_county">
+		<item>
+			<field name="cnty_idx">1</field>
+			<field name="cnty_name">Saint Lucie</field>
+			<field name="cnty_state">1</field>
+			<field name="cnty_url"></field>
+		</item>
+		<item>
+			<field name="cnty_idx">2</field>
+			<field name="cnty_name">Martin</field>
+			<field name="cnty_state">1</field>
+			<field name="cnty_url"></field>
+		</item>
+	</dbTable>
+	</database>
+</e107Export>

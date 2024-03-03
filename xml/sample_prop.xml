@@ -1,0 +1,574 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.2.0 (git)" timestamp="1686146168" >
+	<database>
+  	<dbTable name="estate_agencies">
+  		<item>
+  			<field name="agency_idx">1</field>
+  			<field name="agency_pub">0</field>
+  			<field name="agency_name">Free Agents</field>
+  			<field name="agency_image"></field>
+  			<field name="agency_imgsrc">0</field>
+  			<field name="agency_addr">Laguna Beach, CA</field>
+  			<field name="agency_lat">33.54269750</field>
+  			<field name="agency_lon">-117.78536600</field>
+  			<field name="agency_geoarea"></field>
+  			<field name="agency_zoom">11</field>
+  			<field name="agency_timezone">America/Los_Angeles</field>
+  			<field name="agency_txt1"></field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_county">
+  		<item>
+  			<field name="cnty_idx">1</field>
+  			<field name="cnty_name">Orange</field>
+  			<field name="cnty_state">5</field>
+  			<field name="cnty_url"></field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_city">
+  		<item>
+  			<field name="city_idx">1</field>
+  			<field name="city_county">1</field>
+  			<field name="city_name">Laguna Beach</field>
+  			<field name="city_zip">92651,92652</field>
+  			<field name="city_timezone">America/Los_Angeles</field>
+  			<field name="city_url"></field>
+  		</item>
+  	</dbTable>
+    <dbTable name="estate_grouplist">
+  		<item>
+  			<field name="grouplist_idx">1</field>
+  			<field name="grouplist_propidx">1</field>
+  			<field name="grouplist_groupidx">1</field>
+  			<field name="grouplist_ord">1</field>
+  		</item>
+  		<item>
+  			<field name="grouplist_idx">2</field>
+  			<field name="grouplist_propidx">1</field>
+  			<field name="grouplist_groupidx">2</field>
+  			<field name="grouplist_ord">1</field>
+  		</item>
+  	</dbTable>
+    <dbTable name="estate_featurelist">
+  		<item>
+  			<field name="featurelist_idx">1</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">1</field>
+  			<field name="featurelist_key">4</field>
+  			<field name="featurelist_dta">2 sided</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">2</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">1</field>
+  			<field name="featurelist_key">3</field>
+  			<field name="featurelist_dta">cathedral</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">3</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">2</field>
+  			<field name="featurelist_key">26</field>
+  			<field name="featurelist_dta">Kitchen table</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">4</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">2</field>
+  			<field name="featurelist_key">11</field>
+  			<field name="featurelist_dta">Electric</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">5</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">2</field>
+  			<field name="featurelist_key">9</field>
+  			<field name="featurelist_dta">French Door</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">6</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">2</field>
+  			<field name="featurelist_key">13</field>
+  			<field name="featurelist_dta">Compactor,Disposal</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">7</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">2</field>
+  			<field name="featurelist_key">10</field>
+  			<field name="featurelist_dta"></field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">8</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">2</field>
+  			<field name="featurelist_key">31</field>
+  			<field name="featurelist_dta">Built-In,Double,Wall Mounted</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">9</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">2</field>
+  			<field name="featurelist_key">32</field>
+  			<field name="featurelist_dta">Den</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">10</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">3</field>
+  			<field name="featurelist_key">1</field>
+  			<field name="featurelist_dta">Walk In</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">11</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">3</field>
+  			<field name="featurelist_key">30</field>
+  			<field name="featurelist_dta">Main Patio</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">12</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">4</field>
+  			<field name="featurelist_key">1</field>
+  			<field name="featurelist_dta">Standard</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">13</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">5</field>
+  			<field name="featurelist_key">1</field>
+  			<field name="featurelist_dta">Standard</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">14</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">5</field>
+  			<field name="featurelist_key">2</field>
+  			<field name="featurelist_dta">Shower,Single Sink,Tub</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">16</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">6</field>
+  			<field name="featurelist_key">4</field>
+  			<field name="featurelist_dta">2 sided</field>
+  		</item>
+  	</dbTable>
+    <dbTable name="estate_properties">
+  		<item>
+  			<field name="prop_idx">1</field>
+  			<field name="prop_mlsno"></field>
+  			<field name="prop_listype">1</field>
+  			<field name="prop_name">370 Weymouth Place</field>
+  			<field name="prop_agency">1</field>
+  			<field name="prop_agent">1</field>
+  			<field name="prop_addr1">370 Weymouth Place</field>
+  			<field name="prop_addr2"></field>
+  			<field name="prop_country">us</field>
+  			<field name="prop_state">5</field>
+  			<field name="prop_county">1</field>
+  			<field name="prop_city">1</field>
+  			<field name="prop_subdiv">0</field>
+  			<field name="prop_zip">92651</field>
+  			<field name="prop_features">3 Bed,3 Bath</field>
+  			<field name="prop_sef">370-weymouth-place</field>
+  			<field name="prop_timezone">America/Los_Angeles</field>
+  			<field name="prop_datecreated">1686935588</field>
+  			<field name="prop_dateupdated">1686939623</field>
+  			<field name="prop_datetease">0</field>
+  			<field name="prop_dateprevw">0</field>
+  			<field name="prop_datelive">0</field>
+  			<field name="prop_datepull">0</field>
+  			<field name="prop_hours"><![CDATA[array (
+    0 => 
+    array (
+      0 => '0',
+    ),
+    1 => 
+    array (
+      0 => '1',
+      1 => '09:00',
+      2 => '17:00',
+    ),
+    2 => 
+    array (
+      0 => '1',
+      1 => '09:00',
+      2 => '17:00',
+    ),
+    3 => 
+    array (
+      0 => '1',
+      1 => '09:00',
+      2 => '17:00',
+    ),
+    4 => 
+    array (
+      0 => '1',
+      1 => '09:00',
+      2 => '17:00',
+    ),
+    5 => 
+    array (
+      0 => '1',
+      1 => '09:00',
+      2 => '17:00',
+    ),
+    6 => 
+    array (
+      0 => '1',
+      1 => '09:00',
+      2 => '17:00',
+    ),
+  )]]></field>
+  			<field name="prop_uidcreate">1</field>
+  			<field name="prop_uidupdate">0</field>
+  			<field name="prop_status">3</field>
+  			<field name="prop_parcelid"></field>
+  			<field name="prop_lotid"></field>
+  			<field name="prop_lat">33.55005042</field>
+  			<field name="prop_lon">-117.79722333</field>
+  			<field name="prop_zoom">18</field>
+  			<field name="prop_geoarea"></field>
+  			<field name="prop_yearbuilt">1969</field>
+  			<field name="prop_dimu1">0</field>
+  			<field name="prop_intsize">2166</field>
+  			<field name="prop_roofsize">2650</field>
+  			<field name="prop_dimu2">0</field>
+  			<field name="prop_landsize">½</field>
+  			<field name="prop_zoning">1</field>
+  			<field name="prop_type">7</field>
+  			<field name="prop_modelname">Brady Special</field>
+  			<field name="prop_listprice">1285000</field>
+  			<field name="prop_origprice">1285000</field>
+  			<field name="prop_leasefreq">0</field>
+  			<field name="prop_leasedur">0</field>
+  			<field name="prop_currency">0</field>
+  			<field name="prop_landfee">0.00</field>
+  			<field name="prop_landfreq">0</field>
+  			<field name="prop_thmb"></field>
+  			<field name="prop_summary">[b]This is not a real listing[/b]. This beautiful Mid Century Modern gem may look familiar to you!</field>
+  			<field name="prop_description"><![CDATA[This is a sample that comes with the Estate Plugin in order to demonstrate it&#039;s capabilities and offer something for a new user to explore.]]></field>
+  			<field name="prop_hoafee">0.00</field>
+  			<field name="prop_hoaland">0</field>
+  			<field name="prop_hoaappr">0</field>
+  			<field name="prop_hoareq">0</field>
+  			<field name="prop_hoafrq">0</field>
+  			<field name="prop_bathtot">3</field>
+  			<field name="prop_bathmain">2</field>
+  			<field name="prop_bathhalf">1</field>
+  			<field name="prop_bathfull">2</field>
+  			<field name="prop_bedtot">3</field>
+  			<field name="prop_bedmain">1</field>
+  			<field name="prop_floorct">2</field>
+  			<field name="prop_floorno">0</field>
+  			<field name="prop_bldguc">0</field>
+  			<field name="prop_complxuc">0</field>
+  			<field name="prop_condit">Newly Renovated</field>
+  			<field name="prop_views">4</field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_spaces">
+  		<item>
+  			<field name="space_idx">1</field>
+  			<field name="space_propidx">1</field>
+  			<field name="space_grpid">1</field>
+  			<field name="space_catid">3</field>
+  			<field name="space_ord">1</field>
+  			<field name="space_name">Living Room</field>
+  			<field name="space_loc">Front</field>
+  			<field name="space_dimu">0</field>
+  			<field name="space_dimx">27</field>
+  			<field name="space_dimy">20</field>
+  			<field name="space_dimxy">540</field>
+  			<field name="space_description"></field>
+  		</item>
+  		<item>
+  			<field name="space_idx">2</field>
+  			<field name="space_propidx">1</field>
+  			<field name="space_grpid">1</field>
+  			<field name="space_catid">4</field>
+  			<field name="space_ord">2</field>
+  			<field name="space_name">Kitchen</field>
+  			<field name="space_loc">Back</field>
+  			<field name="space_dimu">0</field>
+  			<field name="space_dimx">22</field>
+  			<field name="space_dimy">18</field>
+  			<field name="space_dimxy">396</field>
+  			<field name="space_description">A Huge, spacious kitchen big enough for a family of 8 and a cook.</field>
+  		</item>
+  		<item>
+  			<field name="space_idx">3</field>
+  			<field name="space_propidx">1</field>
+  			<field name="space_grpid">1</field>
+  			<field name="space_catid">2</field>
+  			<field name="space_ord">3</field>
+  			<field name="space_name">Master Bedroom</field>
+  			<field name="space_loc">Back</field>
+  			<field name="space_dimu">0</field>
+  			<field name="space_dimx">18</field>
+  			<field name="space_dimy">22</field>
+  			<field name="space_dimxy">396</field>
+  			<field name="space_description"></field>
+  		</item>
+  		<item>
+  			<field name="space_idx">4</field>
+  			<field name="space_propidx">1</field>
+  			<field name="space_grpid">2</field>
+  			<field name="space_catid">2</field>
+  			<field name="space_ord">4</field>
+  			<field name="space_name">Bedroom 2</field>
+  			<field name="space_loc">Front</field>
+  			<field name="space_dimu">0</field>
+  			<field name="space_dimx">16</field>
+  			<field name="space_dimy">18</field>
+  			<field name="space_dimxy">288</field>
+  			<field name="space_description">Perfect for 3 Boys</field>
+  		</item>
+  		<item>
+  			<field name="space_idx">5</field>
+  			<field name="space_propidx">1</field>
+  			<field name="space_grpid">2</field>
+  			<field name="space_catid">2</field>
+  			<field name="space_ord">5</field>
+  			<field name="space_name">Bedroom 3</field>
+  			<field name="space_loc">Back</field>
+  			<field name="space_dimu">0</field>
+  			<field name="space_dimx">19</field>
+  			<field name="space_dimy">21</field>
+  			<field name="space_dimxy">399</field>
+  			<field name="space_description"></field>
+  		</item>
+  		<item>
+  			<field name="space_idx">6</field>
+  			<field name="space_propidx">1</field>
+  			<field name="space_grpid">1</field>
+  			<field name="space_catid">3</field>
+  			<field name="space_ord">6</field>
+  			<field name="space_name">Office</field>
+  			<field name="space_loc">Front</field>
+  			<field name="space_dimu">0</field>
+  			<field name="space_dimx">24</field>
+  			<field name="space_dimy">18</field>
+  			<field name="space_dimxy">432</field>
+  			<field name="space_description"></field>
+  		</item>
+  		<item>
+  			<field name="space_idx">7</field>
+  			<field name="space_propidx">1</field>
+  			<field name="space_grpid">1</field>
+  			<field name="space_catid">3</field>
+  			<field name="space_ord">7</field>
+  			<field name="space_name">Den</field>
+  			<field name="space_loc">Back</field>
+  			<field name="space_dimu">0</field>
+  			<field name="space_dimx">18</field>
+  			<field name="space_dimy">22</field>
+  			<field name="space_dimxy">396</field>
+  			<field name="space_description"><![CDATA[What a groovy place to kick your kids to when you need some quiet time in the house. They won&#039;t want to leave while there are plenty of snacks in the kitchen next door.]]></field>
+  		</item>
+  	</dbTable>
+    
+  	<dbTable name="estate_media">
+  		<item>
+  			<field name="media_idx">1</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">1</field>
+  			<field name="media_levord">3</field>
+  			<field name="media_galord">5</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-1-1.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Living Room</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">2</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">1</field>
+  			<field name="media_levord">1</field>
+  			<field name="media_galord">3</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-1-2.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Living Room</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">4</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">1</field>
+  			<field name="media_levord">2</field>
+  			<field name="media_galord">4</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-1-4.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Living Room</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">5</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">2</field>
+  			<field name="media_levord">1</field>
+  			<field name="media_galord">8</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-2-5.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Kitchen</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">6</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">3</field>
+  			<field name="media_levord">1</field>
+  			<field name="media_galord">12</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-3-6.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Master Bedroom</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">7</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">4</field>
+  			<field name="media_levord">1</field>
+  			<field name="media_galord">13</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-4-7.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Bedroom 2</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">8</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">5</field>
+  			<field name="media_levord">1</field>
+  			<field name="media_galord">14</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-5-8.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Bedroom 3</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">10</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">6</field>
+  			<field name="media_levord">1</field>
+  			<field name="media_galord">7</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-6-10.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Office</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">11</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">6</field>
+  			<field name="media_levord">2</field>
+  			<field name="media_galord">6</field>
+  			<field name="media_asp">1.501</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-6-11.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Office</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">12</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">7</field>
+  			<field name="media_levord">1</field>
+  			<field name="media_galord">9</field>
+  			<field name="media_asp">2.008</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-7-12.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Den</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">13</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">7</field>
+  			<field name="media_levord">2</field>
+  			<field name="media_galord">10</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-7-13.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Den</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">14</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">2</field>
+  			<field name="media_levidx">7</field>
+  			<field name="media_levord">3</field>
+  			<field name="media_galord">11</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-2-7-14.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Den</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">15</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">1</field>
+  			<field name="media_levidx">0</field>
+  			<field name="media_levord">14</field>
+  			<field name="media_galord">1</field>
+  			<field name="media_asp">1.778</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-1-0-15.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Property</field>
+  		</item>
+  		<item>
+  			<field name="media_idx">16</field>
+  			<field name="media_propidx">1</field>
+  			<field name="media_lev">1</field>
+  			<field name="media_levidx">0</field>
+  			<field name="media_levord">13</field>
+  			<field name="media_galord">2</field>
+  			<field name="media_asp">1.5</field>
+  			<field name="media_type">1</field>
+  			<field name="media_thm">1-1-0-16.jpg</field>
+  			<field name="media_full"></field>
+  			<field name="media_name">Property</field>
+  		</item>
+  	</dbTable>
+	</database>
+</e107Export>
