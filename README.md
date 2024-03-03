@@ -3,6 +3,10 @@ A plugin for the e107 Content management System to manage Real Estate Agencies, 
 
 The _Estate_ plugin is not ready yet. I have a lot to do before it can be published. The Current repository should be mostly usable if anyone wants to try it out. A live production site using this plugin can be viewed here https://www.sandpiperhome.org
 
+REQUIREMENTS:
+e107 v2.3.3 or later
+Tested with PHP 7.4.33, Later VErsions of PHP may cause problems (I'm working on that)
+
 
 FEATURES
 
