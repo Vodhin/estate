@@ -8,7 +8,7 @@ REQUIREMENTS:
 
 e107 v2.3.3 or later
 
-Tested with PHP 7.4.33, Later VErsions of PHP may cause problems (I'm working on that)
+Tested with PHP 7.4.33, later Versions of PHP may cause problems (I'm working on that)
 
 
 FEATURES
