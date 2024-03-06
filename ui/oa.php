@@ -140,10 +140,19 @@ if($err){
 
 
 
+define("EST_OAEDIT",true);
 
 require_once(e_HANDLER."form_handler.php");
 e107::js('estate','js/oa.js', 'jquery');
 $OACLASS = ' class="estOA"';
+
+
+
+
+
+
+include_once('qry.php');
+
 
 if(intval($prop_idx) > 0){
   $nsHead = '<div id="estMiniNav"><a href="'.e_SELF.'?view.'.$prop_idx.'" title="'.EST_GEN_VIEWLISTING.'"><i class="fa fa-eye"></i></a>';
@@ -159,17 +168,36 @@ else{
 
 
 
+
+$tmpl = e107::getTemplate('estate');
+$sc = e107::getScBatch('estate',true);
+
+
+$sc->setVars($prop[0]);
+
+
+e107::js('inline','var estMapPins = '.$tp->parseTemplate($tmpl['pins'], false, $sc).'; ', 'jquery',2);
+
+
+
 require_once(HEADERF);
 
-$text = $pretext.'
+$estText = $pretext;
+
+$estText .= $tp->parseTemplate($tmpl['view']['sum'], false, $sc);
+
+$estText .= $tp->parseTemplate($tmpl['view']['map'], false, $sc);
+
+      
+$estText .= '
 <div id="estJSpth"'.$OACLASS.' data-pth="'.EST_PATHABS.'"></div>
 <div id="estMobTst"></div>
 <div id="estMiniNav"></div>';
 
 
 
-$ns->tablerender($nsHead,$text,'estEditProp');
-unset($nsHead,$text);
+$ns->tablerender($nsHead,$estText,'estEditProp');
+unset($nsHead,$estText);
 
 
 
