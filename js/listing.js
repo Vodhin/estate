@@ -180,8 +180,8 @@ function htmlDecode(mode,xVal,dec=0){
       var estJSpth = $('#estJSpth').data('pth');
       
     	var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    		minZoom: 6,
-    		maxZoom: 19,
+    		minZoom: 4,
+    		maxZoom: 17,
     		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
     	 });
       
