@@ -495,10 +495,8 @@ class estate_agencies_ui extends e_admin_ui{
         <b>'.EST_GEN_ADMINACCLEVEL.'</b>
         <p>'.EST_HLPMNU_USERS04.'</p>
         <p>'.EST_HLPMNU_USERS05.'</p>
-        <ul>
-        </ul>
         <br />
-        ¹<i>'.EST_HLPMNU_USERS11.'</i>
+        <p>¹<i>'.EST_HLPMNU_USERS11.'</i></p>
       </div>
       <div id="estEditHelp-2" class="estEditHelpSect">
         <p><b>'.EST_GEN_AGENCY.' '.EST_GEN_LISTINGS.':</b><br />'.EST_HLPMNU_AGCY10.'</p>
