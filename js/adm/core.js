@@ -1071,7 +1071,7 @@ function estGetSubDivs(){
           $(mediaEditBox).data('mediadta',mediaDta);
           var mediaTitle = estMediaTitle(mediaDta,'edit media btns');
           
-          var editBtn = $(JQBTN,{'class':'btn btn-default btn-sm estNoRightBord','title':defs.txt.edit+' '+mediaTitle}).on({
+          var editBtn = $(JQBTN,{'class':'btn btn-default btn-sm estNoRightBord','title':defs.txt.crop+' '+defs.txt.image}).on({
             click : function(e){
               e.preventDefault();
               var mediaDta = $(this).parent().data('mediadta');
@@ -1083,7 +1083,7 @@ function estGetSubDivs(){
                 }
               }
             }).appendTo(mediaEditBox);
-          $(JQSPAN,{'class':'fa fa-pencil-square-o'}).appendTo(editBtn);
+          $(JQSPAN,{'class':'fa fa-crop-alt'}).appendTo(editBtn); //pencil-square-o
           
           var uplBtn = $(JQBTN,{'class':'btn btn-default btn-sm estNoLRBord','title':defs.txt.mediareplace+' '+mediaTitle}).on({
             click : function(e){
@@ -1295,7 +1295,7 @@ function estGetSubDivs(){
   
   function estRemovePopover(mode=null){
     $('#estBlackout').fadeOut().promise().done(function(){$('#estBlackout').remove();});
-    $('#estPopCont').animate({'left':'-100vw'},750,'swing',function(){
+    $('#estPopCont').animate({'left':'-100vw','opacity':'0'},750,'swing',function(){
       $('#estPopCont').remove();
       var mediaDta = estNewMediaDta(1);
       estFileUplFld(mediaDta,1);
@@ -1770,7 +1770,7 @@ function estGetSubDivs(){
           $('#estPopCont').data('popit',popIt);
           
           $(popIt.frm[slide].h3).empty().promise().done(function(){
-            $(JQSPAN,{'class':'FL','title':defs.txt.cancelremove}).html(defs.txt.edit+' '+mediaTitle).on({
+            $(JQSPAN,{'class':'FL','title':defs.txt.cancelremove}).html(defs.txt.edit+' '+defs.txt.image+' ('+mediaTitle+')').on({
               click : function(){
                 if(slide == 1){estRemovePopoverAlt(popIt.frm[0].tabs.tab[3].li);}
                 else{estRemovePopover();}
@@ -1815,7 +1815,7 @@ function estGetSubDivs(){
             $(JQBTN,{'id':'cBtnReset','class':'btn btn-sm estCrpBtn btn-default','title':hlp[10]}).html('<i class="fa fa-refresh"></i>').on({
               click : function(e){e.preventDefault();}
               }).prop('disabled',true).appendTo(cBtnBar);
-            $(JQBTN,{'id':'cBtnCropPrev','class':'btn btn-sm estCrpBtn btn-default','title':hlp[11]}).html('<i class="fa fa-crop-alt"></i>').on({
+            $(JQBTN,{'id':'cBtnCropPrev','class':'btn btn-sm estCrpBtn btn-default','title':hlp[11]}).css({'color':'#00CC00'}).html('<i class="fa fa-check"></i>').on({
               click : function(e){e.preventDefault();}
               }).prop('disabled',true).appendTo(cBtnBar);
             
