@@ -1,4 +1,5 @@
 <?php
+if (!defined('e107_INIT')) { exit; }
 
   $EST_PROP = array();
   $EST_PROPINTS = array('prop_idx','prop_status','prop_type','prop_zoning','prop_agent','prop_leasedur','prop_leasefreq','prop_landfee','prop_landfreq','prop_hoafee','prop_hoareq','prop_hoafrq','prop_yearbuilt','prop_intsize','prop_landsize','prop_bathhalf','prop_bathtot','prop_bedtot','prop_bathfull','prop_bathmain','prop_bedmain','prop_floorct','prop_floorno','prop_bldguc','prop_complxuc','prop_views');

@@ -143,6 +143,7 @@ if($err){
 define("EST_OAEDIT",true);
 
 require_once(e_HANDLER."form_handler.php");
+e107::css('url',e_PLUGIN.'estate/css/oa.css');
 e107::js('estate','js/oa.js', 'jquery');
 $OACLASS = ' class="estOA"';
 
@@ -184,9 +185,51 @@ require_once(HEADERF);
 
 $estText = $pretext;
 
-$estText .= $tp->parseTemplate($tmpl['view']['sum'], false, $sc);
 
-$estText .= $tp->parseTemplate($tmpl['view']['map'], false, $sc);
+
+
+
+$tbls = array(); 
+$tbls[0] = 'content 0';
+$tbls[1] = $tp->parseTemplate($tmpl['edit']['map'], false, $sc);
+
+
+
+
+$tabs = array(
+    EST_GEN_LISTING,
+    EST_GEN_ADDRESS,
+    EST_GEN_COMMUNITY,
+    EST_GEN_SPACES,
+    EST_GEN_DETAILS,
+    EST_GEN_GALLERY,
+    EST_GEN_SCHEDULING,
+    EST_GEN_SEO
+    );
+
+
+foreach($tabs as $tk=>$tab){
+  $estText .= '<div class="estOABlock">';
+  $estText .= '<h3><div>'.$tp->toHTML($tab).'</div></h3>';
+  $estText .= '<div class="estOATabCont">';
+  $estText .= $tbls[$tk];
+  $estText .= '</div></div>';
+  }
+
+
+
+
+
+
+
+$estText .= '<div class="estOABlock">';
+$estText .= '<h3><div>Hello Again</div></h3>';
+$estText .= '<div class="estOATabCont">';
+$estText .= 
+$estText .= '</div></div>';
+
+//$estText .= $tp->parseTemplate($tmpl['view']['sum'], false, $sc);
+
 
       
 $estText .= '
