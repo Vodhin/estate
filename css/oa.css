@@ -1,0 +1,141 @@
+/* CSS Document */
+.estOABlock{
+  display:block;
+  position: relative;
+  width: 100%;
+  margin: 6px auto 6px auto;
+  border:1px solid #ABABAB;
+  background-color:#F5F5F5;
+  background-origin: padding-box;
+  padding: 6px 6px 6px 6px;
+  }
+  
+.estOABlock h3{
+  position:relative;
+  white-space:nowrap;
+  cursor:pointer;
+  }
+
+.estOABlock h3 div{
+  display: inline-block;
+  position:relative;
+  width:90%;
+  text-overflow:ellipsis;
+  }
+
+.estOABlock h3::after{
+  content:"▼"; /*‹  † © ® » « §*/
+  position: absolute;
+  right: 8px;
+  }
+
+.estOABlock.expand h3::after{
+  content:"▲"; 
+  }
+
+.estOABlock div.estOATabCont{
+  display:none;
+  position: relative;
+  width: 100%;
+  overflow:hidden;
+  }
+
+.estOABlock.expand div.estOATabCont{
+  display:block;
+  height:unset;
+  min-height:15vh;
+  }
+
+
+
+
+
+
+
+.estInptCont, .estBtnCont{
+  display:inline-block;
+  position:relative;
+  width:100%;
+  background-color: inherit;
+  vertical-align:top;
+  white-space:nowrap;
+  }
+.estInptCont select{
+  display:inline-block;
+  border-top-right-radius:0px;
+  border-bottom-right-radius:0px;
+  -webkit-appearance:none;
+  }
+
+.estInptCont div.estSonar, 
+.estBtnCont div.estSonar{
+  display:inline-block;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  vertical-align: top;
+  overflow: visible;
+  }
+.estInptCont div.estSonarBlip, 
+.estBtnCont div.estSonarBlip{
+  display:none;
+  }
+
+.estInptCont.estNoData div.estSonarBlip, 
+.estBtnCont.estNoData div.estSonarBlip{
+  animation: sonarBlip 2s linear infinite;
+  display:block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #F5F5F5;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+  }
+
+.estInptCont.light.estNoData div.estSonarBlip, 
+.estBtnCont.light.estNoData div.estSonarBlip{background-color: #615E62;}
+
+.estInptCont div button{
+  border-left:none;
+  border-top-left-radius:0px;
+  border-bottom-left-radius:0px;
+  }
+.estInptCont button{
+  border-left:none !important;
+  border-top-left-radius:0px !important;
+  border-bottom-left-radius:0px !important;
+  }
+
+.estInptCont select.oneBtn{
+  width:calc(100% - 40px)  !important;
+  border-right:none;
+  border-top-right-radius:0px;
+  border-bottom-right-radius:0px;
+  }
+
+
+
+
+#estMapCont,
+#est_prop_MapCont{}
+#estMap,
+#est_prop_Map{}
+
+.estMapSearchCont{}
+.estMapLookupAddr{
+  display: inline-block !important;
+  position: relative;
+  width: calc(100% - 96px);
+  border-right: none !important;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  vertical-align: top !important;
+  }
+.estMapSearchBtn{}
+
+
