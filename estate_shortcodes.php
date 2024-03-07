@@ -599,6 +599,25 @@ class estate_shortcodes extends e_shortcode{
     }
   
   
+  
+  
+  function sc_prop_edit_map($parm){
+		$tp = e107::getParser();
+    
+    return '
+  <div class="estInptCont form-group has-feedback-left estMapSearchCont">
+    <input type="text" id="prop_addr_lookup" name="prop_addr_lookup" class="tbox form-control input-xxlarge estMapLookupAddr" value="" placeholder="'.EST_PLCH15.'"/>
+    <button id="est_prop_SrchBtn" class="btn btn-default estMapSearchBtn">'.LAN_SEARCH.'</button>
+    <input type="hidden" id="prop-lat" name="prop_lat" value="'.$this->var['prop_lat'].'" />
+    <input type="hidden" id="prop-lon" name="prop_lon" value="'.$this->var['prop_lon'].'" />
+    <input type="hidden" id="prop-zoom" name="prop_zoom" value="'.$this->var['prop_zoom'].'" />
+    <input type="hidden" id="prop-geoarea" name="prop_geoarea" value="'.$this->var['prop_geoarea'].'" />
+  </div>';
+    }
+  
+  
+  
+  
   function estPropStat($DTA){
     if(intval($DTA['prop_status']) == 5){$ret = (intval($DTA['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);}
     elseif(intval($DTA['prop_status']) == 4){$ret = EST_GEN_PENDING; $parm = '';}
