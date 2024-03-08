@@ -1,7 +1,8 @@
 <?php
 if(!defined('e107_INIT')){exit;}
-if(!ADMIN){exit;}
-if(!getperms('P')){exit;}
+
+//if(!ADMIN){exit;}
+//if(!getperms('P')){exit;}
 
 
 class estateCore{
