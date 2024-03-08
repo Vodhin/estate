@@ -47,7 +47,9 @@
   }
 
 
-
+.estOATabCont table colgroup:first-child{
+  width:25%;
+  }
 
 
 
