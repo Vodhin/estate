@@ -959,6 +959,9 @@ div.estListBlock.estListTiles div.estListPropInfo{
 .TAL{text-align:left !important;}
 .TAC{text-align:center !important;}
 .TAR{text-align:right !important;}
+.VAB{vertical-align:bottom;}
+.VAM{vertical-align:middle;}
+.VAT{vertical-align:top;}
 
 .FS95EM{font-size:0.95em;}
 .FS9EM{font-size:0.9em;}
@@ -973,6 +976,7 @@ div.estListBlock.estListTiles div.estListPropInfo{
 .WD96{width:96%;}
 .WD48{width:48%;}
 .WD32{width: 32%;}
+
 
 .noPAD{
   padding:0px 0px 0px 0px !important;

@@ -1,4 +1,15 @@
 /* CSS Document */
+
+.admin-ui-help-tip{
+  padding-top: 2px;
+  font-size: 18px;
+  cursor: help;
+  color: rgba(127, 127, 127, 0.7);
+  float: right !important;
+  margin-left: 5px;
+  }
+
+
 .estOABlock{
   display:block;
   position: relative;
@@ -7,13 +18,15 @@
   border:1px solid #ABABAB;
   background-color:#F5F5F5;
   background-origin: padding-box;
-  padding: 6px 6px 6px 6px;
   }
   
 .estOABlock h3{
   position:relative;
   white-space:nowrap;
   cursor:pointer;
+  padding: 6px;
+  margin: 0px 0px 0px 0px !important;
+  background-color: rgba(128, 128, 128, 0.25);
   }
 
 .estOABlock h3 div{
@@ -37,20 +50,37 @@
   display:none;
   position: relative;
   width: 100%;
+  padding: 12px 12px 12px 12px;
   overflow:hidden;
   }
 
 .estOABlock.expand div.estOATabCont{
   display:block;
   height:unset;
-  min-height:15vh;
   }
 
-
-.estOATabCont table colgroup:first-child{
-  width:25%;
+table.estOATable1{
+  width: 100%;
   }
 
+table.estOATable1 tr{
+  border-bottom:1px solid rgba(128,128,128,0.5);
+  }
+table.estOATable1 tr:first-child{
+  border-top:1px solid rgba(128,128,128,0.5);
+  }
+table.estOATable1 th,
+table.estOATable1 td{
+  padding: 6px;
+  }
+
+table.estOATable1 colgroup:first-child{
+  width:15%;
+  }
+
+table.estOATable1 colgroup:last-child{
+  width:85%;
+  }
 
 
 
@@ -121,6 +151,20 @@
   }
 
 
+
+.estCalTbl{
+  width:100%;
+  }
+.estCalTbl tr th,
+.estCalTbl tr td{
+  text-align:center;
+  width:14.285%;
+  }
+
+.estCalTbl input,
+.estCalTbl button{
+  width:100%;
+  }
 
 
 #estMapCont,
