@@ -2052,9 +2052,6 @@ class estateCore{
     
     $ESTDAYCT = intval(abs($CALSTART - $CALEND) / 86400);
     
-    
-    
-    
     $text = $this->getCalTbl('start');
     $text .= $this->getCalTbl('head',array('curm'=>$THISMONTH,'nextm'=>$NEXTMONTH,'prevm'=>$PREVMONTH));
     $dta = array('id'=>'estEvtCaltb','class'=>'estCheckered','data-calstart'=>$CALSTART);
@@ -2185,6 +2182,46 @@ class estateCore{
         }
       return '<tr>'.$TBL.'</tr>';
       }
+    }
+  
+  
+  
+  public function estPropFormEle($name,$atr,$value,$DTA){
+    $pref = e107::pref('estate');
+    //$sql = e107::getDB();
+    $tp = e107::getParser();
+    $frm = e107::getForm(false, true);
+    //$timeZones = systemTimeZones();
+    
+    switch($atr['type']){
+      case 'select' :
+      case 'eselect' :
+        return '<select name="'.$name.'" class="form-control input-'.varset($atr['cls'],'xlarge').'" value="'.$value.'"></select>';
+        break;
+        
+      case 'number' :
+        $options = array('size'=>'small');
+        $maxlength = 200;
+        $frm->number($name, $value, $maxlength, $options);
+        break;
+        
+      default :
+        return $frm->text($name,$value, varset($atr['max'],255), array('size'=>varset($atr['cls'],'xlarge'),'required'=>varset($atr['req'],0)));
+        break;
+      }
+    }
+  
+  
+    
+  public function estPropHoursForm($DTA){
+    if(!$DTA || count($DTA) == 0){$DTA = $GLOBALS['EST_PREF']['sched_pub_times'];}
+    $text = $this->getCalTbl('start');
+    $text .= $this->getCalTbl('head');
+    $text .= '<tbody>';
+    $text .= $this->getCalTbl('tr',array('deftime'=>array('n'=>'prop_hours','v'=>$DTA,'l'=>EST_GEN_AVAILABLE)));
+    $text .= '</tbody>';
+    $text .= $this->getCalTbl('end');
+    return $text;
     }
   
   

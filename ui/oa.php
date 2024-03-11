@@ -43,6 +43,17 @@ else{
     
 // Load Listing by ID if any
 
+
+
+if($_POST){
+  $_POST['prop_hours'] = e107::serialize($_POST['prop_hours']);
+  foreach($_POST as $k=>$v){
+    $postext .= '<div>['.$k.'] '.$v.'</div>';
+    }
+  }
+
+
+
 $DTA = array();
 
 if(!$err && intval($qs[1]) > 0){
@@ -195,93 +206,386 @@ else{
 
 $tmpl = e107::getTemplate('estate');
 $sc = e107::getScBatch('estate',true);
-
-
 $sc->setVars($prop[0]);
 
 
 e107::js('inline','var estMapPins = '.$tp->parseTemplate($tmpl['pins'], false, $sc).'; ', 'jquery',2);
 
-
-
-require_once(HEADERF);
-
-$OATXT = $pretext;
-
-$TABLSTRUCT = estTablStruct();
-
-
-$BLKS = array(
-  array('h3'=>EST_GEN_LISTING),
-  array('h3'=>EST_GEN_ADDRESS),
-  array('h3'=>EST_GEN_COMMUNITY),
-  array('h3'=>EST_GEN_SPACES),
-  array('h3'=>EST_GEN_DETAILS),
-  array('h3'=>EST_GEN_GALLERY),
-  array('h3'=>EST_GEN_SCHEDULING)
-  );
-
-
-$tbls = array(); 
-$tbls[0] = 'content 0';
-$tbls[1] = $tp->parseTemplate($tmpl['edit']['map'], false, $sc);
+$frm = e107::getForm(false, true);
+$timeZones = systemTimeZones();
 
 
 
 
+if($_POST){
+  $DTA['prop']['prop_hours'] = $_POST['prop_hours'];
+  }
+
+$estateCore = new estateCore;
+
+
+/*
+
+	 * @param array $array
+	 * @param array $options = [
+	 *      'active'    => (string|int) - array key of the active tab.
+	 *      'fade'      => (bool) - use fade effect or not.
+	 *      'class'     => (string) - custom css class of the tab content container
+	 * ]
+	 * @return string html
+	 * @example
+	 *        $array = array(
+	 *        'home' => array('caption' => 'Home', 'text' => 'some tab content' ),
+	 *        'other' => array('caption' => 'Other', 'text' => 'second tab content' )
+	 *        );
+	 
+// $frm->tabs($array, $options);
+*/
 
 
 
 
 
 
-foreach($TABLSTRUCT['estate_properties'] as $pk=>$pv){
-  $TABKEY = 0;
-  if($pk === 'prop_hours'){
-    $TABKEY = 6;
-    $estateCore = new estateCore;
-    if(!$DTA['prop'][$pk] || count($DTA['prop'][$pk]) == 0){$DTA['prop'][$pk] = $GLOBALS['EST_PREF']['sched_pub_times'];}
-    $dta = array('deftime'=>array('n'=>'prop_hours','v'=>$DTA['prop'][$pk],'l'=>EST_GEN_AVAILABLE));//,'h'=>array(EST_PREF_DEFHRSHINT0,EST_PREF_DEFHRSHINT1)
-    /*
-    $BLKS[6]['tabl']['a'] = ' id="propHrsTable"';
-    $BLKS[6]['tabl']['h'][0]['a'] = ' id=nnnn';
-    $BLKS[6]['tabl']['h'][0]['td'][0]['a'] = ' id="nva"'; 
-    $BLKS[6]['tabl']['h'][0]['td'][0]['t'] = 'text'; 
-    $BLKS[6]['tabl']['h'][0]['td'][0]['a'] = 'id="nvb"'; 
-    $BLKS[6]['tabl']['h'][0]['td'][1]['t'] = 'input'; 
-    */
-    $BLKS[6]['tabl']['b'][0]['td'][0]['a'] = ''; 
-    $BLKS[6]['tabl']['b'][0]['td'][0]['t'] = 'text'; 
-    $BLKS[6]['tabl']['b'][0]['td'][1]['t'] = $estateCore->getCalTbl('start');
-    $BLKS[6]['tabl']['b'][0]['td'][1]['t'] .= $estateCore->getCalTbl('head');
-    $BLKS[6]['tabl']['b'][0]['td'][1]['t'] .= '<tbody>';
-    $BLKS[6]['tabl']['b'][0]['td'][1]['t'] .= $estateCore->getCalTbl('tr',$dta);
-    $BLKS[6]['tabl']['b'][0]['td'][1]['t'] .= '</tbody>';
-    $BLKS[6]['tabl']['b'][0]['td'][1]['t'] .= $estateCore->getCalTbl('end');
-    
-    }
-  else{
-    if($pv['type'] == 'idx' || $pv['type'] == 'int' ||  $pv['str'] == 'int'){
-      $FVALUE = intval($DTA['prop'][$pk]);
-      }
-    else{
-      $FVALUE = $tp->toFORM($DTA['prop'][$pk]);
-      }
-    
-    if(!$pv['type'] || $pv['type'] == 'int' || $pv['type'] == 'hidden'){
-      $HIDDEN .= '<input type="hidden" name="'.$pk.'" value="'.$FVALUE.'" />';
-      }
-    else{
+
+
+if($DTA['prop']['prop_idx']){$UpBtnTxt = EST_GEN_UPDATE;}
+else{$UpBtnTxt = EST_GEN_SAVE;}
+
+
+
+
+
+$OATXT = $postext.$pretext;
+$OATXT .= $HIDDEN;
+
+$OATXT .= '
+<form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-OAform" enctype="multipart/form-data" autocomplete="off" data-h5-instanceid="0" novalidate="novalidate">';
+
+$OATXT .= '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML(EST_GEN_LISTING).'</div></h3>
+  <div class="estOATabCont">
+    <table class="estOATable1">
+      <colgroup></colgroup>
+      <colgroup></colgroup>
+      <thead>
+      </thead>
+      <tbody>';
       
-      }
-    }
+$OATXT .= '
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <div class="buttons-bar center"><input type="submit" name="estSub1" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>';
+
+
+
+
+$OATXT .= '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML(EST_GEN_ADDRESS).'</div></h3>
+  <div class="estOATabCont">
+    <table class="estOATable1">
+      <colgroup></colgroup>
+      <colgroup></colgroup>
+      <thead>
+      </thead>
+      <tbody>';
+      
+$OATXT .= '
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <div class="buttons-bar center"><input type="submit" name="estSub2" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>';
+
+
+
+$OATXT .= '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML(EST_GEN_COMMUNITY).'</div></h3>
+  <div class="estOATabCont">
+    <table class="estOATable1">
+      <colgroup></colgroup>
+      <colgroup></colgroup>
+      <thead>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td>
+          </td>
+        </tr>';
+      
+$OATXT .= '
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <div class="buttons-bar center"><input type="submit" name="estSub3" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>';
+
+
+
+$OATXT .= '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML(EST_GEN_SPACES).'</div></h3>
+  <div class="estOATabCont">';
+
+if(count($SPACES) > 0){
+  usort($SPACES, "spgrpsort");
+  foreach($SPACES as $k=>$v){
     
-  
-  
+    $OATXT .= '
+    <div style="order:'.$v['ord'].'">
+    <h4>'.$tp->toHTML($v['n']).'</h4>';
+    foreach($v['sp'] as $sok=>$sov){
+      ksort($sov);
+      foreach($sov as $sk=>$sv){
+        //$estkeyid = $this->spacesKeyId($v,$sok,$sk);
+        //$SPACETXT = $this->spacesTxt($sv);
+        $OATXT .= '
+        <div class="estViewSpaceBtn">
+          <div class="estSpTtl">'.$tp->toHTML($sv['n']).'</div>
+          <div class="estImgSlide'.(count($sv['m']) > 0 ? ' '.$estkeyid.'img' : '').'" data-ict="'.count($sv['m']).'"></div>
+          <div class="estViewSpTxt">'.$sv['d'].'</div>
+          <div class="">';
+          foreach($sv['m'] as $mk=>$mv){
+            $OATXT .= '
+            <div>'.$mv['t'].'
+            </div>';
+            }
+          $OATXT .= '
+          </div>
+        </div>';
+        }
+      }
+    $OATXT .= '
+    </div>';
+    }
+  unset($SPACES);
   }
 
 
-$OATXT .= $HIDDEN;
+$OATXT .= '
+  </div>
+</div>';
+
+
+
+$OATXT .= '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML(EST_GEN_DETAILS).'</div></h3>
+  <div class="estOATabCont">
+    <table class="estOATable1">
+      <colgroup></colgroup>
+      <colgroup></colgroup>
+      <thead>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td>
+          </td>
+        </tr>';
+      
+$OATXT .= '
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <div class="buttons-bar center"><input type="submit" name="estSub4" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>';
+
+
+
+$OATXT .= '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML(EST_GEN_GALLERY).'</div></h3>
+  <div class="estOATabCont">';
+//$OATXT .= 
+$OATXT .= '
+    <div class="buttons-bar center"><input type="submit" name="estSub5" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
+  </div>
+</div>';
+
+
+$DTA['prop']['prop_hours'] = e107::unserialize($DTA['prop']['prop_hours']);
+
+$OATXT .= '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML(EST_GEN_SCHEDULING).'</div></h3>
+  <div class="estOATabCont">
+    <table class="estOATable1">
+      <colgroup></colgroup>
+      <colgroup></colgroup>
+      <thead>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="VAT">'.$frm->help(EST_PROP_HRSHLP).''.$tp->toHTML(EST_PROP_HRS).'</td>
+          <td>'.$estateCore->estPropHoursForm($DTA['prop']['prop_hours']).'</td>
+        </tr>
+        <tr>
+          <td>database</td>
+          <td>'.$tp->toFORM($DTA['prop']['prop_hours']).'</td>
+        </tr>
+        <tr>
+          <td>default</td>
+          <td>'.$tp->toFORM($GLOBALS['EST_PREF']['sched_pub_times']).'</td>
+        </tr>';
+      //'labl'=>EST_PROP_HRS,'hlp'=>
+$OATXT .= '
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <div class="buttons-bar center"><input type="submit" name="estSub6" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>';
+//$OATXT .= 
+
+$OATXT .= '
+  </div>
+</div>';
+
+
+
+
+$OATXT .= '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML(EST_GEN_MAP).'</div></h3>';
+$OATXT .= $tp->parseTemplate($tmpl['edit']['map'], false, $sc);
+$OATXT .= '
+</div>';
+
+      
+$OATXT .= '
+<div class="buttons-bar center"><input type="submit" name="estSubmitEnd" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
+</form>
+<div id="estJSpth" data-pth="'.EST_PATHABS.'"></div>
+<div id="estMobTst"></div>
+<div id="estMiniNav"></div>';
+
+
+/*
+
+<div class="tooltip fade left in" role="tooltip" id="tooltip351899" style="top: 149.797px; left: 277.359px; display: block;"><div class="tooltip-arrow" style="top: 50%;"></div><div class="tooltip-inner"></div></div>
+
+*/
+
+require_once(HEADERF);
+$ns->tablerender($nsHead,$OATXT,'estEditProp');
+unset($nsHead,$OATXT,$USRSEL);
+require_once(FOOTERF);
+exit;
+
+
+
+
+
+/*
+
+
+$XTRAFRMT = array(
+  'estate_properties' => array(
+    'prop_status'=>array('blk'=>0,'type'=>'select','labl'=>EST_GEN_STATUS,'hlp'=>EST_PROP_STATUSHLP),
+    'prop_name'=>array('blk'=>0,'type'=>'text','labl'=>EST_GEN_NAME,'hlp'=>EST_PROP_NAMEHLP),
+    'prop_zoning'=>array('blk'=>0,'labl'=>EST_PROP_LISTZONE,'hlp'=>EST_PROP_ZONEHLP),
+    'prop_type'=>array('blk'=>0,'labl'=>EST_PROP_TYPE,'hlp'=>EST_PROP_TYPEHLP),
+    'prop_listype'=>array('blk'=>0,'labl'=>EST_PROP_LISTYPE,'hlp'=>EST_PROP_LISTYPE),
+    'prop_mlsno'=>array('blk'=>0,'type'=>'text','labl'=>EST_PROP_MLSNO,'hlp'=>EST_PROP_MLSNOHLP),
+    'prop_parcelid'=>array('blk'=>0,'type'=>'text','labl'=>EST_PROP_PARCELID,'hlp'=>EST_PROP_PARCELIDHLP),
+    'prop_lotid'=>array('blk'=>0,'type'=>'text','labl'=>EST_PROP_LOTID,'hlp'=>EST_PROP_LOTIDHLP),
+    //'prop_agency'=>array(),
+    //'prop_leasefreq'=>array(),
+    //'prop_currency'=>array(),
+    //'prop_landfreq'=>array(),
+    //'prop_uidcreate'=>array(),
+    'prop_addr1'=>array('blk'=>1,'type'=>'text','labl'=>EST_PROP_ADDR1,'hlp'=>''),
+    'prop_addr2'=>array('blk'=>1,'type'=>'text','labl'=>EST_PROP_ADDR2,'hlp'=>''),
+    'prop_country'=>array('blk'=>1,'labl'=>EST_PROP_COUNTRY,'hlp'=>EST_PROP_COUNTRYHLP),
+    'prop_state'=>array('blk'=>1,'labl'=>EST_PROP_STATE,'hlp'=>EST_PROP_STATEHLP),
+    'prop_county'=>array('blk'=>1,'labl'=>EST_PROP_COUNTY,'hlp'=>EST_PROP_COUNTYHLP),
+    'prop_city'=>array('blk'=>1,'labl'=>EST_PROP_CITY,'hlp'=>EST_PROP_CITYHLP),
+    'prop_zip'=>array('blk'=>1,'labl'=>EST_PROP_POSTCODE,'hlp'=>EST_PROP_POSTCODEHLP),
+    
+    'prop_subdiv'=>array('blk'=>2,'labl'=>EST_GEN_SUBDIVISION,'hlp'=>EST_PROP_CITYHLP),
+    'prop_landfee'=>array('blk'=>2,'labl'=>EST_PROP_LANDLEASE,'hlp'=>EST_PROP_LANDLEASEHLP),
+    'prop_landfreq'=>array('blk'=>2,'labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
+    
+    'prop_hours'=>array('blk'=>6,'labl'=>EST_PROP_HRS,'hlp'=>EST_PROP_HRSHLP),
+    )
+  
+  );
+
+
+$TABLSTRUCT = estTablStruct();
+$FORMELES = array_merge_recursive($TABLSTRUCT,$XTRAFRMT);
+unset($XTRAFRMT,$TABLSTRUCT);
+
+
+
+$i = array();
+foreach($FORMELES['estate_properties'] as $pk=>$pv){
+  $BN = intval($pv['blk']);
+  
+  if($pk === 'prop_hours'){
+    $i[$BN]++;
+    
+    $BLKS[$BN]['tabl']['a'] = ' class="estOATable1"';
+    $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][0]['a'] = ' class="VAT"'; 
+    $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][0]['t'] = $tp->toHTML($pv['labl']); 
+    $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][1]['t'] = $estateCore->estPropHoursForm($DTA['prop'][$pk]);
+    $i[$BN]++;
+    $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][0]['a'] = ' class="VAT"'; 
+    $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][0]['t'] = 'test'; 
+    $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][1]['t'] = $tp->toFORM($DTA['prop'][$pk]);
+    unset($FORMELES['estate_properties']['prop_hours']);
+    }
+  else{
+    if($pv['type'] == 'idx' ||  $pv['str'] == 'int'){$FVALUE = intval($DTA['prop'][$pk]);}
+    else{$FVALUE = $tp->toFORM($DTA['prop'][$pk]);}
+    
+    if(!$pv['type'] || $pv['type'] == 'idx' || $pv['type'] == 'hidden'){
+      $HIDDEN .= '<input type="hidden" name="'.$pk.'" value="'.$FVALUE.'" />';
+      }
+    else{
+      $i[$BN]++;
+      $BLKS[$BN]['tabl']['a'] = ' class="estOATable1"';
+      $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][0]['a'] = ''; 
+      $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][0]['t'] = $tp->toHTML(varset($pv['labl'],$pk));
+      $BLKS[$BN]['tabl']['b'][$i[$BN]]['td'][1]['t'] = $estateCore->estPropFormEle($pk,$pv,$FVALUE,$DTA['prop'][$pk]);
+      }
+    }
+  }
+
 
 foreach($BLKS as $BI=>$BLK){
   $OATXT .= '<div class="estOABlock">';
@@ -328,74 +632,11 @@ foreach($BLKS as $BI=>$BLK){
     $OATXT .= '</table>';
     }
   else{
-    //$OATXT .= $tbls[$BI];
+    $OATXT .= 'Other:'.$BLK['oth'];
     }
   $OATXT .= '</div></div>';
   }
+*/
 
-
-
-//$OATXT .= $tp->parseTemplate($tmpl['view']['sum'], false, $sc);
-
-
-      
-$OATXT .= '
-<div id="estJSpth" data-pth="'.EST_PATHABS.'"></div>
-<div id="estMobTst"></div>
-<div id="estMiniNav"></div>';
-
-
-
-$ns->tablerender($nsHead,$OATXT,'estEditProp');
-unset($nsHead,$OATXT);
-
-
-
-
-
-if(count($SPACES) > 0){
-  usort($SPACES, "spgrpsort");
-  $text .= '
-  <div class="estOAEditBlock">';
-  foreach($SPACES as $k=>$v){
-    $text .= '
-    <div style="order:'.$v['ord'].'">
-    <h4>'.$tp->toHTML($v['n']).'</h4>';
-    foreach($v['sp'] as $sok=>$sov){
-      ksort($sov);
-      foreach($sov as $sk=>$sv){
-        //$estkeyid = $this->spacesKeyId($v,$sok,$sk);
-        //$SPACETXT = $this->spacesTxt($sv);
-        $text .= '
-        <div class="estViewSpaceBtn">
-          <div class="estSpTtl">'.$tp->toHTML($sv['n']).'</div>
-          <div class="estImgSlide'.(count($sv['m']) > 0 ? ' '.$estkeyid.'img' : '').'" data-ict="'.count($sv['m']).'"></div>
-          <div class="estViewSpTxt">'.$sv['d'].'</div>
-          <div class="">';
-          foreach($sv['m'] as $mk=>$mv){
-            $text .= '
-            <div>'.$mv['t'].'
-            </div>';
-            }
-          $text .= '
-          </div>
-        </div>';
-        }
-      }
-    $text .= '
-    </div>';
-    }
-  $text .= '
-  </div>';
-  $ns->tablerender(EST_GEN_SPACES,$text,'estEditSpaces');
-  unset($text,$SPACES);
-  }
-
-
-
-
-unset($USRSEL);
-require_once(FOOTERF);
-exit;
 
 ?>

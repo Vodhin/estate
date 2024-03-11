@@ -1876,15 +1876,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
     switch($mode){
 			case 'write' :
         $estateCore = new estateCore;
-        if(!$curVal || count($curVal) == 0){$curVal = $GLOBALS['EST_PREF']['sched_pub_times'];}
-        $dta = array('deftime'=>array('n'=>'prop_hours','v'=>$curVal,'l'=>EST_GEN_AVAILABLE));//,'h'=>array(EST_PREF_DEFHRSHINT0,EST_PREF_DEFHRSHINT1)
-        $text = $estateCore->getCalTbl('start');
-        $text .= $estateCore->getCalTbl('head');
-        $text .= '<tbody>';
-        $text .= $estateCore->getCalTbl('tr',$dta);
-        $text .= '</tbody>';
-        $text .= $estateCore->getCalTbl('end');
-        return $text;
+        return $estateCore->estPropHoursForm($curVal);
         break;
 			case 'read': 
 			case 'filter':
