@@ -1818,7 +1818,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
     $pref = e107::pref();
     switch($mode){
       case 'write':
-        return e107::getForm(false, true)->select('prop_timezone', $timeZones, vartrue($pref['timezone'], 'UTC'),'size=xlarge');
+        return e107::getForm(false, true)->select('prop_timezone', $timeZones, vartrue($curVal, $pref['timezone']),'size=xlarge');
         break;
 			case 'read': 
 			case 'filter':

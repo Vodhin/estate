@@ -2212,7 +2212,62 @@ class estateCore{
     }
   
   
+  
+  
+  
+  public function estOAFormTR($TYPE,$FLD,$DTA,$LABEL,$HLP=null,$ATTR=null,$SRC=null){
+    $pref = e107::pref();//'estate'
+    $tp = e107::getParser();
+    $frm = e107::getForm(false, true);
+    //$sql = e107::getDB();
     
+    //`prop_landfee` decimal(10,2) unsigned NOT NULL,
+    
+    $SERL = array('prop_hours');
+    $INTS = array('prop_listype','prop_country','prop_state','prop_county','prop_city','prop_subdiv','prop_status','prop_zoom','prop_yearbuilt','prop_dimu1','prop_intsize','prop_roofsize','prop_dimu2','prop_zoning','prop_type','prop_listprice','prop_origprice','prop_leasefreq','prop_leasedur','prop_currency','prop_hoafee','prop_hoaland','prop_hoaappr','prop_hoareq','prop_hoafrq','prop_bathtot','prop_bathmain','prop_bathhalf','prop_bathfull','prop_bedtot','prop_bedmain','prop_floorct','prop_floorno','prop_bldguc','prop_complxuc');
+    
+    if($HLP !== null){
+      $INFICO = $frm->help($HLP);
+      }
+    
+    $text = '<tr><td>'.$INFICO.$tp->toHTML($LABEL).'</td><td>';
+    
+    if(in_array($FLD,$SERL)){$FVALUE = e107::unserialize($DTA[$FLD]);}
+    elseif(in_array($FLD,$INTS)){$FVALUE = intval($DTA[$FLD]);}
+    else{$FVALUE = $tp->toFORM($DTA[$FLD]);}
+    
+    switch($TYPE){
+      
+      case 'prop_timezone' :
+        $timeZones = systemTimeZones();
+        $text .= $frm->select('prop_timezone', $timeZones, vartrue($FVALUE, $pref['timezone']),'size=xlarge');
+        break;
+      
+      case 'prop_hours' :
+        $text .= $this->estPropHoursForm($FVALUE);
+        break;
+      
+      case 'select' :
+        $text .= '<select name="'.$FLD.'" class="form-control input-'.varset($ATTR['f']['cls'],'xlarge').'" value="'.$FVALUE.'"></select>';
+        
+        $text .= '</select>';
+        break;
+        
+      case 'number' :
+        $options = array('size'=>'small');
+        $maxlength = 200;
+        $text .= $frm->number($FLD, $FVALUE, $maxlength, $options);
+        break;
+        
+      default :
+        $text .= $frm->text($FLD,$FVALUE, varset($ATTR['f']['max'],255), array('size'=>varset($ATTR['f']['cls'],'xlarge'),'required'=>varset($ATTR['f']['req'],0)));
+        break;
+      }
+    
+    return $text.'</td></tr>';
+    }
+  
+  
   public function estPropHoursForm($DTA){
     if(!$DTA || count($DTA) == 0){$DTA = $GLOBALS['EST_PREF']['sched_pub_times'];}
     $text = $this->getCalTbl('start');

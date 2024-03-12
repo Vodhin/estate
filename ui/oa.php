@@ -45,13 +45,6 @@ else{
 
 
 
-if($_POST){
-  $_POST['prop_hours'] = e107::serialize($_POST['prop_hours']);
-  foreach($_POST as $k=>$v){
-    $postext .= '<div>['.$k.'] '.$v.'</div>';
-    }
-  }
-
 
 
 $DTA = array();
@@ -59,8 +52,6 @@ $DTA = array();
 if(!$err && intval($qs[1]) > 0){
   if($prop = $sql->retrieve("estate_properties","*","prop_idx='".intval($qs[1])."' LIMIT 1",true)){
     $DTA['prop'] = $prop[0];
-    //extract($prop[0]);
-    
     if(intval($DTA['prop']['prop_agent']) > 0){
       if($agt = $sql->retrieve("estate_agents","*","agent_idx='".intval($DTA['prop']['prop_agent'])."' LIMIT 1",true)){
         $DTA['agent'] = $agt[0];
@@ -131,10 +122,14 @@ if(intval($DTA['prop']['prop_idx']) > 0){
   }
 else{
   if($qs[0] !== 'new'){e107::redirect(e_SELF."?new.0.0");}
+  $DTA['prop']['prop_idx'] = intval(0);
   $DTA['prop']['prop_agency'] = intval(EST_AGENCYID);
   $DTA['prop']['prop_agent'] = intval(EST_AGENTID);
   $DTA['prop']['prop_uidcreate'] = USERID;
   $DTA['prop']['prop_uidupdate'] = USERID;
+  $DTA['prop']['prop_datecreated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+  $DTA['prop']['prop_dateupdated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+  
   if($DTA['prop']['prop_agent'] > 0){
     if($agt = $sql->retrieve("estate_agents","*","agent_idx='".intval($DTA['prop']['prop_agent'])."' LIMIT 1",true)){
       $DTA['agent'] = $agt[0];
@@ -150,6 +145,11 @@ else{
       }
     }
   }
+
+
+
+
+
 
 
 $pretext = '
@@ -173,20 +173,74 @@ if($err){
 
 
 
+if($_POST){
+  $PROP_FLDS = $sql->db_FieldList('estate_properties');
+  $PROP_FIXD = array('prop_idx','prop_agency','prop_agent','prop_uidcreate','prop_datecreated','prop_views');
+  
+  $_POST['prop_idx'] = intval($DTA['prop']['prop_idx']);
+  $_POST['prop_agency'] = intval($DTA['prop']['prop_agency']);
+  $_POST['prop_agent'] = intval($DTA['prop']['prop_agent']);
+  
+  $_POST['prop_datecreated'] = $DTA['prop']['prop_datecreated'];
+  $_POST['prop_uidcreate'] = intval($DTA['prop']['prop_uidcreate']);
+  
+  $_POST['prop_uidupdate'] = intval(USERID);
+  $_POST['prop_dateupdated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));;
+  
+  $_POST['prop_hours'] = e107::serialize($_POST['prop_hours']);
+  $_POST['prop_views'] = intval($DTA['prop']['prop_views']);
+  
+  
+  
+  
+  if(intval($DTA['prop']['prop_idx']) > 0){
+    $PROPIDX = intval($DTA['prop']['prop_idx']);
+    foreach($PROP_FLDS as $fld){
+      if(!in_array($fld,$PROP_FIXD)){
+        $QRY .= ($QRY ? ", " : "").$fld."='".$tp->toDB($_POST[$fld] ? $_POST[$fld] : $DTA['prop'][$fld])."'";
+        $postext .= '<div>['.$fld.'] '.$_POST[$fld].'</div>';
+        }
+      }
+    $QRY .= "WHERE prop_idx='".$PROPIDX."' LIMIT 1";
+    
+    $postext = '<h2>DB Update: #'.$PROPIDX.'</h2><div>'.$QRY.'</div><p>'.$postext.'</p>';
+    }
+  else{
+    foreach($PROP_FLDS as $fld){
+      $QRY .= ($QRY ? ", " : "").$fld."='".$tp->toDB($_POST[$fld])."'";
+      $postext .= '<div>['.$fld.'] '.$_POST[$fld].'</div>';
+      }
+    
+    $postext = '<h2>DB INSERT</h2><div>'.$QRY.'</div><p>'.$postext.'</p>';
+    
+    $PROPIDX = 0; //insert new record
+    }
+  
+  
+  $dberr = $sql->getLastErrorText();
+  
+  if(intval($PROPIDX) > 0){
+    if($qs[0] == 'new' && intval($DTA['prop']['prop_idx']) == 0){
+      //e107::redirect(e_SELF."?edit.".intval($PROPIDX).".0");
+      }
+    
+    }
+  else{
+    
+    }
+  }
+
+
 e107::css('url',e_PLUGIN.'estate/css/oa.css');
 e107::js('estate','js/oa.js', 'jquery');
 
 require_once(e_HANDLER."form_handler.php");
 require_once(e_PLUGIN.'estate/ui/tabstruct.php');
 require_once(e_PLUGIN.'estate/ui/core.php');
-  
-
-
-
-
-
 
 include_once('qry.php');
+
+
 
 
 if(intval($DTA['prop']['prop_idx']) > 0){
@@ -257,7 +311,53 @@ else{$UpBtnTxt = EST_GEN_SAVE;}
 
 
 $OATXT = $postext.$pretext;
-$OATXT .= $HIDDEN;
+
+
+
+
+/*
+  e_TOKEN
+  <input type="hidden" name="" value="'.$tp->toForm($DTA['prop']['']).'" />
+
+*/
+
+
+$XTRAFRMT = array(
+  'estate_properties' => array(
+    'prop_status'=>array('type'=>'select','labl'=>EST_GEN_STATUS,'hlp'=>EST_PROP_STATUSHLP),
+    'prop_name'=>array('type'=>'text','labl'=>EST_GEN_NAME,'hlp'=>EST_PROP_NAMEHLP),
+    'prop_zoning'=>array('labl'=>EST_PROP_LISTZONE,'hlp'=>EST_PROP_ZONEHLP),
+    'prop_type'=>array('labl'=>EST_PROP_TYPE,'hlp'=>EST_PROP_TYPEHLP),
+    'prop_listype'=>array('labl'=>EST_PROP_LISTYPE,'hlp'=>EST_PROP_LISTYPE),
+    'prop_mlsno'=>array('type'=>'text','labl'=>EST_PROP_MLSNO,'hlp'=>EST_PROP_MLSNOHLP),
+    'prop_parcelid'=>array('type'=>'text','labl'=>EST_PROP_PARCELID,'hlp'=>EST_PROP_PARCELIDHLP),
+    'prop_lotid'=>array('type'=>'text','labl'=>EST_PROP_LOTID,'hlp'=>EST_PROP_LOTIDHLP),
+    //'prop_leasefreq'=>array(),
+    //'prop_currency'=>array(),
+    'prop_addr1'=>array('type'=>'text','labl'=>EST_PROP_ADDR1,'hlp'=>''),
+    'prop_addr2'=>array('type'=>'text','labl'=>EST_PROP_ADDR2,'hlp'=>''),
+    'prop_country'=>array('labl'=>EST_PROP_COUNTRY,'hlp'=>EST_PROP_COUNTRYHLP),
+    'prop_state'=>array('labl'=>EST_PROP_STATE,'hlp'=>EST_PROP_STATEHLP),
+    'prop_county'=>array('labl'=>EST_PROP_COUNTY,'hlp'=>EST_PROP_COUNTYHLP),
+    'prop_city'=>array('labl'=>EST_PROP_CITY,'hlp'=>EST_PROP_CITYHLP),
+    'prop_zip'=>array('labl'=>EST_PROP_POSTCODE,'hlp'=>EST_PROP_POSTCODEHLP),
+    
+    'prop_subdiv'=>array('labl'=>EST_GEN_SUBDIVISION,'hlp'=>EST_PROP_CITYHLP),
+    'prop_landfee'=>array('labl'=>EST_PROP_LANDLEASE,'hlp'=>EST_PROP_LANDLEASEHLP),
+    'prop_landfreq'=>array('labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
+    
+    'prop_hours'=>array('labl'=>EST_PROP_HRS,'hlp'=>EST_PROP_HRSHLP),
+    )
+  
+  );
+
+
+$TABLSTRUCT = estTablStruct();
+$FORMELES = array_merge_recursive($TABLSTRUCT,$XTRAFRMT);
+unset($XTRAFRMT,$TABLSTRUCT);
+
+
+
 
 $OATXT .= '
 <form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-OAform" enctype="multipart/form-data" autocomplete="off" data-h5-instanceid="0" novalidate="novalidate">';
@@ -272,7 +372,7 @@ $OATXT .= '
       <thead>
       </thead>
       <tbody>';
-      
+      $OATXT .= $estateCore->estOAFormTR('text','prop_name',$DTA['prop'],EST_GEN_NAME,EST_PROP_NAMEHLP);//$ATTR,$SRC);
 $OATXT .= '
       </tbody>
       <tfoot>
@@ -299,6 +399,8 @@ $OATXT .= '
       <thead>
       </thead>
       <tbody>';
+      $OATXT .= $estateCore->estOAFormTR('text','prop_addr1',$DTA['prop'],EST_PROP_ADDR1);//,$INF,$ATTR,$SRC);
+      $OATXT .= $estateCore->estOAFormTR('text','prop_addr2',$DTA['prop'],EST_PROP_ADDR2);//,$INF,$ATTR,$SRC);
       
 $OATXT .= '
       </tbody>
@@ -434,8 +536,6 @@ $OATXT .= '
 </div>';
 
 
-$DTA['prop']['prop_hours'] = e107::unserialize($DTA['prop']['prop_hours']);
-
 $OATXT .= '
 <div class="estOABlock">
   <h3><div>'.$tp->toHTML(EST_GEN_SCHEDULING).'</div></h3>
@@ -445,20 +545,10 @@ $OATXT .= '
       <colgroup></colgroup>
       <thead>
       </thead>
-      <tbody>
-        <tr>
-          <td class="VAT">'.$frm->help(EST_PROP_HRSHLP).''.$tp->toHTML(EST_PROP_HRS).'</td>
-          <td>'.$estateCore->estPropHoursForm($DTA['prop']['prop_hours']).'</td>
-        </tr>
-        <tr>
-          <td>database</td>
-          <td>'.$tp->toFORM($DTA['prop']['prop_hours']).'</td>
-        </tr>
-        <tr>
-          <td>default</td>
-          <td>'.$tp->toFORM($GLOBALS['EST_PREF']['sched_pub_times']).'</td>
-        </tr>';
-      //'labl'=>EST_PROP_HRS,'hlp'=>
+      <tbody>';
+      $OATXT .= $estateCore->estOAFormTR('prop_timezone','prop_timezone',$DTA['prop'],EST_GEN_TIMEZONE,EST_PROP_TIMEZONEHLP);
+      
+      $OATXT .= $estateCore->estOAFormTR('prop_hours','prop_hours',$DTA['prop'],EST_PROP_HRS);//,$INF,$ATTR,$SRC);
 $OATXT .= '
       </tbody>
       <tfoot>
@@ -513,42 +603,6 @@ exit;
 /*
 
 
-$XTRAFRMT = array(
-  'estate_properties' => array(
-    'prop_status'=>array('blk'=>0,'type'=>'select','labl'=>EST_GEN_STATUS,'hlp'=>EST_PROP_STATUSHLP),
-    'prop_name'=>array('blk'=>0,'type'=>'text','labl'=>EST_GEN_NAME,'hlp'=>EST_PROP_NAMEHLP),
-    'prop_zoning'=>array('blk'=>0,'labl'=>EST_PROP_LISTZONE,'hlp'=>EST_PROP_ZONEHLP),
-    'prop_type'=>array('blk'=>0,'labl'=>EST_PROP_TYPE,'hlp'=>EST_PROP_TYPEHLP),
-    'prop_listype'=>array('blk'=>0,'labl'=>EST_PROP_LISTYPE,'hlp'=>EST_PROP_LISTYPE),
-    'prop_mlsno'=>array('blk'=>0,'type'=>'text','labl'=>EST_PROP_MLSNO,'hlp'=>EST_PROP_MLSNOHLP),
-    'prop_parcelid'=>array('blk'=>0,'type'=>'text','labl'=>EST_PROP_PARCELID,'hlp'=>EST_PROP_PARCELIDHLP),
-    'prop_lotid'=>array('blk'=>0,'type'=>'text','labl'=>EST_PROP_LOTID,'hlp'=>EST_PROP_LOTIDHLP),
-    //'prop_agency'=>array(),
-    //'prop_leasefreq'=>array(),
-    //'prop_currency'=>array(),
-    //'prop_landfreq'=>array(),
-    //'prop_uidcreate'=>array(),
-    'prop_addr1'=>array('blk'=>1,'type'=>'text','labl'=>EST_PROP_ADDR1,'hlp'=>''),
-    'prop_addr2'=>array('blk'=>1,'type'=>'text','labl'=>EST_PROP_ADDR2,'hlp'=>''),
-    'prop_country'=>array('blk'=>1,'labl'=>EST_PROP_COUNTRY,'hlp'=>EST_PROP_COUNTRYHLP),
-    'prop_state'=>array('blk'=>1,'labl'=>EST_PROP_STATE,'hlp'=>EST_PROP_STATEHLP),
-    'prop_county'=>array('blk'=>1,'labl'=>EST_PROP_COUNTY,'hlp'=>EST_PROP_COUNTYHLP),
-    'prop_city'=>array('blk'=>1,'labl'=>EST_PROP_CITY,'hlp'=>EST_PROP_CITYHLP),
-    'prop_zip'=>array('blk'=>1,'labl'=>EST_PROP_POSTCODE,'hlp'=>EST_PROP_POSTCODEHLP),
-    
-    'prop_subdiv'=>array('blk'=>2,'labl'=>EST_GEN_SUBDIVISION,'hlp'=>EST_PROP_CITYHLP),
-    'prop_landfee'=>array('blk'=>2,'labl'=>EST_PROP_LANDLEASE,'hlp'=>EST_PROP_LANDLEASEHLP),
-    'prop_landfreq'=>array('blk'=>2,'labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
-    
-    'prop_hours'=>array('blk'=>6,'labl'=>EST_PROP_HRS,'hlp'=>EST_PROP_HRSHLP),
-    )
-  
-  );
-
-
-$TABLSTRUCT = estTablStruct();
-$FORMELES = array_merge_recursive($TABLSTRUCT,$XTRAFRMT);
-unset($XTRAFRMT,$TABLSTRUCT);
 
 
 
