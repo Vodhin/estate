@@ -388,26 +388,34 @@ $OATXT .= '
 
 
 
-
+//
 $OATXT .= '
-<div class="estOABlock">
+<div class="estOABlock expand">
   <h3><div>'.$tp->toHTML(EST_GEN_ADDRESS).'</div></h3>
   <div class="estOATabCont">
-    <table class="estOATable1">
+    <table class="estOAMap">
       <colgroup></colgroup>
       <colgroup></colgroup>
-      <thead>
-      </thead>
+      <colgroup></colgroup>
       <tbody>';
-      $OATXT .= $estateCore->estOAFormTR('text','prop_addr1',$DTA['prop'],EST_PROP_ADDR1);//,$INF,$ATTR,$SRC);
-      $OATXT .= $estateCore->estOAFormTR('text','prop_addr2',$DTA['prop'],EST_PROP_ADDR2);//,$INF,$ATTR,$SRC);
+      $OATXT .= $estateCore->estOAFormTR('text','prop_addr1',$DTA['prop'],EST_PROP_ADDR1,null,array('cs'=>2,'class'=>'estPropAddr','placeholder'=>EST_PLCH96));
+      $OATXT .= $estateCore->estOAFormTR('text','prop_addr2',$DTA['prop'],EST_PROP_ADDR2,null,array('cs'=>2,'class'=>'estPropAddr','placeholder'=>EST_PLCH96A));
+      $OATXT .= $estateCore->estOAFormTR('select','prop_country',$DTA['prop'],EST_PROP_COUNTRY,EST_PROP_COUNTRYHLP,array('cs'=>2,'class'=>'estPropAddr'));
+      $OATXT .= $estateCore->estOAFormTR('eselect','prop_state',$DTA['prop'],EST_PROP_STATE,EST_PROP_STATEHLP,array('cs'=>2,'class'=>'estPropAddr'));
+      $OATXT .= $estateCore->estOAFormTR('eselect','prop_county',$DTA['prop'],EST_PROP_COUNTY,EST_PROP_COUNTYHLP,array('cs'=>2,'class'=>'estPropAddr'));
+      $OATXT .= $estateCore->estOAFormTR('eselect','prop_city',$DTA['prop'],EST_PROP_CITY,EST_PROP_CITYHLP,array('cs'=>2,'class'=>'estPropAddr'));
       
-$OATXT .= '
+      $OATXT .= $estateCore->estOAFormTR('select','prop_zip',$DTA['prop'],EST_PROP_POSTCODE,EST_PROP_POSTCODEHLP,array('cs'=>2,'class'=>'estPropAddr'));
+      
+      
+      $OATXT .= $estateCore->estMap('prop',$DTA['prop']['prop_addr_lookup'],$DTA['prop']['prop_lat'],$DTA['prop']['prop_lon'],$DTA['prop']['prop_geoarea'],$DTA['prop']['prop_zoom']);
+      
+      $OATXT .='
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="2">
-            <div class="buttons-bar center"><input type="submit" name="estSub2" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
+          <td colspan="3">
+            <div class="buttons-bar center"><input type="submit" name="estSub7" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
           </td>
         </tr>
       </tfoot>
@@ -570,14 +578,11 @@ $OATXT .= '
 
 $OATXT .= '
 <div class="estOABlock">
-  <h3><div>'.$tp->toHTML(EST_GEN_MAP).'</div></h3>';
-$OATXT .= $tp->parseTemplate($tmpl['edit']['map'], false, $sc);
-$OATXT .= '
+  <h3><div>'.$tp->toHTML(EST_GEN_MAP).'</div></h3>
 </div>';
 
       
 $OATXT .= '
-<div class="buttons-bar center"><input type="submit" name="estSubmitEnd" class="btn btn-primary" value="'.$UpBtnTxt.'" /></div>
 </form>
 <div id="estJSpth" data-pth="'.EST_PATHABS.'"></div>
 <div id="estMobTst"></div>

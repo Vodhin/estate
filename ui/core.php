@@ -1448,10 +1448,10 @@ class estateCore{
     
     return '
           <tr>
-            <td>
+            <td class="VAT">
               <div id="est_'.$section.'_SrchRes" class="estMapBtnCont"></div>
             </td>
-            <td>
+            <td class="VAT">
               <div class="estInptCont form-group has-feedback-left estMapSearchCont">
                 <input type="text" id="'.$section.'_addr_lookup" name="'.$section.'_addr_lookup" class="tbox form-control input-xxlarge estMapLookupAddr" value="'.$tp->toFORM($addr).'" placeholder="'.EST_PLCH15.'"/>
                 <button id="est_'.$section.'_SrchBtn" class="btn btn-default estMapSearchBtn">'.LAN_SEARCH.'</button>
@@ -1462,7 +1462,7 @@ class estateCore{
               '.$frm->hidden($section.'_geoarea',$tp->toFORM($geoarea)).'
               '.$frm->hidden($section.'_zoom',intval($zoom)).'
             </td>
-            <td>
+            <td class="VAT">
               <p>'.EST_GEN_MAPHLP1.'</p>
               <p>'.EST_GEN_MAPHLP2.'</p>
               <p>'.EST_GEN_MAPHLP3.'</p>
@@ -2215,26 +2215,41 @@ class estateCore{
   
   
   
-  public function estOAFormTR($TYPE,$FLD,$DTA,$LABEL,$HLP=null,$ATTR=null,$SRC=null){
+  public function estOAFormTR($TYPE,$FLD,$DTA,$LABEL,$HLP=null,$options=null,$OPTARR=array()){
     $pref = e107::pref();//'estate'
     $tp = e107::getParser();
     $frm = e107::getForm(false, true);
-    //$sql = e107::getDB();
+    $sql = e107::getDB();
     
     //`prop_landfee` decimal(10,2) unsigned NOT NULL,
-    
     $SERL = array('prop_hours');
-    $INTS = array('prop_listype','prop_country','prop_state','prop_county','prop_city','prop_subdiv','prop_status','prop_zoom','prop_yearbuilt','prop_dimu1','prop_intsize','prop_roofsize','prop_dimu2','prop_zoning','prop_type','prop_listprice','prop_origprice','prop_leasefreq','prop_leasedur','prop_currency','prop_hoafee','prop_hoaland','prop_hoaappr','prop_hoareq','prop_hoafrq','prop_bathtot','prop_bathmain','prop_bathhalf','prop_bathfull','prop_bedtot','prop_bedmain','prop_floorct','prop_floorno','prop_bldguc','prop_complxuc');
+    $INTS = array('prop_listype','prop_state','prop_county','prop_city','prop_subdiv','prop_status','prop_zoom','prop_yearbuilt','prop_dimu1','prop_intsize','prop_roofsize','prop_dimu2','prop_zoning','prop_type','prop_listprice','prop_origprice','prop_leasefreq','prop_leasedur','prop_currency','prop_hoafee','prop_hoaland','prop_hoaappr','prop_hoareq','prop_hoafrq','prop_bathtot','prop_bathmain','prop_bathhalf','prop_bathfull','prop_bedtot','prop_bedmain','prop_floorct','prop_floorno','prop_bldguc','prop_complxuc');
     
     if($HLP !== null){
       $INFICO = $frm->help($HLP);
       }
     
-    $text = '<tr><td>'.$INFICO.$tp->toHTML($LABEL).'</td><td>';
+    $text = '<tr><td>'.$INFICO.$tp->toHTML($LABEL).'</td><td'.($options['cs'] ? ' colspan="'.$options['cs'].'"': '').'>';
     
     if(in_array($FLD,$SERL)){$FVALUE = e107::unserialize($DTA[$FLD]);}
     elseif(in_array($FLD,$INTS)){$FVALUE = intval($DTA[$FLD]);}
     else{$FVALUE = $tp->toFORM($DTA[$FLD]);}
+    
+    
+    switch($FLD){
+      case 'prop_country' :
+        $OPTARR = e_form::getCountry();
+        break;
+      
+      case 'prop_zip' :
+        if(intval($DTA[$FLD]) !== 0){
+          if($sql->gen('SELECT city_zip FROM #estate_city WHERE FIND_IN_SET('.intval($DTA[$FLD]).',city_zip) > 0 LIMIT 1')){
+            $OPTARR = explode(',',$sql->fetch()['city_zip']);
+            }
+          }
+        break;
+      }
+    
     
     switch($TYPE){
       
@@ -2247,9 +2262,15 @@ class estateCore{
         $text .= $this->estPropHoursForm($FVALUE);
         break;
       
+      case 'eselect' :
+        $text .= '<div class="estInptCont estNoData"><select name="'.$FLD.'" class="form-control input-xlarge oneBtn ILBLK" value="'.$FVALUE.'"></select>';
+        foreach($OPTARR as $ok=>$ov){$text .= '<option value="'.$ok.'"'.($ok == $FVALUE ? ' selected="selected"' : '').'>'.$tp->toHTML($ov).'</option>';}
+        $text .= '</select><div class="estSonar"><div class="estSonarBlip"></div><button type="button" class="btn btn-default selEditBtn1" title="Add"><i class="fa fa-plus"></i></button></div></div>';
+        break;
+      
       case 'select' :
-        $text .= '<select name="'.$FLD.'" class="form-control input-'.varset($ATTR['f']['cls'],'xlarge').'" value="'.$FVALUE.'"></select>';
-        
+        $text .= '<select name="'.$FLD.'" class="form-control input-xlarge" value="'.$FVALUE.'">';
+        foreach($OPTARR as $ok=>$ov){$text .= '<option value="'.$ok.'"'.($ok == $FVALUE ? ' selected="selected"' : '').'>'.$tp->toHTML($ov).'</option>';}
         $text .= '</select>';
         break;
         
@@ -2259,8 +2280,14 @@ class estateCore{
         $text .= $frm->number($FLD, $FVALUE, $maxlength, $options);
         break;
         
+      case 'textarea' :
+        $options['class'] = $FATTR['cls'];
+        $text .= $frm->textarea($FLD,$FVALUE,4,80,$options); //,$counter = true: add character counter
+        break;
+        
       default :
-        $text .= $frm->text($FLD,$FVALUE, varset($ATTR['f']['max'],255), array('size'=>varset($ATTR['f']['cls'],'xlarge'),'required'=>varset($ATTR['f']['req'],0)));
+        $text .= $frm->text($FLD,$FVALUE, varset($ATTR['f']['max'],255),$options);
+        //'required'=>varset($ATTR['f']['req'],0)
         break;
       }
     
