@@ -1,5 +1,9 @@
 /* CSS Document */
 
+td{
+  position: relative;
+  }
+
 .admin-ui-help-tip{
   padding-top: 2px;
   font-size: 18px;
@@ -8,6 +12,10 @@
   float: right !important;
   margin-left: 5px;
   }
+
+.has-feedback-left input {
+    padding-left: 30px;
+}
 
 
 .estOABlock{
@@ -59,6 +67,9 @@
   height:unset;
   }
 
+
+
+
 table.estOATable1{
   width: 100%;
   }
@@ -83,6 +94,13 @@ table.estOATable1 colgroup:last-child{
   }
 
 
+
+
+
+@keyframes sonarBlip {
+  from {opacity: 0.5;}
+  to {transform: scale(3);opacity: 0;}
+  }
 
 .estInptCont, .estBtnCont{
   display:inline-block;
@@ -132,19 +150,18 @@ table.estOATable1 colgroup:last-child{
 .estInptCont.light.estNoData div.estSonarBlip, 
 .estBtnCont.light.estNoData div.estSonarBlip{background-color: #615E62;}
 
+.estInptCont button,
 .estInptCont div button{
+  position: relative;
   border-left:none;
   border-top-left-radius:0px;
   border-bottom-left-radius:0px;
-  }
-.estInptCont button{
-  border-left:none !important;
-  border-top-left-radius:0px !important;
-  border-bottom-left-radius:0px !important;
+  z-index: 100;
   }
 
+
 .estInptCont select.oneBtn{
-  width:calc(100% - 40px)  !important;
+  width:calc(100% - 44px)  !important;
   border-right:none;
   border-top-right-radius:0px;
   border-bottom-right-radius:0px;
@@ -167,21 +184,142 @@ table.estOATable1 colgroup:last-child{
   }
 
 
-#estMapCont,
-#est_prop_MapCont{}
-#estMap,
-#est_prop_Map{}
 
-.estMapSearchCont{}
+div.field-help{
+  position:absolute;
+  top:-10px;
+  left:unset;
+  right:28px;
+  font-size:9pt;
+  line-height:1.15em;
+  color:#FFFFFF;
+  background-color:rgba(64,64,64,0.85);
+  padding: 6px;
+  border-radius: 3px 3px 3px 3px;
+  z-index:1500;
+  box-shadow: 1px 1px 2px #0000009C;
+  -webkit-box-shadow: 1px 1px 2px #0000009C;
+  -moz-box-shadow: 1px 1px 2px #0000009C;
+  }
+
+
+
+
+
+table.estOAMap{
+  width: 100%;
+  }
+table.estOAMap th,
+table.estOAMap td{
+  padding: 6px;
+  }
+
+table.estOAMap colgroup:first-child{
+  width:15%;
+  }
+table.estOAMap colgroup:nth-child(2){
+  width:60%;
+  }
+
+table.estOAMap colgroup:last-child{
+  width:25%;
+  }
+
+table.estOAMap tr{
+  border-bottom:1px solid rgba(128,128,128,0.5);
+  }
+table.estOAMap tr:first-child{
+  border-top:1px solid rgba(128,128,128,0.5);
+  }
+
+.estMapCont{
+  display: inline-block;
+  width: 640px;
+  height: 321px;
+  margin: 8px auto 0px auto;
+  }
+
+.estMap{
+  display: block;
+  width: 640px;
+  height: 321px;
+  }
+
+
+.estMapSearchCont{
+  display: block;
+  position:relative;
+  width:100%;
+  margin:0px 0px 4px 0px !important;
+  }
+
+.estMapSearchCont:before {
+  content: "\f002";
+  position: absolute;
+  margin-left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  z-index: 5;
+  }
+
 .estMapLookupAddr{
   display: inline-block !important;
   position: relative;
-  width: calc(100% - 96px);
   border-right: none !important;
   border-top-right-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
   vertical-align: top !important;
   }
-.estMapSearchBtn{}
+
+.estMapSearchBtn{
+  display: inline-block !important;
+  position: relative;
+  left: -4px;
+  border-left: none !important;
+  margin-left:0px !important;
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  vertical-align:top !important;
+  }
+
+.estMapBtnCont{
+  display:block;
+  width:100%;
+  height: 368px;
+  vertical-align:top;
+  }
+.estMapBtnCont button{
+  width:100%;
+  }
+
+.estFoundMapCoordRes{
+  overflow-x: hidden;
+  overflow-y: auto;
+  }
+
+.estMapBtnCont button.estMapLUBtn{
+  white-space: normal !important;
+  text-align: left !important;
+  line-height: 1.25em !important;
+  }
 
 
+#MapSearchLoading{
+  display: block;
+  position: relative;
+  width: 99%;
+  height: 98%;
+  margin: 2px auto;
+  border-radius: 3px;
+  background-color: rgba(205,205,205,0.70);
+  background-image: url('../images/loading.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  }
+
+
+.ILBLK{
+  display:inline-block !important;
+  }
