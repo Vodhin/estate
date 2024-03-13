@@ -185,7 +185,6 @@ define("EST_GEN_FIRST","First");
 define("EST_GEN_FIRSTTIME","First Time");
 define("EST_GEN_FRONTENDACCESS","Front End Access");
 define("EST_GEN_FORM","Form");
-define("EST_GEN_FULLADDR", "Full Address");
 define("EST_GEN_GROUP", "Group");
 define("EST_GEN_GROUPS", "Groups");
 define("EST_GEN_HELP01", "Help");
@@ -196,15 +195,6 @@ define("EST_GEN_LAYOUT_VIEW", "View Page");
 define("EST_GEN_LISTYPES", "Listing Types");
 define("EST_GEN_LOGO", "Logo");
 define("EST_GEN_MAINADMIN", "Main Admin");
-define("EST_GEN_MAPADDRLOOKUP", "Address to look up");
-define("EST_GEN_MAPHLP1","Use the search button to find the coordinates of the address in the lookup field.");
-define("EST_GEN_MAPHLP2","The address in the Lookup field is automatically updated by changing the Address above.");
-define("EST_GEN_MAPHLP3","You might have to edit the address in the lookup field if it is not found.");
-define("EST_GEN_MAPHLP4","You can also drag the pointer to the exact location desired.");
-define("EST_GEN_MAPHLP5","NOTE: The Zoom level for any map is saved for each individual map as displayed.");
-define("EST_GEN_MAPHLP6","Set the default Map Coordinates used when you create a New Agency.");
-define("EST_GEN_MAPHLP7","New Properties will default to the Agency Location's Map Coordinates or to these coordinates if no Agency Location is assigned.");
-
 define("EST_GEN_MISSING","Missing");
 define("EST_GEN_NAMEADDRESS","Name & Address");
 define("EST_GEN_NEWAGENT", "New Agent Profile");
@@ -337,12 +327,10 @@ define("EST_INST_SAMPLIST","A sample Listing with Images has been added for you 
 define("EST_MYAGENTPROFILE","My Agent Profile");
 
 
-define("EST_PLCH15","Enter an address to look up");
 define("EST_PLCH75","A little about me");
 
 define("EST_PLCH85","My Company Info");
 define("EST_PLCH95","eg. Main Office");
-define("EST_PLCH96","Full Street Address");
 define("EST_PLCH97","Additional Agency Info");
 
 
@@ -352,184 +340,10 @@ define("EST_PREF_DEFCOUNTRYHLP","The default Country selected when creating a Ne
 
 define("EST_PREF_LISTPAGESECT","Listing Page Layout");
 
-define("EST_PROP_ADDNEWCOMP","Add New Company");
-define("EST_PROP_ADDR1", "Address 1");
-define("EST_PROP_ADDR2", "Address 2");
-define("EST_PROP_BYLINE","Byline");
-define("EST_PROP_CITY", "City");
-define("EST_PROP_COUNTRY", "Country");
-define("EST_PROP_COUNTY", "County");
-define("EST_PROP_DATECREATED", "Date Created");
-define("EST_PROP_DATEUPDATE", "Date Updated");
-define("EST_PROP_DATELIVE", "Go Live Date");
-define("EST_PROP_DATEPREVW", "Member Preview Date");
-define("EST_PROP_DATEPULL", "Pull Date");
-define("EST_PROP_DATETEASE", "Date Tease");
-define("EST_PROP_DESCRIPTIONPLCHLDR", "Full Description");
-define("EST_PROP_FEATOPTLISTPLC","A Comma (,) separated List, eg. Walk-in Closets, Pool, Washer & Dryer, etc");
-define("EST_PROP_FEATURESHLP","A Comma (,) separated List of text that appears below the Property Name after the Listing Price. Commas will be replaced by a bullet. 255 character limit");
-define("EST_PROP_FEATURESPLCHLDR","3 Bed,3 Bath,Pool,Waterfront,etc"); 
-define("EST_PROP_GEOAREA", "Geo Area");
-define("EST_PROP_HOANAME","HOA Name");
-define("EST_PROP_HOAWEB","HOA Website");
-define("EST_PROP_HOAREQ","HOA Required");
-define("EST_PROP_HOAREQHLP","Homeowner is required to join the Home Owner's Association");
-define("EST_PROP_HOAFEE","HOA Fee");
-define("EST_PROP_HOAFEES","HOA Fees");
-define("EST_PROP_HOAFEESHLP","Dues for Home Owner's Association. Enter zero if there are no HOA fees.");
-define("EST_PROP_HOALAND","HOA Fee Includes Land Lease");
-define("EST_PROP_HOALANDHLP","Enable if a Land Lease is included in the HOA fees.");
-define("EST_PROP_HOAFRQ","HOA Frequency");
+//define("EST_PROP_ADDNEWCOMP","Add New Company");
 
-define("EST_PROP_INTSIZE", "Livable Space");
-define("EST_PROP_LANDLEASE", "Land Lease");
-define("EST_PROP_LANDLEASEHLP", "Land Lease amount. Enter zero if there is no land lease OR if a Land Lease is included in HOA Fees.");
-define("EST_PROP_LAT","Lattitude");
-define("EST_PROP_LEASEDUR","Lease Duration");
-define("EST_PROP_LISTPRICE", "List Price");
-define("EST_PROP_LISTYPE", "Listing Type");
-define("EST_PROP_LISTZONE", "Zoning Category");
-define("EST_PROP_LON","Longitude");
-define("EST_PROP_LOTID", "Lot ID");
-define("EST_PROP_MLSNO", "MLS #");
-define("EST_PROP_MODELNAME", "Model Name");
-define("EST_PROP_MODELNAMEPLCHLDR","The Builder's Model Name");
-
-define("EST_PROP_MSG_ADDMAP","setting up Map coordinates");
-define("EST_PROP_MSG_ADDMEDIA","adding Media");
-define("EST_PROP_MSG_ADDSPACES","Adding Spaces");
-define("EST_PROP_MSG_ADDEVENTS","Adding Events");
-define("EST_PROP_MSG_NAUNTILSPACES","Not available until you add a NEW space");
-define("EST_PROP_MSG_CITY", "Please Select a City");
-define("EST_PROP_MSG_CNTY", "Please Select a County");
-define("EST_PROP_MSG_MISSING","Missing");
-define("EST_PROP_MSG_NAT", "Please Select a Country");
-define("EST_PROP_MSG_NEEDSAVE","This Property needs to be saved before");
-define("EST_PROP_MSG_ST", "Please Select a State");
-define("EST_PROP_MSG_TABLE","Table");
-define("EST_PROP_MSG_TYPE1", "Please Select Listing Type");
-define("EST_PROP_MSG_ZONE1", "Please Select a Zoning Category for this property");
-
-define("EST_PROP_NAME", "Property Name");
-define("EST_PROP_ORIGPRICE", "Original Price");
-define("EST_PROP_PARCELID", "Parcel ID");
-define("EST_PROP_PROPOWNER", "Property Owner");
-define("EST_PROP_POSTCODE", "Postal Code");
-define("EST_PROP_POSTCODELIST", "Postal Code List");
-define("EST_PROP_RESETMAP", "Reset/Redraw Map");
-define("EST_PROP_RESETHM","Click to reload thumbnail. Double-Click to change.");
-define("EST_PROP_ROOFSIZE", "Total Space");
-define("EST_PROP_SEF", "Friendly URL");
-define("EST_PROP_SELAGNCY", "Select Agency");
-define("EST_PROP_SELAGNT", "Select Agent");
-define("EST_PROP_SEF", "Friendly URL");
-define("EST_PROP_MAPADDR","Map Address Lookup");
-
-define("EST_PROP_STATE", "State");
-define("EST_PROP_STATUS", "Status");
-define("EST_PROP_SUMMARYPLCHLDR", "Short Summary");
-define("EST_PROP_TIMEZONE","Time Zone");
-define("EST_PROP_THISCLRFRM","This will clear the form");
-define("EST_PROP_TYPE", "Property Type");
-define("EST_PROP_TYPEPLCH", "Single Family, Appartment, Retail, etc.");
-define("EST_PROP_UIDCREATE", "Listed By");
-define("EST_PROP_UNNAMEDPROP", "Unnamed Property");
-define("EST_PROP_UPDTEUID", "Updated By");
-define("EST_PROP_ZIP", "ZIP Code");
-define("EST_PROP_ZIPLIST", "ZIP Code List");
-
-
-define("EST_PROP_COMPANYAE","Add/Edit Parent Company");
-define("EST_PROP_COMPANYSEL","Select Parent Company");
-
-define("EST_PROP_CITYHLP","Sets filters for Postal Code and Subdivision options. Click the Edit button to Add or Edit City and ZIP Code options.");
-define("EST_PROP_COUNTRYHLP", "Sets filters for all remaining Address data and also sets filters for other options used throughout the forms in this plugin.");
-define("EST_PROP_COUNTYHLP", "Sets filters for City options. Click the Edit button to Add or Edit  County options.");
-
-define("EST_PROP_DESCRIPTIONHLP", "Provide a full description of the property including information not covered in the interior/exterior sections");
-
-define("EST_PROP_HRS","Public Viewing Hours");
-define("EST_PROP_HRSHLP","The Public days and hours the agent is available to show this property. Does not affect the Listing Agent's ability to schedule Events.");
-
-define("EST_PROP_INTERIORHLP", "Add/Edit interior features for this property");
-define("EST_PROP_INTSIZEHLP", "Total Interior climate controled living space");
-
-define("EST_PROP_LANDSIZEHLP", "Optional: the size of the lot the property is built upon");
-//define("EST_PROP_LATLONHLP","The lattitude & Longitude Coordinates for the property. Move the pointer on the map or enter the coordinates here.");
-
-define("EST_PROP_LISTAGENTHLP","The Agent & Agency assigned to this property. What you can do here depends on your login credentials.");
-define("EST_PROP_LISTAGENTHLP1","Main Admins and Estate Admins are able to Add/Edit Agencies and Agents.");
-define("EST_PROP_LISTAGENTHLP2","Estate Managers can only Add/Edit Agents.");
-define("EST_PROP_LISTAGENTHLP3","Estate Agents can only edit their own Profile.");
-define("EST_PROP_LISTPRICEHLP", "The List Price must be a whole number (0-9). Do not include any other characters. Currency type is the same as the Original Price Currency Option.");
-define("EST_PROP_LISTYPEHLP", "The List Type option sets up For Sale or For Rent pricing options.");
-
-define("EST_PROP_LOTIDHLP", "Optional. The Lot ID for this property");
-
-//EST_PROP_MAPADDRHLP Map Help
-define("EST_PROP_MAPADDRHLP","Find Lattitude/Longitude coordinates for an address using openstreetmap.org");
-
-define("EST_PROP_MAPMAINHLP1", "Use the Map Address Lookup to get the coordinates of the displayed address.");
-define("EST_PROP_MAPMAINHLP2", "If addresses are found, they will be listed below the Reset Map Button. Click a found Address button to update the map");
-
-define("EST_PROP_MAPMAINHLP3", "If no addresses are found, try changing the address to look up. Changing the address in this field does not affect the Property's address on the Address tab.");
-define("EST_PROP_MAPMAINHLP4", "You can also drag the Marker in the map to set the coordinates for this property.");
-
-define("EST_PROP_NAMEHLP","A Name for this property. If left blank, the Street Address will be copied here when you save the Property");
-
-define("EST_PROP_MLSNOHLP", "Optional. An index for this property from an outside source, such as the Multiple Listing Service association.");
-define("EST_PROP_MODELNAMEHLP","Optional: Model Names can be used to filter and group listings for visitors to your website");
-
-define("EST_PROP_DATELIVEHLP", "The date the listing will become fully visible to the public");
-define("EST_PROP_DATEPREVWHLP", "The date Website Members can preview this listing as if it were live. This can be before or after the ".EST_PROP_DATETEASE." but must be before or equal to the Go Live Date date.");
-define("EST_PROP_DATEPULLHLP", "The date this listing will automatically end. Leave blank to have the listing remain until you manually change it to Inactive");
-define("EST_PROP_DATETEASEHLP", "The date this listing becomes visible, but with limited data available to the public. You can set what data will be included in the ".LAN_PREFS." form.");
-
-define("EST_PROP_ORIGPRICEHLP", "The Original Price must be a whole number (0-9). Do not include any other characters. Click the currency button to cycle through available currency options.");
-define("EST_PROP_PARCELIDHLP", "Optional. The Parcel ID for this property");
-define("EST_PROP_ROOFSIZEHLP", "Optional: Total space including non-HVAC areas");
-
-define("EST_PROP_SEFHLP","Leave blank to auto-generate it from the Property Name");
-define("EST_PROP_STATUSHLP", "The Status of the Property controls data and functions available to the public:<ul><li>Off Market hides the property from the public</li><li>Scheduled Publication enables a scheduled publication</li><li>Live Now - Ignore Publication Schedule bypasses any scheduled publication</li><li>Pending hides Viewing Request forms</li><li>Sold hides Pricing, Viewing Request forms, and all media except for the first Gallery Image</li></ul>");
-define("EST_PROP_STATEHLP", "Sets filters for County options. Click the Edit button to Add or Edit options.");
-define("EST_PROP_SUBDIVHLP","Optional. Available options are based on the City chosen. Click the Edit button to Add or Edit Subdivision options for the selected City.");
-define("EST_PROP_SUMMARYHLP", "A short description no more than 255 characters long. Used in Property Gallery, Search, and List pages");
-
-define("EST_PROP_TIMEZONEHLP","The Timezone is used to sync the scheduling with the visitor's browser. This is automatically set when you select the City, but you have the option to change it here if the city has multiple timezones.");
-define("EST_PROP_TYPEHLP","Required. A second Category for this listing, eg. Single Family, Multi Family, Office Space, etc.");
-
-define("EST_PROP_ZIPHLP","Sets the ZIP Code value. Add or Edit ZIP Code options by clicking the Edit button for the City Dropdown");
-define("EST_PROP_POSTCODEHLP","Sets the Postal Code value. Add or Edit Postal Code options by clicking the Edit button for the City Dropdown");
-
-define("EST_PROP_ZONEHLP","Required. For what usage is this property: eg. Residential, Commercial, Industrial, etc.");
-
-define("EST_PROPLIST", "Property List");
-
-define("EST_SPCAT_ZERO","Please select a Category on the Main Tab");
-define("EST_SPCID_ZERO","This Space must be Saved in order to add ");
-
-define("EST_MEDIA_VIEWDELETEDMEDIA", "Click to View Deleted Media Files");
-define("EST_MEDIA_CREATEDFOLDERS", "Created Media Folder:");
-define("EST_MEDIA_CREATEDFOLDERFAIL", "Created Media Folder:");
-define("EST_MEDIA_DELETEDFOLDERS", "files and folders deleted");
-define("EST_MEDIA_FOUNDTHMFILE", "Found Thumb File");
-define("EST_MEDIA_FOUNDFULLFILE", "Found Full File");
-define("EST_MEDIAAVAILABLE","Available Media");
-
-define("EST_MEDIAINUSE","Main Gallery Images");
-
-define("EST_MEDIAREPLACE","Upload Replacement Media");
-define("EST_MEDIA_ZOOMCROP","Zoom & Crop");
-
-
-define("EST_UPL_FILEFULLREM","Removed Full Size Version");
-define("EST_UPL_FILEFULLNOTREM","FAILED to Remove Full Size Version");
-define("EST_UPL_FILETHUMBREM","Removed Thumb");
-define("EST_UPL_FILETHUMBNOTREM","FAILED to Remove Thumb");
-define("EST_UPL_FILEVIDREM","Removed Video File");
-define("EST_UPL_FILEVIDNOTREM","FAILED to Remove Video File");
-
-
+//define("EST_PROP_COMPANYAE","Add/Edit Parent Company");
+//define("EST_PROP_COMPANYSEL","Select Parent Company");
 
 define("EST_PREF_2TILEACROSS","2 Tiles Across");
 define("EST_PREF_3TILEACROSS","3 Tiles Across");
@@ -634,17 +448,6 @@ define("EST_TT_ADMPERMIS1","Grant access to the Estate Plugin Admin Area");
 define("EST_TT_ADMPERMIS2","Make this user an Admin and grant access to this plugin?");
 define("EST_TT_FRONTENDFORM","Grants access to front end Listings Form");
 
-
-
-
-
-
-
-define("EST_HLPMNU_ADDRESS1","Information about the property's physical location.");
-define("EST_HLPMNU_ADDRESS2","");
-
-define("EST_HLPMNU_ABOUTSPACES0","Spaces are like rooms, though they are also used for other details about a property. In addition to Bedrooms, Bathrooms, and other rooms in a house, a property might have a yard, patio, or other space. Also. the community a listing is in might have a Park, Pool, and other amenities.");
-
 define("EST_HLPMNU_AGENTPROF01", "The Agent Profile extends the User Profile and is included with the agent's Listings.");
 define("EST_HLPMNU_AGENTPROF02", "An Agent's Profile is also editable from within the Property Listing Form.");
 define("EST_HLPMNU_AGENTPROF03", "As a new Agent you need to choose an Agency. Depending on the User Class assigned to you by the website Admin, you may or may not be able to change this after this step.");
@@ -711,8 +514,6 @@ define("EST_HLPMNU_INIT15","Like the Agent's Profile Image, the default company 
 define("EST_HLPMNU_INIT16","Every Company needs to have at least one Agency to which Agents belong. You can have a single Agency (eg. Main Office) or have multiple Agencies (locations), and Agents can be designated to a specific Agency or set to All Agencies. Admins with the User Class Estate Manager can Add, Edit, or Remove Agencies, Agents, and Listings.");
 define("EST_HLPMNU_INIT17","The Agency Logo defaults to whatever the Company Logo has been set to. Hover your mouse over the Agency Logo and click the Source Button to upload a custom Agency Logo.");
 define("EST_HLPMNU_INIT18","You can choose to include any Agency's location on the vairous Maps displayed either on the Listings Main Page and/or each individual Property Listing Page.");
-define("EST_HLPMNU_INIT19","Use the Address Search function to retrieve a list of possible coordinates. This field is filled in when you edit the Agency's Address, though you may need to further edit the Search Field if no results are found. You can also move the Map Pointer to the correct location if needed.");
-
 
 define("EST_HLPMNU_LISTING1","Add general information about this property's listing, including a unique Listing Name.");
 define("EST_HLPMNU_LISTING2","Most Select Dropdown Lists thoughout this plugin include an Edit Button which allows you to quickly Add and Edit Options for that Dropdown.");
