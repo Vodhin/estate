@@ -216,17 +216,3 @@ $ESTATE_TEMPLATE['view']['gal'] = '
 
  //{SETIMAGE: w=400&h=300} {PROP_OPENHOUSELI}
 
-
-
-
-$ESTATE_TEMPLATE['edit']['map'] = '
-    
-    {PROP_EDIT_MAP}
-  <div id="estMapCont" class="estMapCont"><div id="estMap" class="estMap"></div></div>';
-
-/*
-est_prop_MapCont
-est_prop_Map
-  <div id="" data-zm="'.$EST_PREF['map_zoom_def'].'">
-    <div id="estMap"></div>
-  </div>*/
