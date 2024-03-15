@@ -18,6 +18,10 @@ td{
 }
 
 
+input[type="file"]{
+  display:none !important;
+  }
+
 .estOABlock{
   display:block;
   position: relative;
@@ -29,6 +33,7 @@ td{
   }
   
 .estOABlock h3{
+  display:block;
   position:relative;
   white-space:nowrap;
   cursor:pointer;
@@ -44,18 +49,9 @@ td{
   text-overflow:ellipsis;
   }
 
-.estOABlock h3::after{
-  content:"▼"; /*‹  † © ® » « §*/
-  position: absolute;
-  right: 8px;
-  }
-
-.estOABlock.expand h3::after{
-  content:"▲"; 
-  }
 
 .estOABlock div.estOATabCont{
-  display:none;
+  display:block;
   position: relative;
   width: 100%;
   padding: 12px 12px 12px 12px;
@@ -158,6 +154,105 @@ table.estOATable1 colgroup:last-child{
   border-bottom-left-radius:0px;
   z-index: 100;
   }
+
+.estESelect{
+  display:inline-block !important;
+  }
+
+#estNoGalWarn{display:none;}
+
+#estGalFileSlipCont{
+  float:right;
+  margin:-5px 0px -5px 0px;
+  padding:0px;
+  }
+#estGalFileSlipCont label{
+  margin:0px;
+  }
+
+#estGalleryCont{
+  display:block;
+  position:relative;
+  width:100%;
+  }
+
+
+
+#estate-gallery-tabl{
+  width:100%;
+  }
+
+#estate-gallery-tabl tr{
+  }
+#estate-gallery-tabl thead tr th{
+  padding: 6px;
+  text-transform:uppercase;
+  }
+#estate-gallery-tabl tr td{
+  }
+
+
+
+
+
+.estBeltLoop{
+  display:block;
+  position:relative;
+  width:100%;
+  min-height: 5em;
+  max-height: 12em;
+  background-color: rgba(25,25,25,0.15);
+  margin: 0px;
+  overflow-y: hidden;
+  overflow-x: auto;
+  }
+
+/*.estBeltLoop:hover{min-height: 10em;}*/
+
+.estBelt{
+  display: block;
+  position: relative;
+  max-width: max-content;
+  min-width: 100%;
+  height: 100%;
+  margin:0px;
+  padding:0px;
+  white-space: nowrap;
+  overflow:visible;
+  }
+
+#estGalleryUsed{
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: 10em;
+  background-color: rgba(25,25,25,0.15);
+  margin: 0px;
+  padding:0px;
+  white-space: normal;
+  }
+
+
+
+
+
+
+.listMediaCont.mediaOrder div.upldPvwBtn, .Dragable{
+  border:2px solid #6381FF !important;
+  cursor:move;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 .estInptCont select.oneBtn{
@@ -323,3 +418,90 @@ table.estOAMap tr:first-child{
 .ILBLK{
   display:inline-block !important;
   }
+
+
+
+@media only screen and (min-device-width:100px) and (max-device-width:480px){
+  .dummy{}
+  
+  
+  .estOABlock h3{
+    display:block;
+    }
+  .estOABlock h3 div{
+    display: inline-block;
+    position:relative;
+    width:90%;
+    text-overflow:ellipsis;
+    }
+  
+  .estOABlock h3::after{
+    content:"▼"; /*‹  † © ® » « §*/
+    position: absolute;
+    right: 8px;
+    }
+  
+  .estOABlock.expand h3::after{
+    content:"▲"; 
+    }
+  
+  .estOABlock div.estOATabCont{
+    display:none;
+    padding: 12px 12px 12px 12px;
+    }
+  
+  .estOABlock.expand div.estOATabCont{
+    display:block;
+    width: 100%;
+    height:unset;
+    padding: 0px;
+    overflow-x: auto;
+    }
+  
+  .estOABlock.expand div.estOATabCont table{
+    
+    }
+  
+  .estOABlock.expand div.estOATabCont table tr{
+    
+    }
+  
+  .estOABlock.expand div.estOATabCont table tr th:nth-child(1),
+  .estOABlock.expand div.estOATabCont table tr td:nth-child(1){
+    width:12%;
+    }
+  .estOABlock.expand div.estOATabCont table tr th:nth-child(2),
+  .estOABlock.expand div.estOATabCont table tr td:nth-child(2){
+    width:unset;
+    }
+  
+  
+  div.field-help {
+    top: -10px;
+    left: unset;
+    right: -200px;
+    width: 200px;
+    }
+  
+  .estMapCont{
+    max-width: 90vw;
+    }
+  .estMap{
+    max-width: 90vw;
+    }
+  .estMapBtnCont {
+    height: unset;
+    }
+  
+  .upldPvwBtn {
+    display: inline-block;
+    width: 7em;
+    max-width: 97%;
+    height: 7em;
+    }
+  
+  
+  
+  }
+
+
