@@ -3522,7 +3522,7 @@ function estGetSubDivs(){
     
     if(yDta.contact_idx > 0){
       $(td).addClass('noPAD');
-      $(JQBTN,{'class':'btn btn-default estContMove','title':defs.txt.sort}).html('<i class="S16 e-sort-16"></i>').appendTo(contDiv);
+      $(JQBTN,{'class':'btn btn-default estContMove','title':defs.txt.sort}).html('<i class="fa fa-arrows-alt-v"></i>').appendTo(contDiv);
       $(JQBTN,{'class':'btn btn-default estContGo','title':defs.txt.deletes}).data('del',-1).css({'color':'#CC0000'}).html('<i class="fa fa-close"></i>').appendTo(contDiv);
       }
     else{
@@ -5486,7 +5486,7 @@ function estGetSubDivs(){
     tdta[i].tr[tri][1] = $(JQTH,{'class':'left'}).appendTo(tdta[i].tr[tri][0]);
     tdta[i].tr[tri][2] = $(JQDIV,{'class':'btn-group'}).appendTo(tdta[i].tr[tri][1]);
     
-    tdta[i].tr[tri][3] = $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.section}).html('<i class="S16 e-sort-16"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][2]);
+    tdta[i].tr[tri][3] = $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.section}).html('<i class="fa fa-arrows-alt-v"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][2]);
     
     if(tbx.grouplist_idx == 0){
       $(tdta[i].tr[tri][3]).prop('disabled',true).css({'cursor':'not-allowed'}).attr('title',xt.nauntilspaces);
@@ -5494,7 +5494,7 @@ function estGetSubDivs(){
       $(tdta[i].tbl).removeClass('estDragTable');
       }
     
-    tdta[i].tr[tri][4] = $(JQBTN,{'type':'button','class':'btn btn-default ','title':xt.add1+' '+xt.new1+' '+xt.space+': '+groupName}).html('<i class="S16 e-add-16"></i>').on({
+    tdta[i].tr[tri][4] = $(JQBTN,{'type':'button','class':'btn btn-default ','title':xt.add1+' '+xt.new1+' '+xt.space+': '+groupName}).html('<i class="fa fa-plus"></i>').on({
       click : function(e){
         e.preventDefault();
         estBuildSpace(null,tbx)
@@ -5560,9 +5560,9 @@ function estGetSubDivs(){
         else{$(tdta[i].tr[tri][7]).css({'background-image':'url('+defs.dir.prop.thm+mediaGrep1[0].media_thm+noCache+')'});}
         }
       
-      $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="S32 e-sort-32"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
+      $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="fa fa-arrows-alt-v"></i>"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
       
-      $(JQBTN,{'class':'btn btn-default btn-secondary','title':xt.edit+' '+rmdta.space_name}).html('<i class="S32 e-edit-32"></i>').on({
+      $(JQBTN,{'class':'btn btn-default btn-secondary','title':xt.edit+' '+rmdta.space_name}).html('<i class="fa fa-pencil-square-o"></i>').on({
         click : function(e){
           e.preventDefault();
           var SPDTA = $(this).closest('tr').data();
@@ -5571,7 +5571,7 @@ function estGetSubDivs(){
           }
         }).appendTo(tdta[i].tr[tri][6]);
       
-      $(JQBTN,{'type':'button','class':'action delete btn btn-default','title':xt.deletes+': '+rmdta.space_name}).html('<i class="S32 e-delete-32"></i>').on({
+      $(JQBTN,{'type':'button','class':'action delete btn btn-default','title':xt.deletes+': '+rmdta.space_name}).html('<i class="fa fa-close"></i>').on({
         click : function(e){
           e.preventDefault();
           console.log(rmdta);
@@ -9184,7 +9184,7 @@ function estGetSubDivs(){
               
               if(actn == 'list'){
                 var targ = $('#admin-ui-list-filter').find('div.form-inline:first-child');
-                $(JQBTN,{'type':'button','class':'btn btn-default','title':ret.txt.create}).html('<i class="S16 e-add-16"></i>').on({
+                $(JQBTN,{'type':'button','class':'btn btn-default','title':ret.txt.create}).html('<i class="fa fa-plus"></i>').on({
                   click : function(){window.location.assign(vreBasePath+'admin_config.php?mode='+mainTbl+'&action=create')}
                   }).appendTo(targ);
                 
