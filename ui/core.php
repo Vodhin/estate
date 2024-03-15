@@ -1447,27 +1447,37 @@ class estateCore{
     $frm = e107::getForm(false, true);
     
     return '
-          <tr>
+          <tr class="noMobile">
             <td class="VAT">
               <div id="est_'.$section.'_SrchRes" class="estMapBtnCont"></div>
             </td>
             <td class="VAT">
-              <div class="estInptCont form-group has-feedback-left estMapSearchCont">
-                <input type="text" id="'.$section.'_addr_lookup" name="'.$section.'_addr_lookup" class="tbox form-control input-xxlarge estMapLookupAddr" value="'.$tp->toFORM($addr).'" placeholder="'.EST_PLCH15.'"/>
-                <button id="est_'.$section.'_SrchBtn" class="btn btn-default estMapSearchBtn">'.LAN_SEARCH.'</button>
-              </div>
-              <div id="est_'.$section.'_MapCont" class="estMapCont"><div id="est_'.$section.'_Map" class="estMap"></div></div>
               '.$frm->hidden($section.'_lat',$tp->toFORM($lat)).'
               '.$frm->hidden($section.'_lon',$tp->toFORM($lon)).'
               '.$frm->hidden($section.'_geoarea',$tp->toFORM($geoarea)).'
               '.$frm->hidden($section.'_zoom',intval($zoom)).'
+              <div id="est_'.$section.'_SrchForm" class="estInptCont form-group has-feedback-left estMapSearchCont">
+                <input type="text" id="'.$section.'_addr_lookup" name="'.$section.'_addr_lookup" class="tbox form-control input-xxlarge estMapLookupAddr" value="'.$tp->toFORM($addr).'" placeholder="'.EST_PLCH15.'"/>
+                <button id="est_'.$section.'_SrchBtn" class="btn btn-default estMapSearchBtn">'.LAN_SEARCH.'</button>
+              </div>
+              <div id="est_'.$section.'_MapCont" class="estMapCont"><div id="est_'.$section.'_Map" class="estMap"></div></div>
             </td>
             <td class="VAT">
-              <p>'.EST_GEN_MAPHLP1.'</p>
-              <p>'.EST_GEN_MAPHLP2.'</p>
-              <p>'.EST_GEN_MAPHLP3.'</p>
-              <p>'.EST_GEN_MAPHLP4.'</p>
-              <p>'.EST_GEN_MAPHLP5.'</p>
+              <div id="est_'.$section.'_MapHlpTD">
+                <p>'.EST_GEN_MAPHLP1.'</p>
+                <p>'.EST_GEN_MAPHLP2.'</p>
+                <p>'.EST_GEN_MAPHLP3.'</p>
+                <p>'.EST_GEN_MAPHLP4.'</p>
+                <p>'.EST_GEN_MAPHLP5.'</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="noDesktop">
+            <td colspan="3" class="VAT">
+              <div id="est_'.$section.'_MapCont_targ" class="WD100"></div>
+              <div id="est_'.$section.'_SrchForm_targ" class="WD100"></div>
+              <div id="est_'.$section.'_SrchRes_targ" class="WD100"></div>
+              <div id="est_'.$section.'_MapHlpTD_targ" class="WD100"></div>
             </td>
           </tr>';
     }
@@ -2186,34 +2196,64 @@ class estateCore{
   
   
   
-  public function estPropFormEle($name,$atr,$value,$DTA){
-    $pref = e107::pref('estate');
-    //$sql = e107::getDB();
+  public function estPropFormEle($name,$atr,$value,$DTA){}
+  
+  
+  
+  
+  public function estOAFormTable($SN,$PART,$DTA,$CG=2){
     $tp = e107::getParser();
-    $frm = e107::getForm(false, true);
-    //$timeZones = systemTimeZones();
-    
-    switch($atr['type']){
-      case 'select' :
-      case 'eselect' :
-        return '<select name="'.$name.'" class="form-control input-'.varset($atr['cls'],'xlarge').'" value="'.$value.'"></select>';
+    switch($PART){
+      case 'end' :
+        return '
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="'.$CG.'">
+            <div class="buttons-bar center"><input type="submit" name="estSubmit-'.$SN.'" class="btn btn-primary" value="'.$DTA.'" /></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>';
         break;
+      case 'start' :
+        for($i = 0;$i < $CG; $i++){$CGRP .= '<colgroup></colgroup>';}
+          
+        return '
+<div class="estOABlock">
+  <h3><div>'.$tp->toHTML($DTA).'</div></h3>
+  <div class="estOATabCont">
+    <table class="estOATable1 table-striped">
+      '.$CGRP.'
+      <tbody>';
         
-      case 'number' :
-        $options = array('size'=>'small');
-        $maxlength = 200;
-        $frm->number($name, $value, $maxlength, $options);
         break;
+      case 'tbody' :
         
-      default :
-        return $frm->text($name,$value, varset($atr['max'],255), array('size'=>varset($atr['cls'],'xlarge'),'required'=>varset($atr['req'],0)));
+        switch($SN){
+          case 2 :
+            $text .= $this->estOAFormTable(2,'start',EST_GEN_ADDRESS,3);
+            $text .= $this->estOAFormTR('text','prop_addr1',$DTA,EST_PROP_ADDR1,null,array('cs'=>2,'class'=>'estPropAddr','placeholder'=>EST_PLCH96));
+            $text .= $this->estOAFormTR('text','prop_addr2',$DTA,EST_PROP_ADDR2,null,array('cs'=>2,'class'=>'estPropAddr','placeholder'=>EST_PLCH96A));
+            $text .= $this->estOAFormTR('select','prop_country',$DTA,EST_PROP_COUNTRY,EST_PROP_COUNTRYHLP,array('cs'=>2,'class'=>'estPropAddr'));
+            $text .= $this->estOAFormTR('eselect','prop_state',$DTA,EST_PROP_STATE,EST_PROP_STATEHLP,array('cs'=>2,'class'=>'estPropAddr'));
+            $text .= $this->estOAFormTR('eselect','prop_county',$DTA,EST_PROP_COUNTY,EST_PROP_COUNTYHLP,array('cs'=>2,'class'=>'estPropAddr'));
+            $text .= $this->estOAFormTR('eselect','prop_city',$DTA,EST_PROP_CITY,EST_PROP_CITYHLP,array('cs'=>2,'class'=>'estPropAddr'));
+            $text .= $this->estOAFormTR('select','prop_zip',$DTA,EST_PROP_POSTCODE,EST_PROP_POSTCODEHLP,array('cs'=>2,'class'=>'estPropAddr'));
+            $text .= $this->estMap('prop',$DTA['prop_addr_lookup'],$DTA['prop_lat'],$DTA['prop_lon'],$DTA['prop_geoarea'],$DTA['prop_zoom']);
+            $text .= $this->estOAFormTable(2,'end',($DTA['prop_idx'] > 0 ? EST_GEN_UPDATE : EST_GEN_SAVE),3);
+            break;
+          }
+        
+        
+        
+        return $text;
         break;
       }
+    
     }
-  
-  
-  
-  
   
   public function estOAFormTR($TYPE,$FLD,$DTA,$LABEL,$HLP=null,$options=null,$OPTARR=array()){
     $pref = e107::pref();//'estate'
@@ -2263,7 +2303,8 @@ class estateCore{
         break;
       
       case 'eselect' :
-        $text .= '<div class="estInptCont estNoData"><select name="'.$FLD.'" class="form-control input-xlarge oneBtn ILBLK" value="'.$FVALUE.'"></select>';
+        // estNoData
+        $text .= '<div class="estInptCont"><select name="'.$FLD.'" class="form-control input-xlarge oneBtn estESelect" value="'.$FVALUE.'"></select>';
         foreach($OPTARR as $ok=>$ov){$text .= '<option value="'.$ok.'"'.($ok == $FVALUE ? ' selected="selected"' : '').'>'.$tp->toHTML($ov).'</option>';}
         $text .= '</select><div class="estSonar"><div class="estSonarBlip"></div><button type="button" class="btn btn-default selEditBtn1" title="Add"><i class="fa fa-plus"></i></button></div></div>';
         break;
