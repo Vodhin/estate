@@ -777,7 +777,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       'prop_floorno'=> array (
         'tab'=>4,
-        'title' => EST_GEN_FLOORNO,
+        'title' => EST_GEN_COMPLEX,
         'type' => 'method',
         'data' => 'int',
         'width' => 'auto',

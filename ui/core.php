@@ -2196,66 +2196,167 @@ class estateCore{
   
   
   
+  
+  
+  
+  
+  
+  
+  
   public function estPropFormEle($name,$atr,$value,$DTA){}
   
   
   
-  
-  public function estOAFormTable($SN,$PART,$DTA,$CG=2){
-    $tp = e107::getParser();
-    switch($PART){
-      case 'end' :
-        return '
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="'.$CG.'">
-            <div class="buttons-bar center"><input type="submit" name="estSubmit-'.$SN.'" class="btn btn-primary" value="'.$DTA.'" /></div>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-</div>';
-        break;
-      case 'start' :
-        for($i = 0;$i < $CG; $i++){$CGRP .= '<colgroup></colgroup>';}
-          
-        return '
-<div class="estOABlock">
-  <h3><div>'.$tp->toHTML($DTA).'</div></h3>
-  <div class="estOATabCont">
-    <table class="estOATable1 table-striped">
-      '.$CGRP.'
-      <tbody>';
-        
-        break;
-      case 'tbody' :
-        
-        switch($SN){
-          case 2 :
-            $text .= $this->estOAFormTable(2,'start',EST_GEN_ADDRESS,3);
-            $text .= $this->estOAFormTR('text','prop_addr1',$DTA,EST_PROP_ADDR1,null,array('cs'=>2,'class'=>'estPropAddr','placeholder'=>EST_PLCH96));
-            $text .= $this->estOAFormTR('text','prop_addr2',$DTA,EST_PROP_ADDR2,null,array('cs'=>2,'class'=>'estPropAddr','placeholder'=>EST_PLCH96A));
-            $text .= $this->estOAFormTR('select','prop_country',$DTA,EST_PROP_COUNTRY,EST_PROP_COUNTRYHLP,array('cs'=>2,'class'=>'estPropAddr'));
-            $text .= $this->estOAFormTR('eselect','prop_state',$DTA,EST_PROP_STATE,EST_PROP_STATEHLP,array('cs'=>2,'class'=>'estPropAddr'));
-            $text .= $this->estOAFormTR('eselect','prop_county',$DTA,EST_PROP_COUNTY,EST_PROP_COUNTYHLP,array('cs'=>2,'class'=>'estPropAddr'));
-            $text .= $this->estOAFormTR('eselect','prop_city',$DTA,EST_PROP_CITY,EST_PROP_CITYHLP,array('cs'=>2,'class'=>'estPropAddr'));
-            $text .= $this->estOAFormTR('select','prop_zip',$DTA,EST_PROP_POSTCODE,EST_PROP_POSTCODEHLP,array('cs'=>2,'class'=>'estPropAddr'));
-            $text .= $this->estMap('prop',$DTA['prop_addr_lookup'],$DTA['prop_lat'],$DTA['prop_lon'],$DTA['prop_geoarea'],$DTA['prop_zoom']);
-            $text .= $this->estOAFormTable(2,'end',($DTA['prop_idx'] > 0 ? EST_GEN_UPDATE : EST_GEN_SAVE),3);
-            break;
-          }
-        
-        
-        
-        return $text;
-        break;
-      }
+  public function estOAFormTabs(){
+    return array(
+      0 => array('caption' => EST_GEN_LISTING,'text'=>'','cg'=>2),
+      1 => array('caption' => EST_GEN_ADDRESS,'text'=>'','cg'=>3),
+      2 => array('caption' => EST_GEN_COMMUNITY,'text'=>'','cg'=>2),
+      3 => array('caption' => EST_GEN_SPACES,'text'=>'','cg'=>2),
+      4 => array('caption' => EST_GEN_DETAILS,'text'=>'','cg'=>2),
+      5 => array('caption' => EST_GEN_GALLERY,'text'=>'','cg'=>2),
+      6 => array('caption' => EST_GEN_SCHEDULING,'text'=>'','cg'=>2)
+      );
     
     }
   
-  public function estOAFormTR($TYPE,$FLD,$DTA,$LABEL,$HLP=null,$options=null,$OPTARR=array()){
+  
+  public function estOAFormTable($SN,$DTA,$CG=2){
+    $tp = e107::getParser();
+    switch($SN){
+      case 6 :
+        $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('prop_timezone','prop_timezone',$DTA);
+        $text .= $this->estOAFormTR('prop_hours','prop_hours',$DTA);
+        $text .= $this->estOAFormTableEnd($SN,$DTA);
+        break;
+        
+      case 5 :
+        return $this->estGalleryForm();
+        break;
+        
+      case 4 :
+        $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('text','prop_features',$DTA);
+        $text .= $this->estOAFormTR('text','prop_modelname',$DTA);
+        $text .= $this->estOAFormTR('text','prop_condit',$DTA);
+        $text .= $this->estOAFormTR('number','prop_yearbuilt',$DTA);
+        $text .= $this->estOAFormTR('number','prop_floorct',$DTA);
+        $text .= $this->estOAFormTR('prop_floorno','prop_floorno',$DTA);
+        $text .= $this->estOAFormTR('number','prop_intsize',$DTA);
+        $text .= $this->estOAFormTR('number','prop_roofsize',$DTA);
+        $text .= $this->estOAFormTR('text','prop_landsize',$DTA);
+        
+        $text .= $this->estOAFormTableEnd($SN,$DTA);
+        break;
+        
+      case 3 :
+        return '
+        <div class="estOABlock">
+          <h3><div>'.$tp->toHTML(EST_GEN_SPACES).'</div></h3>
+          <div class="estOATabCont">
+            <div id="estSpaceGrpDiv" class="estSpaceGrpDiv"></div>
+          </div>
+        </div>';
+        break;
+        
+      case 2 :
+        $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTableEnd($SN,$DTA);
+        break;
+        
+      case 1 :
+        $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('text','prop_addr1',$DTA);
+        $text .= $this->estOAFormTR('text','prop_addr2',$DTA);
+        $text .= $this->estOAFormTR('select','prop_country',$DTA);
+        $text .= $this->estOAFormTR('select','prop_state',$DTA);
+        $text .= $this->estOAFormTR('select','prop_county',$DTA);
+        $text .= $this->estOAFormTR('select','prop_city',$DTA);
+        $text .= $this->estOAFormTR('select','prop_zip',$DTA);
+        $text .= $this->estMap('prop',$DTA['prop_addr_lookup'],$DTA['prop_lat'],$DTA['prop_lon'],$DTA['prop_geoarea'],$DTA['prop_zoom']);
+        $text .= $this->estOAFormTableEnd($SN,$DTA);
+        break;
+        
+      case 0 :
+        $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('text','prop_name',$DTA);//$ATTR,$SRC);
+        $text .= $this->estOAFormTR('select','prop_status',$DTA);
+        $text .= $this->estOAFormTR('select','prop_listype',$DTA);
+        $text .= $this->estOAFormTR('text','prop_origprice',$DTA);
+        $text .= $this->estOAFormTR('text','prop_listprice',$DTA);
+        $text .= $this->estOAFormTR('select','prop_zoning',$DTA);
+        $text .= $this->estOAFormTR('select','prop_type',$DTA);
+        $text .= $this->estOAFormTR('text','prop_mlsno',$DTA);
+        $text .= $this->estOAFormTR('text','prop_parcelid',$DTA);
+        $text .= $this->estOAFormTR('text','prop_lotid',$DTA);
+        $text .= $this->estOAFormTableEnd($SN,$DTA);
+        break;
+      }
+    
+    return $text;
+    
+    }
+  
+  
+  private function estOALabels($FLD){
+    $TXT = array(
+      'prop_name'=>array('labl'=>EST_GEN_NAME,'hlp'=>EST_PROP_NAMEHLP),
+      'prop_status'=>array('labl'=>EST_GEN_STATUS,'hlp'=>EST_PROP_STATUSHLP),
+      'prop_zoning'=>array('labl'=>EST_PROP_LISTZONE,'hlp'=>EST_PROP_ZONEHLP),
+      'prop_type'=>array('labl'=>EST_PROP_TYPE,'hlp'=>EST_PROP_TYPEHLP),
+      'prop_listype'=>array('labl'=>EST_PROP_LISTYPE,'hlp'=>EST_PROP_LISTYPE),
+      'prop_origprice'=>array('labl'=>EST_PROP_ORIGPRICE,'hlp'=>EST_PROP_ORIGPRICEHLP),
+      'prop_listprice'=>array('labl'=>EST_PROP_LISTPRICE,'hlp'=>EST_PROP_LISTPRICEHLP),
+            
+      'prop_mlsno'=>array('labl'=>EST_PROP_MLSNO,'hlp'=>EST_PROP_MLSNOHLP),
+      'prop_parcelid'=>array('labl'=>EST_PROP_PARCELID,'hlp'=>EST_PROP_PARCELIDHLP),
+      'prop_lotid'=>array('labl'=>EST_PROP_LOTID,'hlp'=>EST_PROP_LOTIDHLP),
+      
+      'prop_addr1'=>array('labl'=>EST_PROP_ADDR1,'cs'=>2,'cls'=>'estPropAddr','plch'=>EST_PLCH96),
+      'prop_addr2'=>array('labl'=>EST_PROP_ADDR2,'cs'=>2,'cls'=>'estPropAddr','plch'=>EST_PLCH96A),
+      'prop_country'=>array('labl'=>EST_PROP_COUNTRY,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_COUNTRYHLP),
+      'prop_state'=>array('labl'=>EST_PROP_STATE,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_STATEHLP),
+      'prop_county'=>array('labl'=>EST_PROP_COUNTY,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_COUNTYHLP),
+      'prop_city'=>array('labl'=>EST_PROP_CITY,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_CITYHLP),
+      'prop_zip'=>array('labl'=>EST_PROP_POSTCODE,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_POSTCODEHLP),
+      
+      //''=>array('labl'=>,'hlp'=>),
+      
+      //'prop_leasefreq'=>array(),
+      //'prop_currency'=>array(),
+      
+      
+      'prop_timezone'=>array('labl'=>EST_GEN_TIMEZONE,'hlp'=>EST_PROP_TIMEZONEHLP),
+      'prop_subdiv'=>array('labl'=>EST_GEN_SUBDIVISION,'hlp'=>EST_PROP_CITYHLP),
+      
+      'prop_hoafee'=>array('labl'=>EST_PROP_HOAFEES,'hlp'=>EST_PROP_HOAFEESHLP),
+      'prop_hoaland'=>array('labl'=>EST_PROP_HOALAND,'hlp'=>EST_PROP_HOALANDHLP),
+      'prop_landfee'=>array('labl'=>EST_PROP_LANDLEASE,'hlp'=>EST_PROP_LANDLEASEHLP),
+      'prop_landfreq'=>array('labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
+      
+      'prop_modelname'=>array('labl'=>EST_GEN_MODELNAME,'hlp'=>EST_GEN_MODELNAMEHLP),
+      'prop_condit'=>array('labl'=>EST_GEN_CONDITION),
+      'prop_yearbuilt'=>array('labl'=>EST_PROP_YEARBUILT),
+      'prop_floorct'=>array('labl'=>EST_GEN_FLOORCT),
+      'prop_floorno'=>array('labl'=>EST_GEN_COMPLEX),
+      'prop_intsize'=>array('labl'=>EST_PROP_INTSIZE,'hlp'=>EST_PROP_INTSIZEHLP),
+      'prop_roofsize'=>array('labl'=>EST_PROP_ROOFSIZE,'hlp'=>EST_PROP_ROOFSIZEHLP),
+      'prop_landsize'=>array('labl'=>EST_PROP_LANDSIZE,'hlp'=>EST_PROP_LANDSIZEHLP),
+      
+      'prop_bedmain'=>array('labl'=>EST_GEN_BEDROOMS),
+      'prop_bedtot'=>array('labl'=>EST_GEN_BEDROOMS),
+      'prop_bathtot'=>array('labl'=>EST_GEN_BATHROOMS),
+      'prop_bathfull'=>array('labl'=>EST_GEN_BATHROOMS),
+      'prop_bathhalf'=>array('labl'=>EST_GEN_BATHROOMS),
+      
+      'prop_hours'=>array('labl'=>EST_PROP_HRS,'hlp'=>EST_PROP_HRSHLP),
+      );
+    return $TXT[$FLD];
+    }
+  
+  
+  public function estOAFormTR($TYPE,$FLD,$DTA,$options=null,$OPTARR=array()){
     $pref = e107::pref();//'estate'
     $tp = e107::getParser();
     $frm = e107::getForm(false, true);
@@ -2265,21 +2366,64 @@ class estateCore{
     $SERL = array('prop_hours');
     $INTS = array('prop_listype','prop_state','prop_county','prop_city','prop_subdiv','prop_status','prop_zoom','prop_yearbuilt','prop_dimu1','prop_intsize','prop_roofsize','prop_dimu2','prop_zoning','prop_type','prop_listprice','prop_origprice','prop_leasefreq','prop_leasedur','prop_currency','prop_hoafee','prop_hoaland','prop_hoaappr','prop_hoareq','prop_hoafrq','prop_bathtot','prop_bathmain','prop_bathhalf','prop_bathfull','prop_bedtot','prop_bedmain','prop_floorct','prop_floorno','prop_bldguc','prop_complxuc');
     
-    if($HLP !== null){
-      $INFICO = $frm->help($HLP);
+    $LABS = $this->estOALabels($FLD);
+    
+    if($LABS['hlp']){
+      $INFICO = $frm->help($LABS['hlp']);
       }
     
-    $text = '<tr><td>'.$INFICO.$tp->toHTML($LABEL).'</td><td'.($options['cs'] ? ' colspan="'.$options['cs'].'"': '').'>';
+    $text = '<tr><td>'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
     
     if(in_array($FLD,$SERL)){$FVALUE = e107::unserialize($DTA[$FLD]);}
     elseif(in_array($FLD,$INTS)){$FVALUE = intval($DTA[$FLD]);}
     else{$FVALUE = $tp->toFORM($DTA[$FLD]);}
+    
+    $OPTARR = array();
+    
+    $options = ($LABS['cls'] ? ' class="'.$LABS['cls'].'"' : '').($LABS['plch'] ? ' placeholder="'.$LABS['plch'].'"' : '');
     
     
     switch($FLD){
       case 'prop_country' :
         $OPTARR = e_form::getCountry();
         break;
+        
+      case 'prop_status' :
+        foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$OPTARR[$k] = $v['opt'];}
+        break;
+        
+        
+      case 'prop_listype' :
+        $OPTARR = $GLOBALS['EST_LISTTYPE1'];
+        break;
+        
+      case 'prop_type' :
+        $dbRow = $sql->retrieve('estate_listypes', '*', '',true);
+        if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['listype_idx']] = $v['listype_name'];}}
+        break;
+      
+      case 'prop_zoning' ;
+        $dbRow = e107::getDb()->retrieve('estate_zoning', '*', '',true);
+        if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['zoning_idx']] = $v['zoning_name'];}}
+        break;
+      
+      
+      
+      case 'prop_state' :
+        $dbRow = e107::getDb()->retrieve('estate_states', '*', 'state_country="'.$DTA['prop_country'].'"',true);
+        if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['state_idx']] = $v['state_name'];}}
+        break;
+      
+      case 'prop_county' :
+        $dbRow = e107::getDb()->retrieve('estate_county', '*', 'cnty_state="'.$DTA['prop_state'].'"',true);
+        if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['cnty_idx']] = $v['cnty_name'];}}
+        break;
+      
+      case 'prop_city' :
+        $dbRow = e107::getDb()->retrieve('estate_city', '*', 'city_county="'.$DTA['prop_county'].'"',true);
+        if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['city_idx']] = $v['city_name'];}}
+        break;
+      
       
       case 'prop_zip' :
         if(intval($DTA[$FLD]) !== 0){
@@ -2298,31 +2442,43 @@ class estateCore{
         $text .= $frm->select('prop_timezone', $timeZones, vartrue($FVALUE, $pref['timezone']),'size=xlarge');
         break;
       
+      case 'prop_floorno' :
+        $text .= '
+        <div id="propUnitCont" class="estInptCont">
+          <div class="ILMINI">'.EST_GEN_FLOORNO.'
+            <input type="number" name="prop_floorno" value="'.intval($DTA['prop_floorno']).'" min="0" step="1" id="prop-floorno" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title="">
+          </div>
+          <div class="ILMINI">'.EST_GEN_UNITSBLDG.'
+            <input type="number" name="prop_bldguc" value="'.intval($DTA['prop_bldguc']).'" min="0" step="1" id="prop-bldguc" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title="">
+          </div>
+          <div class="ILMINI">'.EST_GEN_UNITSCOMPLX.'
+            <input type="number" name="prop_complxuc" value="'.intval($DTA['prop_complxuc']).'" min="0" step="1" id="prop-complxuc" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title="">
+          </div>
+        </div>';
+        
+        break;
+      
+      
+      
       case 'prop_hours' :
         $text .= $this->estPropHoursForm($FVALUE);
         break;
       
-      case 'eselect' :
-        // estNoData
-        $text .= '<div class="estInptCont"><select name="'.$FLD.'" class="form-control input-xlarge oneBtn estESelect" value="'.$FVALUE.'"></select>';
-        foreach($OPTARR as $ok=>$ov){$text .= '<option value="'.$ok.'"'.($ok == $FVALUE ? ' selected="selected"' : '').'>'.$tp->toHTML($ov).'</option>';}
-        $text .= '</select><div class="estSonar"><div class="estSonarBlip"></div><button type="button" class="btn btn-default selEditBtn1" title="Add"><i class="fa fa-plus"></i></button></div></div>';
-        break;
       
       case 'select' :
-        $text .= '<select name="'.$FLD.'" class="form-control input-xlarge" value="'.$FVALUE.'">';
+        $text .= '<select name="'.$FLD.'" class="form-control input-xlarge'.($LABS['cls'] ? ' '.$LABS['cls'] : '').'" value="'.$FVALUE.'">';
         foreach($OPTARR as $ok=>$ov){$text .= '<option value="'.$ok.'"'.($ok == $FVALUE ? ' selected="selected"' : '').'>'.$tp->toHTML($ov).'</option>';}
         $text .= '</select>';
         break;
+      
         
       case 'number' :
-        $options = array('size'=>'small');
+        //$options = array('size'=>'small');
         $maxlength = 200;
         $text .= $frm->number($FLD, $FVALUE, $maxlength, $options);
         break;
         
       case 'textarea' :
-        $options['class'] = $FATTR['cls'];
         $text .= $frm->textarea($FLD,$FVALUE,4,80,$options); //,$counter = true: add character counter
         break;
         
@@ -2346,6 +2502,77 @@ class estateCore{
     $text .= $this->getCalTbl('end');
     return $text;
     }
+  
+  
+  
+  
+  private function estOAFormTableStart($SN){
+    $tp = e107::getParser();
+    $TBS = $this->estOAFormTabs();
+    for($i = 0;$i < $TBS[$SN]['cg']; $i++){$CGRP .= '<colgroup></colgroup>';}
+    // table-striped
+    return '
+    <div class="estOABlock">
+      <h3><div>'.$tp->toHTML($TBS[$SN]['caption']).'</div></h3>
+      <div class="estOATabCont">
+        <table class="estOATable1">
+          '.$CGRP.'
+          <tbody>';
+    }
+  
+  private function estOAFormTableEnd($SN,$DTA){
+    $tp = e107::getParser();
+    $TBS = $this->estOAFormTabs();
+    return '
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="'.$TBS[$SN]['cg'].'">
+                <div class="buttons-bar center">
+                  <input type="submit" name="estSubmit-'.$SN.'" class="btn btn-primary" value="'.($DTA['prop_idx'] > 0 ? EST_GEN_UPDATE : EST_GEN_SAVE).'" />
+                </div>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>';
+    }
+  
+  
+  private function estGalleryForm(){
+    $tp = e107::getParser();
+    return '
+    <div class="estOABlock">
+      <h3><div>'.$tp->toHTML(EST_GEN_GALLERY).'</div></h3>
+      <div class="estOATabCont">
+        <div id="estNoGalWarn" class="s-message alert alert-block warning alert-warning">'.EST_PROP_MSG_NEEDSAVE.' '.EST_PROP_MSG_ADDMEDIA.'</div>
+        <div class="WD100">
+          <table id="estate-gallery-tabl" class="table-striped">
+            <thead>
+              <tr id="estGalleryH1">
+                <th>
+                  <div id="estGalFileSlipCont">
+                    <label id="fileSlip" for="upFile">
+                      <button id="fileSlipBtn" class="btn btn-primary btn-sm FR">'.EST_UPLOAD.' '.EST_MEDIA.'</button>
+                    </label>
+                  </div>
+                '.EST_MEDIAAVAILABLE.'
+                </th>
+              </tr>
+              <tr id="estGalleryH2"><td><div class="estBeltLoop"><div id="estGalleryBelt" class="estBelt estGalCont"></div></div></td></tr>
+              <tr id="estGalleryH3"><th>'.EST_MEDIAINUSE.'</th></tr>
+            </thead>
+            <tbody>
+              <tr id="estGalleryH4"><td><div id="estGalleryUsed" class="estGalCont"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>';
+    }
+  
+  
   
   
   
