@@ -108,9 +108,17 @@ table.estOATable1 colgroup:last-child{
   }
 .estInptCont select{
   display:inline-block;
+  width:90%;
   border-top-right-radius:0px;
   border-bottom-right-radius:0px;
   -webkit-appearance:none;
+  }
+
+.estInptCont.oneBtn select{
+  width:calc(100% - 44px)  !important;
+  border-right:none;
+  border-top-right-radius:0px;
+  border-bottom-right-radius:0px;
   }
 
 .estInptCont div.estSonar, 
@@ -155,9 +163,12 @@ table.estOATable1 colgroup:last-child{
   z-index: 100;
   }
 
-.estESelect{
-  display:inline-block !important;
+.estInptCont.oneBtn button,
+.estInptCont.oneBtn div button{
+  width:40px;
   }
+
+
 
 #estNoGalWarn{display:none;}
 
@@ -255,12 +266,6 @@ table.estOATable1 colgroup:last-child{
 
 
 
-.estInptCont select.oneBtn{
-  width:calc(100% - 44px)  !important;
-  border-right:none;
-  border-top-right-radius:0px;
-  border-bottom-right-radius:0px;
-  }
 
 
 
@@ -418,6 +423,14 @@ table.estOAMap tr:first-child{
 .ILBLK{
   display:inline-block !important;
   }
+
+
+
+input[name="prop_landsize"],
+input[type="number"]{
+  width:144px !important;
+  }
+
 
 
 
