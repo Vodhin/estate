@@ -9146,7 +9146,7 @@ function estGetSubDivs(){
         }
       }
     else{
-      alert('WARNING: This plugin has interactive elements that do not woth with your current Theme and/or Layout. Missing "<div class="admin-main-content">');
+      alert('WARNING: This plugin has interactive elements that do not work with your current Theme and/or Layout. Missing "<div class="admin-main-content">');
       }
     
     
