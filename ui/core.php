@@ -1458,7 +1458,7 @@ class estateCore{
               '.$frm->hidden($section.'_zoom',intval($zoom)).'
               <div id="est_'.$section.'_SrchForm" class="estInptCont form-group has-feedback-left estMapSearchCont">
                 <input type="text" id="'.$section.'_addr_lookup" name="'.$section.'_addr_lookup" class="tbox form-control input-xxlarge estMapLookupAddr" value="'.$tp->toFORM($addr).'" placeholder="'.EST_PLCH15.'"/>
-                <button id="est_'.$section.'_SrchBtn" class="btn btn-default estMapSearchBtn">'.LAN_SEARCH.'</button>
+                <button id="est_'.$section.'_SrchBtn" class="btn btn-default estMapSearchBtn"><i class="fa fa-search"></i></button>
               </div>
               <div id="est_'.$section.'_MapCont" class="estMapCont"><div id="est_'.$section.'_Map" class="estMap"></div></div>
             </td>
@@ -2237,7 +2237,7 @@ class estateCore{
         
       case 4 :
         $text = $this->estOAFormTableStart($SN);
-        $text .= $this->estOAFormTR('text','prop_features',$DTA);
+        $text .= $this->estOAFormTR('txtcntr','prop_features',$DTA);
         $text .= $this->estOAFormTR('text','prop_modelname',$DTA);
         $text .= $this->estOAFormTR('text','prop_condit',$DTA);
         $text .= $this->estOAFormTR('number','prop_yearbuilt',$DTA);
@@ -2306,8 +2306,8 @@ class estateCore{
       'prop_zoning'=>array('labl'=>EST_PROP_LISTZONE,'hlp'=>EST_PROP_ZONEHLP),
       'prop_type'=>array('labl'=>EST_PROP_TYPE,'hlp'=>EST_PROP_TYPEHLP),
       'prop_listype'=>array('labl'=>EST_PROP_LISTYPE,'hlp'=>EST_PROP_LISTYPE),
-      'prop_origprice'=>array('labl'=>EST_PROP_ORIGPRICE,'hlp'=>EST_PROP_ORIGPRICEHLP),
-      'prop_listprice'=>array('labl'=>EST_PROP_LISTPRICE,'hlp'=>EST_PROP_LISTPRICEHLP),
+      'prop_origprice'=>array('labl'=>EST_PROP_ORIGPRICE,'cls'=>'WD144px','hlp'=>EST_PROP_ORIGPRICEHLP),
+      'prop_listprice'=>array('labl'=>EST_PROP_LISTPRICE,'cls'=>'WD144px','hlp'=>EST_PROP_LISTPRICEHLP),
             
       'prop_mlsno'=>array('labl'=>EST_PROP_MLSNO,'hlp'=>EST_PROP_MLSNOHLP),
       'prop_parcelid'=>array('labl'=>EST_PROP_PARCELID,'hlp'=>EST_PROP_PARCELIDHLP),
@@ -2328,28 +2328,25 @@ class estateCore{
       
       
       'prop_timezone'=>array('labl'=>EST_GEN_TIMEZONE,'hlp'=>EST_PROP_TIMEZONEHLP),
-      'prop_subdiv'=>array('labl'=>EST_GEN_SUBDIVISION,'hlp'=>EST_PROP_CITYHLP),
-      
+      'prop_subdiv'=>array('labl'=>EST_GEN_SUBDIVISION,'hlp'=>EST_PROP_SUBDIVHLP),
       'prop_hoafee'=>array('labl'=>EST_PROP_HOAFEES,'hlp'=>EST_PROP_HOAFEESHLP),
       'prop_hoaland'=>array('labl'=>EST_PROP_HOALAND,'hlp'=>EST_PROP_HOALANDHLP),
       'prop_landfee'=>array('labl'=>EST_PROP_LANDLEASE,'hlp'=>EST_PROP_LANDLEASEHLP),
       'prop_landfreq'=>array('labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
-      
-      'prop_modelname'=>array('labl'=>EST_GEN_MODELNAME,'hlp'=>EST_GEN_MODELNAMEHLP),
+      'prop_modelname'=>array('labl'=>EST_GEN_MODELNAME,'hlp'=>EST_PROP_MODELNAMEHLP),
+      'prop_features'=>array('labl'=>EST_GEN_FEATURES,'cls'=>'estJSmaxchar','plch'=>EST_PROP_FEATURESPLCHLDR,'hlp'=>EST_PROP_FEATURESHLP),
       'prop_condit'=>array('labl'=>EST_GEN_CONDITION),
       'prop_yearbuilt'=>array('labl'=>EST_PROP_YEARBUILT),
       'prop_floorct'=>array('labl'=>EST_GEN_FLOORCT),
       'prop_floorno'=>array('labl'=>EST_GEN_COMPLEX),
       'prop_intsize'=>array('labl'=>EST_PROP_INTSIZE,'hlp'=>EST_PROP_INTSIZEHLP),
       'prop_roofsize'=>array('labl'=>EST_PROP_ROOFSIZE,'hlp'=>EST_PROP_ROOFSIZEHLP),
-      'prop_landsize'=>array('labl'=>EST_PROP_LANDSIZE,'hlp'=>EST_PROP_LANDSIZEHLP),
-      
-      'prop_bedmain'=>array('labl'=>EST_GEN_BEDROOMS),
-      'prop_bedtot'=>array('labl'=>EST_GEN_BEDROOMS),
-      'prop_bathtot'=>array('labl'=>EST_GEN_BATHROOMS),
-      'prop_bathfull'=>array('labl'=>EST_GEN_BATHROOMS),
-      'prop_bathhalf'=>array('labl'=>EST_GEN_BATHROOMS),
-      
+      'prop_landsize'=>array('labl'=>EST_PROP_LANDSIZE,'cls'=>'WD144px','hlp'=>EST_PROP_LANDSIZEHLP),
+      'prop_bedmain'=>array('labl'=>EST_GEN_BEDROOMS,'cls'=>'WD144px'),
+      'prop_bedtot'=>array('labl'=>EST_GEN_BEDROOMS,'cls'=>'WD144px'),
+      'prop_bathtot'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
+      'prop_bathfull'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
+      'prop_bathhalf'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
       'prop_hours'=>array('labl'=>EST_PROP_HRS,'hlp'=>EST_PROP_HRSHLP),
       );
     return $TXT[$FLD];
@@ -2380,18 +2377,15 @@ class estateCore{
     
     $OPTARR = array();
     
-    $options = ($LABS['cls'] ? ' class="'.$LABS['cls'].'"' : '').($LABS['plch'] ? ' placeholder="'.$LABS['plch'].'"' : '');
-    
     
     switch($FLD){
-      case 'prop_country' :
-        $OPTARR = e_form::getCountry();
-        break;
-        
       case 'prop_status' :
         foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$OPTARR[$k] = $v['opt'];}
         break;
         
+      case 'prop_country' :
+        $OPTARR = e_form::getCountry();
+        break;
         
       case 'prop_listype' :
         $OPTARR = $GLOBALS['EST_LISTTYPE1'];
@@ -2406,8 +2400,6 @@ class estateCore{
         $dbRow = e107::getDb()->retrieve('estate_zoning', '*', '',true);
         if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['zoning_idx']] = $v['zoning_name'];}}
         break;
-      
-      
       
       case 'prop_state' :
         $dbRow = e107::getDb()->retrieve('estate_states', '*', 'state_country="'.$DTA['prop_country'].'"',true);
@@ -2435,6 +2427,16 @@ class estateCore{
       }
     
     
+    
+    if($LABS['cls']){
+      $options['class'] .= (trim($options['class']) == '' ? 'tbox form-control' : '').' '.$LABS['cls'];
+      }
+    if($LABS['plch']){
+      $options['placeholder'] = $LABS['plch'];
+      }
+    
+    
+    
     switch($TYPE){
       
       case 'prop_timezone' :
@@ -2446,13 +2448,13 @@ class estateCore{
         $text .= '
         <div id="propUnitCont" class="estInptCont">
           <div class="ILMINI">'.EST_GEN_FLOORNO.'
-            <input type="number" name="prop_floorno" value="'.intval($DTA['prop_floorno']).'" min="0" step="1" id="prop-floorno" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title="">
+            <input type="number" name="prop_floorno" value="'.intval($DTA['prop_floorno']).'" min="0" step="1" id="prop-floorno" class="tbox number e-spinner input-small form-control ui-state-valid WD144px" pattern="^[0-9]*" data-original-title="" title="">
           </div>
           <div class="ILMINI">'.EST_GEN_UNITSBLDG.'
-            <input type="number" name="prop_bldguc" value="'.intval($DTA['prop_bldguc']).'" min="0" step="1" id="prop-bldguc" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title="">
+            <input type="number" name="prop_bldguc" value="'.intval($DTA['prop_bldguc']).'" min="0" step="1" id="prop-bldguc" class="tbox number e-spinner input-small form-control ui-state-valid WD144px" pattern="^[0-9]*" data-original-title="" title="">
           </div>
           <div class="ILMINI">'.EST_GEN_UNITSCOMPLX.'
-            <input type="number" name="prop_complxuc" value="'.intval($DTA['prop_complxuc']).'" min="0" step="1" id="prop-complxuc" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title="">
+            <input type="number" name="prop_complxuc" value="'.intval($DTA['prop_complxuc']).'" min="0" step="1" id="prop-complxuc" class="tbox number e-spinner input-small form-control ui-state-valid WD144px" pattern="^[0-9]*" data-original-title="" title="">
           </div>
         </div>';
         
@@ -2464,11 +2466,17 @@ class estateCore{
         $text .= $this->estPropHoursForm($FVALUE);
         break;
       
+      case 'txtcntr' :
+        $text .= $frm->textarea($FLD,$FVALUE,1,40,$options,1);
+        break;
+      
+      
       
       case 'select' :
-        $text .= '<select name="'.$FLD.'" class="form-control input-xlarge'.($LABS['cls'] ? ' '.$LABS['cls'] : '').'" value="'.$FVALUE.'">';
-        foreach($OPTARR as $ok=>$ov){$text .= '<option value="'.$ok.'"'.($ok == $FVALUE ? ' selected="selected"' : '').'>'.$tp->toHTML($ov).'</option>';}
-        $text .= '</select>';
+        $text .= $frm->select($FLD,$OPTARR,$FVALUE,$options);
+        //$text .= '<select name="'.$FLD.'" class="form-control input-xlarge'.($LABS['cls'] ? ' '.$LABS['cls'] : '').'" value="'.$FVALUE.'">';
+        //foreach($OPTARR as $ok=>$ov){$text .= '<option value="'.$ok.'"'.($ok == $FVALUE ? ' selected="selected"' : '').'>'.$tp->toHTML($ov).'</option>';}
+       // $text .= '</select>';
         break;
       
         
@@ -2479,7 +2487,7 @@ class estateCore{
         break;
         
       case 'textarea' :
-        $text .= $frm->textarea($FLD,$FVALUE,4,80,$options); //,$counter = true: add character counter
+        $text .= $frm->textarea($FLD,$FVALUE,4,40,$options); //,$counter = true: add character counter
         break;
         
       default :
@@ -2487,6 +2495,7 @@ class estateCore{
         //'required'=>varset($ATTR['f']['req'],0)
         break;
       }
+    
     
     return $text.'</td></tr>';
     }
