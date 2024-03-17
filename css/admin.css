@@ -743,6 +743,9 @@ select optgroup.optFilter.inact::before{
   font-size: 0.9em;
   }
 
+#propLPdiv{
+  white-space:nowrap;
+  }
 
 #propOPpctDiv{
   display:block;
@@ -750,6 +753,7 @@ select optgroup.optFilter.inact::before{
   width:67px;
   height: 400px;
   background-color:#212121;
+  white-space: normal;
   overflow-x: hidden;
   overflow-y: auto;
   z-index:100002;
