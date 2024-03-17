@@ -6570,7 +6570,7 @@ function estGetSubDivs(){
     }
   
   function estateSetOpLp(){
-    $('#propOPpctBtn').html('↑ ↓');
+    $('#propOPpctBtn').data('oplp',0).html('↑ ↓');
     if(Number($('input[name="prop_listprice"]').val()) > 0 && Number($('input[name="prop_origprice"]').val()) > 0){
       var oplp = parseFloat((1 -(Number($('input[name="prop_listprice"]').val()) / Number($('input[name="prop_origprice"]').val()))) * 100).toFixed(1);
       if(oplp[oplp.length - 1] == 0){oplp = Math.round(oplp);}
@@ -6585,13 +6585,13 @@ function estGetSubDivs(){
       $('#propOPpctDiv').remove();
       }
     else{
-      var targ = $('#propLPdiv').parent();
+      var targ = $('#propLPdiv');//.parent();
       var xTarg = $('input[name="prop_listprice"]');
       var xVal = Number($('input[name="prop_origprice"]').val());
       var oplp = Number($('#propOPpctBtn').data('oplp'));
       
       $(JQDIV,{'id':'estClearkCover'}).on({click : function(){propOPpct(-1)}}).appendTo('body');
-      var propOPpctDiv = $(JQDIV,{'id':'propOPpctDiv'}).css({'top':(Math.ceil($(targ).offset().top) - 250)+'px','left':($(targ).position().left - 56)+'px'}).appendTo(targ);
+      var propOPpctDiv = $(JQDIV,{'id':'propOPpctDiv'}).css({'top':Number(-176)+'px','left': Number(-72)+'px'}).appendTo(targ);
       
       $(xTarg).data('cVal',Number($(xTarg).val()));
       var vals = [];
@@ -6615,8 +6615,9 @@ function estGetSubDivs(){
             }
           }).appendTo(propOPpctDiv);
         }).promise().done(function(){
-          $(propOPpctDiv).scrollTop($('#xPxtBtn'+oplp).position().top + Math.floor($(targ).parent().height() / 2) - 200);
-          console.log('goto '+oplp);
+          if(document.getElementById('xPxtBtn'+oplp)){
+            $(propOPpctDiv).scrollTop($('#xPxtBtn'+oplp).position().top + Math.floor($(targ).parent().height() / 2) - 200);
+            }
           });
       }
     }
@@ -6687,7 +6688,7 @@ function estGetSubDivs(){
     
     
     
-    var propLPdiv = $(JQDIV,{'id':'propLPdiv','class':'WSNWRP'}).appendTo($('input[name="prop_listprice"]').parent());
+    var propLPdiv = $(JQDIV,{'id':'propLPdiv'}).appendTo($('input[name="prop_listprice"]').parent());
     $(JQBTN,{'id':'propOPpctBtn','class':'btn btn-default estNoRightBord'}).on({
       click : function(e){
         e.preventDefault();
