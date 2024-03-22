@@ -4,9 +4,11 @@ if(!empty($_POST) && !isset($_POST['e-token'])){
   }
 
 if(!defined('e107_INIT')){exit;}
+if(!defined("USERID") || USERID == 0){exit;}
+/*
 if(!ADMIN){exit;}
 if(!getperms('P')){exit;}
-
+*/
 
 if(EST_USERPERM > 0){
 
