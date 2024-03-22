@@ -6,8 +6,8 @@ if(!defined("USERID") || USERID == 0){exit;}
 if (!getperms('P')) {exit;}
 if(!defined("EST_USERPERM")){echo "No Perms"; exit;}
 if(intval(EST_USERPERM) < 1){exit;}
-*/
 define('ADMIN_AREA', true);
+*/
 e107::lan('estate',true,true);
 
 $EMQRY = array();
