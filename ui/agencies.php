@@ -180,58 +180,24 @@ class estate_agencies_ui extends e_admin_ui{
   
   
   public function listPage(){
+    $frm = e107::getForm(false, true);
     $estateCore = new estateCore;
-    $OWNAGT = intval(e107::pref('estate','public_act'));
+    
+    $TBS = array();
+    $TBS[0]['caption'] = EST_GEN_AGENCIES;
+    $TBS[0]['text'] = $estateCore->estAgencyList(1);
+    $TBS[1]['caption'] = EST_GEN_USERLIST;
+    $TBS[1]['text'] = $estateCore->estUserList();
+    
     $ANU = intval(e107::pref('estate','addnewuser'));
-    $mode = $this->getMode();
-    $actn = $this->getAction();
-    $tab = intval($this->getID());
-    
-    $text = '
-    <div class="block-text">
-      <ul id="admin-ui-edit" class="nav nav-tabs">
-        <li class="nav-item'.($tab == 0 ? ' active' : '').'">
-          <a class="nav-link active" href="#tab-0" data-toggle="tab">'.EST_GEN_AGENCIES.'</a>
-        </li>
-        <li class="nav-item'.($tab == 1 ? ' active' : '').'">
-          <a class="nav-link" href="#tab-1" data-toggle="tab">'.EST_GEN_USERLIST.'</a>
-        </li>
-        <li class="nav-item'.($tab == 2 ? ' active' : '').'">
-          <a class="nav-link" href="#tab-2" data-toggle="tab">'.EST_GEN_ADDNEWUSER.'</a>
-        </li>
-      </ul>
-      <div class="tab-content estMargB300">
-        <div class="tab-pane'.($tab == 0 ? ' active' : '').'" id="tab-0" role="tabpanel">';
-    
-    $text .= $estateCore->estAgencyList(1);
-    $text .= '
-        </div>
-        <div class="tab-pane'.($tab == 1 ? ' active' : '').'" id="tab-1" role="tabpanel">';
-    $text .= $estateCore->estUserList();
-    $text .= '
-        </div>
-        <div class="tab-pane'.($tab == 2 ? ' active' : '').'" id="tab-2" role="tabpanel">';
     if($ANU > 1 && EST_USERPERM >= $ANU){
-      $frm = e107::getForm(false, true);
-      $text .= '
-          <form method="post" action="'.e_SELF.'?mode=estate_agencies&action=list" id="estNewUserPage" enctype="multipart/form-data" '.$dataStr.'>';
-      $text .= $estateCore->estAgentForm('anu');
-      $text .= '
-        		<div class="buttons-bar center">
-            '.$frm->admin_button('estProfileSubmit',(intval($formDta['user_id']) > 0 ? LAN_UPDATE : LAN_SAVE), 'submit').'
-        		</div>
-          </form>';
+      $TBS[2]['caption'] = EST_GEN_ADDNEWUSER;
+      $TBS[2]['text'] = '<form method="post" action="'.e_SELF.'?mode=estate_agencies&action=list" id="estNewUserPage" enctype="multipart/form-data" '.$dataStr.'>';
+      $TBS[2]['text'] .= $estateCore->estAgentForm('anu');
+      $TBS[2]['text'] .= '<div class="buttons-bar center">'.$frm->admin_button('estProfileSubmit',(intval($formDta['user_id']) > 0 ? LAN_UPDATE : LAN_SAVE), 'submit').'</div></form>';
       }
-    else{
-      $text .= '
-          <div class="s-message alert alert-block alert-dismissible fade in show info alert-warning" style="width: 96%; margin: 16px auto 16px auto;"><h4 class="s-message-title">'.EST_GEN_ADDNEWUSER.'</h4><div class="s-message-body"><div class="s-message-item">'.EST_GEN_NOTALLOWEDADDUSER.'</div></div></div>';
-      }
-      
-    $text .= '
-        </div>
-      </div>
-    </div>';
-    return $text;
+    
+    return $frm->tabs($TBS, array('active' => intval($this->getID()),'fade' => 0,'class' => 'estOATabs'));
     }
   
   
@@ -294,15 +260,10 @@ class estate_agencies_ui extends e_admin_ui{
   public function editPage(){
     $frm = e107::getForm(false, true);
     $estateCore = new estateCore;
-    $OWNAGT = intval(e107::pref('estate','public_act'));
-    $mode = $this->getMode();
-    $actn = $this->getAction();
     $id = (intval($GLOBALS['ESTDB']['agency_idx']) > 0 ? intval($GLOBALS['ESTDB']['agency_idx']) : intval($this->getID()));
     
-    $ANU = intval(e107::pref('estate','addnewuser'));
-    
     if(intval($id) === 0){
-      $text .= '
+      $text = '
       <form method="post" action="'.e_SELF.'?mode=estate_agencies&action=edit" id="estAgencyCreatePage" enctype="multipart/form-data">';
       $text .= $estateCore->estAgencyForm($formDta);
       $text .= '
@@ -320,56 +281,30 @@ class estate_agencies_ui extends e_admin_ui{
       e107::getMessage()->addWarning('<h4>'.EST_GEN_NOAGENCYFOUND0.'</h4>'.EST_GEN_AGENCY.' ID# '.intval($id).' '.EST_GEN_NOAGENCYFOUND1);
       return;
       }
-      
-    $text = '
-    <ul id="admin-ui-edit" class="nav nav-tabs">
-      <li class="nav-item'.($tab == 0 ? ' active' : '').'">
-        <a class="nav-link active" href="#tab-0" data-toggle="tab"><span id="estProfTab">'.EST_GEN_AGENCY.'</span> '.EST_GEN_PROFILE.'</a>
-      </li>
-      <li class="nav-item'.($tab == 1 ? ' active' : '').'">
-        <a class="nav-link" href="#tab-1" data-toggle="tab">'.EST_GEN_AGENT.' '.EST_GEN_LIST.'</a>
-      </li>';
-      if($ANU > 1 && EST_USERPERM >= $ANU){
-        $text.= '
-        <li class="nav-item'.($tab == 2 ? ' active' : '').'">
-          <a class="nav-link" href="#tab-2" data-toggle="tab">'.EST_GEN_ADDNEWUSER.'</a>
-        </li>';
-        }
-    $text .= '
-    </ul>
-    <div class="tab-content estMargB300">
-      <div class="tab-pane'.($tab == 0 ? ' active' : '').'" id="tab-0" role="tabpanel">
-        <form method="post" action="'.e_SELF.'?mode=estate_agencies&action=edit&id='.$id.'" id="estAgencyEditPage" enctype="multipart/form-data" >';
-          $text .= $estateCore->estAgencyForm($formDta);
-          $text .= '
-    			<div class="buttons-bar center">
-            <input type="hidden" name="estProfileKey" value="5" />
-            '.$frm->admin_button('estProfileSubmit',LAN_UPDATE, 'submit').'
-    			</div>
-        </form>
-      </div>
-      <div class="tab-pane'.($tab == 1 ? ' active' : '').'" id="tab-1" role="tabpanel">';
-      $text .= $estateCore->estUserList($id);
-      $text .= '
-      </div>';
+     
+    
+    $TBS = array();
+    $TBS[0]['caption'] = '<span id="estProfTab">'.EST_GEN_AGENCY.'</span> '.EST_GEN_PROFILE;
+    $TBS[0]['text'] = '<form method="post" action="'.e_SELF.'?mode=estate_agencies&action=edit&id='.$id.'" id="estAgencyEditPage" enctype="multipart/form-data" >';
+    $TBS[0]['text'] .= $estateCore->estAgencyForm($formDta);
+    $TBS[0]['text'] .= '<div class="buttons-bar center"><input type="hidden" name="estProfileKey" value="5" />'.$frm->admin_button('estProfileSubmit',LAN_UPDATE, 'submit').'</div></form>';
+    
+    
+    $TBS[1]['caption'] = EST_GEN_AGENT.' '.EST_GEN_LIST;
+    $TBS[1]['text'] = $estateCore->estUserList($id);    
+    
+    $ANU = intval(e107::pref('estate','addnewuser'));
     if($ANU > 1 && EST_USERPERM >= $ANU){
-      $frm = e107::getForm(false, true);
-      $text .= '
-      <div class="tab-pane'.($tab == 2 ? ' active' : '').'" id="tab-2" role="tabpanel">
-          <form method="post" action="'.e_SELF.'?mode=estate_agencies&action=list" id="estNewUserPage" enctype="multipart/form-data" '.$dataStr.'>';
-      $text .= $estateCore->estAgentForm('anu');
-      $text .= '
-        		<div class="buttons-bar center">
-            '.$frm->admin_button('estProfileSubmit',(intval($formDta['user_id']) > 0 ? LAN_UPDATE : LAN_SAVE), 'submit').'
-        		</div>
-          </form>
-      </div>';
+      $TBS[2]['caption'] = EST_GEN_ADDNEWUSER;
+      $TBS[2]['text'] = '<form method="post" action="'.e_SELF.'?mode=estate_agencies&action=list" id="estNewUserPage" enctype="multipart/form-data" '.$dataStr.'>';
+      $TBS[2]['text'] .= $estateCore->estAgentForm('anu');
+      $TBS[2]['text'] .= '<div class="buttons-bar center">'.$frm->admin_button('estProfileSubmit',(intval($formDta['user_id']) > 0 ? LAN_UPDATE : LAN_SAVE), 'submit').'</div></form>';
       }
     
-    $text .= '
-    </div>';
-    return $text;
+    return $frm->tabs($TBS, array('active' => 0,'fade' => 0,'class' => 'estOATabs'));
     }
+  
+  
   
   public function createPage(){
     e107::redirect(e_SELF."?mode=estate_agencies&action=edit&id=0");
