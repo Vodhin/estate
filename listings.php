@@ -119,7 +119,7 @@ $MQRY = "
     $query = $MQRY.$WHERE." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
     }
 
-if(!$data = $sql->retrieve($query,true)){
+if(!$estQdta = $sql->retrieve($query,true)){
   require_once(HEADERF);
   $tmpl = e107::getTemplate('estate');
   if($PROPID > 0){

@@ -533,9 +533,9 @@ class estate_shortcodes extends e_shortcode{
       if($EUSR = $sql->retrieve("SELECT user_id,user_name,user_email,user_hideemail,user_image FROM #user WHERE user_id=".$PROPUID." ",true)){
         $ret['imgurl'] = $tp->toAvatar($EUSR[0],array('type'=>'url'));
         $ret['agent_name'] = $tp->toHTML($EUSR[0]['user_name']);
-        if(intval($EUSR[0]['user_hideemail']) !== 1){
+        //if(intval($EUSR[0]['user_hideemail']) !== 1){
           $ret['contacts'][6][0] = array($tp->toHTML(EST_GEN_EMAIL),$tp->toHTML($EUSR[0]['user_email']));
-          }
+          //}
         if(check_class($GLOBALS['EST_PREF']['public_act']) && USERID > 0 && $PROPUID == USERID){
           $ret['oa'] = 1;
           }
