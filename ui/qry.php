@@ -4,7 +4,7 @@ if (!defined('e107_INIT')) { exit; }
   $EST_PROP = array();
   $EST_PROPINTS = array('prop_idx','prop_status','prop_type','prop_zoning','prop_agent','prop_leasedur','prop_leasefreq','prop_landfee','prop_landfreq','prop_hoafee','prop_hoareq','prop_hoafrq','prop_yearbuilt','prop_intsize','prop_landsize','prop_bathhalf','prop_bathtot','prop_bedtot','prop_bathfull','prop_bathmain','prop_bedmain','prop_floorct','prop_floorno','prop_bldguc','prop_complxuc','prop_views');
   
-  foreach($data as $row){
+  foreach($estQdta as $row){
     foreach($row as $k=>$v){
       if(in_array($k,$EST_PROPINTS)){$row[$k] = intval($v);}
       }
@@ -61,8 +61,6 @@ if($Z1 = $sql->retrieve("SELECT * FROM #estate_zoning",true)){
 if($Z2 = $sql->retrieve("SELECT * FROM #estate_listypes",true)){
   foreach($Z2 as $row){$EST_PROPTYPES[$row['listype_idx']] = $row['listype_name'];}
   }
-unset($Z1,$Z2);
 
-
-
+unset($FPROPS,$EVTQRY,$data,$data2,$dataEvt,$Z1,$Z2);
 ?>

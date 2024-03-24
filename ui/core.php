@@ -2205,6 +2205,11 @@ class estateCore{
   
   public function estPropFormEle($name,$atr,$value,$DTA){}
   
+  private function estOAHidden($FN,$DTA){
+    $FID = str_replace("_","-",$FN);
+    return '<input type="hidden" id="'.$FID.'" name="'.$FN.'" value="'.$DTA[$FN].'" />';
+    }
+  
   
   
   public function estOAFormTabs(){
@@ -2228,6 +2233,7 @@ class estateCore{
         $text = $this->estOAFormTableStart($SN);
         $text .= $this->estOAFormTR('prop_timezone','prop_timezone',$DTA);
         $text .= $this->estOAFormTR('prop_hours','prop_hours',$DTA);
+        $text .= $this->estOAFormTR('div','estEventsCont',$DTA);
         $text .= $this->estOAFormTableEnd($SN,$DTA);
         break;
         
@@ -2246,8 +2252,9 @@ class estateCore{
         $text .= $this->estOAFormTR('number','prop_intsize',$DTA);
         $text .= $this->estOAFormTR('number','prop_roofsize',$DTA);
         $text .= $this->estOAFormTR('text','prop_landsize',$DTA);
-        
         $text .= $this->estOAFormTableEnd($SN,$DTA);
+        $text .= $this->estOAHidden('prop_dimu1',$DTA);
+        $text .= $this->estOAHidden('prop_dimu2',$DTA);
         break;
         
       case 3 :
@@ -2262,7 +2269,16 @@ class estateCore{
         
       case 2 :
         $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('select','prop_subdiv',$DTA);
+        $text .= $this->estOAFormTR('text','prop_hoafee',$DTA);
+        $text .= $this->estOAFormTR('switch','prop_hoaland',$DTA);
+        $text .= $this->estOAFormTR('text','prop_landfee',$DTA);
+        
+        
         $text .= $this->estOAFormTableEnd($SN,$DTA);
+        $text .= $this->estOAHidden('prop_hoareq',$DTA);
+        $text .= $this->estOAHidden('prop_hoafrq',$DTA);
+        $text .= $this->estOAHidden('prop_hoaappr',$DTA);
         break;
         
       case 1 :
@@ -2285,12 +2301,18 @@ class estateCore{
         $text .= $this->estOAFormTR('select','prop_listype',$DTA);
         $text .= $this->estOAFormTR('text','prop_origprice',$DTA);
         $text .= $this->estOAFormTR('text','prop_listprice',$DTA);
+        $text .= $this->estOAFormTR('select','prop_leasedur',$DTA);
         $text .= $this->estOAFormTR('select','prop_zoning',$DTA);
         $text .= $this->estOAFormTR('select','prop_type',$DTA);
         $text .= $this->estOAFormTR('text','prop_mlsno',$DTA);
         $text .= $this->estOAFormTR('text','prop_parcelid',$DTA);
         $text .= $this->estOAFormTR('text','prop_lotid',$DTA);
         $text .= $this->estOAFormTableEnd($SN,$DTA);
+        $text .= $this->estOAHidden('prop_currency',$DTA);
+        $text .= $this->estOAHidden('prop_leasefreq',$DTA);
+        $text .= $this->estOAHidden('prop_landfreq',$DTA);
+        //prop_uidcreate
+        
         break;
       }
     
@@ -2301,25 +2323,25 @@ class estateCore{
   
   private function estOALabels($FLD){
     $TXT = array(
-      'prop_name'=>array('labl'=>EST_GEN_NAME,'hlp'=>EST_PROP_NAMEHLP),
-      'prop_status'=>array('labl'=>EST_GEN_STATUS,'hlp'=>EST_PROP_STATUSHLP),
-      'prop_zoning'=>array('labl'=>EST_PROP_LISTZONE,'hlp'=>EST_PROP_ZONEHLP),
-      'prop_type'=>array('labl'=>EST_PROP_TYPE,'hlp'=>EST_PROP_TYPEHLP),
-      'prop_listype'=>array('labl'=>EST_PROP_LISTYPE,'hlp'=>EST_PROP_LISTYPE),
-      'prop_origprice'=>array('labl'=>EST_PROP_ORIGPRICE,'cls'=>'WD144px','hlp'=>EST_PROP_ORIGPRICEHLP),
-      'prop_listprice'=>array('labl'=>EST_PROP_LISTPRICE,'cls'=>'WD144px','hlp'=>EST_PROP_LISTPRICEHLP),
-            
+      'prop_name'=>array('labl'=>EST_GEN_NAME,'cls'=>'WD95','hlp'=>EST_PROP_NAMEHLP),
+      'prop_status'=>array('labl'=>EST_GEN_STATUS,'cls'=>'WD45','hlp'=>EST_PROP_STATUSHLP),
+      'prop_zoning'=>array('labl'=>EST_PROP_LISTZONE,'cls'=>'WD45','hlp'=>EST_PROP_ZONEHLP),
+      'prop_type'=>array('labl'=>EST_PROP_TYPE,'cls'=>'WD45','hlp'=>EST_PROP_TYPEHLP),
+      'prop_listype'=>array('labl'=>EST_PROP_LISTYPE,'cls'=>'WD45','hlp'=>EST_PROP_LISTYPE),
+      'prop_origprice'=>array('labl'=>EST_PROP_ORIGPRICE,'cls'=>'WD144px estNoLeftBord','hlp'=>EST_PROP_ORIGPRICEHLP),
+      'prop_listprice'=>array('labl'=>EST_PROP_LISTPRICE,'cls'=>'WD144px estNoLeftBord','hlp'=>EST_PROP_LISTPRICEHLP),
+      'prop_leasedur'=>array('labl'=>EST_PROP_LEASEDUR,'cls'=>'WD45'),
       'prop_mlsno'=>array('labl'=>EST_PROP_MLSNO,'hlp'=>EST_PROP_MLSNOHLP),
       'prop_parcelid'=>array('labl'=>EST_PROP_PARCELID,'hlp'=>EST_PROP_PARCELIDHLP),
       'prop_lotid'=>array('labl'=>EST_PROP_LOTID,'hlp'=>EST_PROP_LOTIDHLP),
       
       'prop_addr1'=>array('labl'=>EST_PROP_ADDR1,'cs'=>2,'cls'=>'estPropAddr','plch'=>EST_PLCH96),
       'prop_addr2'=>array('labl'=>EST_PROP_ADDR2,'cs'=>2,'cls'=>'estPropAddr','plch'=>EST_PLCH96A),
-      'prop_country'=>array('labl'=>EST_PROP_COUNTRY,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_COUNTRYHLP),
-      'prop_state'=>array('labl'=>EST_PROP_STATE,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_STATEHLP),
-      'prop_county'=>array('labl'=>EST_PROP_COUNTY,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_COUNTYHLP),
-      'prop_city'=>array('labl'=>EST_PROP_CITY,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_CITYHLP),
-      'prop_zip'=>array('labl'=>EST_PROP_POSTCODE,'cs'=>2,'cls'=>'estPropAddr','hlp'=>EST_PROP_POSTCODEHLP),
+      'prop_country'=>array('labl'=>EST_PROP_COUNTRY,'cs'=>2,'cls'=>'estPropAddr WD45','hlp'=>EST_PROP_COUNTRYHLP),
+      'prop_state'=>array('labl'=>EST_PROP_STATE,'cs'=>2,'cls'=>'estPropAddr WD45','hlp'=>EST_PROP_STATEHLP),
+      'prop_county'=>array('labl'=>EST_PROP_COUNTY,'cs'=>2,'cls'=>'estPropAddr WD45','hlp'=>EST_PROP_COUNTYHLP),
+      'prop_city'=>array('labl'=>EST_PROP_CITY,'cs'=>2,'cls'=>'estPropAddr WD45','hlp'=>EST_PROP_CITYHLP),
+      'prop_zip'=>array('labl'=>EST_PROP_POSTCODE,'cs'=>2,'cls'=>'estPropAddr WD144px','hlp'=>EST_PROP_POSTCODEHLP),
       
       //''=>array('labl'=>,'hlp'=>),
       
@@ -2328,26 +2350,27 @@ class estateCore{
       
       
       'prop_timezone'=>array('labl'=>EST_GEN_TIMEZONE,'hlp'=>EST_PROP_TIMEZONEHLP),
-      'prop_subdiv'=>array('labl'=>EST_GEN_SUBDIVISION,'hlp'=>EST_PROP_SUBDIVHLP),
-      'prop_hoafee'=>array('labl'=>EST_PROP_HOAFEES,'hlp'=>EST_PROP_HOAFEESHLP),
+      'prop_subdiv'=>array('labl'=>EST_GEN_SUBDIVISION,'cls'=>'WD45','hlp'=>EST_PROP_SUBDIVHLP),
+      'prop_hoafee'=>array('labl'=>EST_PROP_HOAFEES,'cls'=>'FL estNoRightBord WD144px','hlp'=>EST_PROP_HOAFEESHLP),
       'prop_hoaland'=>array('labl'=>EST_PROP_HOALAND,'hlp'=>EST_PROP_HOALANDHLP),
-      'prop_landfee'=>array('labl'=>EST_PROP_LANDLEASE,'hlp'=>EST_PROP_LANDLEASEHLP),
-      'prop_landfreq'=>array('labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
+      'prop_landfee'=>array('labl'=>EST_PROP_LANDLEASE,'cls'=>'FL estNoRightBord WD144px','hlp'=>EST_PROP_LANDLEASEHLP),
+      //'prop_landfreq'=>array('labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
       'prop_modelname'=>array('labl'=>EST_GEN_MODELNAME,'hlp'=>EST_PROP_MODELNAMEHLP),
       'prop_features'=>array('labl'=>EST_GEN_FEATURES,'cls'=>'estJSmaxchar','plch'=>EST_PROP_FEATURESPLCHLDR,'hlp'=>EST_PROP_FEATURESHLP),
       'prop_condit'=>array('labl'=>EST_GEN_CONDITION),
-      'prop_yearbuilt'=>array('labl'=>EST_PROP_YEARBUILT),
-      'prop_floorct'=>array('labl'=>EST_GEN_FLOORCT),
-      'prop_floorno'=>array('labl'=>EST_GEN_COMPLEX),
-      'prop_intsize'=>array('labl'=>EST_PROP_INTSIZE,'hlp'=>EST_PROP_INTSIZEHLP),
-      'prop_roofsize'=>array('labl'=>EST_PROP_ROOFSIZE,'hlp'=>EST_PROP_ROOFSIZEHLP),
-      'prop_landsize'=>array('labl'=>EST_PROP_LANDSIZE,'cls'=>'WD144px','hlp'=>EST_PROP_LANDSIZEHLP),
+      'prop_yearbuilt'=>array('labl'=>EST_PROP_YEARBUILT,'cls'=>'WD144px'),
+      'prop_floorct'=>array('labl'=>EST_GEN_FLOORCT,'cls'=>'WD144px'),
+      'prop_floorno'=>array('labl'=>EST_GEN_COMPLEX,'cls'=>'WD144px'),
+      'prop_intsize'=>array('labl'=>EST_PROP_INTSIZE,'cls'=>'WD144px FL','hlp'=>EST_PROP_INTSIZEHLP),
+      'prop_roofsize'=>array('labl'=>EST_PROP_ROOFSIZE,'cls'=>'WD144px FL','hlp'=>EST_PROP_ROOFSIZEHLP),
+      'prop_landsize'=>array('labl'=>EST_PROP_LANDSIZE,'cls'=>'WD144px FL','hlp'=>EST_PROP_LANDSIZEHLP),
       'prop_bedmain'=>array('labl'=>EST_GEN_BEDROOMS,'cls'=>'WD144px'),
       'prop_bedtot'=>array('labl'=>EST_GEN_BEDROOMS,'cls'=>'WD144px'),
       'prop_bathtot'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
       'prop_bathfull'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
       'prop_bathhalf'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
       'prop_hours'=>array('labl'=>EST_PROP_HRS,'hlp'=>EST_PROP_HRSHLP),
+      'estEventsCont'=>array('cs'=>2),
       );
     return $TXT[$FLD];
     }
@@ -2369,6 +2392,8 @@ class estateCore{
       $INFICO = $frm->help($LABS['hlp']);
       }
     
+    
+    
     $text = '<tr><td>'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
     
     if(in_array($FLD,$SERL)){$FVALUE = e107::unserialize($DTA[$FLD]);}
@@ -2381,6 +2406,11 @@ class estateCore{
     switch($FLD){
       case 'prop_status' :
         foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$OPTARR[$k] = $v['opt'];}
+        break;
+        
+      case 'prop_leasedur' :
+        $OPTARR = $GLOBALS['EST_LEASEDUR'];
+        //foreach($GLOBALS['EST_LEASEDUR'] as $k=>$v){$OPTARR[$k] = $v['opt'];}
         break;
         
       case 'prop_country' :
@@ -2438,6 +2468,12 @@ class estateCore{
     
     
     switch($TYPE){
+      case 'div' :
+        if($LABS['cs']){
+          return '<tr><td colspan="'.$LABS['cs'].'"><div id="'.$FLD.'"></div></td></tr>';
+          }
+        else{$text .= '<div id="'.$FLD.'"></div>';}
+        break;
       
       case 'prop_timezone' :
         $timeZones = systemTimeZones();
@@ -2471,19 +2507,25 @@ class estateCore{
         break;
       
       
+      case 'switch' :
+        //$options
+        $labels = array('on'=>LAN_YES,'off'=>LAN_NO);
+        $text .= $frm->flipswitch($FLD,$FVALUE,$labels,$options);
+        break;
       
       case 'select' :
+        if($LABS['wrap']){$text .= '<div class="estInptCont">';}
         $text .= $frm->select($FLD,$OPTARR,$FVALUE,$options);
-        //$text .= '<select name="'.$FLD.'" class="form-control input-xlarge'.($LABS['cls'] ? ' '.$LABS['cls'] : '').'" value="'.$FVALUE.'">';
-        //foreach($OPTARR as $ok=>$ov){$text .= '<option value="'.$ok.'"'.($ok == $FVALUE ? ' selected="selected"' : '').'>'.$tp->toHTML($ov).'</option>';}
-       // $text .= '</select>';
+        if($LABS['wrap']){$text .= '</div>';}
         break;
       
         
       case 'number' :
         //$options = array('size'=>'small');
         $maxlength = 200;
+        if($LABS['wrap']){$text .= '<div class="estInptCont">';}
         $text .= $frm->number($FLD, $FVALUE, $maxlength, $options);
+        if($LABS['wrap']){$text .= '</div>';}
         break;
         
       case 'textarea' :
@@ -2491,7 +2533,9 @@ class estateCore{
         break;
         
       default :
+        if($LABS['wrap']){$text .= '<div class="estInptCont">';}
         $text .= $frm->text($FLD,$FVALUE, varset($ATTR['f']['max'],255),$options);
+        if($LABS['wrap']){$text .= '</div>';}
         //'required'=>varset($ATTR['f']['req'],0)
         break;
       }
@@ -2500,6 +2544,8 @@ class estateCore{
     return $text.'</td></tr>';
     }
   
+  
+  //getCalTbl
   
   public function estPropHoursForm($DTA){
     if(!$DTA || count($DTA) == 0){$DTA = $GLOBALS['EST_PREF']['sched_pub_times'];}

@@ -55,26 +55,28 @@ if(!$err && intval($qs[1]) > 0){
     if(intval($DTA['prop']['prop_agent']) > 0){
       if($agt = $sql->retrieve("estate_agents","*","agent_idx='".intval($DTA['prop']['prop_agent'])."' LIMIT 1",true)){
         $DTA['agent'] = $agt[0];
-        //extract($agt[0]);
+        if(intval($DTA['agent']['agent_imgsrc']) == 1 && trim($DTA['agent']['agent_image']) !== ""){
+          $DTA['agent']['agent_profimg'] = EST_PTHABS_AGENT.$tp->toHTML($DTA['agent']['agent_image']);
+          }
+        
         if($agy = $sql->retrieve("estate_agencies","*","agency_idx='".intval($DTA['prop']['prop_agency'])."' LIMIT 1",true)){
           $DTA['agency'] = $agy[0];
-          //extract($agy[0]);
           }
         if($usr = $sql->retrieve("user",$USRSEL,"user_id='".intval($DTA['agent']['agent_uid'])."' LIMIT 1",true)){
           $DTA['user'] = $usr[0];
-          //extract($usr[0]);
+          $DTA['user']['user_profimg'] = $tp->toAvatar($DTA['user'],array('type'=>'url'));
+          if(!$DTA['agent']['agent_profimg']){$DTA['agent']['agent_profimg'] = $DTA['user']['user_profimg'];}
           }
         }
       }
     else{
       if($usr = $sql->retrieve("user",$USRSEL,"user_id='".intval($DTA['prop']['prop_uidcreate'])."' LIMIT 1",true)){
+        $usr[0]['user_profimg'] = $tp->toAvatar($usr[0],array('type'=>'url'));
         $DTA['user'] = $usr[0];
-        //extract($usr[0]);
         }
       }
     }
   }
-
 
 
 // If Listing Loaded, Check current Estate User permissions against Property Listing Owner
@@ -150,23 +152,53 @@ else{
 
 
 
-
-
 $pretext = '
-  <h2>THIS FORM IS IN DEVELOPMENT</h2>
-  <div>EST_USERPERM: '.EST_USERPERM.'</div>
-  <div>public_act: '.intval($EST_PREF['public_act']).'</div>
-  <div>You Are: '.$tp->toHTML(USERNAME).' ('.$tp->toHTML(USEREMAIL).') ['.$tp->toHTML(AGENT_NAME).' of '.EST_AGENCYID.' '.$tp->toHTML(AGENCY_NAME).']</div>
-  <div>Property #'.$DTA['prop']['prop_idx'].': '.$tp->toHTML($DTA['prop']['prop_name']).'</div>
-  <div>Agent & Agency: '.$DTA['prop']['prop_agent'].' '.$tp->toHTML($DTA['agent']['agent_name']).' of '.$tp->toHTML($DTA['agency']['agency_name']).' (#'.$DTA['prop']['prop_agency'].')</div>
-  <div>Created By UID: '.$DTA['prop']['prop_uidcreate'].' (Updated By UID '.$DTA['prop']['prop_uidupdate'].')</div>
-  <div>Street: '.$DTA['prop']['prop_addr1'].'</div>';
+  <h2>'.(intval($DTA['prop']['prop_idx']) > 0 ? '' : EST_GEN_NEW.' ').(intval($DTA['prop']['prop_agent']) > 0 ? EST_GEN_AGENT : EST_GEN_PRIVATE).' '.EST_GEN_LISTING.'</h2>
+  <div id="estAgCard" class="estAgCard">
+  <div class="estAgCardInner">
+  ';
 
+if($DTA['agent']){
+  $pretext .= '
+  <div class="estAgtAvatar" style="background-image:url(\''.$DTA['agent']['agent_profimg'].'\')"></div>
+  <div class="estAgtInfo1">
+    <h3>'.$tp->toHTML($DTA['agent']['agent_name']).'</h3>
+    <p class="FSITAL">'.$tp->toHTML($DTA['agent']['agent_txt1']).'</p>';
+    
+  if($AGENT['contacts'][6]){
+    $pretext .= '<div class="estAgContact">';
+    foreach($AGENT['contacts'][6] as $ck=>$cv){
+      $pretext .= '<div>'.$tp->toHTML($cv[0]).' '.$tp->toHTML($cv[1]).'</div>';
+      }
+    $pretext .= '</div>';
+    }
+    
+    $pretext .= '
+  </div>';
+  //$pretext .= '<div>'.$DTA['user']['user_profimg'].'</div>';
+   
+  }
+else{
+  $pretext .= '
+  <div class="estAgtAvatar" style="background-image:url(\''.$DTA['user']['user_profimg'].'\')"></div>
+  <div class="estAgtInfo1">
+    <h3>'.$tp->toHTML($DTA['user']['user_name']).'</h3>
+    <div class="estAgContact">
+      <div>'.$tp->toHTML($DTA['user']['user_email']).'</div>
+    </div>
+  </div>';
+  }
+
+$pretext .= '<div>Created By UID: '.$DTA['prop']['prop_uidcreate'].' (Updated By UID '.$DTA['prop']['prop_uidupdate'].')</div></div></div>';
 
 if($err){
   foreach($err as $k=>$v){e107::getMessage()->addError($v);}
   require_once(HEADERF);
-  echo $pretext;
+  echo $pretext.'
+  <div>USER PERMISSIONS: '.EST_USERPERM.'</div>
+  <div>You Are: '.$tp->toHTML(USERNAME).' ('.$tp->toHTML(USEREMAIL).') ['.$tp->toHTML(AGENT_NAME).' of '.EST_AGENCYID.' '.$tp->toHTML(AGENCY_NAME).']</div>
+  <div>Agent & Agency: '.$DTA['prop']['prop_agent'].' '.$tp->toHTML($DTA['agent']['agent_name']).' of '.$tp->toHTML($DTA['agency']['agency_name']).' (#'.$DTA['prop']['prop_agency'].')</div>';
+  unset($DTA,$err,$pretext);
   require_once(FOOTERF);
   exit;
   }
@@ -281,15 +313,6 @@ if($_POST){
 $estateCore = new estateCore;
 
 
-
-
-if($DTA['prop']['prop_idx']){$UpBtnTxt = EST_GEN_UPDATE;}
-else{$UpBtnTxt = EST_GEN_SAVE;}
-
-
-
-
-
 $OATXT = $postext.$pretext;
 
 
@@ -307,16 +330,13 @@ $OATXT = $postext.$pretext;
 
 $TBSOPTS = array('active' => 0,'fade' => 0,'class' => 'estOATabs');
 $TBS = $estateCore->estOAFormTabs();
+
 foreach($TBS as $k=>$v){
   $TBS[$k]['text'] = $estateCore->estOAFormTable($k,$DTA['prop']);
   }
 
 $OATXT .= '
-<form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-OAform" enctype="multipart/form-data" autocomplete="off" data-propid="'.intval($DTA['prop']['prop_idx']).'" data-h5-instanceid="0" novalidate="novalidate">
-  <input type="hidden" name="prop_currency" value="'.$DTA['prop']['prop_currency'].'" />
-  <input type="hidden" name="prop_dimu1" value="'.$DTA['prop']['prop_dimu1'].'" />
-  <input type="hidden" name="prop_dimu2" value="'.$DTA['prop']['prop_dimu2'].'" />';
-
+<form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-OAform" enctype="multipart/form-data" autocomplete="off" data-propid="'.intval($DTA['prop']['prop_idx']).'" data-h5-instanceid="0" novalidate="novalidate">';
 
 $OATXT .= $frm->tabs($TBS, $TBSOPTS);
 
