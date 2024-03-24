@@ -3278,7 +3278,6 @@ function lightOrDark(color){
       }).appendTo(LeaseFrqDiv);
     
     
-    
     var propLPdiv = $(JQDIV,{'id':'propLPdiv'}).appendTo($('input[name="prop_listprice"]').parent());
     $(JQBTN,{'id':'propOPpctBtn','class':'btn btn-default estNoRightBord'}).on({
       click : function(e){
@@ -3331,6 +3330,7 @@ function lightOrDark(color){
           }
         }
       });
+    
     $('input[name="prop_landfee"]').change();
     
     var HOADiv = $(JQDIV,{'class':'WSNWRP'});
@@ -3371,6 +3371,7 @@ function lightOrDark(color){
         $(dimu1Btn2).html(defs.keys.dim1u[cv][0]);
         }
       });
+    
     $(dimu1Btn2).html(defs.keys.dim1u[dimU1v][0]).on({
       click : function(e){
         e.preventDefault();
@@ -3924,89 +3925,70 @@ function lightOrDark(color){
     if(typeof bgColor !== 'undefined'){lightordark = ' '+lightOrDark(bgColor);}
     $('div.estInptCont').addClass(lightordark);
     
-    
-    
-      $.each(defs.tbls[mainTbl].form,function(fld,fldta){
-        var eleName = fld;
+    $.each(defs.tbls[mainTbl].form,function(fld,fldta){
+      var eleName = fld;
+      
+      if(typeof fldta.type !== 'undefined' && (fldta.type == 'select' || fldta.type == 'eselect')){
+        var elem = $('select[name="'+eleName+'"]');
         
-        if(typeof fldta.type !== 'undefined' && (fldta.type == 'select' || fldta.type == 'eselect')){
-          var elem = $('select[name="'+eleName+'"]');
-          
-          if(fldta.type == 'eselect'){
-            var selContA = $(JQDIV,{'class':'estInptCont'+lightordark+' oneBtn'}).appendTo($(elem).parent());
-            $(elem).addClass('ILBLK').on({change : function(){estTestEles(cForm,cSave)}});
-            $(elem).appendTo(selContA).promise().done(function(){
-              var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(selContA);
-              $(JQDIV,{'class':'estSonarBlip'}).appendTo(sonar);
-              var eSelBtn = $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':defs.txt.add1}).html('<i class="fa fa-plus"></i>');
-              
-              if(uperm >= 3){
-                $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
-                }
-              else if(typeof fldta.src.perm !== 'undefined' && uperm >= Number(fldta.src.perm[1])){
-                $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
-                }
-              
-              //var cssdta = $(elem).css();
-              console.log(elem);
-              $(eSelBtn).on({click : function(e){selectEdit(mainTbl,elem);}}).appendTo(sonar);
-              $(selContA).data('chk',elem);
-              });
-            }
-          
-          if(typeof fldta.chng !== null){
-            $(elem).on({
-              change : function(){
-                $(fldta.chng).each(function(i,fnct){
-                  var myFunc = window[fnct];
-                  if(typeof myFunc === 'function'){myFunc();}
-                  else{alert('javascript function "'+fnct+'" not found');}
-                  //perm
-                  });
-                }
-              });
-                
-              
-            }
-          
-          if(typeof fldta.fltrs !== null){
-            $(elem).on({
-              change : function(){
-                var defs = $('body').data('defs');
-                var newVal = $(this).find('option:selected').val();
-                $.each(fldta.fltrs, function(rfld,fele){
-                  if(typeof defs.tbls[mainTbl].form[rfld].src !== 'undefined'){
-                    var rtbl = defs.tbls[mainTbl].form[rfld].src;
-                    $.extend(fldta,{'maintbl':mainTbl,'mainfld':fld});
-                    fltrSelect(fldta,rtbl,newVal,rfld,fele);
-                    }
-                  });
-                estTestEles(cForm,cSave);
-                }
-              });
-            $(elem).change();
-            }
-          else{
-            $(elem).change();
-            }
+        if(fldta.type == 'eselect'){
+          var selContA = $(JQDIV,{'class':'estInptCont'+lightordark+' oneBtn'}).appendTo($(elem).parent());
+          $(elem).addClass('ILBLK').on({change : function(){estTestEles(cForm,cSave)}});
+          $(elem).appendTo(selContA).promise().done(function(){
+            var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(selContA);
+            $(JQDIV,{'class':'estSonarBlip'}).appendTo(sonar);
+            var eSelBtn = $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':defs.txt.add1}).html('<i class="fa fa-plus"></i>');
+            
+            if(uperm >= 3){
+              $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
+              }
+            else if(typeof fldta.src.perm !== 'undefined' && uperm >= Number(fldta.src.perm[1])){
+              $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
+              }
+            
+            console.log(elem);
+            $(eSelBtn).on({click : function(e){selectEdit(mainTbl,elem);}}).appendTo(sonar);
+            $(selContA).data('chk',elem);
+            });
           }
-        });
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        
+        if(typeof fldta.chng !== null){
+          $(elem).on({
+            change : function(){
+              $(fldta.chng).each(function(i,fnct){
+                var myFunc = window[fnct];
+                if(typeof myFunc === 'function'){myFunc();}
+                else{alert('javascript function "'+fnct+'" not found');}
+                //perm
+                });
+              }
+            });
+              
+            
+          }
+        
+        if(typeof fldta.fltrs !== null){
+          $(elem).on({
+            change : function(){
+              var defs = $('body').data('defs');
+              var newVal = $(this).find('option:selected').val();
+              $.each(fldta.fltrs, function(rfld,fele){
+                if(typeof defs.tbls[mainTbl].form[rfld].src !== 'undefined'){
+                  var rtbl = defs.tbls[mainTbl].form[rfld].src;
+                  $.extend(fldta,{'maintbl':mainTbl,'mainfld':fld});
+                  fltrSelect(fldta,rtbl,newVal,rfld,fele);
+                  }
+                });
+              estTestEles(cForm,cSave);
+              }
+            });
+          $(elem).change();
+          }
+        else{
+          $(elem).change();
+          }
+        }
+      });
     
     
     
@@ -4025,11 +4007,16 @@ function lightOrDark(color){
       });
     
     estateBuildDIMUbtns();
-    estBuildMap();
     estBuildGallery();
+        //estBuildSpaceList();
+        //estInitDefHrs(1);
+        //estBuildEvtTab();
+    estBuildMap();
     estPrepPropHrs();
     
-        
+    
+    $(JQDIV,{'class':'s-message alert alert-block warning alert-warning'}).html(defs.txt.notavail2).prependTo('#estEventsCont');
+    
     var mediaDta = estNewMediaDta(1);
     estFileUplFld(mediaDta,1);
     $('#fileSlipBtn').on({
