@@ -552,7 +552,7 @@ define("EST_HLPMNU_USERS00", "A list of all Members of your website, including Y
 define("EST_HLPMNU_USERS01", "Grants access to the Admin Area of this plugin. This establishes the User as an Agent of your company.");
 define("EST_HLPMNU_USERS02", "<i>Always Checked.</i> Grant Access to the Listings Form from the Front End area of your website.");
 define("EST_HLPMNU_USERS03a", "The Estate Preferences currently DO NOT allow Non admin users to post their own listings.");
-define("EST_HLPMNU_USERS03b", "The Estate Preferences allow Non admin users able to post their own listings without accessing the Admin Area of this website.");
+define("EST_HLPMNU_USERS03b", "The Estate Preferences allows Non admin users to post their own listings without accessing the Admin Area of this website.");
 define("EST_HLPMNU_USERS04", "Sets the Access Level of an Admin with Permission to access the Admin Area of this plugin by assigning a special User Class.");
 define("EST_HLPMNU_USERS05", "Your own Access Level determines what Level you can set for other users and who you can set them for. ");
 

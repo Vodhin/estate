@@ -213,6 +213,7 @@ define("EST_GEN_NOLISTINGS","There are no listings available.");
 define("EST_GEN_NONE","None");
 define("EST_GEN_NOOPENHOUSE","There are no events scheduled");
 define("EST_GEN_NOT","Not");
+define("EST_GEN_NOTAVAIL2","Event Scheduling is not available on this form");
 define("EST_GEN_NOTAFILE","Not A File");
 define("EST_GEN_NOTCONFIRMED","Not Confirmed");
 define("EST_GEN_NOTBELONGTO","Does Not Belong To");
@@ -237,6 +238,7 @@ define("EST_GEN_POSITHNT","Front, Back, East Side, etc.");
 define("EST_GEN_POSITION","Position");
 define("EST_GEN_POWEREDBY","Powered By");
 define("EST_GEN_PREVIEW","Preview");
+define("EST_GEN_PRIVATE","Private");
 define("EST_GEN_PRIVATEVIEWING","Private Viewing");
 define("EST_GEN_PROFILE","Profile");
 define("EST_GEN_PROFILES","Profiles");
@@ -399,8 +401,8 @@ define("EST_PROP_COUNTYHLP", "Sets filters for City options. Click the Edit butt
 
 define("EST_PROP_DESCRIPTIONHLP", "Provide a full description of the property including information not covered in the interior/exterior sections");
 
-define("EST_PROP_HRS","Public Viewing Hours");
-define("EST_PROP_HRSHLP","The Public days and hours the agent is available to show this property. Does not affect the Listing Agent's ability to schedule Events.");
+define("EST_PROP_HRS","Viewing Hours");
+define("EST_PROP_HRSHLP","Displays when the Agent or Seller is available to show this property.");
 
 define("EST_PROP_INTERIORHLP", "Add/Edit interior features for this property");
 define("EST_PROP_INTSIZEHLP", "Total Interior climate controled living space");
