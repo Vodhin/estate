@@ -5701,13 +5701,11 @@ function estGetSubDivs(){
       return;
       }
     
-    
     var agtId = Number(defs.tbls.estate_properties.dta[0].prop_agent);
     var propEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_propidx == propId;});
     var agtEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_agt == agtId && element.event_propidx !== propId;});
     
     Array.prototype.push.apply(propEvts,agtEvts);
-    //console.log(propEvts);
     var evtDiv = [];
     
     
@@ -5744,13 +5742,7 @@ function estGetSubDivs(){
           mouseleave :function(e){estEvtEditBtn(0,this)}
           });
         
-        
-        
-        
         }).promise().done(function(){
-        
-        
-        
         
         $('#estEvtCaltb td.estLive div.estCalDayBox').on({
           mouseenter : function(e){estEvtEditBtn(1,this)},
@@ -5777,10 +5769,6 @@ function estGetSubDivs(){
             });
           });
       });
-    
-      
-    
-    
     }
   
   

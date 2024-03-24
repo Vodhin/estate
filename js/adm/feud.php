@@ -1253,6 +1253,7 @@ function estJStext(){
     'nomap'=>EST_ERR_NOMAP,
     'nocontdta'=>EST_ERR_NOCONDATA,
     'nocontype'=>EST_ERR_NOCONTYPE,
+    'notavail2'=>EST_GEN_NOTAVAIL2,
     'notdefined'=>EST_GEN_NOTDEFINED,
     'option'=>EST_OPTION,
     'options'=>EST_OPTIONS,
