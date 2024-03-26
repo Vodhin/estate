@@ -268,6 +268,7 @@ define("EST_GEN_SOLD","Sold");
 define("EST_GEN_SORT","Sort");
 define("EST_GEN_SPACE","Space");
 define("EST_GEN_SPACES","Spaces");
+define("EST_GEN_SAVEFIRST","Click Save in order to add");
 define("EST_GEN_SQR","Square");
 define("EST_GEN_SQRKM","Sq Km");
 define("EST_GEN_SQRMI","Sq Miles");
