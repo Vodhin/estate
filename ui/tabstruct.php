@@ -212,14 +212,14 @@ function estTablStruct(){
         'str'=>'int',
         'cls'=>'xlarge',
         'labl'=>EST_GEN_GROUP,
-        'src'=>array('tbl'=>'estate_group','idx'=>'group_idx','map'=>array('group_idx','group_name')),
+        'src'=>array('tbl'=>'estate_group','idx'=>'group_idx','perm'=>array(1,2,3),'map'=>array('group_idx','group_name')),
         ),
       'space_catid'=>array(
         'type'=>'eselect',
         'str'=>'int',
         'cls'=>'xlarge',
         'labl'=>LAN_CATEGORY,
-        'src'=>array('tbl'=>'estate_featcats','idx'=>'featcat_idx','map'=>array('featcat_idx','featcat_name','req'=>array('prop_zoning','featcat_zone',EST_PROP_MSG_ZONE1))), //,'fltr'=>array()
+        'src'=>array('tbl'=>'estate_featcats','idx'=>'featcat_idx','perm'=>array(1,2,3),'map'=>array('featcat_idx','featcat_name','req'=>array('prop_zoning','featcat_zone',EST_PROP_MSG_ZONE1))), //,'fltr'=>array()
         'fltrs'=>array('grp'=>array('tbl'=>'estate_features','idx'=>'feature_idx','map'=>array('featcat_idx','featcat_name')))
         ),
       'space_ord'=>array('type'=>'hidden','str'=>'int'),
@@ -363,7 +363,7 @@ function estTablStruct(){
         'type'=>'eselect',
         'str'=>'int',
         'cls'=>'xlarge',
-        'src'=>array('tbl'=>'estate_states','idx'=>'state_idx','map'=>array('state_idx','state_name'))
+        'src'=>array('tbl'=>'estate_states','idx'=>'state_idx','perm'=>array(1,2,3),'map'=>array('state_idx','state_name'))
         ),
       'cnty_url'=>array('type'=>'text','cls'=>'xlarge','labl'=>LAN_WEBSITE,'plch'=>'www.somesite.com')
       ),

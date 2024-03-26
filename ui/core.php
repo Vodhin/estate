@@ -2232,6 +2232,10 @@ class estateCore{
       case 6 :
         $text = $this->estOAFormTableStart($SN);
         $text .= $this->estOAFormTR('prop_timezone','prop_timezone',$DTA);
+        $text .= $this->estOAFormTR('datetime','prop_dateprevw',$DTA);
+        $text .= $this->estOAFormTR('datetime','prop_datetease',$DTA);
+        $text .= $this->estOAFormTR('datetime','prop_datelive',$DTA);
+        $text .= $this->estOAFormTR('datetime','prop_datepull',$DTA);
         $text .= $this->estOAFormTR('prop_hours','prop_hours',$DTA);
         $text .= $this->estOAFormTR('div','estEventsCont',$DTA);
         $text .= $this->estOAFormTableEnd($SN,$DTA);
@@ -2243,6 +2247,8 @@ class estateCore{
         
       case 4 :
         $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('text','prop_summary',$DTA);
+        $text .= $this->estOAFormTR('textarea','prop_description',$DTA);
         $text .= $this->estOAFormTR('txtcntr','prop_features',$DTA);
         $text .= $this->estOAFormTR('text','prop_modelname',$DTA);
         $text .= $this->estOAFormTR('text','prop_condit',$DTA);
@@ -2355,6 +2361,9 @@ class estateCore{
       'prop_hoaland'=>array('labl'=>EST_PROP_HOALAND,'hlp'=>EST_PROP_HOALANDHLP),
       'prop_landfee'=>array('labl'=>EST_PROP_LANDLEASE,'cls'=>'FL estNoRightBord WD144px','hlp'=>EST_PROP_LANDLEASEHLP),
       //'prop_landfreq'=>array('labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
+      
+      'prop_summary'=>array('labl'=>LAN_SUMMARY,'hlp'=>EST_PROP_SUMMARYHLP),
+      'prop_description'=>array('labl'=>LAN_DESCRIPTION,'hlp'=>EST_PROP_DESCRIPTIONHLP),
       'prop_modelname'=>array('labl'=>EST_GEN_MODELNAME,'hlp'=>EST_PROP_MODELNAMEHLP),
       'prop_features'=>array('labl'=>EST_GEN_FEATURES,'cls'=>'estJSmaxchar','plch'=>EST_PROP_FEATURESPLCHLDR,'hlp'=>EST_PROP_FEATURESHLP),
       'prop_condit'=>array('labl'=>EST_GEN_CONDITION),
@@ -2370,6 +2379,11 @@ class estateCore{
       'prop_bathfull'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
       'prop_bathhalf'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
       'prop_hours'=>array('labl'=>EST_PROP_HRS,'hlp'=>EST_PROP_HRSHLP),
+      'prop_datetease'=>array('labl'=>EST_PROP_DATETEASE,'hlp'=>EST_PROP_DATETEASEHLP),
+      'prop_dateprevw'=>array('labl'=>EST_PROP_DATEPREVW,'hlp'=>EST_PROP_DATEPREVWHLP),
+      'prop_datelive'=>array('labl'=>EST_PROP_DATELIVE,'hlp'=>EST_PROP_DATELIVEHLP),
+      'prop_datepull'=>array('labl'=>EST_PROP_DATEPULL,'hlp'=>EST_PROP_DATEPULLHLP),
+      
       'estEventsCont'=>array('cs'=>2),
       );
     return $TXT[$FLD];
@@ -2391,8 +2405,6 @@ class estateCore{
     if($LABS['hlp']){
       $INFICO = $frm->help($LABS['hlp']);
       }
-    
-    
     
     $text = '<tr><td>'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
     
@@ -2424,26 +2436,31 @@ class estateCore{
       case 'prop_type' :
         $dbRow = $sql->retrieve('estate_listypes', '*', '',true);
         if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['listype_idx']] = $v['listype_name'];}}
+        unset($dbRow);
         break;
       
       case 'prop_zoning' ;
         $dbRow = e107::getDb()->retrieve('estate_zoning', '*', '',true);
         if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['zoning_idx']] = $v['zoning_name'];}}
+        unset($dbRow);
         break;
       
       case 'prop_state' :
         $dbRow = e107::getDb()->retrieve('estate_states', '*', 'state_country="'.$DTA['prop_country'].'"',true);
         if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['state_idx']] = $v['state_name'];}}
+        unset($dbRow);
         break;
       
       case 'prop_county' :
         $dbRow = e107::getDb()->retrieve('estate_county', '*', 'cnty_state="'.$DTA['prop_state'].'"',true);
         if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['cnty_idx']] = $v['cnty_name'];}}
+        unset($dbRow);
         break;
       
       case 'prop_city' :
         $dbRow = e107::getDb()->retrieve('estate_city', '*', 'city_county="'.$DTA['prop_county'].'"',true);
         if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['city_idx']] = $v['city_name'];}}
+        unset($dbRow);
         break;
       
       
@@ -2478,6 +2495,7 @@ class estateCore{
       case 'prop_timezone' :
         $timeZones = systemTimeZones();
         $text .= $frm->select('prop_timezone', $timeZones, vartrue($FVALUE, $pref['timezone']),'size=xlarge');
+        unset($timeZones);
         break;
       
       case 'prop_floorno' :
@@ -2503,6 +2521,7 @@ class estateCore{
         break;
       
       case 'txtcntr' :
+        $text = '<tr><td class="VAT">'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
         $text .= $frm->textarea($FLD,$FVALUE,1,40,$options,1);
         break;
       
@@ -2519,6 +2538,9 @@ class estateCore{
         if($LABS['wrap']){$text .= '</div>';}
         break;
       
+      case 'datetime' :
+        $text .= $frm->datepicker($FLD,$FVALUE,array('size'=>'small WD256px','mode'=>'datetime'));
+        break;
         
       case 'number' :
         //$options = array('size'=>'small');
@@ -2529,6 +2551,7 @@ class estateCore{
         break;
         
       case 'textarea' :
+        $text = '<tr><td class="VAT">'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
         $text .= $frm->textarea($FLD,$FVALUE,4,40,$options); //,$counter = true: add character counter
         break;
         
@@ -2540,7 +2563,7 @@ class estateCore{
         break;
       }
     
-    
+    unset($INFICO,$OPTARR,$LABS,$options);
     return $text.'</td></tr>';
     }
   
