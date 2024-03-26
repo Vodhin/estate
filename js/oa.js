@@ -22,6 +22,7 @@ var JQTR = '<tr></tr>';
 var JQTH = '<th></th>';
 var JQTD = '<td></td>';
 var JQEDI = '<i class="fa fa-pencil-square-o"></i>';
+var JQADI = '<i class="fa fa-plus"></i>';
 
 
 
@@ -117,6 +118,44 @@ function lightOrDark(color){
         }
       });
     }
+  
+  
+  function estProcPdta(pDta,fldmap,ret){
+    if(pDta.form.elem == null){return;}
+    console.log(pDta);
+    var defs = $('body').data('defs');
+    if($(pDta.form.elem).is('select')){
+      if(fldmap == null){estAlertLog(defs.txt.nomap);}
+      else{
+        rk0 = ret.kf.indexOf(fldmap[0]);
+        rk1 = ret.kf.indexOf(fldmap[1]);
+        if(ret.newid > 0){
+          $(JQOPT,{'value':ret.newid}).html(ret.kv[rk1]).appendTo(pDta.form.elem).promise().done(function(){
+            $(pDta.form.elem).children('option').sort(function (a, b) {
+              var cA = $(a).html(); var cB = $(b).html();
+              return (cA > cB) ? 1 : (cA < cB) ? -1 : 0;
+              }).appendTo($(pDta.form.elem)).promise().done(function(){
+                $(pDta.form.elem).val(ret.newid).change();
+                });
+            });
+          }
+        else{
+          $(pDta.form.elem).find('option[value="'+ret.kv[rk0]+'"]').html(ret.kv[rk1]).promise().done(function(){
+            $(pDta.form.elem).children('option').sort(function (a, b) {
+              var cA = $(a).html(); var cB = $(b).html();
+              return (cA > cB) ? 1 : (cA < cB) ? -1 : 0;
+              }).appendTo($(pDta.form.elem)).promise().done(function(){
+                $(pDta.form.elem).val(ret.kv[rk0]).change();
+                });
+            
+            });
+          }
+        }
+      }
+    else{estAlertLog(defs.txt.lostresult);}
+    }
+  
+  
   
   
   function estMediaTitle(tdta,xd=null){
@@ -753,7 +792,7 @@ function lightOrDark(color){
     var sectKey = defs.tbls.estate_sects[lev][1];
     var mediaCont = $('#estMediaMgrCont');
     if(levDta[sectKey] == 0){
-      $('#estMediaNoGo').html(defs.txt.spaceidzero+' '+defs.txt.media).show();
+      $('#estMediaNoGo').html(defs.txt.savefirst+' '+defs.txt.media).show();
       $(mediaCont).hide();
       $('#fileSlip').hide();
       $('#fileSlipBtn2').prop('disabled',1);
@@ -983,7 +1022,12 @@ function lightOrDark(color){
     
     var defs = $('body').data('defs');
     var propId = Number($('body').data('propid'));
+    var spaceFrm = defs.tbls.estate_spaces.form;
     var xt = defs.txt;
+    
+    var uperm = Number(defs.user.perm);
+    var SpIc = [JQADI,defs.txt.add1];
+    if(uperm >= 3){SpIc = [JQEDI,defs.txt.add1+'/'+defs.txt.edit];}
     
     var popIt = estBuildPopover([{'tabs':[xt.main,xt.features,xt.description,xt.media],'fnct':{'name':'estSHUploadBtn','args':3}}]); //fnct acts on tab click
     var popFrm = popIt.frm[0];
@@ -1038,7 +1082,6 @@ function lightOrDark(color){
     if(levDta.space_idx == 0){$(saveBtn2).hide();}
     
     
-    
     $(popFrm.form).data('levdta',levDta).data('destTbl',{'dta':destTbl.dta,'flds':destTbl.flds,'idx':'space_idx','table':'estate_spaces'});
     $(popFrm.form).data('maintbl',null).data('form',{'elem':null,'attr':null,'match':{},'fnct':{'name':'estSaveSpace'}});
     
@@ -1091,7 +1134,11 @@ function lightOrDark(color){
       
     var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(tabtr[tabx].tr[tri][3]);
     $(JQDIV,{'class':'estSonarBlip'}).appendTo(sonar);
-    $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':xt.add1+'/'+xt.edit}).html(JQEDI).on({
+    
+    if(typeof spaceFrm.space_grpid.src.perm !== 'undefined' && uperm >= Number(spaceFrm.space_grpid.src.perm[1])){
+      SpIc = [JQEDI,defs.txt.add1+'/'+defs.txt.edit];
+      }
+    $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':SpIc[1]}).html(SpIc[0]).on({
       click : function(e){
         var defs = $('body').data('defs');
         var defDta = estDefDta('estate_group');
@@ -1100,6 +1147,8 @@ function lightOrDark(color){
         estPopoverAlt(1,{'tbl':'estate_spaces','fld':'space_grpid','defdta':defDta,'fnct':{'name':'estSpaceGroupChange'}});
         }
       }).appendTo(sonar);
+    
+    
     $(tabtr[tabx].tr[tri][3]).data('chk',space_grpid);
     tri++;
     
@@ -1115,7 +1164,11 @@ function lightOrDark(color){
     
     var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(tabtr[tabx].tr[tri][3]);
     $(JQDIV,{'class':'estSonarBlip'}).appendTo(sonar);
-    $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':xt.add1+'/'+xt.edit}).html(JQEDI).on({
+    
+    if(typeof spaceFrm.space_catid.src.perm !== 'undefined' && uperm >= Number(spaceFrm.space_catid.src.perm[1])){
+      SpIc = [JQEDI,defs.txt.add1+'/'+defs.txt.edit];
+      }
+    $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':SpIc[1]}).html(SpIc[0]).on({
       click : function(e){
         var defs = $('body').data('defs');
         var defDta = estDefDta('estate_featcats');
@@ -1396,7 +1449,7 @@ function lightOrDark(color){
     
     if(levDta[sectKey] == 0){
       $('#estFeatureMgrCont').hide();
-      $('#estFeatureNoGo').html(defs.txt.spaceidzero+' '+defs.txt.features).show();
+      $('#estFeatureNoGo').html(defs.txt.savefirst+' '+defs.txt.features).show();
       }
     else{
       var catInf = estGetFeatCatInfo();
@@ -1841,6 +1894,17 @@ function lightOrDark(color){
     var defs = $('body').data('defs');
     var trs = [];
     var tri = 0;
+    var uperm = Number(defs.user.perm);
+    console.log(uperm);
+    /*
+    
+              if(uperm >= 3){
+                $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
+                }
+              else if(typeof fldta.src.perm !== 'undefined' && uperm >= Number(fldta.src.perm[1])){
+                $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
+                }
+    */
     
     $.each(eleForm, function(eli,ele){
       trs[tri] = {'tr':1,'label':'???','inpt':[],'trip':null,'tab':(typeof ele.tab !== 'undefined' ? ele.tab : 0),'wrap':null};
@@ -1980,7 +2044,6 @@ function lightOrDark(color){
               $(trs[tri].inpt[0]).find('option[value="'+eleVal+'"]').prop('selected','selected');
               });
           trs[tri].trip = trs[tri].inpt[0];
-          
           if(xFnct !== null && typeof xFnct.btns !== 'undefined'){
             console.log(xFnct.btns);
             trs[tri].wrap = 1;
@@ -2327,8 +2390,66 @@ function lightOrDark(color){
   
   
   
+  function estSaveSpace(spaceId){
+    var defs = $('body').data('defs');
+    $('input[name="space_idx"]').val(spaceId);
+    console.log(defs);
+    
+    var levDta = defs.tbls.estate_spaces.dta.find(x => x.space_idx === spaceId);
+    console.log(levDta);
+    
+    var popit = $('#estPopCont').data('popit');
+    $(popit.frm[0].form).data('levdta',levDta);
+    estTestEles(popit.frm[0].form, popit.frm[0].savebtns);
+    
+    var grpLstDta = defs.tbls.estate_grouplist.dta.find(x => Number(x.grouplist_groupidx) === Number(levDta.space_grpid));
+    
+    if(typeof grpLstDta == 'undefined'){
+      var grpOrd = 1;
+      
+      var glDta = {'tbl':'estate_grouplist','key':'grouplist_idx','del':0,'fdta':[{'grouplist_idx':0},{'grouplist_propidx':levDta.space_propidx},{'grouplist_groupidx':levDta.space_grpid},{'grouplist_ord':grpOrd}]};
+      
+      $.ajax({
+        url: vreFeud+'?5||0',
+        type:'post',
+        data:{'fetch':3,'propid':levDta.space_propidx,'rt':'js','tdta':[glDta]},
+        dataType:'json',
+        cache:false,
+        processData:true,
+        success: function(ret, textStatus, jqXHR){
+          ret = ret[0];
+          //console.log(ret);
+          if(typeof ret.error !== 'undefined'){
+            estAlertLog(ret.error);
+            $('#estPopContRes'+0).html(ret.error).fadeIn(200,function(){estPopHeight(1)});
+            }
+          else{
+            if(typeof ret.alldta !== 'undefined'){
+              estProcDefDta(ret.alldta.tbls);
+              estBuildCategoryList(2);
+              estBuildMediaList(2);
+              estBuildSpaceList();
+              estPopHeight();
+              }
+            }
+          },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log('ERRORS: '+textStatus+' '+errorThrown);
+          estAlertLog(jqXHR.responseText);
+          estRemovePopover();
+          }
+        });
+      }
+    else{
+      estBuildCategoryList(2);
+      estBuildMediaList(2);
+      estBuildSpaceList();
+      estPopHeight();
+      }
+    }
   
-  
+  //estFeatureNoGo
+  //estMediaNoGo
   
   
   
@@ -2508,7 +2629,7 @@ function lightOrDark(color){
       $(tdta[i].tbl).removeClass('estDragTable');
       }
     
-    tdta[i].tr[tri][4] = $(JQBTN,{'type':'button','class':'btn btn-default ','title':xt.add1+' '+xt.new1+' '+xt.space+': '+groupName}).html('<i class="fa fa-plus"></i>').on({
+    tdta[i].tr[tri][4] = $(JQBTN,{'type':'button','class':'btn btn-default ','title':xt.add1+' '+xt.new1+' '+xt.space+': '+groupName}).html(JQADI).on({
       click : function(e){
         e.preventDefault();
         estBuildSpace(null,tbx)
@@ -2760,6 +2881,8 @@ function lightOrDark(color){
     var defs = $('body').data('defs');
     var xt = defs.txt;
     
+    var uperm = Number(defs.user.perm);
+    
     if(tdta == null){estAlertLog(xt.missing+' '+xt.form+' '+xt.datasource);return;}
     var popIt = $('#estPopCont').data('popit');
     
@@ -2811,6 +2934,10 @@ function lightOrDark(color){
     if(typeof destTbl == 'undefined'){estAlertLog('"'+eSrcFrm.src.tbl+'" '+xt.notdefined);return;}
     if(typeof destTbl.form == 'undefined'){estAlertLog('"'+eSrcFrm.src.tbl+'" '+xt.form+' '+xt.notdefined);return;}
     
+    
+    if(uperm >= 3 ||(typeof eSrcFrm.src.perm !== 'undefined' && uperm >= Number(eSrcFrm.src.perm[1]))){}
+    else{cVal = '';}
+    //arrows-alt-v
     var idx = eSrcFrm.src.idx;
     var sectDta = estGetSectDta(idx,cVal,destTbl,tdta.defdta);
     
@@ -3108,7 +3235,6 @@ function lightOrDark(color){
     var targName = $(targ).prop('name');
     
     var uperm = Number(defs.user.perm);
-    
     
     var srcTbl = defs.tbls[mainTbl];
     if(typeof srcTbl == 'undefined'){return;}
@@ -3764,7 +3890,7 @@ function lightOrDark(color){
     }
   
   
-  
+  //estProcPdta
   
   function estOAPrep(){
     console.log('OA Prep');
@@ -3772,6 +3898,7 @@ function lightOrDark(color){
     var propId = Number($('body').data('propid'));
     var defs = $('body').data('defs');
     var mainTbl = 'estate_properties';
+    var cForm = $('#plugin-estate-OAform');
     
     if(defs.tbls.estate_properties.dta.length == 0){
       var newDta = estDefDta('estate_properties');
@@ -3934,10 +4061,11 @@ function lightOrDark(color){
         if(fldta.type == 'eselect'){
           var selContA = $(JQDIV,{'class':'estInptCont'+lightordark+' oneBtn'}).appendTo($(elem).parent());
           $(elem).addClass('ILBLK').on({change : function(){estTestEles(cForm,cSave)}});
+                    
           $(elem).appendTo(selContA).promise().done(function(){
             var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(selContA);
             $(JQDIV,{'class':'estSonarBlip'}).appendTo(sonar);
-            var eSelBtn = $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':defs.txt.add1}).html('<i class="fa fa-plus"></i>');
+            var eSelBtn = $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':defs.txt.add1}).html(JQADI);
             
             if(uperm >= 3){
               $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
@@ -3946,66 +4074,58 @@ function lightOrDark(color){
               $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
               }
             
-            console.log(elem);
             $(eSelBtn).on({click : function(e){selectEdit(mainTbl,elem);}}).appendTo(sonar);
             $(selContA).data('chk',elem);
             });
           }
         
-        if(typeof fldta.chng !== null){
-          $(elem).on({
-            change : function(){
-              $(fldta.chng).each(function(i,fnct){
-                var myFunc = window[fnct];
-                if(typeof myFunc === 'function'){myFunc();}
-                else{alert('javascript function "'+fnct+'" not found');}
-                //perm
-                });
-              }
-            });
-              
-            
+        
+        if(typeof fldta.chng !== 'undefined'){
+          if(fldta.chng !== null){
+            $(elem).on({
+              change : function(){
+                $(fldta.chng).each(function(i,fnct){
+                  var myFunc = window[fnct];
+                  if(typeof myFunc === 'function'){myFunc();}
+                  else{alert('javascript function "'+fnct+'" not found');}
+                  //perm
+                  });
+                }
+              });
+            }
           }
         
-        if(typeof fldta.fltrs !== null){
-          $(elem).on({
-            change : function(){
-              var defs = $('body').data('defs');
-              var newVal = $(this).find('option:selected').val();
-              $.each(fldta.fltrs, function(rfld,fele){
-                if(typeof defs.tbls[mainTbl].form[rfld].src !== 'undefined'){
-                  var rtbl = defs.tbls[mainTbl].form[rfld].src;
-                  $.extend(fldta,{'maintbl':mainTbl,'mainfld':fld});
-                  fltrSelect(fldta,rtbl,newVal,rfld,fele);
-                  }
-                });
-              estTestEles(cForm,cSave);
-              }
-            });
-          $(elem).change();
+        if(typeof fldta.fltrs !== 'undefined'){
+          if(fldta.fltrs !== null){
+            $(elem).on({
+              change : function(){
+                var defs = $('body').data('defs');
+                var newVal = $(this).find('option:selected').val();
+                $.each(fldta.fltrs, function(rfld,fele){
+                  if(typeof defs.tbls[mainTbl].form[rfld].src !== 'undefined'){
+                    var rtbl = defs.tbls[mainTbl].form[rfld].src;
+                    $.extend(fldta,{'maintbl':mainTbl,'mainfld':fld});
+                    fltrSelect(fldta,rtbl,newVal,rfld,fele);
+                    }
+                  });
+                estTestEles(cForm,cSave);
+                }
+              });
+            }
           }
-        else{
-          $(elem).change();
-          }
+        $(elem).change();
         }
       });
     
     
     
-    $('.estInptCont').each(function(i,ele){
-      //$(ele).find('select').width($(ele).width() - $(ele).find('button').outerWidth()+'px');
-      });
-    
-    //$(eSelBtn).on({click : function(e){selectEdit(mainTbl,elem);}}).appendTo(sonar);
-    //$(selContA).data('chk',elem);
-    
-        
     $('.estPropAddr').on({
       change : function(){estSetPropAddress();},
       keyup : function(){estSetPropAddress();},
       blur : function(){estSetPropAddress();}
       });
-    
+
+    //estSaveSpace 
     estateBuildDIMUbtns();
     estBuildGallery();
         //estBuildSpaceList();
