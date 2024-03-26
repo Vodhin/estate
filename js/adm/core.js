@@ -24,6 +24,7 @@ var JQTR = '<tr></tr>';
 var JQTH = '<th></th>';
 var JQTD = '<td></td>';
 var JQEDI = '<i class="fa fa-pencil-square-o"></i>';
+var JQADI = '<i class="fa fa-plus"></i>';
 
   /*
   
@@ -2061,6 +2062,7 @@ function estGetSubDivs(){
     console.log(tdta);
     var defs = $('body').data('defs');
     var xt = defs.txt;
+    var uperm = Number(defs.user.perm);
     
     if(tdta == null){estAlertLog(xt.missing+' '+xt.form+' '+xt.datasource);return;}
     var popIt = $('#estPopCont').data('popit');
@@ -2112,6 +2114,9 @@ function estGetSubDivs(){
     var destTbl = defs.tbls[eSrcFrm.src.tbl]; // -> Alt form table, can be 'self' or 'table_name'
     if(typeof destTbl == 'undefined'){estAlertLog('"'+eSrcFrm.src.tbl+'" '+xt.notdefined);return;}
     if(typeof destTbl.form == 'undefined'){estAlertLog('"'+eSrcFrm.src.tbl+'" '+xt.form+' '+xt.notdefined);return;}
+    
+    if(uperm >= 3 ||(typeof eSrcFrm.src.perm !== 'undefined' && uperm >= Number(eSrcFrm.src.perm[1]))){}
+    else{cVal = '';}
     
     var idx = eSrcFrm.src.idx;
     var sectDta = estGetSectDta(idx,cVal,destTbl,tdta.defdta);
@@ -3849,6 +3854,7 @@ function estGetSubDivs(){
     var defs = $('body').data('defs');
     var trs = [];
     var tri = 0;
+    var uperm = Number(defs.user.perm);
     
     $.each(eleForm, function(eli,ele){
       trs[tri] = {'tr':1,'label':'???','inpt':[],'trip':null,'tab':(typeof ele.tab !== 'undefined' ? ele.tab : 0),'wrap':null};
@@ -4496,7 +4502,13 @@ function estGetSubDivs(){
     
     var defs = $('body').data('defs');
     var propId = Number($('body').data('propid'));
+    var spaceFrm = defs.tbls.estate_spaces.form;
     var xt = defs.txt;
+    
+    var uperm = Number(defs.user.perm);
+    var SpIc = [JQADI,defs.txt.add1];
+    if(uperm >= 3){SpIc = [JQEDI,defs.txt.add1+'/'+defs.txt.edit];}
+    
     
     var popIt = estBuildPopover([{'tabs':[xt.main,xt.features,xt.description,xt.media],'fnct':{'name':'estSHUploadBtn','args':3}}]); //fnct acts on tab click
     var popFrm = popIt.frm[0];
@@ -4604,7 +4616,11 @@ function estGetSubDivs(){
       
     var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(tabtr[tabx].tr[tri][3]);
     $(JQDIV,{'class':'estSonarBlip'}).appendTo(sonar);
-    $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':xt.add1+'/'+xt.edit}).html(JQEDI).on({
+    
+    if(typeof spaceFrm.space_grpid.src.perm !== 'undefined' && uperm >= Number(spaceFrm.space_grpid.src.perm[1])){
+      SpIc = [JQEDI,defs.txt.add1+'/'+defs.txt.edit];
+      }
+    $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':SpIc[1]}).html(SpIc[0]).on({
       click : function(e){
         var defs = $('body').data('defs');
         var defDta = estDefDta('estate_group');
@@ -4628,7 +4644,10 @@ function estGetSubDivs(){
     
     var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(tabtr[tabx].tr[tri][3]);
     $(JQDIV,{'class':'estSonarBlip'}).appendTo(sonar);
-    $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':xt.add1+'/'+xt.edit}).html(JQEDI).on({
+    if(typeof spaceFrm.space_catid.src.perm !== 'undefined' && uperm >= Number(spaceFrm.space_catid.src.perm[1])){
+      SpIc = [JQEDI,defs.txt.add1+'/'+defs.txt.edit];
+      }
+    $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':SpIc[1]}).html(SpIc[0]).on({
       click : function(e){
         var defs = $('body').data('defs');
         var defDta = estDefDta('estate_featcats');
@@ -4832,7 +4851,7 @@ function estGetSubDivs(){
     var sectKey = defs.tbls.estate_sects[lev][1];
     var mediaCont = $('#estMediaMgrCont');
     if(levDta[sectKey] == 0){
-      $('#estMediaNoGo').html(defs.txt.spaceidzero+' '+defs.txt.media).show();
+      $('#estMediaNoGo').html(defs.txt.savefirst+' '+defs.txt.media).show();
       $(mediaCont).hide();
       $('#fileSlip').hide();
       $('#fileSlipBtn2').prop('disabled',1);
@@ -4936,7 +4955,7 @@ function estGetSubDivs(){
     
     if(levDta[sectKey] == 0){
       $('#estFeatureMgrCont').hide();
-      $('#estFeatureNoGo').html(defs.txt.spaceidzero+' '+defs.txt.features).show();
+      $('#estFeatureNoGo').html(defs.txt.savefirst+' '+defs.txt.features).show();
       }
     else{
       var catInf = estGetFeatCatInfo();
@@ -5494,7 +5513,7 @@ function estGetSubDivs(){
       $(tdta[i].tbl).removeClass('estDragTable');
       }
     
-    tdta[i].tr[tri][4] = $(JQBTN,{'type':'button','class':'btn btn-default ','title':xt.add1+' '+xt.new1+' '+xt.space+': '+groupName}).html('<i class="fa fa-plus"></i>').on({
+    tdta[i].tr[tri][4] = $(JQBTN,{'type':'button','class':'btn btn-default ','title':xt.add1+' '+xt.new1+' '+xt.space+': '+groupName}).html(JQADI).on({
       click : function(e){
         e.preventDefault();
         estBuildSpace(null,tbx)
@@ -5560,7 +5579,7 @@ function estGetSubDivs(){
         else{$(tdta[i].tr[tri][7]).css({'background-image':'url('+defs.dir.prop.thm+mediaGrep1[0].media_thm+noCache+')'});}
         }
       
-      $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="fa fa-arrows-alt-v"></i>"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
+      $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="fa fa-arrows-alt-v"></i></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
       
       $(JQBTN,{'class':'btn btn-default btn-secondary','title':xt.edit+' '+rmdta.space_name}).html('<i class="fa fa-pencil-square-o"></i>').on({
         click : function(e){
@@ -8348,7 +8367,7 @@ function estGetSubDivs(){
             $(elem).appendTo(selContA).promise().done(function(){
               var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(selContA);
               $(JQDIV,{'class':'estSonarBlip'}).appendTo(sonar);
-              var eSelBtn = $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':defs.txt.add1}).html('<i class="fa fa-plus"></i>');
+              var eSelBtn = $(JQBTN,{'type':'button','class':'btn btn-default selEditBtn1','title':defs.txt.add1}).html(JQADI);
               
               if(uperm >= 3){
                 $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
@@ -8362,41 +8381,40 @@ function estGetSubDivs(){
               });
             }
           
-          if(typeof fldta.chng !== null){
-            $(elem).on({
-              change : function(){
-                $(fldta.chng).each(function(i,fnct){
-                  var myFunc = window[fnct];
-                  if(typeof myFunc === 'function'){myFunc();}
-                  else{alert('javascript function "'+fnct+'" not found');}
-                  //perm
-                  });
-                }
-              });
-                
-              
+          if(typeof fldta.chng !== 'undefined'){
+            if(fldta.chng !== null){
+              $(elem).on({
+                change : function(){
+                  $(fldta.chng).each(function(i,fnct){
+                    var myFunc = window[fnct];
+                    if(typeof myFunc === 'function'){myFunc();}
+                    else{alert('javascript function "'+fnct+'" not found');}
+                    //perm
+                    });
+                  }
+                });
+              }
             }
-          
-          if(typeof fldta.fltrs !== null){
-            $(elem).on({
-              change : function(){
-                var defs = $('body').data('defs');
-                var newVal = $(this).find('option:selected').val();
-                $.each(fldta.fltrs, function(rfld,fele){
-                  if(typeof defs.tbls[mainTbl].form[rfld].src !== 'undefined'){
-                    var rtbl = defs.tbls[mainTbl].form[rfld].src;
-                    $.extend(fldta,{'maintbl':mainTbl,'mainfld':fld});
-                    fltrSelect(fldta,rtbl,newVal,rfld,fele);
-                    }
-                  });
-                estTestEles(cForm,cSave);
-                }
-              });
-            $(elem).change();
+          //estNoData
+          if(typeof fldta.fltrs !== 'undefined'){
+            if(fldta.fltrs !== null){
+              $(elem).on({
+                change : function(){
+                  var defs = $('body').data('defs');
+                  var newVal = $(this).find('option:selected').val();
+                  $.each(fldta.fltrs, function(rfld,fele){
+                    if(typeof defs.tbls[mainTbl].form[rfld].src !== 'undefined'){
+                      var rtbl = defs.tbls[mainTbl].form[rfld].src;
+                      $.extend(fldta,{'maintbl':mainTbl,'mainfld':fld});
+                      fltrSelect(fldta,rtbl,newVal,rfld,fele);
+                      }
+                    });
+                  estTestEles(cForm,cSave);
+                  }
+                });
+              }
             }
-          else{
-            $(elem).change();
-            }
+          $(elem).change();
           }
         else{
           if(helpInFull == 0 && typeof fldta.hlpm !== 'undefined' && fldta.hlpm !== null){
@@ -9173,7 +9191,7 @@ function estGetSubDivs(){
               
               if(actn == 'list'){
                 var targ = $('#admin-ui-list-filter').find('div.form-inline:first-child');
-                $(JQBTN,{'type':'button','class':'btn btn-default','title':ret.txt.create}).html('<i class="fa fa-plus"></i>').on({
+                $(JQBTN,{'type':'button','class':'btn btn-default','title':ret.txt.create}).html(JQADI).on({
                   click : function(){window.location.assign(vreBasePath+'admin_config.php?mode='+mainTbl+'&action=create')}
                   }).appendTo(targ);
                 
