@@ -8,12 +8,12 @@ img {
   display: none;
 }
 
-.slider, .slider-wrapper {
+.estSlider, .estSlider-wrapper {
   position: relative;
   height: 250px;
 }
 
-.slide {
+.estSlide {
   background-color: black;
   width: 100%;
   overflow: hidden;
@@ -26,7 +26,7 @@ img {
   transition: opacity .5s ease-in-out;
 }
 
-.slide-img {
+.estSlide-img {
   filter: brightness(50%);
   height: 100%;
   object-fit: fill;
@@ -34,13 +34,13 @@ img {
   margin: 0 auto;
 }
 
-.slide-figure {
+.estSlide-figure {
   height: 100%;
   position: relative;
   margin: 0;
 }
 
-.slide-caption {
+.estSlide-caption {
   position: absolute;
   bottom: 30%;
   width: calc(100% - 1rem);
@@ -49,22 +49,22 @@ img {
   left: 50%;
 }
 
-.trigger:checked + .slide {
+.trigger:checked + .estSlide {
   z-index: 6000;
   opacity: 1;
 }
 
-.slider-nav {
+.estSlider-nav {
   width: 100%;
   text-align: center;
   margin: 1rem 0;
 }
 
-.slider-nav__item {
+.estSlider-nav__item {
   display: inline-block;
 }
 
-.slider-nav__label {
+.estSlider-nav__label {
   font-size: 13px;
   background-color: #333;
   display: block;
@@ -78,37 +78,37 @@ img {
   transition: background-color .25s, color .25s ease-in-out;
 }
 
-.slider-nav__label:hover,
-.slider-nav__label:active,
-.slider-nav__label:focus {
+.estSlider-nav__label:hover,
+.estSlider-nav__label:active,
+.estSlider-nav__label:focus {
   background-color: gray;
   color: black;
 }
 
 @media only screen and (min-width: 1024px) {
-  .slider, .slider-wrapper {
+  .estSlider, .estSlider-wrapper {
     height: 480px;
   }
 
-  .slide-caption {
+  .estSlide-caption {
     width: 65%;
     font-size: 1.5rem;
   }
 }
 
 @media only screen and (max-width: 1023px) and (min-width: 768px) {
-  .slider, .slider-wrapper {
+  .estSlider, .estSlider-wrapper {
     height: 360px;
   }
 
-  .slide-caption {
+  .estSlide-caption {
     width: 75%;
     font-size: 1.25rem;
   }
 }
 
 @media only screen and (min-width: 768px) {
-  .slide-img {
+  .estSlide-img {
     width: 100%;
     height: auto;
   }
@@ -118,7 +118,7 @@ img {
 
 
 
-.slide {
+.estSlide {
   position: absolute;
   z-index: 5000;
   ...
@@ -126,7 +126,7 @@ img {
   transition: opacity .5s ease-in-out;
 }
 
-.trigger:checked + .slide {
+.trigger:checked + .estSlide {
   z-index: 6000;
   opacity: 1;
 }

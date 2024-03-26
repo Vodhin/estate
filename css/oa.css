@@ -24,7 +24,6 @@ input[type="file"]{
 
 
 .form-control {
-  /*width:unset !important;*/
   }
 
 
@@ -118,6 +117,9 @@ table.estOATable1 colgroup:last-child{
 
 .WD192px{
   width:192px !important;
+  }
+.WD256px{
+  width:256px !important;
   }
 
 .WD95{width:95% !important;}
