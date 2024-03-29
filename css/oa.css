@@ -1,489 +1,550 @@
-/* CSS Document */
-
-td{
-  position: relative;
-  }
-
-.admin-ui-help-tip{
-  padding-top: 2px;
-  font-size: 18px;
-  cursor: help;
-  color: rgba(127, 127, 127, 0.7);
-  float: right !important;
-  margin-left: 5px;
-  }
-
-.has-feedback-left input {
-    padding-left: 30px;
-}
-
-
-input[type="file"]{
-  display:none !important;
-  }
-
-
-.form-control {
-  }
-
-
-
-.estOABlock{
-  display:block;
-  position: relative;
-  width: 100%;
-  margin: 6px auto 6px auto;
-  border:1px solid #ABABAB;
-  background-color:#F5F5F5;
-  background-origin: padding-box;
-  }
-  
-.estOABlock h3{
-  display:block;
-  position:relative;
-  white-space:nowrap;
-  cursor:pointer;
-  padding: 6px;
-  margin: 0px 0px 0px 0px !important;
-  background-color: rgba(128, 128, 128, 0.25);
-  }
-
-.estOABlock h3 div{
-  display: inline-block;
-  position:relative;
-  width:90%;
-  text-overflow:ellipsis;
-  }
-
-
-.estOABlock div.estOATabCont{
-  display:block;
-  position: relative;
-  width: 100%;
-  padding: 12px 12px 12px 12px;
-  overflow:hidden;
-  }
-
-.estOABlock.expand div.estOATabCont{
-  display:block;
-  height:unset;
-  }
-
-
-
-
-table.estOATable1{
-  width: 100%;
-  }
-
-table.estOATable1 tr{
-  border-bottom:1px solid rgba(128,128,128,0.5);
-  }
-table.estOATable1 tr:first-child{
-  border-top:1px solid rgba(128,128,128,0.5);
-  }
-table.estOATable1 th,
-table.estOATable1 td{
-  padding: 6px;
-  }
-
-table.estOATable1 colgroup:first-child{
-  width:15%;
-  }
-
-table.estOATable1 colgroup:last-child{
-  width:85%;
-  }
-
-
-
-
-
-@keyframes sonarBlip {
-  from {opacity: 0.5;}
-  to {transform: scale(3);opacity: 0;}
-  }
-
-.estInptCont button:last-child
-.estInptCont div button:last-child{
-  border-top-right-radius:3px;
-  border-bottom-right-radius:3px;
-  }
-
-
-.WD144px{
-  width:144px !important;
-  }
-
-.WD192px{
-  width:192px !important;
-  }
-.WD256px{
-  width:256px !important;
-  }
-
-.WD95{width:95% !important;}
-.WD85{width:85% !important;}
-.WD75{width:75% !important;}
-.WD65{width:65% !important;}
-.WD55{width:55% !important;}
-.WD45{width:45% !important;}
-
-#estClearkCover{
-  background-color:rgba(64,64,64,0.15);
-  }
-
-
-#propOPpctDiv{
-  display:block;
-  position:absolute;
-  width:67px;
-  height: 400px;
-  background-color:#212121;
-  overflow-x: hidden;
-  overflow-y: auto;
-  z-index:100002;
-  }
-#propOPpctDiv button{
-  width:100%;
-  }
-
-
-#estNoGalWarn{display:none;}
-
-#estGalFileSlipCont{
-  float:right;
-  margin:-5px 0px -5px 0px;
-  padding:0px;
-  }
-#estGalFileSlipCont label{
-  margin:0px;
-  }
-
-#estGalleryCont{
-  display:block;
-  position:relative;
-  width:100%;
-  }
-
-
-
-#estate-gallery-tabl{
-  width:100%;
-  }
-
-#estate-gallery-tabl tr{
-  }
-#estate-gallery-tabl thead tr th{
-  padding: 6px;
-  text-transform:uppercase;
-  }
-#estate-gallery-tabl tr td{
-  }
-
-
-
-
-
-.estBeltLoop{
-  display:block;
-  position:relative;
-  width:100%;
-  min-height: 5em;
-  max-height: 12em;
-  background-color: rgba(25,25,25,0.15);
-  margin: 0px;
-  overflow-y: hidden;
-  overflow-x: auto;
-  }
-
-/*.estBeltLoop:hover{min-height: 10em;}*/
-
-.estBelt{
-  display: block;
-  position: relative;
-  max-width: max-content;
-  min-width: 100%;
-  height: 100%;
-  margin:0px;
-  padding:0px;
-  white-space: nowrap;
-  overflow:visible;
-  }
-
-#estGalleryUsed{
-  display: block;
-  position: relative;
-  width: 100%;
-  min-height: 10em;
-  background-color: rgba(25,25,25,0.15);
-  margin: 0px;
-  padding:0px;
-  white-space: normal;
-  }
-
-
-
-
-
-
-.listMediaCont.mediaOrder div.upldPvwBtn, .Dragable{
-  border:2px solid #6381FF !important;
-  cursor:move;
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.estCalTbl{
-  width:100%;
-  }
-.estCalTbl tr th,
-.estCalTbl tr td{
-  text-align:center;
-  width:14.285%;
-  }
-
-.estCalTbl input,
-.estCalTbl button{
-  width:100%;
-  }
-
-
-
-div.field-help{
-  position:absolute;
-  top:-10px;
-  left:unset;
-  right:28px;
-  font-size:9pt;
-  line-height:1.15em;
-  color:#FFFFFF;
-  background-color:rgba(64,64,64,0.85);
-  padding: 6px;
-  border-radius: 3px 3px 3px 3px;
-  z-index:1500;
-  box-shadow: 1px 1px 2px #0000009C;
-  -webkit-box-shadow: 1px 1px 2px #0000009C;
-  -moz-box-shadow: 1px 1px 2px #0000009C;
-  }
-
-
-
-
-
-table.estOAMap{
-  width: 100%;
-  }
-table.estOAMap th,
-table.estOAMap td{
-  padding: 6px;
-  }
-
-table.estOAMap colgroup:first-child{
-  width:15%;
-  }
-table.estOAMap colgroup:nth-child(2){
-  width:60%;
-  }
-
-table.estOAMap colgroup:last-child{
-  width:25%;
-  }
-
-table.estOAMap tr{
-  border-bottom:1px solid rgba(128,128,128,0.5);
-  }
-table.estOAMap tr:first-child{
-  border-top:1px solid rgba(128,128,128,0.5);
-  }
-
-.estMapCont{
-  display: inline-block;
-  width: 640px;
-  height: 321px;
-  margin: 8px auto 0px auto;
-  }
-
-.estMap{
-  display: block;
-  width: 640px;
-  height: 321px;
-  }
-
-
-.estMapSearchCont{
-  display: block;
-  position:relative;
-  width:100%;
-  margin:0px 0px 4px 0px !important;
-  }
-
-.estMapSearchCont:before {
-  content: "\f002";
-  position: absolute;
-  margin-left: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  z-index: 5;
-  }
-
-.estMapLookupAddr{
-  display: inline-block !important;
-  position: relative;
-  border-right: none !important;
-  border-top-right-radius: 0px !important;
-  border-bottom-right-radius: 0px !important;
-  vertical-align: top !important;
-  }
-
-.estMapSearchBtn{
-  display: inline-block !important;
-  position: relative;
-  left: -4px;
-  border-left: none !important;
-  margin-left:0px !important;
-  border-top-left-radius: 0px !important;
-  border-bottom-left-radius: 0px !important;
-  vertical-align:top !important;
-  }
-
-.estMapBtnCont{
-  display:block;
-  width:100%;
-  height: 368px;
-  vertical-align:top;
-  }
-.estMapBtnCont button{
-  width:100%;
-  }
-
-.estFoundMapCoordRes{
-  overflow-x: hidden;
-  overflow-y: auto;
-  }
-
-.estMapBtnCont button.estMapLUBtn{
-  white-space: normal !important;
-  text-align: left !important;
-  line-height: 1.25em !important;
-  }
-
-
-#MapSearchLoading{
-  display: block;
-  position: relative;
-  width: 99%;
-  height: 98%;
-  margin: 2px auto;
-  border-radius: 3px;
-  background-color: rgba(205,205,205,0.70);
-  background-image: url('../images/loading.gif');
-  background-position: center;
-  background-repeat: no-repeat;
-  }
-
-
-
-
-
-
-@media only screen and (min-device-width:100px) and (max-device-width:480px){
-  .dummy{}
-  
-  
-  .estOABlock h3{
-    display:block;
-    }
-  .estOABlock h3 div{
-    display: inline-block;
-    position:relative;
-    width:90%;
-    text-overflow:ellipsis;
-    }
-  
-  .estOABlock h3::after{
-    content:"▼"; /*‹  † © ® » « §*/
-    position: absolute;
-    right: 8px;
-    }
-  
-  .estOABlock.expand h3::after{
-    content:"▲"; 
-    }
-  
-  .estOABlock div.estOATabCont{
-    display:none;
-    padding: 12px 12px 12px 12px;
-    }
-  
-  .estOABlock.expand div.estOATabCont{
-    display:block;
-    width: 100%;
-    height:unset;
-    padding: 0px;
-    overflow-x: auto;
-    }
-  
-  .estOABlock.expand div.estOATabCont table{
-    
-    }
-  
-  .estOABlock.expand div.estOATabCont table tr{
-    
-    }
-  
-  .estOABlock.expand div.estOATabCont table tr th:nth-child(1),
-  .estOABlock.expand div.estOATabCont table tr td:nth-child(1){
-    width:12%;
-    }
-  .estOABlock.expand div.estOATabCont table tr th:nth-child(2),
-  .estOABlock.expand div.estOATabCont table tr td:nth-child(2){
-    width:unset;
-    }
-  
-  
-  div.field-help {
-    top: -10px;
-    left: unset;
-    right: -200px;
-    width: 200px;
-    }
-  
-  .estMapCont{
-    max-width: 90vw;
-    }
-  .estMap{
-    max-width: 90vw;
-    }
-  .estMapBtnCont {
-    height: unset;
-    }
-  
-  .upldPvwBtn {
-    display: inline-block;
-    width: 7em;
-    max-width: 97%;
-    height: 7em;
-    }
-  
-  
-  
-  }
-
-
+/* CSS Document */
+
+td{
+  position: relative;
+  }
+
+.admin-ui-help-tip{
+  padding-top: 2px;
+  font:normal normal normal 14px/1 FontAwesome !important;
+  font-size: 18px;
+  cursor: help;
+  color: rgba(127, 127, 127, 0.7);
+  float: right !important;
+  margin-left: 5px;
+  }
+
+.has-feedback-left input {
+    padding-left: 30px;
+}
+
+
+input[type="file"]{
+  display:none !important;
+  }
+
+.btn,
+.form-control {
+  //color: #000000 !important;
+  }
+
+
+
+.estOABlock{
+  display:block;
+  position: relative;
+  width: 100%;
+  margin: 6px auto 6px auto;
+  border:1px solid #ABABAB;
+  background-color:#F5F5F5;
+  background-origin: padding-box;
+  }
+  
+.estOABlock h3{
+  display:block;
+  position:relative;
+  white-space:nowrap;
+  cursor:pointer;
+  padding: 6px;
+  margin: 0px 0px 0px 0px !important;
+  background-color: rgba(128, 128, 128, 0.25);
+  }
+
+.estOABlock h3 div{
+  display: inline-block;
+  position:relative;
+  width:90%;
+  text-overflow:ellipsis;
+  }
+
+
+.estOABlock div.estOATabCont{
+  display:block;
+  position: relative;
+  width: 100%;
+  background-color: inherit;
+  color: inherit;
+  text-align: left;
+  line-height: 1.15em;
+  padding: 12px 12px 12px 12px;
+  /*overflow:hidden;*/
+  }
+
+.estOABlock.expand div.estOATabCont{
+  display:block;
+  height:unset;
+  }
+
+.estOABlock div.estOATabCont input[type="text"],
+.estOABlock div.estOATabCont input[type="number"],
+.estOABlock div.estOATabCont select,
+.estOABlock div.estOATabCont button,
+#estPopCont input[type="text"],
+#estPopCont input[type="number"],
+#estPopCont select,
+#estPopCont button{
+  height: 38px;
+  min-width: 38px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px !important;
+  line-height: 18px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  outline: none;
+  }
+
+.estOABlock div.estOATabCont textarea,
+#estPopCont textarea{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px !important;
+  line-height: 18px !important;
+  padding: 6px 12px !important;
+  outline: none;
+  }
+
+#estPopCont h3 button{
+  height: 30px;
+  font-size: 12px !important;
+  padding: 6px 12px !important;
+  outline: none;
+  }
+
+
+
+table.estOATable1{
+  width: 100%;
+  background-color: inherit;
+  }
+
+table.estOATable1 tr{
+  border-bottom:1px solid rgba(128,128,128,0.5);
+  }
+table.estOATable1 tr:first-child{
+  border-top:1px solid rgba(128,128,128,0.5);
+  }
+table.estOATable1 th,
+table.estOATable1 td{
+  padding: 6px;
+  }
+
+table.estOATable1 colgroup:first-child{
+  width:15%;
+  min-width: 128px;
+  }
+
+table.estOATable1 colgroup:last-child{
+  }
+
+
+
+
+
+@keyframes sonarBlip {
+  from {opacity: 0.5;}
+  to {transform: scale(3);opacity: 0;}
+  }
+
+.estInptCont button:last-child
+.estInptCont div button:last-child{
+  border-top-right-radius:3px;
+  border-bottom-right-radius:3px;
+  }
+
+
+.WD144px{
+  width:144px !important;
+  }
+
+.WD192px{
+  width:192px !important;
+  }
+.WD256px{
+  width:256px !important;
+  }
+
+.WD95{width:95% !important;}
+.WD85{width:85% !important;}
+.WD75{width:75% !important;}
+.WD65{width:65% !important;}
+.WD55{width:55% !important;}
+.WD45{width:45% !important;}
+
+#estClearkCover{
+  background-color:rgba(64,64,64,0.15);
+  }
+
+
+#propOPpctDiv{
+  display:block;
+  position:absolute;
+  width:67px;
+  height: 400px;
+  background-color:#212121;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index:100002;
+  }
+#propOPpctDiv button{
+  width:100%;
+  }
+
+
+#estNoGalWarn{display:none;}
+
+#estGalFileSlipCont{
+  float:right;
+  margin:-5px 0px -5px 0px;
+  padding:0px;
+  }
+#estGalFileSlipCont label{
+  margin:0px;
+  }
+
+#estGalleryCont{
+  display:block;
+  position:relative;
+  width:100%;
+  }
+
+
+
+#estate-gallery-tabl{
+  width:100%;
+  }
+
+#estate-gallery-tabl tr{
+  }
+#estate-gallery-tabl thead tr th{
+  padding: 6px;
+  text-transform:uppercase;
+  }
+#estate-gallery-tabl tr td{
+  }
+
+
+
+
+
+.estBeltLoop{
+  display:block;
+  position:relative;
+  width:100%;
+  min-height: 5em;
+  max-height: 12em;
+  background-color: rgba(25,25,25,0.15);
+  margin: 0px;
+  overflow-y: hidden;
+  overflow-x: auto;
+  }
+
+/*.estBeltLoop:hover{min-height: 10em;}*/
+
+.estBelt{
+  display: block;
+  position: relative;
+  max-width: max-content;
+  min-width: 100%;
+  height: 100%;
+  margin:0px;
+  padding:0px;
+  white-space: nowrap;
+  overflow:visible;
+  }
+
+#estGalleryUsed{
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: 10em;
+  background-color: rgba(25,25,25,0.15);
+  margin: 0px;
+  padding:0px;
+  white-space: normal;
+  }
+
+
+
+
+
+
+.listMediaCont.mediaOrder div.upldPvwBtn, .Dragable{
+  border:2px solid #6381FF !important;
+  cursor:move;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.estCalTbl{
+  width:100%;
+  }
+.estCalTbl tr th,
+.estCalTbl tr td{
+  text-align:center;
+  width:14.285%;
+  }
+
+.estCalTbl input,
+.estCalTbl button{
+  width:100%;
+  }
+
+
+
+div.field-help{
+  position:absolute;
+  top:4px;
+  left:unset;
+  right: 32px;
+  min-width: 132px;
+  min-height: 42px;
+  background-color:rgb(64,64,64);
+  color:#FFFFFF;
+  font-size:9pt;
+  text-align: left;
+  line-height:1.15em;
+  padding: 6px;
+  border-radius: 3px 3px 3px 3px;
+  z-index:1500;
+  box-shadow: 1px 1px 2px #0000009C;
+  -webkit-box-shadow: 1px 1px 2px #0000009C;
+  -moz-box-shadow: 1px 1px 2px #0000009C;
+  }
+
+div.field-help::after{
+  content:"";
+  position:absolute;
+  top: 13px;
+  left: unset;
+  right: -8px;
+  width: 16px;
+  height: 16px;
+  background-color:rgb(64,64,64);
+  transform:rotate(45deg);
+  z-index: 1498;
+  }
+
+div.field-help ul{
+  padding-inline-start: 14px;
+  font-size: 0.9em;
+  }
+div.field-help ul li{
+  
+  }
+
+
+table.estOAMap{
+  width: 100%;
+  }
+table.estOAMap th,
+table.estOAMap td{
+  padding: 6px;
+  }
+
+table.estOAMap colgroup:first-child{
+  width:15%;
+  }
+table.estOAMap colgroup:nth-child(2){
+  width:60%;
+  }
+
+table.estOAMap colgroup:last-child{
+  width:25%;
+  }
+
+table.estOAMap tr{
+  border-bottom:1px solid rgba(128,128,128,0.5);
+  }
+table.estOAMap tr:first-child{
+  border-top:1px solid rgba(128,128,128,0.5);
+  }
+
+.estMapCont{
+  display: inline-block;
+  width: 386px;
+  height: 256px;
+  margin: 8px auto 0px auto;
+  }
+
+.estMap{
+  display: block;
+  width: 386px;
+  height: 256px;
+  }
+
+
+.estMapSearchCont{
+  display: block;
+  position:relative;
+  width:100%;
+  margin:0px 0px 4px 0px !important;
+  }
+
+.estMapSearchCont:before {
+  content: "\f002";
+  position: absolute;
+  margin-left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  z-index: 5;
+  }
+
+.estMapLookupAddr{
+  display: inline-block !important;
+  position: relative;
+  border-right: none !important;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  vertical-align: top !important;
+  }
+
+.estMapSearchBtn{
+  display: inline-block !important;
+  position: relative;
+  left: -4px;
+  border-left: none !important;
+  margin-left:0px !important;
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  vertical-align:top !important;
+  }
+
+.estMapBtnCont{
+  display:block;
+  width:100%;
+  height: 368px;
+  vertical-align:top;
+  }
+.estMapBtnCont button{
+  width:100%;
+  }
+
+.estFoundMapCoordRes{
+  overflow-x: hidden;
+  overflow-y: auto;
+  }
+
+.estMapBtnCont button.estMapLUBtn{
+  white-space: normal !important;
+  text-align: left !important;
+  line-height: 1.25em !important;
+  }
+
+
+#MapSearchLoading{
+  display: block;
+  position: relative;
+  width: 99%;
+  height: 98%;
+  margin: 2px auto;
+  border-radius: 3px;
+  background-color: rgba(205,205,205,0.70);
+  background-image: url('../images/loading.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  }
+
+
+
+
+
+
+@media only screen and (min-device-width:100px) and (max-device-width:480px){
+  .dummy{}
+  
+  
+  .estOABlock h3{
+    display:block;
+    }
+  .estOABlock h3 div{
+    display: inline-block;
+    position:relative;
+    width:90%;
+    text-overflow:ellipsis;
+    }
+  
+  .estOABlock h3::after{
+    content:"▼"; /*‹  † © ® » « §*/
+    position: absolute;
+    right: 8px;
+    }
+  
+  .estOABlock.expand h3::after{
+    content:"▲"; 
+    }
+  
+  .estOABlock div.estOATabCont{
+    display:none;
+    padding: 12px 12px 12px 12px;
+    }
+  
+  .estOABlock.expand div.estOATabCont{
+    display:block;
+    width: 100%;
+    height:unset;
+    padding: 0px;
+    overflow-x: auto;
+    }
+  
+  .estOABlock.expand div.estOATabCont table{
+    
+    }
+  
+  .estOABlock.expand div.estOATabCont table tr{
+    
+    }
+  
+  .estOABlock.expand div.estOATabCont table tr th:nth-child(1),
+  .estOABlock.expand div.estOATabCont table tr td:nth-child(1){
+    width:12%;
+    }
+  .estOABlock.expand div.estOATabCont table tr th:nth-child(2),
+  .estOABlock.expand div.estOATabCont table tr td:nth-child(2){
+    width:unset;
+    }
+  
+  
+  div.field-help {
+    top: -10px;
+    left: unset;
+    right: -200px;
+    width: 200px;
+    }
+  
+  .estMapCont{
+    max-width: 90vw;
+    }
+  .estMap{
+    max-width: 90vw;
+    }
+  .estMapBtnCont {
+    height: unset;
+    }
+  
+  .upldPvwBtn {
+    display: inline-block;
+    width: 7em;
+    max-width: 97%;
+    height: 7em;
+    }
+  
+  
+  
+  }
+
+

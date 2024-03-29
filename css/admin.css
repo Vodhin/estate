@@ -1406,7 +1406,10 @@ div.estFeatInUse div button:nth-child(4) span{
   z-index:1;
   }
 
-.estCalTbl colgroup{width:14.285%;}
+.estCalTbl colgroup{
+  width:14.285% !important;
+  min-width: unset !important;
+  }
 
 .estCalTbl tbody,
 .estCalTbl tbody tr{
@@ -1421,7 +1424,7 @@ div.estFeatInUse div button:nth-child(4) span{
   /*line-height:1.5em;*/
   text-align:center;
   padding-top: 8px;
-    padding-bottom: 4px;
+  padding-bottom: 4px;
   }
 
 .estCalTbl tbody td{
