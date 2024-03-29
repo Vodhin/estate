@@ -961,6 +961,228 @@ class estateCore{
   
   
   
+  private function PropertyListTableTR($DTA,$CSPN){
+    $tp = e107::getParser();
+    if(count($DTA) == 0){
+      return '<tr><td class="left" colspan="'.$CSPN.'">No Records</td></tr>';
+      }
+    else{
+      foreach($DTA as $k=>$v){
+        
+        $SELLER = '
+        <div class="estPropListAgentCont">
+          <div>'.$tp->toHTML($v['agency_name']).'</div>
+          <div>
+            <div style="background-image:url(\''.$v['agent_profimg'].'\')"></div>';
+        if(intval($v['prop_agent']) > 0){
+          //$SELLER .= '<a href="'.e_SELF.'?mode=estate_agencies&action=agent&id='.intval($v['agent_idx']).'">';
+          $SELLER .= $tp->toHTML($v['agent_name']);
+          //$SELLER .= '</a>';
+          }
+        else{
+          $SELLER .= $tp->toHTML($v['agent_name']);
+          }
+        //
+        $SELLER .= '<br />('.$tp->toHTML($v['agent_login']).')<br />'.$tp->toHTML($v['agent_email']).'
+          </div>
+        </div>';
+          
+        $text .= '<tr id="row-'.intval($k).'">';
+        $text .= '<td class="left noPAD posREL"><div class="estPropThumb" title="'.EST_PROP_RESETHM.'"></div></td>';
+        $text .= '<td class="left"><div class="FWB">'.$tp->toHTML($v['prop_name']).'</div>'.$tp->toHTML((trim(strtolower($v['prop_name'])) !== trim(strtolower($v['prop_addr1'])) ? $v['prop_addr1'] : '').($v['prop_addr2'] !== '' ? '<div>'.$v['prop_addr2'].'</div>' : '').'<div>'.$v['city'].', '.$v['ST'].' '.$v['prop_zip'].' '.strtoupper($v['nat']).'</div>').'</td>'; // '.$v['county'].',
+        $text .= '<td class="left noPAD posREL">'.$SELLER.'</td>';
+        $text .= '<td class="left"></td>';
+        $text .= '<td class="right"></td>';
+        $text .= '<td class="left"></td>';
+        $text .= '<td class="left"></td>';
+        $text .= '<td class="center last"></td>';
+        $text .= '<tr>';
+        }
+      return $text;
+      }
+    }
+  
+  private function estPropertyListTableSF($mode,$DTA){
+    $CSPN = 8;
+    
+    $text = '
+        <table id="plugin-estate-list-table-'.$mode.'" class="table adminlist table-striped estCustomTable1">
+          <colgroup>
+    				<col class="left" style="width:110px">
+    				<col class="left" style="width:auto">
+    				<col class="left noPAD" style="width:auto">
+    				<col class="left" style="width:auto">
+    				<col class="right" style="width:auto">
+    				<col class="left" style="width:auto">
+    				<col class="left" style="width:auto">
+    				<col class="center last" style="width:10%">
+    			</colgroup>
+          <thead id="estPropListTH-'.$mode.'">
+            <tr class="even first">
+              <th id="e-column-prop-thmb-'.$mode.'" class="left">'.EST_GEN_THUMBNAIL.'</th>
+              <th id="e-column-prop-name-'.$mode.'" class="left">'.EST_GEN_NAME.' & '.EST_GEN_ADDRESS.'</th>
+              <th id="e-column-prop-agent-'.$mode.'" class="left">'.($mode == 2 ? 'Owner' : EST_GEN_LISTAGENT).'</th>
+              <th id="e-column-prop-status-'.$mode.'" class="left">'.EST_GEN_STATUS.'</th>
+              <th id="e-column-prop-listprice-'.$mode.'" class="left">'.EST_PROP_LISTPRICE.'</th>
+              <th id="e-column-prop-state-'.$mode.'" class="left">'.EST_PROP_STATE.'</th>
+              <th id="e-column-prop-county-'.$mode.'" class="left">'.EST_PROP_COUNTY.'</th>
+              <th id="e-column-options-'.$mode.'" class="center last">'.LAN_OPTIONS.'</th>
+            </tr>
+          </thead>
+          <tbody id="estPropListTB-'.$mode.'">';
+          
+          $text .= $this->PropertyListTableTR($DTA[$mode],$CSPN);
+          
+          $text .= '
+          </tbody>
+          <tfoot id="estPropListTF-'.$mode.'">
+          </tfoot>
+        </table>';
+      
+    return $text;
+    }
+  
+  
+  
+  public function estPropertyListTable(){
+    $ESTPREF = e107::pref('estate');
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    
+    $text = '
+      <div class="admin-main-content">
+        <fieldset id="admin-ui-list-filter" class="e-filter" style="margin:4px;">
+          <div class="left form-inline span8 col-md-8">
+            <div class="row-fluid">
+              <div class="btn-group">
+                <span id="admin-ui-list-search" class="form-group has-feedback has-feedback-left FL"><input type="text" name="searchquery" value="" maxlength="50" id="searchquery" class="tbox input-text filter input-xlarge form-control ui-state-valid" size="20" data-original-title="" title=""></span>
+                <select id="estPropFilter" class="form-control e-tip tbox select input-xlarge filter ui-state-valid ILBLK FL estNoRightBord" title="" data-original-title="Filter">
+                </select>
+                <div class="e-autocomplete"></div>
+                <button type="button" value="etrigger_filter" id="etrigger-filter" class="btn btn-default" title="Filter"><span><i class="fa fa-filter"></i></span></button>
+                <span class="indicator" style="display: none;"><i class="fa fa-spin fa-spinner fa-fw"></i></span>
+                <button type="button" id="estPropCreate" class="btn btn-default ILBLK" title="'.EST_GEN_CREATE.'"><i class="fa fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </fieldset>';
+    
+    
+    
+    
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_image FROM #user");
+    while($rows = $sql->fetch()){
+      $rows['avatar'] = $tp->toAvatar($rows,array('type'=>'url'));
+      $USERS[$rows['user_id']] = $rows;
+      }
+    
+    
+    
+    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_subdiv","prop_zip","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_zoning","prop_type","prop_listprice","prop_origprice","prop_thmb","prop_views","agency_name","agency_imgsrc","agency_image","agent_idx","agent_name","agent_uid","agent_imgsrc","agent_image");
+    
+    /*"prop_country","prop_state","prop_county","prop_city",
+    */
+    
+    array_push($FLDS,"city_name AS city");
+    array_push($FLDS,"cnty_name AS county");
+    array_push($FLDS,"state_name AS state");
+    array_push($FLDS,"state_init AS ST");
+    array_push($FLDS,"state_country AS nat");
+    
+    
+    $QRY = "SELECT ".implode(", ",$FLDS)." FROM `#estate_properties`";
+    
+    $QRY .= "
+    LEFT JOIN `#estate_city`
+    ON prop_city = city_idx
+    LEFT JOIN `#estate_county`
+    ON city_county = cnty_idx
+    LEFT JOIN `#estate_states`
+    ON state_idx = cnty_state
+    LEFT JOIN `#estate_agencies`
+    ON agency_idx = prop_agency
+    LEFT JOIN `#estate_agents`
+    ON agent_idx = prop_agent
+    ";
+    
+    //LEFT JOIN `#user` ON user_id = prop_uidcreate
+    
+    if(ADMINPERMS !== '0'){
+      if(EST_USERPERM == 2){$QRY .= " WHERE prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
+      else{$QRY .= " WHERE prop_agent='".EST_AGENTID."' ";}
+      }
+    
+    
+    $DTA = array();
+    $sql->gen($QRY);
+    if(EST_USERPERM > 1 && intval($ESTPREF['public_act']) !== 255){
+      while($rows = $sql->fetch()){
+        $DTA[(intval($rows['prop_agent']) == 0 ? 2 : 1)][$rows['prop_idx']] = $this->estMergePropDta($rows,$USERS);
+        }
+      
+      $TBS[0]['caption'] = EST_GEN_AGENT.' '.EST_GEN_LISTINGS;
+      $TBS[1]['caption'] = EST_GEN_NONAGENTLISTINGS;
+      $TBS[0]['text'] = $this->estPropertyListTableSF(1,$DTA);
+      $TBS[1]['text'] = $this->estPropertyListTableSF(2,$DTA);
+      $text .= e107::getForm(false,true)->tabs($TBS,array('active'=>0,'fade'=>0,'class'=>'estOATabs'));
+      
+      }
+    else{
+      while($rows = $sql->fetch()){
+        $DTA[1][$rows['prop_idx']] = $this->estMergePropDta($rows,$USERS);
+        }
+      $text .= $this->estPropertyListTableSF(1,$DTA);
+      }
+    
+    /*
+    $text .= '
+        <div id="admin-ui-list-batch" class="navbar navbar-inner left">
+    			<div class="span6 col-md-6">
+            <div class="form-inline input-inline">
+    					<img src="/e107_images/generic/branchbottom.gif" class="treeprefix level-x icon" alt="">
+    	        <div class="input-group input-append">
+    						<select name="etrigger_batch" id="etrigger-batch" class="tbox form-control input-large select batch e-autosubmit reset" data-original-title="" title="">
+      						<option value="">With selected...</option>
+                  <option value="copy" class="ui-batch-option class" style="padding-left: 15px">Copy</option>
+                  <option value="delete" class="ui-batch-option class" style="padding-left: 15px">Delete</option>
+                  <option value="export" class="ui-batch-option class" style="padding-left: 15px">Export</option>
+                  <optgroup class="optgroup " label="Modify&nbsp;Friendly URL">
+                    <option value="sefgen__prop_sef__prop_name">Generate</option>
+                  </optgroup>
+                </select>
+                <div class="input-group-btn input-append">
+    				      <button data-loading-icon="fa-spinner" type="submit" name="e__execute_batch" value="e__execute_batch" id="e--execute-batch" class="btn batch e-hide-if-js btn-primary"><span>Go</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+    			<div id="admin-ui-list-total-records" class="span6 col-md-6 right"><span>Total Records: 12</span></div>
+    		</div>';
+    */
+    $text .= '
+      </div>';
+    return $text;
+    }
+  
+  private function estMergePropDta($rows,$USERS){
+    $tp = e107::getParser();
+    if(intval($rows['prop_agent']) == 0){
+      $rows['agency_name'] = EST_GEN_PRIVATE.' '.EST_GEN_SELLER;
+      $rows['agent_profimg'] = $USERS[$rows['prop_uidcreate']]['avatar'];
+      $rows['agent_name'] = $USERS[$rows['prop_uidcreate']]['user_name'];
+      $rows['agent_login'] = $USERS[$rows['prop_uidcreate']]['user_loginname'];
+      $rows['agent_email'] = $USERS[$rows['prop_uidcreate']]['user_email'];
+      }
+    else{
+      if(intval($rows['agent_imgsrc']) == 1 && trim($rows['agent_image']) !== ""){$rows['agent_profimg'] = EST_PTHABS_AGENT.$tp->toHTML($rows['agent_image']);}
+      else{$rows['agent_profimg'] = $USERS[$rows['agent_uid']]['avatar'];}
+      $rows['agent_login'] = $USERS[$rows['agent_uid']]['user_loginname'];
+      $rows['agent_email'] = $USERS[$rows['agent_uid']]['user_email'];
+      }
+    return $rows;
+    }
+  
+  
   public function estAgencyList($fltr=0){
     $tp = e107::getParser();
     $sql = e107::getDB();
@@ -2515,8 +2737,8 @@ class estateCore{
         break;
       
       
-      
       case 'prop_hours' :
+        $text = '<tr><td class="VAT">'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td>';
         $text .= $this->estPropHoursForm($FVALUE);
         break;
       

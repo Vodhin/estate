@@ -1492,10 +1492,23 @@ class estate_listing_ui extends e_admin_ui{
     
     
     
+    
+    
+    
+    public function listPage(){
+      $ESTPREF = e107::pref('estate');
+      $estateCore = new estateCore;
+      return $estateCore->estPropertyListTable();
+      }
+    
+    
+    
+    
+    
 		public function init() {
       $tp = e107::getParser();
       $mes = e107::getMessage();
-      
+      //$mes->addSuccess('You did it!');
       
 			$this->fields['prop_country']['writeParms']['default'] = 'blank';
 			$this->fields['prop_country']['writeParms']['optArray'] = e_form::getCountry();
@@ -1775,7 +1788,19 @@ class estate_listing_ui extends e_admin_ui{
           }
         else{
           $text .= '
-          <div class="estEditHelpSect">
+          <div id="estEditHelp-0" class="estEditHelpSect">
+            <b>'.EST_GEN_AGENT.' '.EST_GEN_LISTINGS.'</b>
+            <p id="estHlp-proplist1">'.EST_HLPMNU_PROPLIST1.'</p>
+            <p id="estHlp-proplist2">'.EST_HLPMNU_PROPLIST2.'</p>
+            <b id="estHlp-proplist3">'.EST_HLPMNU_PROPLIST3.'</b>
+            <p id="estHlp-proplist4">'.EST_HLPMNU_PROPLIST4.'</p>
+            <p id="estHlp-proplist5">'.EST_HLPMNU_PROPLIST5.'</p>
+            <b id="estHlp-proplist6">'.EST_HLPMNU_PROPLIST6.'</b>
+            <p id="estHlp-proplist7">'.EST_HLPMNU_PROPLIST7.'</p>
+            <p id="estHlp-proplist8">'.EST_HLPMNU_PROPLIST8.'</p>
+          </div>
+          <div id="estEditHelp-1" class="estEditHelpSect">
+            <b>'.EST_GEN_NONAGENTLISTINGS.'</b>
             <p id="estHlp-proplist1">'.EST_HLPMNU_PROPLIST1.'</p>
             <p id="estHlp-proplist2">'.EST_HLPMNU_PROPLIST2.'</p>
             <b id="estHlp-proplist3">'.EST_HLPMNU_PROPLIST3.'</b>
