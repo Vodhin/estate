@@ -173,7 +173,6 @@ define("EST_GEN_DELETEDPROPERTY","Deleted Property");
 define("EST_GEN_DELZONECAT","Delete Zoning Category Results");
 define("EST_GEN_DOESEXIST","does exist");
 define("EST_GEN_DOESNOTEXIST","does NOT exist");
-define("EST_GEN_DRAGTO","Click And Drag To");
 define("EST_GEN_ESTADMINS","Estate Admins");
 define("EST_GEN_ESTAGENTS","Estate Agents");
 define("EST_GEN_ESTMANAGERS","Estate Managers");
@@ -615,7 +614,7 @@ define("EST_INSTR004j","***");
 
 
 define("EST_INSTR005a","You can allow Members who have joined your website to post their own listings by enabling this feature in the Estate Preferences. This option is disabled by default. If you enable this feature, Non-Agent users can create, edit, and delete their own listings using a basic form accessable via the Front end. They do not need Admin rights and will not be able to access any part of the Admin area of your e107 website, including the Estate plugin Admin area. Non-Agent users are able to add (but not Edit) some shared-data, such as State, City, and Postal Code, but cannot add Preset Data such as Listing Type, Zoning Category, Property Type: they are forced to select from options already in the system.");
-define("EST_INSTR005b","Listings posted by Non-Agents can be moderated by Estate Managers or Estate Admins, but not by Agents, and by default require an Admin or Manager to approve the listing before it is visible to the public. These listings are saved to the same Database tables as your Agent listings, but are *** NOT DEVELOPED YET ***");
+define("EST_INSTR005b","Listings posted by Non-Agents can be moderated by Estate Managers or Estate Admins, but not by Agents, and by default require an Admin or Manager to approve the listing before it is visible to the public. These listings are saved to the same Database tables as your Agent listings, but do not have an Agent ID assigned to the Property Listing and will appear in a separate list.");
 
 
 define("EST_INSTR010","Shared Data");
