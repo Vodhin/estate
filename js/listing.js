@@ -277,17 +277,20 @@ function htmlDecode(mode,xVal,dec=0){
   
   
   function estPrepMenu(){
-    if(document.getElementById('estPlugMenu1')){
-      if(document.getElementById('estSidebar1Capt') && $('#estPlugMenu1').is(':visible')){
+    if(document.getElementById('estPlugMenu1') && $('#estPlugMenu1').is(':visible')){
+      if(document.getElementById('estSidebar1Capt')){
+        
+        /*
         $('#estSidebar1Capt').appendTo('#estPlugMenu1Cap');
         $('#estMiniNav').appendTo('#estSidebar1Capt');
         $('#estInfoModule').appendTo('#estPlugMenu1');
         $('#estAgntModule').appendTo('#estPlugMenu1');
         $('#estOpenHouseModule').appendTo('#estPlugMenu1').promise().done(function(){
+          
           $('#estViewBoxSummarySB').hide();
           if(document.getElementById('estFeaturesModule') && $('#estFeaturesModule').is(':visible')){
             $('#estFeaturesModule').appendTo('#estSideMenuFeat').promise().done(function(){
-              if(document.getElementById('estFeaturesModule') && $('#estFeaturesModule').is(':visible')){
+              if(document.getElementById('estViewSpacePvwCont') && $('#estViewSpacePvwCont').is(':visible')){
                 $('#estViewSpaceBtnCont').appendTo('#estSideMenuSpaces');
                 $('div.estViewSpaceBtn').removeClass('estBGGrad2').addClass('btn btn-primary');
                 
@@ -302,15 +305,11 @@ function htmlDecode(mode,xVal,dec=0){
                 }
               });
             }
-          
           });
         
-        
-        
+        */
         }
       }
-    
-    
     }
   
   
