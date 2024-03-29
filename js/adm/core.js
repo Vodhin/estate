@@ -1810,7 +1810,7 @@ function estGetSubDivs(){
             $(JQBTN,{'id':'cBtnFlipH','class':'btn btn-sm estCrpBtn btn-default','title':hlp[8]}).html('<i class="fa fa-arrows-alt-h"></i>').on({
               click : function(e){e.preventDefault();}
               }).prop('disabled',true).appendTo(cBtnBar);
-            $(JQBTN,{'id':'cBtnFlipV','class':'btn btn-sm estCrpBtn btn-default','title':hlp[9]}).html('<i class="fa fa-arrows-alt-v"></i>').on({
+            $(JQBTN,{'id':'cBtnFlipV','class':'btn btn-sm estCrpBtn btn-default','title':hlp[9]}).html('<i class="fa fa-arrows-v"></i>').on({
               click : function(e){e.preventDefault();}
               }).prop('disabled',true).appendTo(cBtnBar);
             $(JQBTN,{'id':'cBtnReset','class':'btn btn-sm estCrpBtn btn-default','title':hlp[10]}).html('<i class="fa fa-refresh"></i>').on({
@@ -3527,7 +3527,7 @@ function estGetSubDivs(){
     
     if(yDta.contact_idx > 0){
       $(td).addClass('noPAD');
-      $(JQBTN,{'class':'btn btn-default estContMove','title':defs.txt.sort}).html('<i class="fa fa-arrows-alt-v"></i>').appendTo(contDiv);
+      $(JQBTN,{'class':'btn btn-default estContMove','title':defs.txt.sort}).html('<i class="fa fa-arrows-v"></i>').appendTo(contDiv);
       $(JQBTN,{'class':'btn btn-default estContGo','title':defs.txt.deletes}).data('del',-1).css({'color':'#CC0000'}).html('<i class="fa fa-close"></i>').appendTo(contDiv);
       }
     else{
@@ -5505,7 +5505,7 @@ function estGetSubDivs(){
     tdta[i].tr[tri][1] = $(JQTH,{'class':'left'}).appendTo(tdta[i].tr[tri][0]);
     tdta[i].tr[tri][2] = $(JQDIV,{'class':'btn-group'}).appendTo(tdta[i].tr[tri][1]);
     
-    tdta[i].tr[tri][3] = $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.section}).html('<i class="fa fa-arrows-alt-v"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][2]);
+    tdta[i].tr[tri][3] = $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.section}).html('<i class="fa fa-arrows-v"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][2]);
     
     if(tbx.grouplist_idx == 0){
       $(tdta[i].tr[tri][3]).prop('disabled',true).css({'cursor':'not-allowed'}).attr('title',xt.nauntilspaces);
@@ -5579,7 +5579,7 @@ function estGetSubDivs(){
         else{$(tdta[i].tr[tri][7]).css({'background-image':'url('+defs.dir.prop.thm+mediaGrep1[0].media_thm+noCache+')'});}
         }
       
-      $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="fa fa-arrows-alt-v"></i></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
+      $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="fa fa-arrows-v"></i></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
       
       $(JQBTN,{'class':'btn btn-default btn-secondary','title':xt.edit+' '+rmdta.space_name}).html('<i class="fa fa-pencil-square-o"></i>').on({
         click : function(e){
@@ -9105,6 +9105,7 @@ function estGetSubDivs(){
     
     if($('div.admin-main-content').length > 0){
       var navTabs = $('div.admin-main-content').find('li.nav-item');
+      console.log(navTabs);
       if(navTabs.length > 0){
         var navUL = $(navTabs).eq(0).closest('ul');
         var cookieName = mainTbl+'-'+actn+'-'+mainId;
@@ -9131,7 +9132,10 @@ function estGetSubDivs(){
               }
             });
           }).promise().done(function(){
-            if(mainTbl == 'estate_agencies'){
+            if(mainTbl == 'estate_properties' && actn == 'list' && tabNo > 0){
+              $('#admin-ui-edit').find('li').eq(tabNo).find('a').click();
+              }
+            else if(mainTbl == 'estate_agencies'){
               if(actn == 'edit' || actn == 'create'){
                 estPrepAgencyForm(mainId);
                 }
@@ -9188,12 +9192,21 @@ function estGetSubDivs(){
               $('body').data('defs',ret);
               var helpInFull = (typeof ret.prefs.helpinfull !== 'undefined' ? Number(ret.prefs.helpinfull) : 0);
               estSetHelpInFull();
-              
+              //nav-tabs
               if(actn == 'list'){
-                var targ = $('#admin-ui-list-filter').find('div.form-inline:first-child');
-                $(JQBTN,{'type':'button','class':'btn btn-default','title':ret.txt.create}).html(JQADI).on({
-                  click : function(){window.location.assign(vreBasePath+'admin_config.php?mode='+mainTbl+'&action=create')}
-                  }).appendTo(targ);
+                if(document.getElementById('estPropCreate')){
+                  $('#estPropCreate').on({
+                    click : function(){window.location.assign(vreBasePath+'admin_config.php?mode='+mainTbl+'&action=create')}
+                    });
+                  }
+                else{
+                  var targ = $('#admin-ui-list-filter').find('div.form-inline:first-child');
+                  $(JQBTN,{'type':'button','class':'btn btn-default','title':ret.txt.create}).html(JQADI).on({
+                    click : function(){window.location.assign(vreBasePath+'admin_config.php?mode='+mainTbl+'&action=create')}
+                    }).appendTo(targ);
+                  }
+                
+                  
                 
                 if(helpInFull == 0){
                   $('#plugin-estate-list-table thead').on({mouseenter : function(){estScrollHlp('#estHlp-proplist3')}});
