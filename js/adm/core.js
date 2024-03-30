@@ -9041,13 +9041,46 @@ function estGetSubDivs(){
   
   
   
-  function estPrepAgencyList(){
-    }
-  
   
   function estPrepMainHelp(){
     console.log('Main Help JS');
     }
+  
+  function estPrepAgencyList(){
+    }
+  
+  function estSetPropListFilters(btn){
+    var tbody = $(btn).closest('table').find('tbody');
+    var fltrs = {};
+    $('.estPropListFltrSet').each(function(i,ele){
+      var ul = $(ele).find('ul.scroll-menu');
+      var fld = $(ul).data('fld');
+      fltrs[fld] = [];
+      $(ul).find('label.active').each(function(x,lab){
+        fltrs[fld].push($(lab).data('value').toString());
+        }); 
+      $(ele).removeClass('open');
+      }).promise().done(function(){
+          
+        
+        $(tbody).find('tr').each(function(i,tr){
+          $(tr).removeClass('showMe').hide();
+          var trDta = $(tr).data();
+          for(var fKey in fltrs){
+            if(trDta[fKey]){
+              var fVal = trDta[fKey].toString();
+              console.log(fltrs[fKey],fKey,fVal);
+              if(fltrs[fKey].indexOf(fVal) > -1){$(tr).addClass('showMe');}
+              }
+            }
+          
+          
+          }).promise().done(function(){
+            $(tbody).find('tr.showMe').show();
+            });
+        });
+    }
+  
   
   
   $(document).ready(function(){
@@ -9115,6 +9148,7 @@ function estGetSubDivs(){
           tabNo = 0;
           }
         
+        
         var btnBar = $('#admin-ui-edit').find('div.buttons-bar');
         
         $(navUL).find('li.nav-item').each(function(i,ele){
@@ -9132,8 +9166,30 @@ function estGetSubDivs(){
               }
             });
           }).promise().done(function(){
-            if(mainTbl == 'estate_properties' && actn == 'list' && tabNo > 0){
-              $('#admin-ui-edit').find('li').eq(tabNo).find('a').click();
+            if(mainTbl == 'estate_properties'){
+              if(actn == 'list'){
+                if(tabNo > 0){$(navUL).find('li').eq(tabNo).find('a').click();}
+                
+                $('.estPropListFltrSet').each(function(i,ele){
+                  $(ele).find('button:last-child').on({
+                    click : function(e){
+                      e.preventDefault();
+                      estSetPropListFilters(this);
+                      }
+                    });
+                  
+                  });
+                
+                $('.estPropListTB').find('tr').each(function(i,tr){
+                  var levdta = $(tr).data();
+                  $.each(levdta,function(k,v){$(tr).removeAttr('data-'+k);});
+                  $(tr).find('td:last-child').on({
+                    click : function(e){
+                      console.log($(this).parent().data());
+                      }
+                    });
+                  });
+                }
               }
             else if(mainTbl == 'estate_agencies'){
               if(actn == 'edit' || actn == 'create'){
@@ -9148,7 +9204,7 @@ function estGetSubDivs(){
                 if(tabNo > 0){
                   if(tabNo > 1 && Number($('input[name="estNewUserPost"]').val()) === 0){tabNo = 1;}
                   if(Number($('input[name="estNewUserPost"]').val()) < 0){tabNo = 2;}
-                  $('#admin-ui-edit').find('li').eq(tabNo).find('a').click();
+                  $(navUL).find('li').eq(tabNo).find('a').click();
                   }
                 }
               return;
