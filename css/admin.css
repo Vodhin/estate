@@ -133,44 +133,69 @@ button.wiggle:hover{
   background-image: linear-gradient(#cf0909a6,#ff010161 60%,#f3020287) !important;
   }
 
+
+
+
+tbody.estPropListTB tr > td{
+  position:relative;
+  }
+
+
+tbody.estPropListTB tr > td:nth-child(2) p{
+  width: 100%;
+  max-width: 224px;
+  overflow: hidden;
+  }
+
+.estPropListStat{
+  display:block;
+  position:relative;
+  cursor:pointer;
+  }
+
+
 .estPropListAgentCont{
   display: block;
   position: relative;
   margin-top: 2px;
   width: 100%;
-  max-width: 144px;
+  max-width: 224px;
+  overflow: hidden;
   }
 .estPropListAgentCont div:nth-child(1){
   display: block;
   position: relative;
   width: 100%;
+  border-bottom: 1px dotted #646464;
   font-size: 0.8em;
   font-weight: bold;
   text-align: left;
-  
   line-height:1.15em;
   margin-top: 0px;
   margin-bottom: 0px;
   padding-top: 0px;
+  text-transform: Capitalize; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   }
-/*.estPropListAgentCont div:nth-child(1){text-transform: uppercase;}*/
-.estPropListAgentCont div:nth-child(1){text-transform: Capitalize; border-bottom: 1px dotted #646464;}
+  
+
 .estPropListAgentCont div:nth-child(2){
   display: block;
   position: relative;
   width: 100%;
+  max-height: 56px;
   margin-top: 4px;
   line-height: 1em;
+  overflow: hidden;
   }
 .estPropListAgentCont div:nth-child(2) div{
   display: inline-block;
   position: relative;
   float: left;
   width: 38px;
-  height: 38px;
+  height: 48px;
   margin: 0px 4px 0px 0px;
   border-radius: 5px;
   background-clip: border-box;
@@ -181,6 +206,20 @@ button.wiggle:hover{
   vertical-align:top;
   }
 
+.estPropListAgentCont div:nth-child(2) p{
+  display: inline-block;
+  position: relative;
+  width: calc(100% - 42px);
+  }
+
+.estPropListAgentCont div:nth-child(2) p a,
+.estPropListAgentCont div:nth-child(2) p i{
+  display:block;
+  position: relative;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
 
 .estInptCont, .estBtnCont{
   display:inline-block;
