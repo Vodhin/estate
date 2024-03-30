@@ -968,68 +968,153 @@ class estateCore{
       }
     else{
       foreach($DTA as $k=>$v){
+        $dtaStr = $this->estDataStr($v);
         
         $SELLER = '
         <div class="estPropListAgentCont">
           <div>'.$tp->toHTML($v['agency_name']).'</div>
           <div>
-            <div style="background-image:url(\''.$v['agent_profimg'].'\')"></div>';
+            <div style="background-image:url(\''.$v['agent_profimg'].'\')"></div>
+            <p>';
         if(intval($v['prop_agent']) > 0){
-          //$SELLER .= '<a href="'.e_SELF.'?mode=estate_agencies&action=agent&id='.intval($v['agent_idx']).'">';
-          $SELLER .= $tp->toHTML($v['agent_name']);
-          //$SELLER .= '</a>';
+          $SELLER .= '<a href="'.e_SELF.'?mode=estate_agencies&action=agent&id='.intval($v['agent_idx']).'" title="'.EST_GEN_EDIT.' '.EST_GEN_AGENT.'">';
+          $SELLER .= $tp->toHTML(EST_GEN_AGENT.' '.$v['agent_name']);//
+          $SELLER .= '</a>';
           }
         else{
           $SELLER .= $tp->toHTML($v['agent_name']);
           }
-        //
-        $SELLER .= '<br />('.$tp->toHTML($v['agent_login']).')<br />'.$tp->toHTML($v['agent_email']).'
+        
+        $SELLER .= '
+              <i>('.$tp->toHTML($v['agent_login']).')</i>
+              <i>'.$tp->toHTML($v['agent_email']).'</i>
+            </p>
           </div>
         </div>';
-          
-        $text .= '<tr id="row-'.intval($k).'">';
-        $text .= '<td class="left noPAD posREL"><div class="estPropThumb" title="'.EST_PROP_RESETHM.'"></div></td>';
-        $text .= '<td class="left"><div class="FWB">'.$tp->toHTML($v['prop_name']).'</div>'.$tp->toHTML((trim(strtolower($v['prop_name'])) !== trim(strtolower($v['prop_addr1'])) ? $v['prop_addr1'] : '').($v['prop_addr2'] !== '' ? '<div>'.$v['prop_addr2'].'</div>' : '').'<div>'.$v['city'].', '.$v['ST'].' '.$v['prop_zip'].' '.strtoupper($v['nat']).'</div>').'</td>'; // '.$v['county'].',
-        $text .= '<td class="left noPAD posREL">'.$SELLER.'</td>';
-        $text .= '<td class="left"></td>';
-        $text .= '<td class="right"></td>';
-        $text .= '<td class="left"></td>';
-        $text .= '<td class="left"></td>';
-        $text .= '<td class="center last"></td>';
-        $text .= '<tr>';
+        
+        if(count($GLOBALS['EST_PROPSTATUS'])){
+          $pStat = $GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'];
+          //foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$data2[$k] = $v['opt'];}
+          }
+        else{
+          $pStat = '';
+          }
+        
+        $pPrice = '';
+        
+        $text .= '
+        <tr id="row-'.intval($k).'" '.$dtaStr.'>
+          <td class="left noPAD">
+            <div class="estPropThumb" title="'.EST_PROP_RESETHM.'"></div>
+          </td>
+          <td class="left">
+              <div class="FWB">'.$tp->toHTML($v['prop_name']).'</div>
+            '.$tp->toHTML((trim(strtolower($v['prop_name'])) !== trim(strtolower($v['prop_addr1'])) ? $v['prop_addr1'] : '').($v['prop_addr2'] !== '' ? '<div>'.$v['prop_addr2'].'</div>' : '').'<div>'.$v['county'].'</div><div>'.$v['city'].', '.$v['ST'].' '.$v['prop_zip'].' '.strtoupper($v['nat']).'</div>').'
+          </td>
+          <td class="left noPAD VAB">'.$SELLER.'</td>
+          <td class="left">
+            <div class="estPropListStat">'.$pStat.'<div>
+          </td>
+          <td class="right">
+            <div>'.$v['prop_currency'].' '.$v['prop_listprice'].'</div>
+            <div><i>'.$v['prop_currency'].' '.$v['prop_origprice'].'</i></div>
+          </td>
+          <td class="left"></td>
+          <td class="center last">
+            <div class="btn-group WSNWRP">
+              <a href="'.e_SELF.'?mode=estate_properties&amp;action=edit&amp;id='.intval($v['prop_idx']).'" class="btn btn-default btn-secondary" data-modal-caption="" title="'.EST_GEN_EDIT.'" data-placement="left"><i class="S32 e-edit-32"></i></a>
+              <button type="submit" name="etrigger_delete['.intval($v['prop_idx']).']" data-placement="left" value="'.intval($v['prop_idx']).'" id="etrigger-delete-'.intval($v['prop_idx']).'-'.intval($v['prop_idx']).'" class="action delete btn btn-default" title="Delete [ ID: '.intval($v['prop_idx']).' ]" data-confirm="Are you sure?"><i class="S32 e-delete-32"></i></button>
+            </div>
+        
+          </td>
+        </tr>';
         }
       return $text;
       }
     }
   
+  
+  private function estPropListFltrBtn($mode,$k,$v=''){
+    $tp = e107::getParser();
+    if($mode == 2){
+      return '
+                    <li class="list-group-item">
+            				  <div id="column_options-button" class="right">
+                        <button data-loading-icon="fa-spinner" type="button" id="propFltr-'.$k.'" class="btn btn-primary btn-small" value="propFltr-'.$k.'"><span>'.EST_GEN_APPLYFILTER.'</span></button>
+            				  </div>
+                    </li>';
+      }
+    else{
+      return '
+                        <li role="menuitem">
+                          <a href="#" title="">
+                            <label class="checkbox form-check active" data-value="'.$k.'">
+                              <input type="checkbox" name="set-prop-status-'.$mode.'['.$k.']" value="'.$k.'" class="form-check-input" checked="checked"><span>'.$tp->toHTML($v).'</span>
+                            </label>
+                          </a>
+                        </li>';
+      }
+    }
+  
   private function estPropertyListTableSF($mode,$DTA){
-    $CSPN = 8;
+    $tp = e107::getParser();
+    $CSPN = 7;
     
     $text = '
         <table id="plugin-estate-list-table-'.$mode.'" class="table adminlist table-striped estCustomTable1">
           <colgroup>
     				<col class="left" style="width:110px">
     				<col class="left" style="width:auto">
-    				<col class="left noPAD" style="width:auto">
+    				<col class="left" style="width:auto">
     				<col class="left" style="width:auto">
     				<col class="right" style="width:auto">
     				<col class="left" style="width:auto">
-    				<col class="left" style="width:auto">
-    				<col class="center last" style="width:10%">
+    				<col class="center last" style="width:auto">
     			</colgroup>
           <thead id="estPropListTH-'.$mode.'">
             <tr class="even first">
               <th id="e-column-prop-thmb-'.$mode.'" class="left">'.EST_GEN_THUMBNAIL.'</th>
-              <th id="e-column-prop-name-'.$mode.'" class="left">'.EST_GEN_NAME.' & '.EST_GEN_ADDRESS.'</th>
-              <th id="e-column-prop-agent-'.$mode.'" class="left">'.($mode == 2 ? 'Owner' : EST_GEN_LISTAGENT).'</th>
-              <th id="e-column-prop-status-'.$mode.'" class="left">'.EST_GEN_STATUS.'</th>
-              <th id="e-column-prop-listprice-'.$mode.'" class="left">'.EST_PROP_LISTPRICE.'</th>
-              <th id="e-column-prop-state-'.$mode.'" class="left">'.EST_PROP_STATE.'</th>
-              <th id="e-column-prop-county-'.$mode.'" class="left">'.EST_PROP_COUNTY.'</th>
-              <th id="e-column-options-'.$mode.'" class="center last">'.LAN_OPTIONS.'</th>
+              <th id="e-column-prop-name-'.$mode.'" class="left">
+                '.EST_GEN_NAME.' & '.EST_GEN_ADDRESS.'
+              </th>
+              <th id="e-column-prop-agent-'.$mode.'" class="left">
+                '.($mode == 2 ? EST_GEN_LISTING.' '.EST_GEN_MEMBER : EST_GEN_LISTAGENT).'
+              </th>
+              <th id="e-column-prop-status-'.$mode.'" class="left">';
+              if(count($GLOBALS['EST_PROPSTATUS'])){
+                $text .= '
+                <div class="col-selection dropdown e-tip pull-right float-right estPropListFltrSet WD100" data-placement="left" data-original-title="" title="">
+                  <a class="dropdown-toggle" title="'.EST_GEN_FILTERBY.' '.EST_GEN_STATUS.'" data-toggle="dropdown" data-bs-toggle="dropdown" href="#">'.EST_GEN_STATUS.' <b class="caret"></b></a>
+                  <ul class="list-group dropdown-menu col-selection e-noclick" role="menu" aria-labelledby="dLabel">
+                    <li class="list-group-item col-selection-list">
+                      <ul class="nav scroll-menu"  data-fld="prop_status">';
+                foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){
+                  $text .= $this->estPropListFltrBtn(1,$k,$v['opt']);
+                  }
+                $text .= '
+                      </ul>
+                    </li>';
+                $text .= $this->estPropListFltrBtn(2,'prop_status');
+                $text .= '
+                  </ul>
+                </div>';
+                }
+              else{
+                $text .= EST_GEN_STATUS;
+                }
+              $text .= '        
+              </th>
+              <th id="e-column-prop-listprice-'.$mode.'" class="left">
+                '.EST_PROP_LISTPRICE.'
+              </th>
+              <th id="e-column-prop-state-'.$mode.'" class="left">
+                '.EST_PROP_STATE.'
+              </th>
+              <th id="e-column-options-'.$mode.'" class="center last">'.LAN_OPTIONS.'
+              </th>
             </tr>
           </thead>
-          <tbody id="estPropListTB-'.$mode.'">';
+          <tbody id="estPropListTB-'.$mode.'" class="estPropListTB">';
           
           $text .= $this->PropertyListTableTR($DTA[$mode],$CSPN);
           
@@ -1050,6 +1135,8 @@ class estateCore{
     $tp = e107::getParser();
     
     $text = '
+    <form method="post" action="https://estate.vodhin.org/e107_plugins/estate/admin_config.php?mode=estate_properties&amp;action=list" id="plugin-estate-list-form" data-h5-instanceid="0" novalidate="novalidate">
+			<input type="hidden" name="e-token" value="'.e_TOKEN.'" data-original-title="" title="">
       <div class="admin-main-content">
         <fieldset id="admin-ui-list-filter" class="e-filter" style="margin:4px;">
           <div class="left form-inline span8 col-md-8">
@@ -1160,7 +1247,8 @@ class estateCore{
     		</div>';
     */
     $text .= '
-      </div>';
+      </div>
+    </form>';
     return $text;
     }
   
