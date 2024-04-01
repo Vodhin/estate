@@ -203,7 +203,18 @@ define("EST_GEN_NEWUSERAGENT","New User/Agent");
 
 define("EST_GEN_NONADMINACCESS", "Non-Admin Access");
 define("EST_GEN_NONADMINLISTINGS", "Non-Admin Listings");
+
 define("EST_GEN_NONAGENTLISTINGS","Non-Agent Listings");
+
+define("EST_GEN_NONAGENTAPPROVED","Auto Approve");
+define("EST_GEN_NONAGENTAPPROVEDHLP","Automatically Approve New Non-Agent Listing Submissions");
+define("EST_GEN_NONAGENTEXP","Expires After");
+define("EST_GEN_NONAGENTEXPHLP","Set how long Non-Agent Listings will remain visible");
+define("EST_GEN_NONAGENTIMGCT","Max Images");
+define("EST_GEN_NONAGENTIMGCTHLP","Set the maximum number of images a Non-Agent can upload per listing (min: 3, max 18).");
+define("EST_GEN_NONAGENTMOD","Moderated By");
+define("EST_GEN_NONAGENTMODHLP","Choose who can Moderate Non-Agent Listings");
+
 define("EST_GEN_NOCHANGEADMIN", "You cannot change a Main Admin");
 define("EST_GEN_NOAGENCYFOUND0","Agency Not Found");
 define("EST_GEN_NOAGENCYFOUND1","Was not found in the database. If you know that the Agency ID is correct, you may not have permissions to edit the data.");

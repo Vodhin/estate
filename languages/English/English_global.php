@@ -303,6 +303,7 @@ define("EST_GEN_VIEWLISTINGS","View Available Listings");
 define("EST_GEN_VOLANTARY","Voluntary");
 define("EST_GEN_WEBSITE","Website");
 define("EST_GEN_WEEKLY","Weekly");
+define("EST_GEN_WEEKS","Weeks");
 define("EST_GEN_ZONE","Zone");
 define("EST_GEN_ZONING","Zoning");
 
