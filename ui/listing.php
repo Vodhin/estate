@@ -1481,13 +1481,39 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' =>  array (),
         'writeParms' =>  array ('classlist'=>'member,nobody,no-excludes'),
         ),
-      /*
-		<pref name='public_act'>255</pref>
-		<pref name='public_apr'>1</pref>
-		<pref name='public_exp'>30</pref>
-		<pref name='public_imgct'>12</pref>
-      
-      */
+      'public_mod'=>array( 
+        'tab'=>5,
+        'title'=>EST_GEN_NONAGENTMOD,
+        'type'=>'dropdown',
+        'data'=>'str',
+        'width' => 'auto',
+        'help'=>EST_GEN_NONAGENTMODHLP,
+        'writeParms' => array('size'=>'xlarge','optArray'=>array(4=>EST_GEN_ESTATE.' '.EST_GEN_MAINADMIN.' '.EST_GEN_ONLY,3=>EST_GEN_ESTATE.' '.EST_GEN_ADMIN.' & '.EST_GEN_MAINADMIN,2=>EST_GEN_ESTATE.' '.EST_GEN_MANAGER.', '.EST_GEN_ADMIN.', & '.EST_GEN_MAINADMIN)),
+        ),
+			'public_apr'=>array(
+        'tab'=>5,
+        'title'=>EST_GEN_NONAGENTAPPROVED,
+        'type'=>'boolean',
+        'data'=>'int',
+        'help'=>EST_GEN_NONAGENTAPPROVEDHLP,
+        ),
+      'public_imgct'=>array(
+        'tab'=>5,
+        'title'=>EST_GEN_NONAGENTIMGCT,
+        'type'=>'number',
+        'data'=>'int',
+        'help'=>EST_GEN_NONAGENTIMGCTHLP,
+        'writeParms' => array('size'=>'small','min'=>3,'max'=>18),
+        ),
+      'public_exp'=>array( 
+        'tab'=>5,
+        'title'=>EST_GEN_NONAGENTEXP,
+        'type'=>'dropdown',
+        'data'=>'str',
+        'width' => 'auto',
+        'help'=>EST_GEN_NONAGENTEXPHLP,
+        'writeParms' => array('size'=>'xlarge','optArray'=>array(0=>EST_GEN_NONE,14=>'2 '.EST_GEN_WEEKS,30=>'1 '.EST_GEN_MONTH,61=>'2 '.EST_GEN_MONTHS,92=>'3 '.EST_GEN_MONTHS,183=>'6 '.EST_GEN_MONTHS)),
+        ),
       );
     
     

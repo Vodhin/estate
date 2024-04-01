@@ -270,15 +270,20 @@ class estateCore{
   
   
   
-  public function estGetAllAgents(){
+  public function estGetAllAgents($MODE=0){
     $sql = e107::getDB();
     $tp = e107::getParser();
     $ret = array();
     $ui=0;
     
-    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.* FROM #estate_agents JOIN #user ON user_id = agent_uid ORDER BY agent_name ASC");
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.* FROM ".($MODE == 1 ? "#user LEFT JOIN #estate_agents ON agent_uid = user_id".(USERID !== 1 ? " WHERE NOT user_id='1'" : "") : "#estate_agents JOIN #user ON user_id = agent_uid")." ORDER BY agent_name ASC");
+    
     while($rows = $sql->fetch()){
       $rows['user_profimg'] = $tp->toAvatar($rows,array('type'=>'url'));
+      if(intval($rows['agent_imgsrc']) == 1 && trim($rows['agent_image']) !== ""){$rows['agent_profimg'] = EST_PTHABS_AGENT.$tp->toHTML($rows['agent_image']);}
+      else{$rows['agent_profimg'] = $tp->toAvatar($rows,array('type'=>'url'));}
+      //agent_image
+      
       $AGTCLSES = explode(",",$rows['user_class']);
       if(in_array(ESTATE_ADMIN,$AGTCLSES)){
         $rows['user_role'] = EST_GEN_MAIN." ".EST_GEN_ADMIN;
@@ -1129,6 +1134,109 @@ class estateCore{
   
   
   
+  
+  
+  
+  public function estPropertyListQry($MODE=0){
+    $ESTPREF = e107::pref('estate');
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    
+    $AGNTS = $this->estGetAllAgents(1);
+    
+    if(count($AGNTS) > 0){
+      foreach($AGNTS as $ak=>$av){
+        $av['avatar'] = $av['agent_profimg'];
+        $USERS[$av['user_id']] = $av;
+        if(intval($av['user_id']) !== 1 && (intval($av['user_mgr']) <= EST_USERPERM || intval($av['user_id']) == intval(USERID))){
+          $AGTIDS .= ($AGTIDS ? ',':'').$av['agent_idx'];
+          }
+        }
+      }
+    
+    
+    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_zoning","prop_type","prop_listprice","prop_origprice","prop_thmb","prop_views","agency_name","agency_imgsrc","agency_image","agent_idx","agent_name","agent_uid","agent_imgsrc","agent_image");
+    
+    array_push($FLDS,"city_name AS city");
+    array_push($FLDS,"cnty_name AS county");
+    array_push($FLDS,"state_name AS state");
+    array_push($FLDS,"state_init AS ST");
+    array_push($FLDS,"state_country AS nat");
+    
+    
+    $QRY = "
+    SELECT ".implode(",",$FLDS)."
+    FROM `#estate_properties` 
+    LEFT JOIN `#estate_city`
+    ON prop_city = city_idx
+    LEFT JOIN `#estate_county`
+    ON city_county = cnty_idx
+    LEFT JOIN `#estate_states`
+    ON state_idx = cnty_state
+    LEFT JOIN `#estate_agencies`
+    ON agency_idx = prop_agency
+    LEFT JOIN `#estate_agents`
+    ON agent_idx = prop_agent";
+    
+    
+    $STOPQRY = 0;
+    
+    if(EST_USERPERM < 2 || intval($ESTPREF['public_act']) === 255){$MODE = 0;}
+    
+    
+    
+    // SPLIT TABLE DISPLAY
+    if($MODE == 1){
+      // TABLE #1, AGENT LISTINGS
+      if(ADMINPERMS === '0' && intval(USERID) !== 1){
+        $QRYX = " WHERE prop_agent IN(".$AGTIDS.")";
+        }
+      
+      else if(ADMINPERMS !== '0'){
+        if(EST_USERPERM == 2){
+          if($AGTIDS){$QRYX = " WHERE prop_agent IN(".$AGTIDS.")";}
+          else{$QRYX = " WHERE prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
+          }
+        else{$QRYX = " WHERE prop_agent='".EST_AGENTID."' ";}
+        }
+      }
+    else if($MODE == 2){
+      // TABLE #2, USER LISTINGS
+      if(ADMINPERMS === '0'){
+        $QRYX = " WHERE prop_agent='0'";
+        }
+      else if(ADMINPERMS !== '0' && EST_USERPERM >= intval($ESTPREF['public_mod'])){
+        $QRYX = " WHERE prop_agent='0'";
+        }
+      else{$STOPQRY++;}
+      }
+    else{
+      // SINGLE TABLE WITH EVERYTHING
+      if(ADMINPERMS === '0' && intval(USERID) !== 1){
+        $QRYX = " WHERE prop_agent IN(".$AGTIDS.") OR  prop_agent='0'";
+        }
+      else if(ADMINPERMS !== '0'){
+        if(EST_USERPERM == 2){
+          if($AGTIDS){$QRYX = " WHERE prop_agent IN(".$AGTIDS.")";}
+          else{$QRYX = " WHERE prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
+          }
+        else{$QRYX = " WHERE prop_agent='".EST_AGENTID."' ";}
+        }
+      }
+    
+    
+    $TST = $QRY.$QRYX;
+    
+    return $TST;
+    if($STOPQRY == 0){
+      //$sql->gen($QRY.$QRYX);
+      
+      }
+    }
+  
+  
+  
+  
   public function estPropertyListTable(){
     $ESTPREF = e107::pref('estate');
     $sql = e107::getDB();
@@ -1156,19 +1264,19 @@ class estateCore{
     
     
     
-    
-    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_image FROM #user");
-    while($rows = $sql->fetch()){
-      $rows['avatar'] = $tp->toAvatar($rows,array('type'=>'url'));
-      $USERS[$rows['user_id']] = $rows;
+    $AGNTS = $this->estGetAllAgents(1);
+    if(count($AGNTS) > 0){
+      foreach($AGNTS as $ak=>$av){
+        $av['avatar'] = $av['agent_profimg'];
+        $USERS[$av['user_id']] = $av;
+        if(intval($av['user_id']) !== 1 && (intval($av['user_mgr']) <= EST_USERPERM || intval($av['user_id']) == intval(USERID))){
+          $AGTIDS .= ($AGTIDS ? ',':'').$av['agent_idx'];
+          }
+        }
       }
     
     
-    
-    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_subdiv","prop_zip","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_zoning","prop_type","prop_listprice","prop_origprice","prop_thmb","prop_views","agency_name","agency_imgsrc","agency_image","agent_idx","agent_name","agent_uid","agent_imgsrc","agent_image");
-    
-    /*"prop_country","prop_state","prop_county","prop_city",
-    */
+    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_zoning","prop_type","prop_listprice","prop_origprice","prop_thmb","prop_views","agency_name","agency_imgsrc","agency_image","agent_idx","agent_name","agent_uid","agent_imgsrc","agent_image");
     
     array_push($FLDS,"city_name AS city");
     array_push($FLDS,"cnty_name AS county");
@@ -1177,7 +1285,7 @@ class estateCore{
     array_push($FLDS,"state_country AS nat");
     
     
-    $QRY = "SELECT ".implode(", ",$FLDS)." FROM `#estate_properties`";
+    $QRY = "SELECT ".implode(",",$FLDS)." FROM `#estate_properties`";
     
     $QRY .= "
     LEFT JOIN `#estate_city`
@@ -1194,14 +1302,25 @@ class estateCore{
     
     //LEFT JOIN `#user` ON user_id = prop_uidcreate
     
-    if(ADMINPERMS !== '0'){
-      if(EST_USERPERM == 2){$QRY .= " WHERE prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
-      else{$QRY .= " WHERE prop_agent='".EST_AGENTID."' ";}
+    if(ADMINPERMS === '0' && intval(USERID) !== 1){
+      $QRYX = " WHERE prop_agent IN(".$AGTIDS.") OR prop_agent='0'";
+      }
+    
+    else if(ADMINPERMS !== '0'){
+      if(EST_USERPERM == 2){
+        if($AGTIDS){$QRYX = " WHERE prop_agent IN(".$AGTIDS.")";}
+        else{$QRYX = " WHERE prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
+        }
+      else{$QRYX = " WHERE prop_agent='".EST_AGENTID."' ";}
       }
     
     
+    $TSTTXT = $this->estPropertyListQry(0);
+    
+    $text = '';//'<div>QRYX:'.$QRYX.'</div>'.$TSTTXT;
+    
     $DTA = array();
-    $sql->gen($QRY);
+    $sql->gen($QRY.$QRYX);
     if(EST_USERPERM > 1 && intval($ESTPREF['public_act']) !== 255){
       while($rows = $sql->fetch()){
         $DTA[(intval($rows['prop_agent']) == 0 ? 2 : 1)][$rows['prop_idx']] = $this->estMergePropDta($rows,$USERS);
@@ -1256,14 +1375,13 @@ class estateCore{
     $tp = e107::getParser();
     if(intval($rows['prop_agent']) == 0){
       $rows['agency_name'] = EST_GEN_PRIVATE.' '.EST_GEN_SELLER;
-      $rows['agent_profimg'] = $USERS[$rows['prop_uidcreate']]['avatar'];
+      $rows['agent_profimg'] = $USERS[$rows['prop_uidcreate']]['agent_profimg'];
       $rows['agent_name'] = $USERS[$rows['prop_uidcreate']]['user_name'];
       $rows['agent_login'] = $USERS[$rows['prop_uidcreate']]['user_loginname'];
       $rows['agent_email'] = $USERS[$rows['prop_uidcreate']]['user_email'];
       }
     else{
-      if(intval($rows['agent_imgsrc']) == 1 && trim($rows['agent_image']) !== ""){$rows['agent_profimg'] = EST_PTHABS_AGENT.$tp->toHTML($rows['agent_image']);}
-      else{$rows['agent_profimg'] = $USERS[$rows['agent_uid']]['avatar'];}
+      $rows['agent_profimg'] = $USERS[$rows['agent_uid']]['agent_profimg'];
       $rows['agent_login'] = $USERS[$rows['agent_uid']]['user_loginname'];
       $rows['agent_email'] = $USERS[$rows['agent_uid']]['user_email'];
       }
