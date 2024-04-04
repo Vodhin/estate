@@ -728,6 +728,19 @@ else if($FETCH == 76){
   }
 
 
+else if($FETCH == 97){
+  //$sql = e107::getDB();
+  $FLTR = array();
+  $FLTR['WHERE'] = $_POST['tdta']['fltr'];
+  $FLTR['ORDER'] = explode(" ",$_POST['tdta']['order']);
+  $FLTR['LIMIT'] = explode(",",$_POST['tdta']['limit']);
+  $DTA = $estateCore->estPropertyListQry(intval($_POST['tdta']['mode']),$FLTR);
+  $DTA['colsp'] = $_POST['tdta']['colsp'];
+  $text = $estateCore->PropertyListTableTR($DTA);
+  echo $text;
+  exit;
+  }
+
 else if($FETCH == 98){
   $RES = array();//estGetAllDta(0);
   $RES['dir'] = estDirList();

@@ -9049,36 +9049,46 @@ function estGetSubDivs(){
   function estPrepAgencyList(){
     }
   
-  function estSetPropListFilters(btn){
-    var tbody = $(btn).closest('table').find('tbody');
-    var fltrs = {};
-    $('.estPropListFltrSet').each(function(i,ele){
-      var ul = $(ele).find('ul.scroll-menu');
-      var fld = $(ul).data('fld');
-      fltrs[fld] = [];
-      $(ul).find('label.active').each(function(x,lab){
-        fltrs[fld].push($(lab).data('value').toString());
-        }); 
-      $(ele).removeClass('open');
+  
+  function estSetPropListFilters(btn,tabl){
+    var tbody = $(tabl).data('tbody');
+    var fltrs = $(tabl).data('fltrs');
+    
+    var tdta = {'fltr':{},'mode':$(tabl).data('mode'),'colsp':$(tabl).data('colspan'),'order':$(tabl).data('order'),'limit':$(tabl).data('limit').join()};
+    
+    $(fltrs).each(function(fi,fltr){
+      console.log(fltr);
+      var chked = $(fltr.ul).find('label.active');
+      if(chked.length !== fltr.li.length){
+        tdta.fltr[fltr.fld] = [];
+        $(chked).each(function(ci,cli){
+          tdta.fltr[fltr.fld].push($(cli).data('value'));
+          });
+        }
+      
       }).promise().done(function(){
-          
+        console.log(tdta);
+        $('div.estFltrDiv').removeClass('open');
         
-        $(tbody).find('tr').each(function(i,tr){
-          $(tr).removeClass('showMe').hide();
-          var trDta = $(tr).data();
-          for(var fKey in fltrs){
-            if(trDta[fKey]){
-              var fVal = trDta[fKey].toString();
-              console.log(fltrs[fKey],fKey,fVal);
-              if(fltrs[fKey].indexOf(fVal) > -1){$(tr).addClass('showMe');}
-              }
+        $.ajax({
+          url: vreFeud+'?0||0',
+          type:'post',
+          data:{'fetch':97,'propid':0,'rt':'html','tdta':tdta},
+          dataType:'text',
+          cache:false,
+          processData:true,
+          success: function(ret, textStatus, jqXHR){
+            $(tbody).empty().promise().done(function(){
+              $(tbody).html(ret);
+              });
+            },
+          error: function(jqXHR, textStatus, errorThrown){
+            console.log('ERRORS: '+textStatus+' '+errorThrown);
+            estAlertLog(jqXHR.responseText);
             }
-          
-          
-          }).promise().done(function(){
-            $(tbody).find('tr.showMe').show();
-            });
+          });
         });
+    
     }
   
   
@@ -9086,7 +9096,7 @@ function estGetSubDivs(){
   $(document).ready(function(){
     console.log(vreQry);
     $('body').addClass('noFCOutline');
-    
+    var eUID = Number($('#estUIDdiv').data('euid'));
     var mainTbl = (typeof(vreQry.mode) !== 'undefined' ? vreQry.mode : 'estate_properties');
     var actn = (typeof(vreQry.action) !== 'undefined' ? vreQry.action : 'list');
     var mainId = (typeof(vreQry.id) !== 'undefined' ? vreQry.id : 0);
@@ -9137,19 +9147,16 @@ function estGetSubDivs(){
     
     
     if($('div.admin-main-content').length > 0){
+      var tabNo = 0;
       var navTabs = $('div.admin-main-content').find('li.nav-item');
-      console.log(navTabs);
       if(navTabs.length > 0){
         var navUL = $(navTabs).eq(0).closest('ul');
-        var cookieName = mainTbl+'-'+actn+'-'+mainId;
-        var tabNo = getCookie(cookieName);
+        var cookieName = eUID+'-'+mainTbl+'-'+actn+'-'+mainId;
+        tabNo = getCookie(cookieName);
         if(typeof tabNo == 'undefined'){
           setCookie(cookieName, 0, 1);
           tabNo = 0;
           }
-        
-        
-        var btnBar = $('#admin-ui-edit').find('div.buttons-bar');
         
         $(navUL).find('li.nav-item').each(function(i,ele){
           $(ele).on({
@@ -9165,52 +9172,74 @@ function estGetSubDivs(){
                 });
               }
             });
-          }).promise().done(function(){
-            if(mainTbl == 'estate_properties'){
-              if(actn == 'list'){
-                if(tabNo > 0){$(navUL).find('li').eq(tabNo).find('a').click();}
-                
-                $('.estPropListFltrSet').each(function(i,ele){
-                  $(ele).find('button:last-child').on({
-                    click : function(e){
-                      e.preventDefault();
-                      estSetPropListFilters(this);
-                      }
-                    });
-                  
-                  });
-                
-                $('.estPropListTB').find('tr').each(function(i,tr){
-                  var levdta = $(tr).data();
-                  $.each(levdta,function(k,v){$(tr).removeAttr('data-'+k);});
-                  $(tr).find('td:last-child').on({
-                    click : function(e){
-                      console.log($(this).parent().data());
-                      }
-                    });
-                  });
-                }
-              }
-            else if(mainTbl == 'estate_agencies'){
-              if(actn == 'edit' || actn == 'create'){
-                estPrepAgencyForm(mainId);
-                }
-              else{
-                estPrepAgencyListTable();
-                estPrepUserListTable();
-                if(document.getElementById('estNewUserFormTable')){
-                  estPrepAgentProfile($('#estNewUserFormTable'));
-                  }
-                if(tabNo > 0){
-                  if(tabNo > 1 && Number($('input[name="estNewUserPost"]').val()) === 0){tabNo = 1;}
-                  if(Number($('input[name="estNewUserPost"]').val()) < 0){tabNo = 2;}
-                  $(navUL).find('li').eq(tabNo).find('a').click();
-                  }
-                }
-              return;
-              }
-            });
+          });
         }
+        
+        var btnBar = $('#admin-ui-edit').find('div.buttons-bar');
+        
+        if(mainTbl == 'estate_properties'){
+          if(actn == 'list'){
+            if(tabNo > 0){$(navUL).find('li').eq(tabNo).find('a').click();}
+            
+            $('.estPropListTABx').each(function(tbi,tabl){
+              var thead = $(tabl).find('thead');
+              var tbody = $(tabl).find('tbody');
+              
+              var dta = {'tbody':tbody,'thead':thead,'mode':$(tabl).data('mode'),'fltrs':[]};
+              
+              $(thead).find('ul.estPropListFltrSet').each(function(i,fele){
+                var UL = $(fele).find('ul.estPropListFltrUL');
+                dta.fltrs[i] = {'fld':$(fele).data('fld'),'ul':UL,'li':[]};
+                
+                $(UL).find('li.estFltrItm').each(function(fi,fLI){
+                  var fchk = $(fLI).find('label.form-check');
+                  dta.fltrs[i].li.push(fchk);
+                  });
+                
+                $(fele).find('button:last-child').on({
+                  click : function(e){
+                    e.preventDefault();
+                    estSetPropListFilters(this,tabl);
+                    }
+                  });
+                }).promise().done(function(){
+                  $(tabl).data(dta);
+                  console.log($(tabl).data());
+                  });
+              });
+            
+            
+            $('.estPropListTB').find('tr').each(function(i,tr){
+              var levdta = $(tr).data();
+              $.each(levdta,function(k,v){$(tr).removeAttr('data-'+k);});
+              $(tr).find('td:last-child').on({
+                click : function(e){
+                  console.log($(this).parent().data());
+                  }
+                });
+              });
+            }
+          }
+        else if(mainTbl == 'estate_agencies'){
+          if(actn == 'edit' || actn == 'create'){
+            estPrepAgencyForm(mainId);
+            }
+          else{
+            estPrepAgencyListTable();
+            estPrepUserListTable();
+            if(document.getElementById('estNewUserFormTable')){
+              estPrepAgentProfile($('#estNewUserFormTable'));
+              }
+            if(tabNo > 0){
+              if(tabNo > 1 && Number($('input[name="estNewUserPost"]').val()) === 0){tabNo = 1;}
+              if(Number($('input[name="estNewUserPost"]').val()) < 0){tabNo = 2;}
+              $(navUL).find('li').eq(tabNo).find('a').click();
+              }
+            }
+          return;
+          }
+            
+        
       }
     else{
       alert('WARNING: This plugin has interactive elements that do not work with your current Theme and/or Layout. Missing "<div class="admin-main-content">');
