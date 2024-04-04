@@ -102,6 +102,7 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
     new estate_adminFirst();
     require_once(e_ADMIN."auth.php");
     e107::getAdminUI()->runPage();
+    echo '<div id="estUIDdiv" data-euid="'.USERID.'"></div>';
     require_once(e_ADMIN."footer.php");
     exit;
     }
@@ -114,6 +115,7 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
     new estate_adminUser();
     require_once(e_ADMIN."auth.php");
     e107::getAdminUI()->runPage();
+    echo '<div id="estUIDdiv" data-euid="'.USERID.'"></div>';
     require_once(e_ADMIN."footer.php");
     exit;
     }
@@ -141,5 +143,6 @@ else{
 
 require_once(e_ADMIN."auth.php");
 e107::getAdminUI()->runPage();
+echo '<div id="estUIDdiv" data-euid="'.USERID.'"></div>';
 require_once(e_ADMIN."footer.php");
 exit;
