@@ -276,7 +276,7 @@ class estateCore{
     $ret = array();
     $ui=0;
     
-    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.* FROM ".($MODE == 1 ? "#user LEFT JOIN #estate_agents ON agent_uid = user_id".(USERID !== 1 ? " WHERE NOT user_id='1'" : "") : "#estate_agents JOIN #user ON user_id = agent_uid")." ORDER BY agent_name ASC");
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.* ".($MODE == 1 ? "FROM #user LEFT JOIN #estate_agents ON agent_uid = user_id".(USERID !== 1 ? " WHERE NOT user_id='1'" : "") : "FROM #estate_agents JOIN #user ON user_id = agent_uid")." ORDER BY agent_name ASC");
     
     while($rows = $sql->fetch()){
       $rows['user_profimg'] = $tp->toAvatar($rows,array('type'=>'url'));
@@ -966,13 +966,18 @@ class estateCore{
   
   
   
-  private function PropertyListTableTR($DTA,$CSPN){
+  public function PropertyListTableTR($DTA){
     $tp = e107::getParser();
-    if(count($DTA) == 0){
-      return '<tr><td class="left" colspan="'.$CSPN.'">No Records</td></tr>';
+    if(count($DTA['tr']) == 0){
+      return '
+      <tr>
+        <td class="left" colspan="'.$DTA['colsp'].'">
+          <div class="s-message alert alert-block warning alert-warning" style="display: block;">No Listings</div>
+        </td>
+      </tr>';
       }
     else{
-      foreach($DTA as $k=>$v){
+      foreach($DTA['tr'] as $k=>$v){
         $dtaStr = $this->estDataStr($v);
         
         $SELLER = '
@@ -997,15 +1002,12 @@ class estateCore{
           </div>
         </div>';
         
+        
+        
         if(count($GLOBALS['EST_PROPSTATUS'])){
-          $pStat = $GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'];
           //foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$data2[$k] = $v['opt'];}
           }
-        else{
-          $pStat = '';
-          }
         
-        $pPrice = '';
         
         $text .= '
         <tr id="row-'.intval($k).'" '.$dtaStr.'>
@@ -1018,13 +1020,16 @@ class estateCore{
           </td>
           <td class="left noPAD VAB">'.$SELLER.'</td>
           <td class="left">
-            <div class="estPropListStat">'.$pStat.'<div>
+            <div class="estPropListStat"><a data-targ="prop_status">'.$GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'].'</a><div>
+          </td>
+          <td class="left">
+            <div title="'.EST_PROP_LISTZONE.'">'.$v['prop_zname'].'</div>
+            <div title="'.EST_PROP_LISTYPE.'">'.$GLOBALS['EST_LISTTYPE1'][$v['prop_listype']].'</div>
           </td>
           <td class="right">
-            <div>'.$v['prop_currency'].' '.$v['prop_listprice'].'</div>
-            <div><i>'.$v['prop_currency'].' '.$v['prop_origprice'].'</i></div>
+            <div class="estPropListStat" title="'.EST_PROP_ORIGPRICE.'"><i>'.$GLOBALS['EST_CURSYMB'][$v['prop_currency']].' '.$v['prop_origprice'].'</i></div>
+            <div class="estPropListStat" title="'.EST_PROP_LISTPRICE.'">'.$GLOBALS['EST_CURSYMB'][$v['prop_currency']].' <a data-targ="prop_listprice">'.$v['prop_listprice'].'</a></div>
           </td>
-          <td class="left"></td>
           <td class="center last">
             <div class="btn-group WSNWRP">
               <a href="'.e_SELF.'?mode=estate_properties&amp;action=edit&amp;id='.intval($v['prop_idx']).'" class="btn btn-default btn-secondary" data-modal-caption="" title="'.EST_GEN_EDIT.'" data-placement="left"><i class="S32 e-edit-32"></i></a>
@@ -1039,44 +1044,44 @@ class estateCore{
     }
   
   
+  
+  
+  
   private function estPropListFltrBtn($mode,$k,$v=''){
     $tp = e107::getParser();
     if($mode == 2){
-      return '
-                    <li class="list-group-item">
-            				  <div id="column_options-button" class="right">
-                        <button data-loading-icon="fa-spinner" type="button" id="propFltr-'.$k.'" class="btn btn-primary btn-small" value="propFltr-'.$k.'"><span>'.EST_GEN_APPLYFILTER.'</span></button>
-            				  </div>
-                    </li>';
+      return '';
       }
     else{
-      return '
-                        <li role="menuitem">
-                          <a href="#" title="">
-                            <label class="checkbox form-check active" data-value="'.$k.'">
-                              <input type="checkbox" name="set-prop-status-'.$mode.'['.$k.']" value="'.$k.'" class="form-check-input" checked="checked"><span>'.$tp->toHTML($v).'</span>
-                            </label>
-                          </a>
-                        </li>';
+      return '';
       }
     }
+  
+  
+  //e_TOKEN
   
   private function estPropertyListTableSF($mode,$DTA){
     $tp = e107::getParser();
     $CSPN = 7;
+    $DTA['colsp'] = 7;
+    
+    //$DTA['FLTR']
+    //$DTA['AGENTS'];
+    //$DTA['USERS'];
+    //<div>'.$DTA['QRY'].'</div>
     
     $text = '
-        <table id="plugin-estate-list-table-'.$mode.'" class="table adminlist table-striped estCustomTable1">
+        <table id="plugin-estate-list-table-'.$mode.'" class="table adminlist table-striped estPropListTABx estCustomTable1" data-colspan="'.$DTA['colsp'].'" data-mode="'.$mode.'" data-order="'.$DTA['FLTR']['ORDER'][0].' '.$DTA['FLTR']['ORDER'][1].'" data-limit="['.$DTA['FLTR']['LIMIT'][0].','.$DTA['FLTR']['LIMIT'][1].']">
           <colgroup>
     				<col class="left" style="width:110px">
     				<col class="left" style="width:auto">
     				<col class="left" style="width:auto">
     				<col class="left" style="width:auto">
-    				<col class="right" style="width:auto">
     				<col class="left" style="width:auto">
+    				<col class="right" style="width:auto">
     				<col class="center last" style="width:auto">
     			</colgroup>
-          <thead id="estPropListTH-'.$mode.'">
+          <thead id="estPropListTH-'.$mode.'" class="estPropListTH">
             <tr class="even first">
               <th id="e-column-prop-thmb-'.$mode.'" class="left">'.EST_GEN_THUMBNAIL.'</th>
               <th id="e-column-prop-name-'.$mode.'" class="left">
@@ -1086,34 +1091,45 @@ class estateCore{
                 '.($mode == 2 ? EST_GEN_LISTING.' '.EST_GEN_MEMBER : EST_GEN_LISTAGENT).'
               </th>
               <th id="e-column-prop-status-'.$mode.'" class="left">';
+              
               if(count($GLOBALS['EST_PROPSTATUS'])){
                 $text .= '
-                <div class="col-selection dropdown e-tip pull-right float-right estPropListFltrSet WD100" data-placement="left" data-original-title="" title="">
+                <div class="col-selection dropdown e-tip pull-right float-right estFltrDiv WD100" data-placement="left">
                   <a class="dropdown-toggle" title="'.EST_GEN_FILTERBY.' '.EST_GEN_STATUS.'" data-toggle="dropdown" data-bs-toggle="dropdown" href="#">'.EST_GEN_STATUS.' <b class="caret"></b></a>
-                  <ul class="list-group dropdown-menu col-selection e-noclick" role="menu" aria-labelledby="dLabel">
+                  <ul class="list-group dropdown-menu col-selection estPropListFltrSet e-noclick" data-fld="prop_status" role="menu" aria-labelledby="dLabel">
                     <li class="list-group-item col-selection-list">
-                      <ul class="nav scroll-menu"  data-fld="prop_status">';
+                      <ul class="nav scroll-menu estPropListFltrUL" >';
                 foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){
-                  $text .= $this->estPropListFltrBtn(1,$k,$v['opt']);
+                  $text .= '
+                        <li class="estFltrItm" role="menuitem">
+                          <a href="#" title="">
+                            <label class="checkbox form-check active" data-value="'.$k.'">
+                              <input type="checkbox" name="set-prop-status-'.$mode.'['.$k.']" value="'.$k.'" class="form-check-input" checked="checked"><span>'.$tp->toHTML($v['opt']).'</span>
+                            </label>
+                          </a>
+                        </li>';
                   }
                 $text .= '
                       </ul>
-                    </li>';
-                $text .= $this->estPropListFltrBtn(2,'prop_status');
-                $text .= '
+                    </li>
+                    <li class="list-group-item">
+              			  <div id="column_options-button" class="right">
+                        <button data-loading-icon="fa-spinner" type="button" id="propFltr-prop_status" class="btn btn-primary btn-small" value="propFltr-prop_status"><span>'.EST_GEN_APPLYFILTER.'</span></button>
+              			  </div>
+                    </li>
                   </ul>
                 </div>';
                 }
               else{
                 $text .= EST_GEN_STATUS;
                 }
-              $text .= '        
+              $text .= '
+              <th id="e-column-prop-zoning-'.$mode.'" class="left">
+                '.EST_GEN_CATEGORY.'
               </th>
-              <th id="e-column-prop-listprice-'.$mode.'" class="left">
+              </th>
+              <th id="e-column-prop-listprice-'.$mode.'" class="right">
                 '.EST_PROP_LISTPRICE.'
-              </th>
-              <th id="e-column-prop-state-'.$mode.'" class="left">
-                '.EST_PROP_STATE.'
               </th>
               <th id="e-column-options-'.$mode.'" class="center last">'.LAN_OPTIONS.'
               </th>
@@ -1121,7 +1137,7 @@ class estateCore{
           </thead>
           <tbody id="estPropListTB-'.$mode.'" class="estPropListTB">';
           
-          $text .= $this->PropertyListTableTR($DTA[$mode],$CSPN);
+          $text .= $this->PropertyListTableTR($DTA);
           
           $text .= '
           </tbody>
@@ -1137,25 +1153,35 @@ class estateCore{
   
   
   
-  public function estPropertyListQry($MODE=0){
+  public function estPropertyListQry($MODE=0,$FLTR=array()){
     $ESTPREF = e107::pref('estate');
     $sql = e107::getDB();
     $tp = e107::getParser();
     
-    $AGNTS = $this->estGetAllAgents(1);
+    //$this->estPropertyListTableSF(1,$DTA);
     
-    if(count($AGNTS) > 0){
-      foreach($AGNTS as $ak=>$av){
+    $DTA = array();
+    $DTA['tr'] = array();
+    
+    $dbRow = $sql->retrieve('estate_zoning', '*', '',true);
+    if(count($dbRow)){foreach($dbRow as $zk=>$zv){$DTA['ZONES'][$zv['zoning_idx']] = $zv['zoning_name'];}}
+    unset($dbRow,$zk,$zv);
+    
+    
+    $DTA['AGENTS'] = $this->estGetAllAgents(1);
+    $DTA['USERS'] = array();
+    
+    if(count($DTA['AGENTS']) > 0){
+      foreach($DTA['AGENTS'] as $ak=>$av){
         $av['avatar'] = $av['agent_profimg'];
-        $USERS[$av['user_id']] = $av;
+        $DTA['USERS'][$av['user_id']] = $av;
         if(intval($av['user_id']) !== 1 && (intval($av['user_mgr']) <= EST_USERPERM || intval($av['user_id']) == intval(USERID))){
           $AGTIDS .= ($AGTIDS ? ',':'').$av['agent_idx'];
           }
         }
       }
     
-    
-    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_zoning","prop_type","prop_listprice","prop_origprice","prop_thmb","prop_views","agency_name","agency_imgsrc","agency_image","agent_idx","agent_name","agent_uid","agent_imgsrc","agent_image");
+    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_listype","prop_zoning","prop_type","prop_currency","prop_listprice","prop_origprice","prop_thmb","prop_views","agency_name","agency_imgsrc","agency_image","agent_idx","agent_name","agent_uid","agent_imgsrc","agent_image");
     
     array_push($FLDS,"city_name AS city");
     array_push($FLDS,"cnty_name AS county");
@@ -1165,7 +1191,7 @@ class estateCore{
     
     
     $QRY = "
-    SELECT ".implode(",",$FLDS)."
+    SELECT ".implode(", ",$FLDS)."
     FROM `#estate_properties` 
     LEFT JOIN `#estate_city`
     ON prop_city = city_idx
@@ -1179,71 +1205,148 @@ class estateCore{
     ON agent_idx = prop_agent";
     
     
-    $STOPQRY = 0;
-    
-    if(EST_USERPERM < 2 || intval($ESTPREF['public_act']) === 255){$MODE = 0;}
-    
-    
+    if(intval($ESTPREF['public_act']) === 255 || EST_USERPERM < intval($ESTPREF['public_mod'])){$MODE = 0;}
     
     // SPLIT TABLE DISPLAY
     if($MODE == 1){
       // TABLE #1, AGENT LISTINGS
-      if(ADMINPERMS === '0' && intval(USERID) !== 1){
-        $QRYX = " WHERE prop_agent IN(".$AGTIDS.")";
+      if($FLTR['WHERE']['prop_uidcreate']){
+        $FLTR['WHERE']['prop_agent'] = "prop_uidcreate='".intval($FLTR['WHERE']['prop_uidcreate'])."'";
+        }
+      if($FLTR['WHERE']['prop_uidupdate']){
+        $FLTR['WHERE']['prop_agent'] = "prop_uidupdate='".intval($FLTR['WHERE']['prop_uidupdate'])."'";
         }
       
-      else if(ADMINPERMS !== '0'){
-        if(EST_USERPERM == 2){
-          if($AGTIDS){$QRYX = " WHERE prop_agent IN(".$AGTIDS.")";}
-          else{$QRYX = " WHERE prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
+      if(!$FLTR['WHERE']['prop_agent']){
+        if(ADMINPERMS === '0'){
+          if(intval(USERID) === 1){$FLTR['WHERE']['prop_agent'] = " NOT prop_agent='0'";}
+          else{$FLTR['WHERE']['prop_agent'] = " prop_agent IN(".$AGTIDS.") AND NOT prop_agent='0'";}
           }
-        else{$QRYX = " WHERE prop_agent='".EST_AGENTID."' ";}
+        
+        else if(ADMINPERMS !== '0'){
+          if(EST_USERPERM == 2){
+            if($AGTIDS){$FLTR['WHERE']['prop_agent'] = " prop_agent IN(".$AGTIDS.") AND NOT prop_agent='0'";}
+            else{$FLTR['WHERE']['prop_agent'] = " prop_agent='".EST_AGENTID."' OR (prop_agency = '".EST_AGENCYID."' AND NOT prop_agent='0')";}
+            }
+          else{$FLTR['WHERE']['prop_agent'] = " prop_agent='".EST_AGENTID."' ";}
+          }
         }
       }
     else if($MODE == 2){
       // TABLE #2, USER LISTINGS
-      if(ADMINPERMS === '0'){
-        $QRYX = " WHERE prop_agent='0'";
+      if(ADMINPERMS === '0' || EST_USERPERM >= intval($ESTPREF['public_mod'])){
+        if($FLTR['WHERE']['prop_uidcreate']){
+          $FLTR['WHERE']['prop_agent'] = "prop_uidcreate='".intval($FLTR['WHERE']['prop_uidcreate'])."'";
+          }
+        else{
+          $FLTR['WHERE']['prop_agent'] = "prop_agent='0'";
+          }
         }
-      else if(ADMINPERMS !== '0' && EST_USERPERM >= intval($ESTPREF['public_mod'])){
-        $QRYX = " WHERE prop_agent='0'";
+      else{
+        return $DTA;
         }
-      else{$STOPQRY++;}
       }
     else{
       // SINGLE TABLE WITH EVERYTHING
-      if(ADMINPERMS === '0' && intval(USERID) !== 1){
-        $QRYX = " WHERE prop_agent IN(".$AGTIDS.") OR  prop_agent='0'";
+      if($FLTR['WHERE']['prop_uidcreate']){
+        $FLTR['WHERE']['prop_agent'] = "prop_uidcreate='".intval($FLTR['WHERE']['prop_uidcreate'])."'";
         }
-      else if(ADMINPERMS !== '0'){
-        if(EST_USERPERM == 2){
-          if($AGTIDS){$QRYX = " WHERE prop_agent IN(".$AGTIDS.")";}
-          else{$QRYX = " WHERE prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
-          }
-        else{$QRYX = " WHERE prop_agent='".EST_AGENTID."' ";}
+      if($FLTR['WHERE']['prop_uidupdate']){
+        $FLTR['WHERE']['prop_agent'] = "prop_uidupdate='".intval($FLTR['WHERE']['prop_uidupdate'])."'";
         }
-      }
-    
-    
-    $TST = $QRY.$QRYX;
-    
-    return $TST;
-    if($STOPQRY == 0){
-      //$sql->gen($QRY.$QRYX);
       
+      if(!$FLTR['WHERE']['prop_agent']){
+        if(ADMINPERMS === '0' && intval(USERID) !== 1){
+          $FLTR['WHERE']['prop_agent'] = " prop_agent IN(".$AGTIDS.") OR prop_agent='0'";
+          }
+        else if(ADMINPERMS !== '0'){
+          if(EST_USERPERM == 2){
+            if($AGTIDS){$FLTR['WHERE']['prop_agent'] = " prop_agent IN(".$AGTIDS.")";}
+            else{$FLTR['WHERE']['prop_agent'] = " prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
+            }
+          else{$FLTR['WHERE']['prop_agent'] = " prop_agent='".EST_AGENTID."' ";}
+          
+          
+          if(EST_USERPERM < intval($ESTPREF['public_mod'])){
+            $FLTR['WHERE']['prop_agent'] .= ($FLTR['WHERE']['prop_agent'] ? " AND " : "")." NOT prop_agent='0'";
+            }
+          }
+        }
       }
+    
+    
+    if($FLTR['WHERE']){
+      if($FLTR['WHERE']['prop_agent']){
+        $QRYX .= ($QRYX ? " AND " : "")." ".$FLTR['WHERE']['prop_agent']." ";
+        }
+      
+      if($FLTR['WHERE']['prop_status']){
+        $QRYX .= ($QRYX ? " AND " : "")." prop_status IN(".implode(",",$FLTR['WHERE']['prop_status']).") ";
+        }
+        
+      if($FLTR['WHERE']['prop_zoning']){
+        $QRYX .= ($QRYX ? " AND " : "")." prop_zoning IN(".implode(",",$FLTR['WHERE']['prop_zoning']).") ";
+        }
+      
+      if($FLTR['WHERE']['prop_type']){
+        $QRYX .= ($QRYX ? " AND " : "")." prop_type IN(".implode(",",$FLTR['WHERE']['prop_type']).") ";
+        }
+      }
+    
+    if($QRYX){$QRYX = "WHERE ".$QRYX;}
+    
+      
+    
+    
+    if(!$FLTR['ORDER'][0]){$FLTR['ORDER'][0] = "prop_name";}
+    if(!$FLTR['ORDER'][1]){$FLTR['ORDER'][1] = "ASC";}
+    
+    if(!$FLTR['LIMIT'][0]){$FLTR['LIMIT'][0] = intval(0);}
+    if(!$FLTR['LIMIT'][1]){$FLTR['LIMIT'][1] = 50;}
+    
+    $DTA['FLTR'] = $FLTR;
+    
+    $QRY .= " ".$QRYX." ORDER BY ".implode(" ",$FLTR['ORDER'])." LIMIT ".implode(",",$FLTR['LIMIT']);
+    unset($QRYX);
+    
+    $DTA['QRY'] = $QRY;
+    
+    $sql->gen($DTA['QRY']);
+    while($rows = $sql->fetch()){
+      
+      $rows['prop_zname'] = $DTA['ZONES'][$rows['prop_zoning']];
+      
+      if(intval($rows['prop_agent']) == 0){
+        $rows['agency_name'] = EST_GEN_PRIVATE.' '.EST_GEN_SELLER;
+        $rows['agent_profimg'] = $DTA['USERS'][$rows['prop_uidcreate']]['agent_profimg'];
+        $rows['agent_name'] = $DTA['USERS'][$rows['prop_uidcreate']]['user_name'];
+        $rows['agent_login'] = $DTA['USERS'][$rows['prop_uidcreate']]['user_loginname'];
+        $rows['agent_email'] = $DTA['USERS'][$rows['prop_uidcreate']]['user_email'];
+        }
+      else{
+        $rows['agent_profimg'] = $DTA['USERS'][$rows['agent_uid']]['agent_profimg'];
+        $rows['agent_login'] = $DTA['USERS'][$rows['agent_uid']]['user_loginname'];
+        $rows['agent_email'] = $DTA['USERS'][$rows['agent_uid']]['user_email'];
+        }
+      $DTA['tr'][$rows['prop_idx']] = $rows;
+      }
+      
+    return $DTA;
     }
   
   
-  
+  /*
+  Fatal error: Uncaught PDOException: SQLSTATE[HY000] [1203] User [redacted] already has more than 'max_user_connections' active connections in [redacted]estate.vodhin.org/e107_handlers/e_db_pdo_class.php:2811 Stack trace: #0 [redacted]estate.vodhin.org/e107_handlers/e_db_pdo_class.php(334): e_db_pdo->_getMySQLaccess() #1 [redacted]estate.vodhin.org/e107_handlers/e_db_pdo_class.php(693): e_db_pdo->db_Query('SELECT session_...', NULL, 'db_Select', false, '', '') #2 [redacted]estate.vodhin.org/e107_handlers/session_handler.php(1271): e_db_pdo->select('session', 'session_data', 'session_id='654...') #3 [internal function]: e_session_db->read('654d3abdab9efa3...') #4 [redacted]estate.vodhin.org/e107_handlers/session_handler.php(609): session_start() #5 [redacted]estate.vodhin.org/e107_handlers/session_handler.php(514): e_session->start('soft_cookieSID') #6 [redacted]estate.vodhin.org/e107_handlers/session_handler.php(938): e_session->init('e107sess', 'soft_cookieSID') #7 [redacted]estate.vod in [redacted]estate.vodhin.org/e107_handlers/e_db_pdo_class.php on line 2811
+  */
   
   public function estPropertyListTable(){
     $ESTPREF = e107::pref('estate');
     $sql = e107::getDB();
     $tp = e107::getParser();
     
+    
     $text = '
-    <form method="post" action="https://estate.vodhin.org/e107_plugins/estate/admin_config.php?mode=estate_properties&amp;action=list" id="plugin-estate-list-form" data-h5-instanceid="0" novalidate="novalidate">
+    <form method="post" action="'.e_SELF.'?mode=estate_properties&amp;action=list" id="plugin-estate-list-form" data-h5-instanceid="0" novalidate="novalidate">
 			<input type="hidden" name="e-token" value="'.e_TOKEN.'" data-original-title="" title="">
       <div class="admin-main-content">
         <fieldset id="admin-ui-list-filter" class="e-filter" style="margin:4px;">
@@ -1251,10 +1354,7 @@ class estateCore{
             <div class="row-fluid">
               <div class="btn-group">
                 <span id="admin-ui-list-search" class="form-group has-feedback has-feedback-left FL"><input type="text" name="searchquery" value="" maxlength="50" id="searchquery" class="tbox input-text filter input-xlarge form-control ui-state-valid" size="20" data-original-title="" title=""></span>
-                <select id="estPropFilter" class="form-control e-tip tbox select input-xlarge filter ui-state-valid ILBLK FL estNoRightBord" title="" data-original-title="Filter">
-                </select>
                 <div class="e-autocomplete"></div>
-                <button type="button" value="etrigger_filter" id="etrigger-filter" class="btn btn-default" title="Filter"><span><i class="fa fa-filter"></i></span></button>
                 <span class="indicator" style="display: none;"><i class="fa fa-spin fa-spinner fa-fw"></i></span>
                 <button type="button" id="estPropCreate" class="btn btn-default ILBLK" title="'.EST_GEN_CREATE.'"><i class="fa fa-plus"></i></button>
               </div>
@@ -1262,81 +1362,35 @@ class estateCore{
           </div>
         </fieldset>';
     
+    /*
+                <select id="estPropFilter" class="form-control e-tip tbox select input-xlarge filter ui-state-valid ILBLK FL estNoRightBord" title="" data-original-title="Filter">
+                </select>
+                <button type="button" value="etrigger_filter" id="etrigger-filter" class="btn btn-default" title="Filter"><span><i class="fa fa-filter"></i></span></button>
     
+    */
     
-    $AGNTS = $this->estGetAllAgents(1);
-    if(count($AGNTS) > 0){
-      foreach($AGNTS as $ak=>$av){
-        $av['avatar'] = $av['agent_profimg'];
-        $USERS[$av['user_id']] = $av;
-        if(intval($av['user_id']) !== 1 && (intval($av['user_mgr']) <= EST_USERPERM || intval($av['user_id']) == intval(USERID))){
-          $AGTIDS .= ($AGTIDS ? ',':'').$av['agent_idx'];
-          }
-        }
-      }
+    $FLTR = array();
     
-    
-    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_zoning","prop_type","prop_listprice","prop_origprice","prop_thmb","prop_views","agency_name","agency_imgsrc","agency_image","agent_idx","agent_name","agent_uid","agent_imgsrc","agent_image");
-    
-    array_push($FLDS,"city_name AS city");
-    array_push($FLDS,"cnty_name AS county");
-    array_push($FLDS,"state_name AS state");
-    array_push($FLDS,"state_init AS ST");
-    array_push($FLDS,"state_country AS nat");
-    
-    
-    $QRY = "SELECT ".implode(",",$FLDS)." FROM `#estate_properties`";
-    
-    $QRY .= "
-    LEFT JOIN `#estate_city`
-    ON prop_city = city_idx
-    LEFT JOIN `#estate_county`
-    ON city_county = cnty_idx
-    LEFT JOIN `#estate_states`
-    ON state_idx = cnty_state
-    LEFT JOIN `#estate_agencies`
-    ON agency_idx = prop_agency
-    LEFT JOIN `#estate_agents`
-    ON agent_idx = prop_agent
-    ";
-    
-    //LEFT JOIN `#user` ON user_id = prop_uidcreate
-    
-    if(ADMINPERMS === '0' && intval(USERID) !== 1){
-      $QRYX = " WHERE prop_agent IN(".$AGTIDS.") OR prop_agent='0'";
-      }
-    
-    else if(ADMINPERMS !== '0'){
-      if(EST_USERPERM == 2){
-        if($AGTIDS){$QRYX = " WHERE prop_agent IN(".$AGTIDS.")";}
-        else{$QRYX = " WHERE prop_agency = '".EST_AGENCYID."' OR prop_agent='".EST_AGENTID."'";}
-        }
-      else{$QRYX = " WHERE prop_agent='".EST_AGENTID."' ";}
-      }
-    
-    
-    $TSTTXT = $this->estPropertyListQry(0);
-    
-    $text = '';//'<div>QRYX:'.$QRYX.'</div>'.$TSTTXT;
-    
-    $DTA = array();
-    $sql->gen($QRY.$QRYX);
-    if(EST_USERPERM > 1 && intval($ESTPREF['public_act']) !== 255){
-      while($rows = $sql->fetch()){
-        $DTA[(intval($rows['prop_agent']) == 0 ? 2 : 1)][$rows['prop_idx']] = $this->estMergePropDta($rows,$USERS);
-        }
+    if(EST_USERPERM >= intval($ESTPREF['public_mod']) && intval($ESTPREF['public_act']) !== 255){
+      
+      //$FLTR['WHERE']['prop_agent'] = "prop_agent='3'";
+      //$FLTR['WHERE']['prop_status'] = array(1,3,5);
+      
+      $DTA = $this->estPropertyListQry(1,$FLTR);
       
       $TBS[0]['caption'] = EST_GEN_AGENT.' '.EST_GEN_LISTINGS;
-      $TBS[1]['caption'] = EST_GEN_NONAGENTLISTINGS;
       $TBS[0]['text'] = $this->estPropertyListTableSF(1,$DTA);
-      $TBS[1]['text'] = $this->estPropertyListTableSF(2,$DTA);
-      $text .= e107::getForm(false,true)->tabs($TBS,array('active'=>0,'fade'=>0,'class'=>'estOATabs'));
       
+      $FLTR = array();
+      
+      $DTA = $this->estPropertyListQry(2,$FLTR);
+      $TBS[1]['caption'] = EST_GEN_NONAGENTLISTINGS;
+      $TBS[1]['text'] = $this->estPropertyListTableSF(2,$DTA);
+      
+      $text .= e107::getForm(false,true)->tabs($TBS,array('active'=>0,'fade'=>0,'class'=>'estOATabs'));
       }
     else{
-      while($rows = $sql->fetch()){
-        $DTA[1][$rows['prop_idx']] = $this->estMergePropDta($rows,$USERS);
-        }
+      $DTA = $this->estPropertyListQry(0,$FLTR);
       $text .= $this->estPropertyListTableSF(1,$DTA);
       }
     
@@ -1371,22 +1425,6 @@ class estateCore{
     return $text;
     }
   
-  private function estMergePropDta($rows,$USERS){
-    $tp = e107::getParser();
-    if(intval($rows['prop_agent']) == 0){
-      $rows['agency_name'] = EST_GEN_PRIVATE.' '.EST_GEN_SELLER;
-      $rows['agent_profimg'] = $USERS[$rows['prop_uidcreate']]['agent_profimg'];
-      $rows['agent_name'] = $USERS[$rows['prop_uidcreate']]['user_name'];
-      $rows['agent_login'] = $USERS[$rows['prop_uidcreate']]['user_loginname'];
-      $rows['agent_email'] = $USERS[$rows['prop_uidcreate']]['user_email'];
-      }
-    else{
-      $rows['agent_profimg'] = $USERS[$rows['agent_uid']]['agent_profimg'];
-      $rows['agent_login'] = $USERS[$rows['agent_uid']]['user_loginname'];
-      $rows['agent_email'] = $USERS[$rows['agent_uid']]['user_email'];
-      }
-    return $rows;
-    }
   
   
   public function estAgencyList($fltr=0){
