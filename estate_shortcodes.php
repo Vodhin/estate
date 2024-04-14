@@ -132,8 +132,6 @@ class estate_shortcodes extends e_shortcode{
         $i = 0;
         foreach($AGY as $k=>$v){
           if(intval($v['agency_pub']) > 0){
-            
-            
             $ARR1['agcy'][$i] = array(
               'idx'=>$v['agency_idx'],
               'name1'=>$v['agency_name'],
@@ -168,7 +166,7 @@ class estate_shortcodes extends e_shortcode{
         else{
           $i = 0;
           foreach($GLOBALS['EST_PROP'] as $k=>$v){
-            if(intval($v['prop_status']) > 1 && intval($v['prop_status']) < 5){
+            if(intval($v['prop_status']) > 1 && intval($v['prop_status']) < 5 && trim($v['prop_lat']) !== '' && trim($v['prop_lon']) !== ''){
               $ARR1['prop'][$i] = array(
                 'drop'=>$this->estPriceDrop($v,1),
                 'feat'=>explode(',',$v['prop_features']),

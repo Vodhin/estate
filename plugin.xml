@@ -20,6 +20,7 @@
 		<pref name='addnewuser'>3</pref>
 		<pref name='adminonly'>0</pref>
 		<pref name='country'>us</pref>
+    <pref name='currency'>0</pref>
 		<pref name='helpinfull'>1</pref>
 		<pref name='firsttime'>2</pref>
 		<pref name='layout_list'>estListTiles estListTile45</pref>
