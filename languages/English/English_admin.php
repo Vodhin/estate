@@ -184,6 +184,8 @@ define("EST_GEN_FIRST","First");
 define("EST_GEN_FIRSTTIME","First Time");
 define("EST_GEN_FRONTENDACCESS","Front End Access");
 define("EST_GEN_FORM","Form");
+define("EST_GEN_GENERALOPTS", "General Options");
+define("EST_GEN_GENERALOPTSHLP1", "Set general options for this plugin");
 define("EST_GEN_GROUP", "Group");
 define("EST_GEN_GROUPS", "Groups");
 define("EST_GEN_HELP01", "Help");
@@ -194,18 +196,17 @@ define("EST_GEN_LAYOUT_VIEW", "View Page");
 define("EST_GEN_LISTYPES", "Listing Types");
 define("EST_GEN_LOGO", "Logo");
 define("EST_GEN_MAINADMIN", "Main Admin");
+define("EST_GEN_MAPOPTS", "Map Options");
+define("EST_GEN_MAPOPTSHLP1", "Set map options for this plugin");
 define("EST_GEN_MISSING","Missing");
 define("EST_GEN_NAMEADDRESS","Name & Address");
 define("EST_GEN_NEWAGENT", "New Agent Profile");
 define("EST_GEN_NEWCOMPANY", "New Company");
-
 define("EST_GEN_NEWUSERAGENT","New User/Agent");
-
 define("EST_GEN_NONADMINACCESS", "Non-Admin Access");
 define("EST_GEN_NONADMINLISTINGS", "Non-Admin Listings");
-
 define("EST_GEN_NONAGENTLISTINGS","Non-Agent Listings");
-
+define("EST_GEN_NONAGENTLISTINGHLP1","Set options for listings posted by non-agents");
 define("EST_GEN_NONAGENTAPPROVED","Auto Approve");
 define("EST_GEN_NONAGENTAPPROVEDHLP","Automatically Approve New Non-Agent Listing Submissions");
 define("EST_GEN_NONAGENTEXP","Expires After");
@@ -214,7 +215,6 @@ define("EST_GEN_NONAGENTIMGCT","Max Images");
 define("EST_GEN_NONAGENTIMGCTHLP","Set the maximum number of images a Non-Agent can upload per listing (min: 3, max 18).");
 define("EST_GEN_NONAGENTMOD","Moderated By");
 define("EST_GEN_NONAGENTMODHLP","Choose who can Moderate Non-Agent Listings");
-
 define("EST_GEN_NOCHANGEADMIN", "You cannot change a Main Admin");
 define("EST_GEN_NOAGENCYFOUND0","Agency Not Found");
 define("EST_GEN_NOAGENCYFOUND1","Was not found in the database. If you know that the Agency ID is correct, you may not have permissions to edit the data.");
@@ -244,6 +244,10 @@ define("EST_GEN_REMAGENCYX", "You cannot remove this Agency - there are no other
 define("EST_GEN_REORDER","Re-order");
 define("EST_GEN_RESETDEF","Reset to Default");
 define("EST_GEN_SCHEDULING","Scheduling");
+
+define("EST_GEN_SCHEDULEOPTS","Scheduling Options");
+define("EST_GEN_SCHEDULEOPTSHLP1","Set Default Schedule Options");
+
 define("EST_GEN_SEO", "SEO");
 define("EST_GEN_SHOW", "Show");
 define("EST_GEN_SUCCESS", "Success");
@@ -345,6 +349,7 @@ define("EST_PLCH97","Additional Agency Info");
 
 
 
+define("EST_PREF_DEFCURRENCYHLP","The default Currency selected when creating a New Listing");
 define("EST_PREF_DEFCOUNTRYHLP","The default Country selected when creating a New Listing");
 
 
@@ -544,6 +549,11 @@ define("EST_HLPMNU_PROPLIST5","By default, properties are sorted by Listing Date
 define("EST_HLPMNU_PROPLIST6","Thumbnails");
 define("EST_HLPMNU_PROPLIST7","Thumbnails are cached by your browser and may display in incorrect image if you have updated the file. Click any thumbnail in the list to reload a fresh version of the image.");
 define("EST_HLPMNU_PROPLIST8","Double-Click any thumbnail to choose a different thumbnail for this Property");
+
+define("EST_HLPMNU_PROPLIST9","Start a new listing by adding some basic information and clicking the \"Save & Continue\" button. ");
+define("EST_HLPMNU_PROPLIST9a","You will have the opportunity to change this data in the next step, including adding new options to drop-down selections.");
+
+
 
 define("EST_HLPMNU_SCHED0","The Scheduling system automates the publication of this listing when the Status is set to Active. If the Status is set to anything else, then these dates are ignored.");
 define("EST_HLPMNU_SCHED5","The Events table lists the Property's Events schecule.");
