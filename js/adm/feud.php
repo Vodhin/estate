@@ -79,6 +79,7 @@ if($FETCH == 1 || $FETCH == 2){
   $RES['txt'] = estJStext();
   $RES['propid'] = $PROPID;
   $RES['dir'] = estDirList();
+  $RES['tbls']['estate_listypes']['dta'] = $sql->retrieve('estate_listypes', '*', '',true);
   
   $RES['classes'] = $GLOBALS['EST_CLASSES'];
   $pref = e107::pref();
@@ -730,14 +731,17 @@ else if($FETCH == 76){
 
 else if($FETCH == 97){
   //$sql = e107::getDB();
-  $FLTR = array();
-  $FLTR['WHERE'] = $_POST['tdta']['fltr'];
-  $FLTR['ORDER'] = explode(" ",$_POST['tdta']['order']);
-  $FLTR['LIMIT'] = explode(",",$_POST['tdta']['limit']);
-  $DTA = $estateCore->estPropertyListQry(intval($_POST['tdta']['mode']),$FLTR);
-  $DTA['colsp'] = $_POST['tdta']['colsp'];
-  $text = $estateCore->PropertyListTableTR($DTA);
-  echo $text;
+  if($_POST['tdta']){
+    $FLTR = array();
+    $FLTR['WHERE'] = $_POST['tdta']['fltr'];
+    $FLTR['ORDER'] = explode(" ",$_POST['tdta']['order']);
+    $FLTR['LIMIT'] = explode(",",$_POST['tdta']['limit']);
+    $DTA = $estateCore->estPropertyListQry(intval($_POST['tdta']['mode']),$FLTR);
+    $DTA['colsp'] = intval($_POST['tdta']['colsp']);
+    
+    $text = $estateCore->PropertyListTableTR($DTA);
+    echo $text;
+    }
   exit;
   }
 
@@ -1076,7 +1080,7 @@ function estGetAllDta($PROPID){
   
   $ESTTBL['estate_user']['dta'] = $estateCore->estGetAllUsers();
   $ESTTBL['estate_agents']['dta'] = $estateCore->estGetAllAgents();
-  //$ESTTBL['estate_agencies']['dta'] = $estateCore->estGetAllAgencies();
+  $ESTTBL['estate_agencies']['dta'] = $estateCore->estGetAllAgencies();
   //$ESTTBL['estate_contacts']['dta'] = $estateCore->estGetCompContacts();
   
   //$ESTTBL['estate_agencyfull']['dta'] = $estateCore->estGetAgencyFull();
@@ -1111,37 +1115,15 @@ function estGetAllDta($PROPID){
   
   foreach($TBLS as $tbl=>$v){
     $ESTTBL[$tbl]['flds'] = $sql->db_FieldList($tbl);
+    
     if(count($ESTTBL[$tbl]['dta']) == 0){
       if($ESTTABDTA[$tbl]){$ESTTBL[$tbl]['dta'] = ($sql->count($tbl) > 0 ? $sql->retrieve($tbl, '*',$ESTTABDTA[$tbl],true) : array());}
       else{$ESTTBL[$tbl]['dta'] = ($sql->count($tbl) > 0 ? $sql->retrieve($tbl, '*','',true) : array());}
       }
+      
+      
     
     $ESTTBL[$tbl]['form'] = estTablForm($TBLS[$tbl],$ESTTBL[$tbl]['flds']);
-    /*
-    foreach($ESTTBL[$tbl]['flds'] as $sk=>$sv){
-      $ESTTBL[$tbl]['form'][$sv]['ord'] = $sk;
-      if($TBLS[$tbl][$sv]){
-        $FDTA = $TBLS[$tbl][$sv];
-        $ESTTBL[$tbl]['form'][$sv]['attr'] = $FDTA['attr'];
-        $ESTTBL[$tbl]['form'][$sv]['chks'] = $FDTA['chks'];
-        $ESTTBL[$tbl]['form'][$sv]['chng'] = $FDTA['chng'];
-        $ESTTBL[$tbl]['form'][$sv]['cls'] = $FDTA['cls'];
-        //$ESTTBL[$tbl]['form'][$sv]['fetch'] = $FDTA['fetch'];
-        $ESTTBL[$tbl]['form'][$sv]['fltrs'] = $FDTA['fltrs'];
-        $ESTTBL[$tbl]['form'][$sv]['fnct'] = $FDTA['fnct'];
-        $ESTTBL[$tbl]['form'][$sv]['hlpm'] = $FDTA['hlpm'];
-        $ESTTBL[$tbl]['form'][$sv]['html'] = $FDTA['html'];
-        $ESTTBL[$tbl]['form'][$sv]['labl'] = $FDTA['labl'];
-        $ESTTBL[$tbl]['form'][$sv]['par'] = $FDTA['par'];
-        $ESTTBL[$tbl]['form'][$sv]['plch'] = $FDTA['plch'];
-        $ESTTBL[$tbl]['form'][$sv]['rows'] = $FDTA['rows'];
-        $ESTTBL[$tbl]['form'][$sv]['src'] = $FDTA['src'];
-        $ESTTBL[$tbl]['form'][$sv]['str'] = ($FDTA['str'] ? $FDTA['str'] : 0);
-        $ESTTBL[$tbl]['form'][$sv]['tab'] = ($FDTA['tab'] ? intval($FDTA['tab']) : 0);
-        $ESTTBL[$tbl]['form'][$sv]['type'] = $FDTA['type'];
-        }
-      }
-      */
     }
   
   $i = 0;
@@ -1239,6 +1221,7 @@ function estJStext(){
     'group1'=>EST_GEN_GROUP,
     'hoaappr1'=>EST_GEN_HOAAPPR1,
     'image'=>EST_GEN_IMAGE,
+    'infochanged'=>EST_GEN_INFOCHANGED,
     'item'=>EST_GEN_ITEM,
     'listing'=>EST_GEN_LISTING,
     'listings'=>EST_GEN_LISTINGS,
@@ -1299,6 +1282,7 @@ function estJStext(){
     'unk'=>EST_GEN_UNK,
     'sqr'=>EST_GEN_SQR,
     'updated'=>EST_UPDATED,
+    'updatethis'=>EST_GEN_UPDATETHIS,
     'upload'=>EST_UPLOAD,
     'view'=>EST_GEN_VIEW,
     'views'=>EST_GEN_VIEWS,
@@ -1322,7 +1306,7 @@ function estJSkeys(){
     'avatarlab'=>array(EST_AGT_PROPIC,EST_GEN_CUSTOM,EST_GEN_USER.' '.EST_AGT_PROPIC), //LAN_NONE,
     'contkeys'=>$estateCore->estGetContKeys(),
     'contabs'=>$GLOBALS['EST_CONTACTBLS'],
-    'cursymb'=>$GLOBALS['EST_CURSYMB'],
+    'cursymb'=>EST_CURSYMB,
     'dim1u'=>$GLOBALS['EST_DIM1UNITS'],
     'dim2u'=>$GLOBALS['EST_DIM2UNITS'],
     'dimuopt'=>$DIMUOPT,

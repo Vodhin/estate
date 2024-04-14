@@ -2322,6 +2322,9 @@ function estGetSubDivs(){
     var defs = $('body').data('defs');
     var agtDta = $('select[name="agent_uid"]').closest('form').data('levdta');
     var eDta = $('select[name="agent_uid"]').find('option:selected').data();
+    
+    console.log('estSetAgentUID');
+    
     if(Number(eDta.user_id) > 0){
       if(jsconfirm(defs.txt.agtupdta)){
         agtDta.agent_uid = Number(eDta.user_id);
@@ -2382,15 +2385,22 @@ function estGetSubDivs(){
         var img1 = $('#agtAvatar');
         var img2 = $(img1).find('img');
         var dta = $(img1).closest('form').data('levdta');
+        console.log(dta);
+        
         if(Number(dta.agent_imgsrc) == 1){
           //if(dta.agent_image.length > 0){imgUrl = defs.dir.agent+dta.agent_image;}
           imgUrl = defs.dir.agent+dta.agent_image;
           }
         else{
           if($('select[name="agent_uid"]').length == 1){
+            
             var eDta = $('select[name="agent_uid"]').find('option:selected').data();
-            if(typeof eDta.user_profimg !== 'undefined' && eDta.user_profimg.length > 0){imgUrl = eDta.user_profimg;}
-            else if(eDta.user_image.length > 0){imgUrl = eDta.user_image;}
+            if(typeof eDta !== 'undefined'){
+              if(eDta.user_image.length > 0){imgUrl = eDta.user_image;}
+              if(typeof eDta.user_profimg !== 'undefined'){
+                if(eDta.user_profimg.length > 0){imgUrl = eDta.user_profimg;}
+                }
+              }
             }
           else if(typeof dta.user_profimg !== 'undefined' && dta.user_profimg.length > 0){imgUrl = dta.user_profimg;}
           else if(typeof dta.user_image !== 'undefined' && dta.user_image.length > 0){imgUrl = dta.user_image;}
@@ -2495,6 +2505,7 @@ function estGetSubDivs(){
     var propId = Number($('body').data('propid'));
     var keyTbl = defs.keys.contabs[6];
     var destTbl = defs.tbls[keyTbl[0]];
+    console.log('estAgentForm');
     
     var tabTxt = [defs.txt.agent,defs.txt.contacts];
     
@@ -2625,6 +2636,8 @@ function estGetSubDivs(){
   function estLoadAgentUIDs(aDta){
     var defs = $('body').data('defs');
     var uidOpt = [];
+    console.log('estLoadAgentUIDs');
+    
     $('select[name="agent_uid"]').empty().promise().done(function(){
       $(defs.tbls.estate_user.dta).each(function(ai,optDta){
         uidOpt[ai] = $(JQOPT,{'value':optDta.user_id}).data(optDta).html(optDta.user_name+' ('+optDta.user_loginname+')');
@@ -2898,7 +2911,6 @@ function estGetSubDivs(){
       else{$(dta.eles.owncb).prop('checked',true);}
       }
     
-    console.log(dta);
     if(Number(dta.agent_idx) > 0){
       $(dta.eles.agtBtn).attr('title',defs.txt.edit+' '+dta.agent_name);
       $(dta.eles.agtBtn).find('span').eq(0).html(defs.txt.agent+' '+dta.agent_name);
@@ -2913,6 +2925,8 @@ function estGetSubDivs(){
       $(dta.eles.agtBtn).find('span').eq(0).html(defs.txt.newagt);
       $(dta.eles.agtBtn).find('span').eq(1).html('- - -');
       }
+    console.log(dta);
+    
     }
   
   
@@ -2945,6 +2959,7 @@ function estGetSubDivs(){
       var dta = $(tr).data();
       $.each(dta,function(k,v){$(tr).removeAttr('data-'+k);});
       $(tr).removeData();
+      
       
       var up = dta.user_perms.toString();
       if(up.length > 0){up = (up.indexOf('.') > -1 ? up.split('.') : [up]);}
@@ -2980,7 +2995,7 @@ function estGetSubDivs(){
               var bDta = $(this).closest('tr').data();
               var url = vrePage+'?mode=estate_agencies&action=';
               if(Number(bDta.user_id) == Number(defs.user.user_id)){url += 'profile';}
-              else{url += 'agent&id='+(Number(bDta.agent_idx) > 0 ? Number(bDta.agent_idx) : '0.'+Number(bDta.user_id)+'.'+Number(bDta.agent_agcy));}
+              else{url += 'agent&id='+Number(bDta.user_id)+'.'+Number(bDta.agent_idx)+'.'+Number(bDta.agent_agcy);}
               window.location.assign(url);
               }
             });
@@ -3200,15 +3215,19 @@ function estGetSubDivs(){
   
   
   function estPrepAgentProfile(aTbl){
-    
-    var estAgentForm = $(aTbl).closest('form');
+    console.log('estPrepAgentProfile');
     var eImg = $('#agtAvatar').find('img.estSecretImg');
     var levdta = $(aTbl).data();
     $.each(levdta,function(k,v){$(aTbl).removeAttr('data-'+k);});
     $(aTbl).removeData();
+    
+    var estAgentForm = $(aTbl).closest('form');
+    var fDta = $(estAgentForm).data();
+    $.each(fDta,function(k,v){$(estAgentForm).removeAttr('data-'+k);});
     $(estAgentForm).data('levdta',levdta);
     
     console.log($(estAgentForm).data());
+    
     $(eImg).on({load : function(e){estAvatarWH(e.target);}});
     
     $.ajax({
@@ -6493,24 +6512,38 @@ function estGetSubDivs(){
     var defs = $('body').data('defs');
     var agencyId = Number($('input[name="prop_agency"]').val());
     var agentId = Number($('input[name="prop_agent"]').val());
-    if(Number(defs.user.perm) > 1 || Number(defs.user.agent_idx) == agentId){
-      
-      if(agentId > 0){
+    console.log(defs.tbls.estate_agents.dta);
+    
+    if(agentId > 0){
+      if(Number(defs.user.perm) > 1 || Number(defs.user.agent_idx) == agentId){
         var ag2dta = defs.tbls.estate_agents.dta.find(x => Number(x.agent_idx) === agentId);
         if(typeof ag2dta !== 'undefined'){
+          if(agencyId !== Number(ag2dta.agent_agcy)){
+            agencyId = Number(ag2dta.agent_agcy);
+            $('input[name="prop_agency"]').val(agencyId);
+            $('#estAgencySelBtn').data('agcy',agencyId);
+            defs.tbls.estate_properties.dta[0].prop_agency = agencyId;
+            $('body').data('defs',defs);
+            console.log(defs.tbls.estate_properties.dta[0]);
+            estAlertLog(defs.txt.agent+' '+defs.txt.infochanged+'. '+defs.txt.please+' '+defs.txt.updatethis+' '+defs.txt.listing);
+            }
+            
           $('#estAgentSelBtnTxt').html(ag2dta.agent_name);
           estSetAgtMiniPic(ag2dta);
           }
         }
       
-      
       if(agencyId > 0){
         var agncyDta = defs.tbls.estate_agencies.dta.find(x => Number(x.agency_idx) === agencyId);
+        console.log(agncyDta);
         if(typeof agncyDta !== 'undefined'){
           $('#estAgencySelBtn').html(agncyDta.agency_name);
           estFilterAgents(1,agncyDta);
           }
         }
+      }
+    else{
+      console.log('new Agent Listing or is Member Listing');
       }
     }
   
@@ -7923,6 +7956,7 @@ function estGetSubDivs(){
   
     
   function estAgentPHPform(usrDta,agyDta){
+    console.log('estAgentPHPform ',usrDta,agyDta);
     $.ajax({
       url: vreFeud+'?21||0',
       type:'post',
@@ -8204,6 +8238,7 @@ function estGetSubDivs(){
 
 
   function estPrepAgencyForm(mainId){
+    console.log('estPrepAgencyForm ',mainId);
     $.ajax({
       url: vreFeud+'?0||0',
       type:'get',
@@ -9050,22 +9085,47 @@ function estGetSubDivs(){
     }
   
   
+  
+  
+  
+  
   function estSetPropListFilters(btn,tabl){
-    var tbody = $(tabl).data('tbody');
-    var fltrs = $(tabl).data('fltrs');
+    var dta = $(tabl).data();
+    var tbody = dta.tbody;
     
-    var tdta = {'fltr':{},'mode':$(tabl).data('mode'),'colsp':$(tabl).data('colspan'),'order':$(tabl).data('order'),'limit':$(tabl).data('limit').join()};
     
-    $(fltrs).each(function(fi,fltr){
+    var limits = dta.limit;
+    if($(btn).hasClass('estPropDBPrev')){
+      limits[0] = Number(limits[0]) - Number(limits[1]);
+      }
+    else if($(btn).hasClass('estPropDBNext')){
+      limits[0] = Number(limits[0]) + Number(limits[1]);
+      }
+    
+    if(Number(limits[0]) <= 0){limits[0] = 0;}
+    
+    
+    var tdta = {'fltr':{},'mode':dta.mode,'colsp':dta.colspan,'order':dta.order,'limit':dta.limit.join()};
+    
+    $(tbody).empty().promise().done(function(){
+      $(tbody).html('<tr><td colspan="'+tdta.colsp+'"><div class="uplThmCover" style="height:128px"></div></td></tr>');
+      });
+    //estAgencySelBtn
+    
+    $(dta.fltrs).each(function(fi,fltr){
       console.log(fltr);
       var chked = $(fltr.ul).find('label.active');
-      if(chked.length !== fltr.li.length){
+      $(fltr.capt).attr('data-before',Number(fltr.li.length) - (Number(fltr.li.length)-Number(chked.length)));
+      if(chked.length > 0 && chked.length !== fltr.li.length){
+        $(fltr.capt).addClass('fltrd');
         tdta.fltr[fltr.fld] = [];
         $(chked).each(function(ci,cli){
           tdta.fltr[fltr.fld].push($(cli).data('value'));
           });
         }
-      
+      else{
+        $(fltr.capt).removeClass('fltrd');
+        }
       }).promise().done(function(){
         console.log(tdta);
         $('div.estFltrDiv').removeClass('open');
@@ -9079,7 +9139,9 @@ function estGetSubDivs(){
           processData:true,
           success: function(ret, textStatus, jqXHR){
             $(tbody).empty().promise().done(function(){
-              $(tbody).html(ret);
+              $(tbody).html(ret).promise().done(function(){
+                estSetPropListLimits(tabl);
+                });
               });
             },
           error: function(jqXHR, textStatus, errorThrown){
@@ -9089,6 +9151,176 @@ function estGetSubDivs(){
           });
         });
     
+    }
+  
+  function estSetPropListLimits(tabl){
+    var dta = $(tabl).data();
+    if(Number(dta.limit[0]) < 1){$(dta.dbbtns[0]).prop('disabled',true);}
+    else{$(dta.dbbtns[0]).prop('disabled',false).removeProp('disabled');}
+    if((Number($(dta.tbody).find('tr').length) - 1) < Number(dta.limit[1]))$(dta.dbbtns[2]).prop('disabled',true);
+    else{$(dta.dbbtns[2]).prop('disabled',false).removeProp('disabled');}
+    }
+  
+  
+  function estDBResCount(btn,tabl){
+    var dta = $(tabl).data(dta);
+    if(document.getElementById('estDBResCount')){
+      $('#estDBResCount').remove();
+      }
+    else{
+      var nBox = $(JQDIV,{'id':'estDBResCount'}).appendTo($(btn).parent());
+      $([5,10,25,50,100,150,250]).each(function(i,v){
+        $(JQBTN,{'class':'btn btn-default'}).html(v).on({
+          click : function(e){
+            e.preventDefault();
+            dta.limit[1] = v;
+            $(dta.dbbtns[1]).html(v);
+            $(tabl).data(dta);
+            $('#estDBResCount').remove();
+            estSetPropListFilters(this,tabl);
+            }
+          }).appendTo(nBox);
+        });
+      }
+    }
+  
+  
+  
+  function estPrepPropListFilters(){
+    $('.estPropListTABx').each(function(tbi,tabl){
+      var thead = $(tabl).find('thead');
+      var tbody = $(tabl).find('tbody');
+      
+      var dta = {'tbody':tbody,'thead':thead,'mode':$(tabl).data('mode'),'fltrs':[],'dbbtns':[],'limit':[]};
+      
+      $(thead).find('ul.estPropListFltrSet').each(function(i,fele){
+        var capt = $(fele).parent().find('a.dropdown-toggle');
+        var UL = $(fele).find('ul.estPropListFltrUL');
+        
+        dta.fltrs[i] = {'fld':$(fele).data('fld'),'ul':UL,'li':[],'capt':capt};
+        
+        $(UL).each(function(ULi,ULEle){
+          $(ULEle).find('li.estFltrItm').each(function(fi,fLI){
+            var fchk = $(fLI).find('label.form-check');
+            if($(fLI).hasClass('estFltrHead')){
+              $(fLI).on({
+                click : function(e){
+                  if($(fchk).hasClass('active')){
+                    $(ULEle).find('li.estFltrInd label.form-check').addClass('active');
+                    }
+                  else{
+                    $(ULEle).find('li.estFltrInd label.form-check').removeClass('active');
+                    }
+                  }
+                });
+              }
+            else{
+              dta.fltrs[i].li.push(fchk);
+              }
+            });
+          });
+        
+        $(fele).find('button:last-child').on({
+          click : function(e){
+            e.preventDefault();
+            estSetPropListFilters(this,tabl);
+            }
+          });
+        }).promise().done(function(){
+        
+          $(thead).find('div.estPropListDBLimit').each(function(i,btnCont){
+            var dbBtns = $(btnCont).find('button');
+            
+            $(dbBtns[0]).on({click : function(){estSetPropListFilters(this,tabl);}});
+            $(dbBtns[1]).on({click : function(){estDBResCount(this,tabl);}});
+            $(dbBtns[2]).on({click : function(){estSetPropListFilters(this,tabl);}});
+            
+            dta.limit[0] = Number($(btnCont).data('from'));
+            dta.limit[1] = Number($(btnCont).data('limit'));
+            dta.dbbtns = dbBtns;
+            
+            }).promise().done(function(){
+              
+              $(tabl).data(dta);
+              estSetPropListLimits(tabl);
+              });
+          });
+      });
+    
+        //estPropCreate
+    
+    $('.estPropListTB').find('tr').each(function(i,tr){
+      var levdta = $(tr).data();
+      $.each(levdta,function(k,v){$(tr).removeAttr('data-'+k);});
+      $(tr).find('td:last-child').on({
+        click : function(e){
+          console.log($(this).parent().data());
+          }
+        });
+      });
+    
+    }
+  
+  function estPrepPropListNewForm(){
+    var defs = $('body').data('defs');
+    $('select[name="prop_leasedur"]').data('pval',$('select[name="prop_leasedur"]').val());
+    $('input[name="prop_origprice"]').data('pval',Number($('input[name="prop_origprice"]').val()));
+    
+    
+    var LeaseFrqDiv = $(JQDIV,{'class':'WSNWRP'}).appendTo($('input[name="prop_origprice"]').parent());
+    var currencyBtn = $(JQBTN,{'id':'estPropCurrBtn','class':'btn btn-default estNoRightBord'}).html(defs.keys.cursymb[$('input[name="prop_currency"]').val()]).on({
+      click : function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        estSetDIMUbtns(3,this);
+        }
+      }).appendTo(LeaseFrqDiv);
+    $('input[name="prop_origprice"]').appendTo(LeaseFrqDiv);
+    
+    var LeaseFrqBtn = $(JQBTN,{'id':'estPropLeaseFrqBtn','class':'btn btn-default estNoLeftBord'}).on({
+      click : function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        estSetDIMUbtns(4,this);
+        }
+      }).appendTo(LeaseFrqDiv);
+    
+    estSetDIMUbtns(4,LeaseFrqBtn,Number($('input[name="prop_leasefreq"]').val()));
+    
+    $('select[name="prop_zoning"]').on({
+      change : function(){
+        var propZone = Number($(this).val());
+        var zoneDta = $.grep(defs.tbls.estate_listypes.dta, function (element, index) {return Number(element.listype_zone) == propZone;});
+        $('select[name="prop_type"]').empty().promise().done(function(){
+          $(JQOPT,{'value':'0'}).html('- '+defs.txt.other+' '+defs.txt.option+' -').appendTo('select[name="prop_type"]');
+          $(zoneDta).each(function(i,opt){
+            $(JQOPT,{'value':opt.listype_idx}).html(opt.listype_name).appendTo('select[name="prop_type"]');
+            }).promise().done(function(){
+              $('select[name="prop_type"]').change();
+              });
+          });
+        }
+      }).change();
+    
+        
+    
+    
+    $('select[name="prop_listype"]').on({
+      change : function(){
+        if(this.value > 0){
+          $('select[name="prop_leasedur"]').val(0).change();
+          $('select[name="prop_leasedur"]').closest('tr').fadeOut();
+          $('input[name="prop_origprice"]').removeClass('estNoRightBord');
+          $('#estPropLeaseFrqBtn').fadeOut();
+          }
+        else{
+          $('select[name="prop_leasedur"]').closest('tr').fadeIn();
+          $('select[name="prop_leasedur"]').val($('select[name="prop_leasedur"]').data('pval')).change();
+          $('input[name="prop_origprice"]').addClass('estNoRightBord');
+          $('#estPropLeaseFrqBtn').fadeIn();
+          }
+        }
+      }).change();
     }
   
   
@@ -9129,7 +9361,7 @@ function estGetSubDivs(){
       }
     
     if(document.getElementById('estAgentFormTable')){
-      setCookie('estate_agencies-list-0', 1, 1);
+      //setCookie(eUID+'-estate_agencies-list-0', 1, 1);
       estPrepAgentProfile($('#estAgentFormTable'));
       return;
       }
@@ -9177,50 +9409,7 @@ function estGetSubDivs(){
         
         var btnBar = $('#admin-ui-edit').find('div.buttons-bar');
         
-        if(mainTbl == 'estate_properties'){
-          if(actn == 'list'){
-            if(tabNo > 0){$(navUL).find('li').eq(tabNo).find('a').click();}
-            
-            $('.estPropListTABx').each(function(tbi,tabl){
-              var thead = $(tabl).find('thead');
-              var tbody = $(tabl).find('tbody');
-              
-              var dta = {'tbody':tbody,'thead':thead,'mode':$(tabl).data('mode'),'fltrs':[]};
-              
-              $(thead).find('ul.estPropListFltrSet').each(function(i,fele){
-                var UL = $(fele).find('ul.estPropListFltrUL');
-                dta.fltrs[i] = {'fld':$(fele).data('fld'),'ul':UL,'li':[]};
-                
-                $(UL).find('li.estFltrItm').each(function(fi,fLI){
-                  var fchk = $(fLI).find('label.form-check');
-                  dta.fltrs[i].li.push(fchk);
-                  });
-                
-                $(fele).find('button:last-child').on({
-                  click : function(e){
-                    e.preventDefault();
-                    estSetPropListFilters(this,tabl);
-                    }
-                  });
-                }).promise().done(function(){
-                  $(tabl).data(dta);
-                  console.log($(tabl).data());
-                  });
-              });
-            
-            
-            $('.estPropListTB').find('tr').each(function(i,tr){
-              var levdta = $(tr).data();
-              $.each(levdta,function(k,v){$(tr).removeAttr('data-'+k);});
-              $(tr).find('td:last-child').on({
-                click : function(e){
-                  console.log($(this).parent().data());
-                  }
-                });
-              });
-            }
-          }
-        else if(mainTbl == 'estate_agencies'){
+        if(mainTbl == 'estate_agencies'){
           if(actn == 'edit' || actn == 'create'){
             estPrepAgencyForm(mainId);
             }
@@ -9238,8 +9427,6 @@ function estGetSubDivs(){
             }
           return;
           }
-            
-        
       }
     else{
       alert('WARNING: This plugin has interactive elements that do not work with your current Theme and/or Layout. Missing "<div class="admin-main-content">');
@@ -9250,9 +9437,6 @@ function estGetSubDivs(){
       estPrefs();
       return;
       }
-    
-    
-    
     
     
     if(mainTbl == 'estate_presets'){
@@ -9279,19 +9463,21 @@ function estGetSubDivs(){
               estSetHelpInFull();
               //nav-tabs
               if(actn == 'list'){
-                if(document.getElementById('estPropCreate')){
-                  $('#estPropCreate').on({
-                    click : function(){window.location.assign(vreBasePath+'admin_config.php?mode='+mainTbl+'&action=create')}
-                    });
+                if(mainTbl == 'estate_properties'){
+                  var tabLen = Number($(navUL).find('li').length) - 1;
+                  if(tabNo < tabLen){$(navUL).find('li').eq(tabNo).find('a').click();}
+                  if(tabLen < 2){$('#estEditHelp-1').html($('#estEditHelp-2').html());}
+                  //if(Number(defs.user.perm) >= Number(defs.prefs.public_mod)){}
+                  estPrepPropListFilters();
+                  estPrepPropListNewForm();
                   }
-                else{
+                
+                if(!document.getElementById('estPropCreate')){
                   var targ = $('#admin-ui-list-filter').find('div.form-inline:first-child');
                   $(JQBTN,{'type':'button','class':'btn btn-default','title':ret.txt.create}).html(JQADI).on({
                     click : function(){window.location.assign(vreBasePath+'admin_config.php?mode='+mainTbl+'&action=create')}
                     }).appendTo(targ);
                   }
-                
-                  
                 
                 if(helpInFull == 0){
                   $('#plugin-estate-list-table thead').on({mouseenter : function(){estScrollHlp('#estHlp-proplist3')}});
@@ -9320,6 +9506,11 @@ function estGetSubDivs(){
     });
 
 
+//fa-solid fa-chevron-left
+//fa-solid fa-angles-left
+//fa-solid fa-chevron-right
+//fa-solid fa-angles-right
+//fa-solid fa-9 (1,2,3,4,5,6,7,8)
 //fa fa-navicon
 //fa fa-plus
 //fa fa-close
