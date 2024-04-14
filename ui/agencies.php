@@ -206,22 +206,26 @@ class estate_agencies_ui extends e_admin_ui{
     $frm = e107::getForm(false, true);
     $XID = $this->getID();
     $AID = explode('.',$XID);
+    $USRID = intval($AID[0]);
+    $AGTID = intval($AID[1]);
+    $LOCID = intval($AID[2]);
     
-    if(intval($AID[0]) == USERID){
-      e107::redirect(SITEURLBASE.e_PLUGIN_ABS."estate/admin_config.php?mode=estate_agencies&action=profile&id=".USERID);
+    if($USRID == USERID){
+      e107::redirect(SITEURLBASE.e_PLUGIN_ABS."estate/admin_config.php?mode=estate_agencies&action=profile");
       }
     else{
       if(intval($GLOBALS['ESTDB']['agent_idx']) > 0 ){
-        if(intval($AID[0]) !== intval($GLOBALS['ESTDB']['agent_idx'])){
-          e107::redirect(SITEURLBASE.e_PLUGIN_ABS."estate/admin_config.php?mode=estate_agencies&action=agent&id=".intval($GLOBALS['ESTDB']['agent_idx']));
+        if($AGTID !== intval($GLOBALS['ESTDB']['agent_idx'])){
+          e107::redirect(SITEURLBASE.e_PLUGIN_ABS."estate/admin_config.php?mode=estate_agencies&action=agent&id=".intval($GLOBALS['ESTDB']['agent_uid']).".".intval($GLOBALS['ESTDB']['agent_idx']).".".intval($GLOBALS['ESTDB']['agent_agcy']));
           }
         }
       
-      if(intval($AID[0]) == 0 && intval($AID[1]) > 0){
-        $formDta = $estateCore->estGetUserById(intval($AID[1]));
-        if(intval($AID[2]) > 0){$formDta['agent_agcy'] = intval($AID[2]);}
+      if($AGTID == 0 && $USRID > 0){
+        $formDta = $estateCore->estGetUserById($USRID);
+        if($LOCID > 0){$formDta['agent_agcy'] = $LOCID;}
+        else{$formDta['agent_agcy'] = EST_AGENCYID;}
         }
-      else{$formDta = $estateCore->estGetAgentById($AID[0]);}
+      else{$formDta = $estateCore->estGetAgentById($AGTID);}
       
       
       $dataStr = $estateCore->estDataStr($formDta);
@@ -440,8 +444,11 @@ class estate_agencies_ui extends e_admin_ui{
     if($hlpactn == 'agent' || $hlpactn == 'profile'){
       $estateCore = new estateCore;
       $AID = explode('.',$this->getID());
-      if(intval($AID[0]) == 0 && intval($AID[1]) > 0){$dta = $estateCore->estGetUserById(intval($AID[1]));}
-      else{$dta = $estateCore->estGetAgentById($AID[0]);}
+      $USRID = intval($AID[0]);
+      $AGTID = intval($AID[1]);
+      $LOCID = intval($AID[2]);
+      if($AGTID == 0 && $USRID > 0){$dta = $estateCore->estGetUserById($USRID);}
+      else{$dta = $estateCore->estGetAgentById($AGTID);}
       
       $text .= '
       <div class="estEditHelpSect">

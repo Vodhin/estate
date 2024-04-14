@@ -1102,6 +1102,18 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' => array (), 
         'writeParms' => array('size'=>'large'),
         ),
+        
+			'currency' => array (
+        'tab'=>0,
+        'title' => LAN_DEFAULT.' '.EST_GEN_CURRENCY,
+        'type' => 'dropdown',
+        'data' => 'str',
+        'width' => 'auto',
+        'help' => EST_PREF_DEFCURRENCYHLP,
+        'readParms' => array (), 
+        'writeParms' => array('size'=>'small','optArray'=>EST_CURSYMB),
+        ),
+        
       
       'layout_preview_listpage'=>array(
         'tab'=>1,
@@ -1586,39 +1598,15 @@ class estate_listing_ui extends e_admin_ui{
       $this->fields['prop_leasedur']['writeParms']['optArray'] = $GLOBALS['EST_LEASEDUR'];
       
       $this->fields['prop_events'][1] = 2;
-      
-      //$text = $this->table;
-      //$mes->addInfo('blurf: '.$table);//'Test: ['.$tst2.'] '.$data2[0]['city_zip']
-      
-      
-      //$sql = e107::getDB();
-      //if($sql->gen('SELECT * FROM #estate_states ')){
-        //while($row = $sql->fetch()){$ESTATES[$row['state_idx']] = $tp->toHTML($row['state_name']);}
-        //}
-      
-			// Set drop-down values (if any). 
-      //$optarr[-1] = 'New Subdivision';
-		
-      //$tp = e107::getParser();
-      
-      //e_form:datepicker($name, $datestamp = false, $options = null)
-      //$frm = e_form;
-      //$frm->datepicker('my_field',time(),'mode=date&format=yyyy-mm-dd');
-      
-      //$testm = $this->getMode();
-      //$testm = $this->getAction();
-      //$mes->addSuccess('You did it!');
-      //echo $mes->render();
-      
-    
 		}
 
 		
 		// ------- Customize Create --------
 		
 		public function beforeCreate($new_data,$old_data){
-      $new_data['prop_datecreated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
-      $new_data['prop_dateupdated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+      $TNOW = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+      $new_data['prop_datecreated'] = $TNOW;
+      $new_data['prop_dateupdated'] = $TNOW;
       $new_data['prop_uidcreate'] = USERID;
       $new_data['prop_uidupdate'] = USERID;
       
@@ -1670,15 +1658,14 @@ class estate_listing_ui extends e_admin_ui{
 		// ------- Customize Update --------
 		
 		public function beforeUpdate($new_data, $old_data, $id){
-      //$time = time();
       $tp = e107::getParser();
       $new_data['prop_dateupdated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
       $new_data['prop_uidupdate'] = USERID;
       
-      if(empty($old_data['prop_name']) || $old_data['prop_name'] = EST_PROP_UNNAMEDPROP || $new_data['prop_name'] == EST_PROP_UNNAMEDPROP){
+      if(empty($old_data['prop_name']) || $old_data['prop_name'] == EST_PROP_UNNAMEDPROP){
         if(!empty($new_data['prop_addr1'])){$new_data['prop_name'] = trim($tp->toText($new_data['prop_addr1']));}
         elseif(!empty($old_data['prop_addr1'])){$new_data['prop_name'] = trim($tp->toText($old_data['prop_addr1']));}
-        else{$new_data['prop_name'] = trim($tp->toText(EST_PROP_UNNAMEDPROP));}
+        //else{$new_data['prop_name'] = trim($tp->toText(EST_PROP_UNNAMEDPROP));}
         }
 			if(empty($old_data['prop_sef']) && empty($new_data['prop_sef'])){
         $new_data['prop_sef'] = eHelper::title2sef($new_data['prop_name']);
@@ -1788,8 +1775,8 @@ class estate_listing_ui extends e_admin_ui{
         else if($hlpactn == 'prefs'){
           $text .= '
           <div id="estEditHelp-0" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">General Options</b>
-            <p id="estHlp-prefGen1">Set general options for this plugin.</p>
+            <b id="estHlp-prefGen1">'.EST_GEN_GENERALOPTS.'</b>
+            <p id="estHlp-prefGen1">'.EST_GEN_GENERALOPTSHLP1.'</p>
           </div>
           <div id="estEditHelp-1" class="estEditHelpSect">
             <b id="estHlp-prefGen1">List Page Template</b>
@@ -1800,16 +1787,16 @@ class estate_listing_ui extends e_admin_ui{
             <p id="estHlp-prefGen1">Set Options for the View Listing Template</p>
           </div>
           <div id="estEditHelp-3" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">Scheduling Options</b>
-            <p id="estHlp-prefGen1">Set Default Schedule Options</p>
+            <b id="estHlp-prefGen1">'.EST_GEN_SCHEDULEOPTS.'</b>
+            <p id="estHlp-prefGen1">'.EST_GEN_SCHEDULEOPTSHLP1.'</p>
           </div>
           <div id="estEditHelp-4" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">Map Options</b>
-            <p id="estHlp-prefGen1">Set map options for this plugin</p>
+            <b id="estHlp-prefGen1">'.EST_GEN_MAPOPTS.'</b>
+            <p id="estHlp-prefGen1">'.EST_GEN_MAPOPTSHLP1.'</p>
           </div>
           <div id="estEditHelp-5" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">Non-Agent Listings</b>
-            <p id="estHlp-prefGen1">Set options for listings posted by non-agents</p>
+            <b id="estHlp-prefGen1">'.EST_GEN_NONAGENTLISTINGS.'</b>
+            <p id="estHlp-prefGen1">'.EST_GEN_NONAGENTLISTINGHLP1.'</p>
           </div>';
           }
         else{
@@ -1835,6 +1822,11 @@ class estate_listing_ui extends e_admin_ui{
             <b id="estHlp-proplist6">'.EST_HLPMNU_PROPLIST6.'</b>
             <p id="estHlp-proplist7">'.EST_HLPMNU_PROPLIST7.'</p>
             <p id="estHlp-proplist8">'.EST_HLPMNU_PROPLIST8.'</p>
+          </div>
+          <div id="estEditHelp-2" class="estEditHelpSect">
+            <b>'.EST_GEN_NEW.' '.EST_GEN_LISTING.'</b>
+            <p id="estHlp-proplist8">'.EST_HLPMNU_PROPLIST9.'</p>
+            <p id="estHlp-proplist8">'.EST_HLPMNU_PROPLIST9a.'</p>
           </div>';
           }
         }

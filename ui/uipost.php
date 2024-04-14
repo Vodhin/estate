@@ -11,8 +11,38 @@ if(!getperms('P')){exit;}
 */
 
 if(EST_USERPERM > 0){
-
+  
   $msg = e107::getMessage();
+  
+  if(isset($_POST['estAdminNewListing'])){
+    $sql = e107::getDB();
+		$tp = e107::getParser();
+    
+    $NEWPROP = array();
+    $TNOW = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+    $_POST['prop_idx'] = intval(0);
+    $_POST['prop_agency'] = EST_AGENCYID;
+    $_POST['prop_agent'] = EST_AGENTID;
+    $_POST['prop_datecreated'] = $TNOW;
+    $_POST['prop_dateupdated'] = $TNOW;
+    $_POST['prop_uidcreate'] = USERID;
+    $_POST['prop_uidupdate'] = USERID;
+    $_POST['prop_listprice'] = intval($_POST['prop_origprice']);
+    
+    $FLDS = $sql->db_FieldList('estate_properties');
+    foreach($FLDS as $k=>$v){$NEWPROP[$v] = ($_POST[$v] ? $tp->toDB($_POST[$v]) : '');}
+    unset($FLDS);
+    
+    $newId = $sql->insert("estate_properties",$NEWPROP);
+    $dberr = $sql->getLastErrorText();
+    if($dberr){$msg->addError('<p>'.$dberr.'</p>');}
+    else{
+      if(intval($newId) > 0){
+        e107::redirect(e_SELF."?mode=estate_properties&action=edit&id=".$newId);
+        }
+      }
+    }
+  
   
   if(isset($_POST['estProfileSubmit'])){
     $sql = e107::getDB();
