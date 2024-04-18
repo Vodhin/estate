@@ -144,7 +144,7 @@ class estateCore{
     $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_image,user_signature FROM #user WHERE user_admin='1'".($mode == 1 ? "" : " AND user_class IN (".$usrClasses.")").((EST_USERPERM === 4 || USERID === 1) ? "" : " AND NOT user_perms='0'").(USERID === 1 ? "" : " AND NOT user_id='1'")." ORDER BY user_name ASC");
     
     while($rows = $sql->fetch()){
-      $UID = $rows['user_id'];
+      $UID = intval($rows['user_id']);
       $rows['user_profimg'] = $tp->toAvatar($rows,array('type'=>'url'));
       if($rows['user_perms'] === '0'){
         if(USERID === $UID || USERID === 1){
@@ -1063,7 +1063,8 @@ class estateCore{
     $text .= '
           <li class="list-group-item">
     			  <div id="column_options-button" class="right">
-              <button data-loading-icon="fa-spinner" type="button" id="propFltrBtn-'.$mode.'-'.$KEYS[$mode][2].'" class="btn btn-primary btn-small" value="propFltr-'.$KEYS[$mode][2].'"><span>'.EST_GEN_APPLYFILTER.'</span></button>
+              <button data-loading-icon="fa-spinner" type="button" id="propFltrClrBtn-'.$mode.'-'.$KEYS[$mode][2].'" class="btn btn-primary btn-small propFltrClr" value="propFltrClr-'.$KEYS[$mode][2].'"><span>'.EST_GEN_CLEARFILTER.'</span></button>
+              <button data-loading-icon="fa-spinner" type="button" id="propFltrSetBtn-'.$mode.'-'.$KEYS[$mode][2].'" class="btn btn-primary btn-small propFltrSet" value="propFltr-'.$KEYS[$mode][2].'"><span>'.EST_GEN_APPLYFILTER.'</span></button>
     			  </div>
           </li>
         </ul>
@@ -1139,8 +1140,6 @@ class estateCore{
           </thead>
           <tbody id="estPropListTB-'.$mode.'" class="estPropListTB">';
           
-          //$DTA['FLTR']['LIMIT'][0]
-          //'.($mode < 2 ? '<button type="button" id="estPropCreate" class="btn btn-default ILBLK" title="'.EST_GEN_CREATE.'"><i class="fa fa-plus"></i></button>' : '').'
           //<i class="fa-solid fa-chevron-left"></i>
           //<i class="fa-solid fa-angles-left"></i>
           //<i class="fa-solid fa-chevron-right"></i>
@@ -1188,7 +1187,7 @@ class estateCore{
       $text = '
       <tr>
         <td class="left" colspan="'.$DTA['colsp'].'">
-          <div class="s-message alert alert-block warning alert-warning" style="display: block;">No Listings</div>
+          <div class="s-message alert alert-block warning alert-warning" style="display: block;">'.EST_GEN_NODBRESULTS.'</div>
         </td>
       </tr>';
       }
@@ -1216,12 +1215,6 @@ class estateCore{
             </p>
           </div>
         </div>';
-        
-        
-        
-        if(count($GLOBALS['EST_PROPSTATUS'])){
-          //foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$data2[$k] = $v['opt'];}
-          }
         
         
         $text .= '
@@ -1256,13 +1249,28 @@ class estateCore{
         </tr>';
         }
       }
+    //
+    $RSTART = intval($DTA['FLTR']['LIMIT'][0]);
+    $RLIMIT = intval($DTA['FLTR']['LIMIT'][1]);
+    $RTRWCT = count($DTA['TR']);
+    $COUNTED = intval($DTA['COUNTED']);
+    
+    $REND = $RTRWCT + $RSTART;
+    $RSTART++;
     
     $text .= '
-      <tr>
-        <td colspan="'.$DTA['colsp'].'">'.count($DTA['TR']).' of '.$DTA['COUNTED'].' Total Records
+      <tr data-counted="'.$DTA['COUNTED'].'">
+        <td colspan="'.$DTA['colsp'].'">'.($RTRWCT < $RLIMIT ? EST_GEN_ENDOF : $RSTART.' '.EST_GEN_TO.' '.$REND.' '.EST_GEN_OF).' '.$COUNTED.' Total Records
+        <div>'.$DTA['REMOVED'].' Removed Results</div>
         </td>
       </tr>';
-        
+    
+    /*
+        <p>'.$DTA['QRYZ'].'</p>
+        <p>'.$DTA['QRY'].'</p>
+    
+    */
+    
     
     /*
     $text .= '
@@ -1447,10 +1455,12 @@ class estateCore{
     
     $sql->gen("SELECT #estate_zoning.*, #estate_listypes.* FROM #estate_zoning LEFT JOIN #estate_listypes ON listype_zone = zoning_idx");
     while($rows = $sql->fetch()){
-      $DTA['ZONES'][$rows['zoning_idx']]['name'] = $rows['zoning_name'];
-      if(intval($rows['listype_idx']) > 0){$DTA['ZONES'][$rows['zoning_idx']]['types'][$rows['listype_idx']] = $rows['listype_name'];}
+      $zid = intval($rows['zoning_idx']);
+      $lid = intval($rows['listype_idx']);
+      $DTA['ZONES'][$zid]['name'] = $rows['zoning_name'];
+      if($lid > 0){$DTA['ZONES'][$zid]['types'][$lid] = $rows['listype_name'];}
       }
-    unset($rows);
+    unset($rows,$zid,$lid);
     
     $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_listype","prop_zoning","prop_type","prop_currency","prop_listprice","prop_origprice","prop_thmb","prop_views","city_name AS city","cnty_name AS county","state_name AS state","state_init AS ST","state_country AS nat");
     
@@ -1575,22 +1585,24 @@ class estateCore{
     $DTA['FLTR'] = $FLTR;
     
     
-    $QRY .= " ".$QRYX." ORDER BY ".implode(" ",$FLTR['ORDER'])." LIMIT ".implode(",",$FLTR['LIMIT']);
-    $DTA['QRY'] = $QRY;
     
+    //." LIMIT ".implode(",",$FLTR['LIMIT'])
     $QRYZ = "SELECT COUNT('prop_idx') AS counted FROM `#estate_properties` ".$QRYX;
     $DTA['QRYZ'] = $QRYZ;
     
-    unset($QRY,$QRYX,$QRYZ);
     
     $sql->gen($DTA['QRYZ']);
     $rows = $sql->fetch();
     $DTA['COUNTED'] = $rows['counted'];
+    $DTA['REMOVED'] = 0;
     
     $dberr = $sql->getLastErrorText();
     if($dberr){$DTA['ERR'] = $dberr;}
     unset($dberr); 
     
+    
+    $QRY .= " ".$QRYX." ORDER BY ".implode(" ",$FLTR['ORDER'])." LIMIT ".implode(",",$FLTR['LIMIT']);
+    $DTA['QRY'] = $QRY;
     
     $sql->gen($DTA['QRY']);
     
@@ -1620,8 +1632,10 @@ class estateCore{
         }
       else{
         $DTA['COUNTED'] = $DTA['COUNTED'] - 1;
+        $DTA['REMOVED'] ++;
         }
       }
+    unset($QRY,$QRYX,$QRYZ);
     
     return $DTA;
     }
@@ -1674,8 +1688,8 @@ class estateCore{
       $TBS[0]['text'] = $this->estPropertyListTableSF(1,$DTA);
       }
     
-    $NDTA = array('e-token'=>e_TOKEN,'prop_listype'=>1,'prop_status'=>3,'prop_currency'=>intval($EST_PREF['currency']),'prop_leasedur'=>0,'prop_leasefreq'=>1,'prop_lat'=>$EST_PREF['pref_lat'],'prop_lon'=>$EST_PREF['pref_lon']);
-  
+    $NDTA = array('e-token'=>e_TOKEN,'prop_listype'=>1,'prop_status'=>3,'prop_currency'=>intval($EST_PREF['currency']),'prop_leasedur'=>0,'prop_leasefreq'=>1,'prop_lat'=>$EST_PREF['pref_lat'],'prop_lon'=>$EST_PREF['pref_lon'],'seller_namex'=>EST_AGENTNAME);
+    
     $TBS[2]['caption'] = EST_GEN_NEW.' '.EST_GEN_LISTING;
     $TBS[2]['text'] = '<form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-form" autocomplete="off" data-h5-instanceid="0" novalidate="novalidate">';
     $TBS[2]['text'] .= $this->estOAHidden('e-token',$NDTA);
@@ -1691,6 +1705,7 @@ class estateCore{
         <colgroup style="width:75%"></colgroup>
         <tbody>';
     $TBS[2]['text'] .= $this->estOAFormTR('text','prop_name',$NDTA);
+    $TBS[2]['text'] .= $this->estOAFormTR('nofld','seller_namex',$NDTA);
     $TBS[2]['text'] .= $this->estOAFormTR('select','prop_status',$NDTA);
     $TBS[2]['text'] .= $this->estOAFormTR('select','prop_zoning',$NDTA);
     $TBS[2]['text'] .= $this->estOAFormTR('select','prop_type',$NDTA);
@@ -2648,6 +2663,7 @@ class estateCore{
   
   
   public function estAgentUserSelect($id=0){ //defunct?
+    /*
     $sql = e107::getDB();
     $frm = e107::getForm(false, true); 
     $tp = e107::getParser();
@@ -2656,7 +2672,6 @@ class estateCore{
     
     //$agents = $this->getAllAgents();
     
-    //$uperm = 1;
     $uperm = EST_USERPERM;
     
     $users = $this->estGetUsers();
@@ -2686,8 +2701,8 @@ class estateCore{
     else{
       $text = EST_ERR_NOUSERSINCLASS;
       }
-    
-    return $text;
+    */
+    return "DEFUNCT FUNCTION?";
     }
   
   
@@ -3107,7 +3122,8 @@ class estateCore{
   
   private function estOALabels($FLD){
     $TXT = array(
-      'prop_name'=>array('labl'=>EST_GEN_NAME,'cls'=>'WD95','hlp'=>EST_PROP_NAMEHLP),
+      'seller_namex'=>array('labl'=>EST_GEN_AGENT.' '.EST_GEN_NAME,'cls'=>'WD95'),
+      'prop_name'=>array('labl'=>EST_GEN_PROPERTY.' '.EST_GEN_NAME,'cls'=>'WD95','hlp'=>EST_PROP_NAMEHLP),
       'prop_status'=>array('labl'=>EST_GEN_STATUS,'cls'=>'WD45','hlp'=>EST_PROP_STATUSHLP),
       'prop_zoning'=>array('labl'=>EST_PROP_LISTZONE,'cls'=>'WD45','hlp'=>EST_PROP_ZONEHLP),
       'prop_type'=>array('labl'=>EST_PROP_TYPE,'cls'=>'WD45','hlp'=>EST_PROP_TYPEHLP),
@@ -3263,6 +3279,9 @@ class estateCore{
     
     
     switch($TYPE){
+      case 'nofld' :
+        return '<tr><td class="VAM">'.$tp->toHTML($LABS['labl']).'</td><td><div style="margin:8px auto; font-weight:bold;">'.$tp->toHTML($FVALUE).'</div></td><td>';
+        break;
       case 'div' :
         if($LABS['cs']){
           return '<tr><td colspan="'.$LABS['cs'].'"><div id="'.$FLD.'"></div></td></tr>';
