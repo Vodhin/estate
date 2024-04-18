@@ -60,6 +60,7 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
   $EST_AGENT = $estateCore->estGetUserById(USERID);
   $EST_AGENT['perm'] = intval(EST_USERPERM);
   define("EST_AGENTID",intval($EST_AGENT['agent_idx']));
+  define("EST_AGENTNAME",$EST_AGENT['agent_name']);
   define("EST_AGENCYID",intval($EST_AGENT['agent_agcy']));
   
   if(!empty($_POST)){require_once(e_PLUGIN.'estate/ui/uipost.php');}
