@@ -1160,7 +1160,6 @@ function estJStext(){
   
   return array(
     'add1'=>EST_GEN_ADD1,
-    'addnewcomp'=>EST_PROP_ADDNEWCOMP,
     'addevent'=>EST_PROP_MSG_ADDEVENTS,
     'addnewspace'=>EST_GEN_ADDNEWROOM,
     'addrnotfound'=>EST_MSG_ADDRNOTFOUND,

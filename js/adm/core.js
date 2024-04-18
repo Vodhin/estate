@@ -2319,11 +2319,11 @@ function estGetSubDivs(){
   
   
   function estSetAgentUID(){
+    console.log('estSetAgentUID');
     var defs = $('body').data('defs');
     var agtDta = $('select[name="agent_uid"]').closest('form').data('levdta');
     var eDta = $('select[name="agent_uid"]').find('option:selected').data();
     
-    console.log('estSetAgentUID');
     
     if(Number(eDta.user_id) > 0){
       if(jsconfirm(defs.txt.agtupdta)){
@@ -2377,6 +2377,7 @@ function estGetSubDivs(){
 
 
   function estSetAgentImg(destTarg){
+    //console.log('estSetAgentImg');
     var defs = $('body').data('defs');
     var imgUrl = null;
     
@@ -2385,7 +2386,7 @@ function estGetSubDivs(){
         var img1 = $('#agtAvatar');
         var img2 = $(img1).find('img');
         var dta = $(img1).closest('form').data('levdta');
-        console.log(dta);
+        //console.log(dta);
         
         if(Number(dta.agent_imgsrc) == 1){
           //if(dta.agent_image.length > 0){imgUrl = defs.dir.agent+dta.agent_image;}
@@ -2437,6 +2438,7 @@ function estGetSubDivs(){
   
       
   function estSetAgtMiniPic(agtDta=null){
+    console.log('estSetAgtMiniPic');
     var defs = $('body').data('defs');
     var imgUrl = null;
     var agtId = Number($('input[name="prop_agent"]').val());
@@ -2501,11 +2503,11 @@ function estGetSubDivs(){
   
   
   function estAgentForm(btn=null){
+    console.log('estAgentForm');
     var defs = $('body').data('defs');
     var propId = Number($('body').data('propid'));
     var keyTbl = defs.keys.contabs[6];
     var destTbl = defs.tbls[keyTbl[0]];
-    console.log('estAgentForm');
     
     var tabTxt = [defs.txt.agent,defs.txt.contacts];
     
@@ -2634,9 +2636,9 @@ function estGetSubDivs(){
   
   
   function estLoadAgentUIDs(aDta){
+    console.log('estLoadAgentUIDs');
     var defs = $('body').data('defs');
     var uidOpt = [];
-    console.log('estLoadAgentUIDs');
     
     $('select[name="agent_uid"]').empty().promise().done(function(){
       $(defs.tbls.estate_user.dta).each(function(ai,optDta){
@@ -2719,11 +2721,11 @@ function estGetSubDivs(){
   
   
   function estUpUserTR(tr,dta,agtDel=0){
+    console.log('estUpUserTR');
     var defs = $('body').data('defs');
     var strPerms = '', strClass = '';
-    
     $(tr).addClass('estFlipIt');
-    //estFeatHasOpts
+    
     
     var nPID = [], nClass = [];
     $(dta.user_perms).each(function(i,pid){
@@ -3226,7 +3228,7 @@ function estGetSubDivs(){
     $.each(fDta,function(k,v){$(estAgentForm).removeAttr('data-'+k);});
     $(estAgentForm).data('levdta',levdta);
     
-    console.log($(estAgentForm).data());
+    //console.log($(estAgentForm).data()); 
     
     $(eImg).on({load : function(e){estAvatarWH(e.target);}});
     
@@ -3238,7 +3240,6 @@ function estGetSubDivs(){
       cache:false,
       processData:true,
       success: function(ret, textStatus, jqXHR){
-        console.log(ret);
         if(typeof ret !== 'undefined' && ret !== null){
           if(typeof ret.error !== 'undefined'){alert(ret.error);}
           else{
@@ -3717,7 +3718,6 @@ function estGetSubDivs(){
     var txt2 = $(yTR).find('input[type="text"].contData');
     var btn3 = $(yTR).find('button.estContGo');
     var contDta = $(yTR).data();
-    console.log(contDta);
     
     if($(yTR).parent().is('tbody')){
       if(mode == -1){
@@ -3729,7 +3729,7 @@ function estGetSubDivs(){
         $(btn3).attr('title',defs.txt.save).data('del',0).css({'color':'#00CC00'}).html('<i class="fa fa-save"></i>');
         //$(txt1).prop('name','contact_key['+Number(contDta.contact_tabkey)+']['+Number(contDta.contact_idx)+']');
         //$(txt2).prop('name','contact_data['+Number(contDta.contact_tabkey)+']['+Number(contDta.contact_idx)+']');
-        } //fa fa-check
+        }
       
       if(Number(contDta.contact_tabidx) == 0){
         $(btn3).prop('disabled',true);
@@ -4230,7 +4230,7 @@ function estGetSubDivs(){
                   
                   var fnct = pDta.form.fnct;
                   console.log(fnct);
-                  //agent_uid
+                  
                   if(typeof fnct !== 'undefined'){
                     if(fnct !== null && typeof fnct.name !== 'undefined'){
                       var args = (typeof fnct.args !== 'undefined' ? fnct.args : '');
@@ -7754,7 +7754,7 @@ function estGetSubDivs(){
   
   
   function estBindContactTables(){
-    console.log('estBindContactTables');
+    //console.log('estBindContactTables');
     
     $('table.estContTabl').each(function(i,tabl){
       if(!$(tabl).hasClass('estBound')){
@@ -9154,16 +9154,22 @@ function estGetSubDivs(){
     }
   
   function estSetPropListLimits(tabl){
+    $('#estDBResCount').remove();
     var dta = $(tabl).data();
-    if(Number(dta.limit[0]) < 1){$(dta.dbbtns[0]).prop('disabled',true);}
+    
+    if(Number(dta.limit[0]) < 1){
+      dta.limit[0] = 0;
+      $(dta.dbbtns[0]).prop('disabled',true);
+      }
     else{$(dta.dbbtns[0]).prop('disabled',false).removeProp('disabled');}
-    if((Number($(dta.tbody).find('tr').length) - 1) < Number(dta.limit[1]))$(dta.dbbtns[2]).prop('disabled',true);
+    
+    if((Number($(dta.tbody).find('tr').length) - 1) < Number(dta.limit[1])){$(dta.dbbtns[2]).prop('disabled',true);}
     else{$(dta.dbbtns[2]).prop('disabled',false).removeProp('disabled');}
     }
   
   
   function estDBResCount(btn,tabl){
-    var dta = $(tabl).data(dta);
+    var dta = $(tabl).data();
     if(document.getElementById('estDBResCount')){
       $('#estDBResCount').remove();
       }
@@ -9177,6 +9183,8 @@ function estGetSubDivs(){
             $(dta.dbbtns[1]).html(v);
             $(tabl).data(dta);
             $('#estDBResCount').remove();
+            dta.limit[0] = Number(0);
+            $(tabl).data(dta);
             estSetPropListFilters(this,tabl);
             }
           }).appendTo(nBox);
@@ -9220,9 +9228,26 @@ function estGetSubDivs(){
             });
           });
         
-        $(fele).find('button:last-child').on({
+        $(fele).find('button.propFltrClr').on({
           click : function(e){
             e.preventDefault();
+            $(UL).each(function(ULi,ULEle){
+              $(ULEle).find('li.estFltrItm').each(function(fi,fLI){
+                $(fLI).find('label.form-check').removeClass('active');
+                });
+              }).promise().done(function(){
+                dta.limit[0] = Number(0);
+                $(tabl).data(dta);
+                estSetPropListFilters(this,tabl);
+                });
+            }
+          });
+        
+        $(fele).find('button.propFltrSet').on({
+          click : function(e){
+            e.preventDefault();
+            dta.limit[0] = Number(0);
+            $(tabl).data(dta);
             estSetPropListFilters(this,tabl);
             }
           });
