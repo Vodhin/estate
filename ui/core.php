@@ -992,14 +992,17 @@ class estateCore{
   private function estPropListFilterLI($mode,$DTA){
     $tp = e107::getParser();
     $KEYS = array(
-      0=>array('USERS',EST_GEN_LISTAGENT.' '.EST_GEN_MEMBER,'prop_agent','agents','seller_name','seller_aid'),
+      //0=>array('USERS',EST_GEN_LISTAGENT.' '.EST_GEN_MEMBER,'prop_agent','agents','seller_name','seller_aid'),
+      0=>array('AGENTFLTR',EST_GEN_LISTAGENT,'prop_agent','agents','seller_name','seller_aid'),
       1=>array('AGENTFLTR',EST_GEN_LISTAGENT,'prop_agent','agents','seller_name','seller_aid'),
       2=>array('USERS',EST_GEN_LISTING.' '.EST_GEN_MEMBER,'prop_uidcreate',null,'seller_name','seller_aid'),
       3=>array('EST_PROPSTATUS',EST_GEN_STATUS,'prop_status',null,'opt',null),
       4=>array('ZONES',EST_GEN_CATEGORY,'prop_type','types',null,null),
       );
     
-    if(count($DTA[$KEYS[$mode][0]]) > 1){
+    //estPropertyListTable
+    
+    if(count($DTA[$KEYS[$mode][0]]) > 0){
       $text = '
       <div class="col-selection dropdown e-tip pull-right float-right estFltrDiv WD100" data-placement="left">
         <a class="dropdown-toggle" title="'.EST_GEN_FILTERBY.' '.$KEYS[$mode][1].'" data-toggle="dropdown" data-bs-toggle="dropdown" data-before="0" href="#">'.$KEYS[$mode][1].' <b class="caret"></b></a>
@@ -1266,6 +1269,7 @@ class estateCore{
       </tr>';
     
     /*
+        <div><h4>AGTIDS: ['.count($DTA['AGTIDS']).'] '.implode(',',$DTA['AGTIDS']).'</h4></div>
         <p>'.$DTA['QRYZ'].'</p>
         <p>'.$DTA['QRY'].'</p>
     
@@ -1276,7 +1280,7 @@ class estateCore{
     $text .= '
       <tr>
         <td colspan="'.$DTA['colsp'].'">
-          <div><h4>AGTIDS: ['.count($DTA['AGTIDS']).'] '.implode(',',$DTA['AGTIDS']).'</h4></div>
+          
           <div>
             <h4>QUERY</h4>
             <div>'.$DTA['QRY'].'</div>
@@ -1355,59 +1359,53 @@ class estateCore{
     
     $DTA['AGENTS'] = array();
     $DTA['AGENTFLTR'] = array();
+    $DTA['AGTIDS'] = array();
     
+    if(EST_USERPERM < 3){
+      if(EST_USERPERM == 2){$AQRY = " agency_idx='".EST_AGENCYID."' ";}
+      else{$AQRY = " agent_uid='".USERID."' ";}
+      }
     
+    if(USERID !== 1){$AQRY .= ($AQRY ? " AND " : "")." NOT agent_uid='1'";}
     
-    
-    $sql->gen("SELECT #estate_agents.*, agency_idx, agency_name FROM #estate_agents LEFT JOIN #estate_agencies ON agency_idx=agent_agcy ".(USERID !== 1 ? " WHERE NOT agent_uid='1'" : "")." ORDER BY agency_name ASC, agent_name ASC");
+    $sql->gen("SELECT #estate_agents.*, agency_idx, agency_name FROM #estate_agents LEFT JOIN #estate_agencies ON agency_idx=agent_agcy ".($AQRY ? " WHERE ".$AQRY : "")." ORDER BY agency_name ASC, agent_name ASC");
     
     
     while($rows = $sql->fetch()){
       $aid = intval($rows['agent_idx']);
       $uid = intval($rows['agent_uid']);
       
-      
       if($DTA['USERS'][$uid]){
-        $DTA['USERS'][$uid]['seller_aid'] = $aid;
-        $DTA['AGENTS'][$aid]['seller_aid'] = $aid;
-        $DTA['AGENTS'][$aid]['seller_uid'] = $DTA['USERS'][$uid]['seller_uid'];
-        $DTA['AGENTS'][$aid]['seller_name'] = (trim($rows['agent_name']) !== '' ? $rows['agent_name'] : $DTA['USERS'][$uid]['seller_name']);
-      
-        
-        if(intval($rows['agent_imgsrc']) == 1 && trim($rows['agent_image']) !== ""){
-          $DTA['AGENTS'][$aid]['seller_profimg'] = EST_PTHABS_AGENT.$rows['agent_image'];
-          }
-        else{
-          $DTA['AGENTS'][$aid]['seller_profimg'] = $DTA['USERS'][$uid]['seller_profimg'];
-          }
-        
-        $DTA['AGENTS'][$aid]['seller_agency']['id'] = $rows['agency_idx'];
-        $DTA['AGENTS'][$aid]['seller_agency']['name'] = $rows['agency_name'];
-        $DTA['AGENTS'][$aid]['seller_role'] = $DTA['USERS'][$uid]['seller_role'];
-        $DTA['AGENTS'][$aid]['seller_mgr'] = $DTA['USERS'][$uid]['seller_mgr'];
-        $DTA['AGENTS'][$aid]['seller_email'] = $DTA['USERS'][$uid]['seller_email'];
-        $DTA['AGENTS'][$aid]['seller_count'] = 0;
-        
-        $DTA['AGENTFLTR'][$rows['agency_idx']]['count'] = 0;
-        $DTA['AGENTFLTR'][$rows['agency_idx']]['name'] = $rows['agency_name'];
-        $DTA['AGENTFLTR'][$rows['agency_idx']]['agents'][$aid] = $DTA['AGENTS'][$aid];
-        
-        
-        $DTA['AGTIDS'] = array();
-        if(USERID !== 1){
-          if(EST_USERPERM < 3 && intval($rows['agency_idx']) !== EST_AGENCYID){
-            unset($DTA['AGENTS'][$aid],$DTA['USERS'][$uid],$DTA['AGENTFLTR'][$rows['agency_idx']]['agents'][$aid]);
+        if(intval($DTA['USERS'][$uid]['seller_mgr']) <= EST_USERPERM || $uid == intval(USERID)){
+          if(!in_array($aid,$DTA['AGTIDS'])){array_push($DTA['AGTIDS'],$aid);}
+            
+          $DTA['USERS'][$uid]['seller_aid'] = $aid;
+          $DTA['AGENTS'][$aid]['seller_aid'] = $aid;
+          $DTA['AGENTS'][$aid]['seller_uid'] = $DTA['USERS'][$uid]['seller_uid'];
+          $DTA['AGENTS'][$aid]['seller_name'] = (trim($rows['agent_name']) !== '' ? $rows['agent_name'] : $DTA['USERS'][$uid]['seller_name']);
+          
+          if(intval($rows['agent_imgsrc']) == 1 && trim($rows['agent_image']) !== ""){
+            $DTA['AGENTS'][$aid]['seller_profimg'] = EST_PTHABS_AGENT.$rows['agent_image'];
             }
           else{
-            if(intval($DTA['USERS'][$uid]['seller_mgr']) <= EST_USERPERM || $uid == intval(USERID)){
-              if(!in_array($aid,$DTA['AGTIDS'])){
-                array_push($DTA['AGTIDS'],$aid);
-                }
-              }
-            else{
-              unset($DTA['AGENTS'][$aid],$DTA['AGENTFLTR'][$rows['agency_idx']]['agents'][$aid]);
-              }
+            $DTA['AGENTS'][$aid]['seller_profimg'] = $DTA['USERS'][$uid]['seller_profimg'];
             }
+          
+          $DTA['AGENTS'][$aid]['seller_agency']['id'] = $rows['agency_idx'];
+          $DTA['AGENTS'][$aid]['seller_agency']['name'] = $rows['agency_name'];
+          $DTA['AGENTS'][$aid]['seller_role'] = $DTA['USERS'][$uid]['seller_role'];
+          $DTA['AGENTS'][$aid]['seller_mgr'] = $DTA['USERS'][$uid]['seller_mgr'];
+          $DTA['AGENTS'][$aid]['seller_email'] = $DTA['USERS'][$uid]['seller_email'];
+          $DTA['AGENTS'][$aid]['seller_count'] = 0;
+          
+          $DTA['AGENTFLTR'][$rows['agency_idx']]['count'] = 0;
+          $DTA['AGENTFLTR'][$rows['agency_idx']]['name'] = $rows['agency_name'];
+          $DTA['AGENTFLTR'][$rows['agency_idx']]['agents'][$aid] = $DTA['AGENTS'][$aid];
+          
+            
+          }
+        else{
+          unset($DTA['USERS'][$uid]);
           }
         }
       }
@@ -1588,13 +1586,13 @@ class estateCore{
     
     //." LIMIT ".implode(",",$FLTR['LIMIT'])
     $QRYZ = "SELECT COUNT('prop_idx') AS counted FROM `#estate_properties` ".$QRYX;
-    $DTA['QRYZ'] = $QRYZ;
     
     
-    $sql->gen($DTA['QRYZ']);
+    $sql->gen($QRYZ);
     $rows = $sql->fetch();
     $DTA['COUNTED'] = $rows['counted'];
     $DTA['REMOVED'] = 0;
+    $DTA['QRYZ'] = '['.$MODE.']'.$QRYZ;
     
     $dberr = $sql->getLastErrorText();
     if($dberr){$DTA['ERR'] = $dberr;}
