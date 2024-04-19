@@ -3176,23 +3176,27 @@ td table.estContTabl{
   padding: 8px 8px 8px 8px;
   }
 
+#estMainHelpPage img{
+  max-width:75vw;
+  }
+
 .FLEXREV{
   flex-direction: row-reverse;
   }
 
-#estInstrMenuTBL{
+.estInstrMenuTBL{
   width:100%;
   margin-bottom:16px;
   }
-#estInstrMenuTBL td{
+.estInstrMenuTBL td{
   width:256px;
   vertical-align:top;
   padding:8px 16px 0px 16px;
   }
-#estInstrMenuTBL td:nth-child(4){
+.estInstrMenuTBL td:nth-child(4){
   width:calc(100% - 768px);
   }
-#estInstrMenuTBL td p{
+.estInstrMenuTBL td p{
   margin-top:8px;
   }
 
