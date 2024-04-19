@@ -143,6 +143,9 @@ define("EST_GEN_EMAIL","Email");
 define("EST_GEN_ENDOF","End of");
 define("EST_GEN_ENABLE","Enable");
 define("EST_GEN_ESTATE","Estate");
+define("EST_GEN_ESTADMINS","Estate Admins");
+define("EST_GEN_ESTAGENTS","Estate Agents");
+define("EST_GEN_ESTMANAGERS","Estate Managers");
 define("EST_GEN_EVENT","Event");
 define("EST_GEN_EVENTS","Events");
 define("EST_GEN_FACEBOOK","FaceBook");
@@ -171,6 +174,7 @@ define("EST_GEN_GALLERY", "Gallery");
 define("EST_GEN_GENERAL", "General");
 define("EST_GEN_HALF","Half");
 define("EST_GEN_HAS","Has");
+define("EST_GEN_HELP01", "Help");
 define("EST_GEN_HIDDEN", "Hidden");
 define("EST_GEN_HIDE", "Hide");
 define("EST_GEN_HOA","HOA");
@@ -479,6 +483,10 @@ define("EST_PROP_ZONEHLP","Required. For what usage is this property: eg. Reside
 
 define("EST_PROPLIST", "Property List");
 
+
+
+
+
 define("EST_SPCAT_ZERO","Please select a Category on the Main Tab");
 define("EST_SPCID_ZERO","This Space must be Saved in order to add ");
 
@@ -531,4 +539,101 @@ define("EST_HLPMNU_ADDRESS2","");
 define("EST_HLPMNU_INIT19","Use the Address Search function to retrieve a list of possible coordinates. This field is filled in when you edit the Agency's Address, though you may need to further edit the Search Field if no results are found. You can also move the Map Pointer to the correct location if needed.");
 
 
+
+define("EST_PUB_HELP_TOP1","This page is for the general public to learn how the Estate Plugin works without accessing the Admin section of my Estate Demo website. The Tab sections below detail the various features of this plugin and are included in the Admin Area.");
+
+
+define("EST_INSTR000","Overview");
+define("EST_INSTR001","The Estate Plugin for the e107 Content Management System started as a way for an individual Agent to easily create a personal website for their property listings and has evolved to handle an entire company with multiple agents and agency locations. It was not intended for use by the general public to sell thier own property but now includes a setting in the plugin's Preferences that you can turn on to allow Members to list their own property. ");
+define("EST_INSTR001a","There is also an Agent Contact Form that can be used to request a quote or arrange a viewing. The contact form is available to everyone by default, and can be set to Members Only in the plugin's Preferences. Each Agent can change this setting for themselves in their own Agent Profile.");
+
+define("EST_INSTR002","Admin Level Agents");
+define("EST_INSTR002a","This plugin uses three special User Classes (Permission Levels) that control what a user can do within this plugin's Admin Area. Any user set as a Main Site Admin can always access everything. Users with access to this plugin as an ESTATE AGENT, ESTATE MANAGER, or ESTATE ADMIN can create, edit, and delete listings via the back end forms ONLY IF they are an Admin and assigned one of those specific User Classes. You can also grant your Website Members the ability to post their own Private Listings, but more on that later.");
+define("EST_INSTR002b","The plugin's Admin Area Menu for the three access levels:");
+define("EST_INSTR002c","have full access to Agency Locations, Agents, Listings, and all other data.");
+define("EST_INSTR002d","can access the Agency Profile to which they are assigned and any Agent Profiles and Listings assigned to the same Agency Location.");
+define("EST_INSTR002e","can only access their own Agent Profile and Property Listings.");
+
+define("EST_INSTR003","This hierarchy is established through the e107 Website System's User Class settings. While you can make your user assignments through the e107 User Class interface, it is recommended that you manage your users through this plugin: When remove a user's access to this plugin it can determine if a user has Admin rights to other sections of your e107 website and keep or remove their Admin status based on that information. You can find a complete list of your users on the User List tab on the Agents & Agencies Form, provided that you yourself have the correct permissions to do so");
+define("EST_INSTR003a","You do have permission");
+define("EST_INSTR003b","You do NOT have permission");
+define("EST_INSTR003c","Agents can always create, edit, or delete their own listings, as can Managers and Admins. Some data used in each listing, such as Zoning Category, Property Type, Countries, Counties, Cities, and States (and many other things) are saved separately from Property Listings, thus becoming options for other Agents to select from (Shared Data).");
+
+define("EST_INSTR004","Assigning Users As Agents");
+define("EST_INSTR004a","Only Estate Admins and Estate Managers can set your e107 website Users as Agents. When you grant acces to the Estate plugin to a Non-Admin user of your e107 website they will be automatically granted Admin Rights and ONLY for accessing this plugin.");
+define("EST_INSTR004b","Estate Admins have Menu button labeled Agents & Agencies which will list all Agencies and all Users. The Agencies Tab has a list of Agencies. Click the Edit button to make changes to that Agency and also see a list of Agents assigned to that Agency (See the Estate Managers section below). To add a new Agency, Click the + button at the top of the list.");
+
+define("EST_INSTR004c","The User List Tab lists all users of your e107 Website regardless of Admin status or Agency affiliation. This list is devided into 3 sections: Yourself, Admins, and Non-Admin users.");
+define("EST_INSTR004d","Note: Users who are an e107 Main Admin cannot have their settings changed via this form since they are automatically an Estate Admin.");
+define("EST_INSTR004e","This list shows Users that you have permission to assign as Agents, Listed by their e107 Login Name. The options for each user will auto-save when any changes are made. Here you can set a User's Permissions and their Admin Access Level. Unchecking an Agent's Admin Permission will remove their Access Level and you will be asked if you want to delete their Agent Profile (you do not have to, in case you intend to bring them back later). Clicking the Agent Profile button will take you to the form to edit tht User's Agent profile.");
+
+define("EST_INSTR004f","You can also quickly add a New User with a New Agent Profile to your e107 website from this plugin. New Users added via this form will be automatically given Admin Status with access only to this plugin. Information about this New User will be used to create a New Agent Profile that can be edited later. This form mimics the e107 Quick Add User form (v2.3.3) but also allows you to upload their User Profile Image if you have one.");
+define("EST_INSTR004g","NOTE: A Main Admin can control who can access the Add New User form from the Estate Plugin's Preferences Page. The default setting allows only Estate Main Admins and Estate Admins to access this form. You can allow your Estate Managers to also access this form, though any New User added will be assigned to the same Agency as the Manager.");
+
+
+
+define("EST_INSTR004g","Estate Managers have a Menu button labeled Agency Profile, which allows them to modify the Agency to whch they are assigned, inclusing adding and removing Agents for that Agency. Additionally, the Agent List Tab allows Estate Managers to Select from and Add Users to your e107 website to be assigned as Agents.");
+define("EST_INSTR004h","The Agent List Tab lists Agents currently assigned to that Agency as well as e107 website Users not assigned to another Agency. ");
+define("EST_INSTR004i","***");
+define("EST_INSTR004j","***");
+
+
+define("EST_INSTR005a","You can allow Members who have joined your website to post their own listings by enabling this feature in the Estate Preferences. This option is disabled by default. If you enable this feature, Non-Agent users can create, edit, and delete their own listings using a basic form accessable via the Front end. They do not need Admin rights and will not be able to access any part of the Admin area of your e107 website, including the Estate plugin Admin area. Non-Agent users are able to add (but not Edit) some shared-data, such as State, City, and Postal Code, but cannot add Preset Data such as Listing Type, Zoning Category, Property Type: they are forced to select from options already in the system.");
+define("EST_INSTR005b","Listings posted by Non-Agents can be moderated by Estate Managers or Estate Admins, but not by Agents, and by default require an Admin or Manager to approve the listing before it is visible to the public. These listings are saved to the same Database tables as your Agent listings, but do not have an Agent ID assigned to the Property Listing and will appear in a separate list.");
+
+
+define("EST_INSTR008","Listings Page");
+define("EST_INSTR008a","The Main Listings Page");
+define("EST_INSTR008b","This is the main list of the properties. From here you can review your listings, quickly change their status and update their current Price. They can also be Editied or Deleted from this list. Clicking on the top Header Bar Labels will open a Filter Function to further refine the list based on critera related to that column. You can also control how many results are returned.");
+define("EST_INSTR008c","Below are some examples of what each list would look like based on that user's Access Level.");
+
+
+define("EST_INSTR008d","An Estate Main Admin or Estate Admin would see everything, including any Non-Agent/Private Listings in their own tab (see below). ");
+define("EST_INSTR008e","Estate Managers would only see listings made by themselves and Estate Agents assigned to the same Agency that they manage (but not listings made by other Estate Managers, even if they are in the same Agency). If Non-Agent Listings have been enabled and Estate Managers are allowed to Moderate them, then an addition \"Non-Agent Listings\" Tab will be accessable.");
+define("EST_INSTR008f","Estate Agents can only access their own listings. As a reminder, this plugin utilizes the e107 Admin Permissions and User Class settings in such a way that your Estate Agents (and Estate Managers and Estate Admins) can be restricted to only the Estate Plugin's Back End and prevents access to other e107 Admin Areas.");
+
+define("EST_INSTR008g","If Private, Non-Agent Listings have been enabled and you have premissions to moderate those listings, you will see a Non-Agent Listings tab, which will display those listings is a separate table.");
+
+
+define("EST_INSTR008h","Every Admin, Manager, and Agent can Create a New Listing. This tab contains a simple form that is used to start the process. Simply fill in the Property Name and some basci information and click the Save & Continue button. This will save the new property and open the Listing Edit form where you can add more information, define special features, and upload images.");
+
+
+define("EST_INSTR009","Listing Edit Page");
+define("EST_INSTR009a","");
+
+
+
+define("EST_INSTR010","Shared Data");
+define("EST_INSTR011","Many Dropdown lists used in this plugin can be edited in order to update the options for that dropdown without interrupting a user's workflow. Estate Managers and Estate Admins can change existing information while Estate Agents can only add new options. Any new options added by one user will become available for all other users and any changes made to existing data, such as correcting a misspelled name, will update all listings. ");
+define("EST_INSTR012","In this example the Edit button opens a form for City data:");
+define("EST_INSTR013","As you can see, this is more than just the City's name: the city belongs to a county (which itself belongs to a state) and also has a list of Zip Codes (used for the Zip Code Field), a Time Zone selection (for adjusting scheduled events), and  a spot for entering a website address for the city. These editable dropdown lists can also act as filters for other dropdown lists, making it easier for Agents to find the data they are looking for.");
+define("EST_INSTR014","");
+
+define("EST_INSTR020","Filtered Data");
+define("EST_INSTR021","When a dropdown list option is selected, the options for other dropdown fields may also change. In this example, changing the State will change the options for County (which in turn affects the options for City, Postal Code, Subdivision, and so on). If no options are available for the filtered dropdown lists, you will see an animated \"sonar\" blip prompting you to add a new option to the affected field.");
+define("EST_INSTR022","");
+
+
+define("EST_INSTR030","Spaces");
+define("EST_INSTR031","Spaces are rooms in the building or exterior places - anything related to a space on the property. Spaces are keyed to the listing's Zoning: changing the Zoning changes the Types of Spaces you can add. Each space has it's own set of data points such as dimensions, description, feature list, and image gallery. Spaces are grouped into separate tables on the Spaces tab. Add a new space by clicking the + button in the table headder. You can change the order of your spaces by dragging the up/down arrows in each row, and you can reorder the groups by dragging the up/down arrows in each group's table headder. You can even drag a Space between different Group Tables.");
+
+define("EST_INSTR032","Spaces are grouped together by the Group Name selected when creating a Space, such as Main Floor, First Floor, Exterior, etc. New Groups are added when you save a space assigned to a new Group, which will add a new Group Table to the Spaces Tab on the main listing form. These group Names are shared with other property listings with the same Zoning Category. Anyone can add a New Group, but only Managers and Admins can edit existing group names.");
+
+define("EST_INSTR033","When you create or edit a Space, you will open a sub-form for adding that data. This form is divided into tabs for different options. Any item with an * is required to have a value before you can save the space.");
+define("EST_INSTR033a","Some options on this form, such as Features and Media, are not available until the Space has been saved. The Main tab on the Spaces form includes basic information about the space, including its Location, Group, Category, and Dimensions for that Space.");
+
+define("EST_INSTR034","Location helps identify where the Space is on the property but is not required.");
+define("EST_INSTR034a","The Group is required to group Spaces that share an area, like Main Floor, Second Floor, or Exterior. Select a Group for this Space or add a new Group to create a new group of Spaces.");
+define("EST_INSTR034b","The Category defines what type of Space the room is and filters the available Features on the Features tab for that Space. Select or create a Category for the Space. Categories are saved separately from the listing and they will be available for other listings of the same Zoning Category (Residential, Commercial).");
+define("EST_INSTR034c","Demensions are helpful to a potential buyer but are not required. Enter the Length and Width of the Space and the Square Footage will be automatically calculated. You can toggle the unit of measurement between Square Foot or Square Meter for each Space. A new Space will default to the Unit of Measurement preset in Estate Preferences.");
+
+define("EST_INSTR035","The Features Tab has list of available features on the left side and a list of features currently assigned to the space on the right.");
+define("EST_INSTR035a","You can Add a new Feature by clicking the New Feature button at the top of the Left column, and Edit any Feature by clicking the edit button next to that Feature's name. Features are saved independent of the listing, making them available to use for other listings. If you change the Feature Name on one listing, it will update for all other listings.");
+
+define("EST_INSTR035b","Click any Feature in the Left Column to add it to the Space: it will move to the Right Column. If the Fesature has additional predefined options, the button will include a drop-down list where you can select any that apply or none at all. ");
+define("EST_INSTR036","***");
+
+define("EST_INSTR037","");
+define("EST_INSTR038","");
+define("EST_INSTR039","");
 
