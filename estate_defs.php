@@ -77,6 +77,189 @@ function spgrpsort($a, $b){
   return strnatcmp($a['ord'], $b['ord']);
   }
 
+
+function estHelpTabs(){
+    $tp = e107::getParser();
+    $public_act = intval($GLOBALS['EST_PREF']['public_act']);
+    
+    
+    $TBS[0]['caption'] = EST_INSTR000;
+    $TBS[0]['text'] = '
+          <div>
+            <h3>'.EST_INSTR000.'</h3>
+            <p>'.EST_INSTR001.'</p>
+            <p>'.EST_INSTR001a.'</p>
+          </div>
+          <div>
+            <h3>'.EST_INSTR002.'</h3>
+            <p>'.EST_INSTR002a.'</p>
+            <p>'.EST_INSTR002b.':</p>
+            <table id="estInstrMenuTBL" class="estInstrMenuTBL">
+              <tbody>
+                <tr>
+                  <td><b>'.EST_GEN_ESTADMINS.'</b></td>
+                  <td><b>'.EST_GEN_ESTMANAGERS.'</b></td>
+                  <td><b>'.EST_GEN_ESTAGENTS.'</b></td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr_admmenu3.png" /><p class="FSITAL">'.EST_GEN_ESTADMINS.' '.EST_INSTR002c.'</p></td>
+                  <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr_admmenu2.png" /><p class="FSITAL">'.EST_GEN_ESTMANAGERS.' '.EST_INSTR002d.'</p></td>
+                  <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr_admmenu1.png" /><p class="FSITAL">'.EST_GEN_ESTAGENTS.' '.EST_INSTR002e.'</p></td>
+                  <td>&nbsp;</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>'.EST_INSTR003.' ('.(EST_USERPERM >= 2 ? EST_INSTR003a : EST_INSTR003b).').</p>
+            <p>'.EST_INSTR003c.'</p>
+          </div>
+          <div>
+            <h3>'.EST_GEN_NONAGENTLISTINGS.' </h3>
+            <p>['.EST_GEN_CURRENTLY.' '.($public_act == 255 ? LAN_DISABLED : LAN_ENABLED).'] '.EST_INSTR005a.'</p>
+            <p>'.EST_INSTR005b.'</p>
+          </div>';
+    
+    
+    
+    //<b>'.EST_GEN_AGENT.' '.EST_GEN_LISTINGS.'</b>
+    $TBS[1]['caption'] = EST_GEN_AGENTS;
+    $TBS[1]['text'] = '
+          <div>
+            <h3>'.EST_INSTR004.'</h3>
+            <p>'.EST_INSTR004a.'</p>
+            <hr />
+            <h3>'.EST_GEN_ESTADMINS.'</h3>
+            <p>'.EST_INSTR004b.'</p>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagencylist.png" /></p>
+            <p>'.EST_INSTR004c.' <i>'.EST_INSTR004d.'</i></p>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr_agtuserlist.png" /></p>
+            <p>'.EST_INSTR004e.'</p>
+            <p>'.EST_INSTR004f.'</p>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr_agtadduser.png" /></p>
+            <p>'.EST_INSTR004g.'</p>
+            <hr />
+            <h3>'.EST_GEN_ESTMANAGERS.'</h3>
+            <p>'.EST_INSTR004g.'</p>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagency.png" /></p>
+            <p>'.EST_INSTR004h.'</p>
+            <p>'.EST_INSTR004i.'</p>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagentlist.png" /></p>
+            <p>'.EST_INSTR004j.'</p>
+          </div>';
+    
+    
+    $TBS[2]['caption'] = EST_INSTR008;
+    $TBS[2]['text'] = '
+          <div>
+            <h3>'.EST_INSTR008a.'</h3>
+            <p>'.EST_INSTR008b.'</p>
+            <p>'.EST_INSTR008c.'</p>
+          </div>
+          <div>
+            <h3>'.EST_GEN_ESTADMINS.'</h3>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr000.png" /></p>
+            <p>'.EST_INSTR008d.'</p>
+          </div>
+          <div>
+            <h3>'.EST_GEN_ESTMANAGERS.'</h3>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr012a.png" /></p>
+            <p>'.EST_INSTR008e.'</p>
+          </div>
+          
+          <div>
+            <h3>'.EST_GEN_ESTAGENTS.'</h3>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr013a.png" /></p>
+            </p>'.EST_INSTR008f.'</p>
+          </div>
+          
+          <div>
+            <h3>'.EST_GEN_NONAGENTLISTINGS.'</h3>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr011b.png" /></p>
+            <p>'.EST_INSTR008g.'</p>
+          </div>
+          <div>
+            <h3>'.EST_GEN_NEW.' '.EST_GEN_LISTING.'</h3>
+            <p><img src="'.EST_PATHABS_IMAGES.'instr013b.png" /></p>
+            <p>'.EST_INSTR008h.'</p>
+          </div>';
+    
+    
+    $TBS[3]['caption'] = EST_INSTR009;
+    $TBS[3]['text'] = 'Coming Soon';
+    
+    
+    $TBS[4]['caption'] = EST_INSTR010;
+    $TBS[4]['text'] = '
+          <div>
+            <h3>'.EST_INSTR010.'</h3>
+            <p>'.EST_INSTR011.'</p>
+            <img src="'.EST_PATHABS_IMAGES.'instr002.png" class="estInstImg" />
+            <p>'.EST_INSTR012.'</p>
+            <img src="'.EST_PATHABS_IMAGES.'instr003.png" class="estInstImg" />
+            <p>'.EST_INSTR013.'</p>
+          </div>
+          <div>
+            <h3>'.EST_INSTR020.'</h3>
+            <p>'.EST_INSTR021.'</p>
+            <img src="'.EST_PATHABS_IMAGES.'instr004.png" class="estInstImg" />
+          </div>
+          <div>
+            <p>'.EST_INSTR022.'</p>
+          </div>';
+    
+    
+    
+    $TBS[5]['caption'] = EST_INSTR030;
+    $TBS[5]['text'] = '<div>
+            <h3>'.EST_INSTR030.'</h3>
+            <p>'.EST_INSTR031.'</p>
+            <img src="'.EST_PATHABS_IMAGES.'instr005.png" class="estInstImg" style="width:75%;" />
+            <p>'.EST_INSTR032.'</p>
+            <p>'.EST_INSTR033.'</p>
+            <p>'.EST_INSTR033a.'</p>
+            
+            <table>
+              <tr>
+                <td><img src="'.EST_PATHABS_IMAGES.'instr006.png" class="estInstImg" /></td>
+                <td class="VAT">
+                  <p>'.EST_INSTR034.'</p>
+                  <p>'.EST_INSTR034a.'</p>
+                  <p>'.EST_INSTR034b.'</p>
+                  <p>'.EST_INSTR034c.'</p>
+                </td>
+              </tr>
+              <tr>
+                <td><img src="'.EST_PATHABS_IMAGES.'instr007.png" class="estInstImg" /></td>
+                <td class="VAT">
+                  <p>'.EST_INSTR035.'</p>
+                  <p>'.EST_INSTR035a.'</p>
+                  <p>'.EST_INSTR035b.'</p>
+                </td>
+              </tr>
+              <tr>
+                <td><img src="'.EST_PATHABS_IMAGES.'instr007a.png" class="estInstImg" /></td>
+                <td class="VAT">
+                  <p>'.EST_INSTR036.'</p>
+                </td>
+              </tr>
+              <tr>
+                <td><img src="'.EST_PATHABS_IMAGES.'instr008.png" class="estInstImg" /></td>
+                <td class="VAT">
+                  <p>'.EST_INSTR038.'</p>
+                </td>
+              </tr>
+              <tr>
+                <td><img src="'.EST_PATHABS_IMAGES.'instr009.png" class="estInstImg" /></td>
+                <td class="VAT">
+                  <p>'.EST_INSTR039.'</p>
+                </td>
+              </tr>
+            </table>
+          </div>';
+    
+  return $TBS;
+  }
+
     
 function estGetSpaces($PROPID,$PSTAT=0){
   $sql = e107::getDb();
