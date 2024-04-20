@@ -255,6 +255,11 @@
   padding:6px 0px 16px 0px;
   margin:0px 0px 16px 0px;
   }
+
+.estViewSect p{
+  white-space: pre;
+  }
+
 .estViewBoxCont div.estViewSect:last-child{
   border-bottom: none !important;
   }
@@ -977,7 +982,6 @@ div.estListBlock.estListTiles div.estListPropInfo{
   overflow:hidden;
   text-overflow:ellipsis;
   }
-
 
 .FWB{font-weight:bold;}
 .TAL{text-align:left !important;}
