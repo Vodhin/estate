@@ -1896,13 +1896,6 @@ function estGetSubDivs(){
         estAlertLog(jqXHR.responseText);
         }
       });
-    
-    
-    
-    
-    
-    //media_thm
-          
     }
   
   
