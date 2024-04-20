@@ -204,6 +204,8 @@ if($err){
   }
 
 
+e107::css('url',e_PLUGIN.'estate/js/cropperjs/dist/cropper.css');
+e107::js('estate','js/cropperjs/dist/cropper.js', 'jquery');
 
 if($_POST){
   $PROP_FLDS = $sql->db_FieldList('estate_properties');

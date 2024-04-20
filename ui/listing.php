@@ -1878,33 +1878,62 @@ class estate_listing_form_ui extends e_admin_form_ui{
     $frm = e107::getForm();
     
     $estateCore = new estateCore;
-    $rows = $estateCore->estGetAgentById($curVal);
+    //$rows = $estateCore->estGetAgentById($curVal);
+    
+    
+    
+    
+    
     switch($mode){
 			case 'read': 
         //$dta = $this->getController()->getListModel();
-        $text = '<div class="estPropListAgentCont"><div>'.$tp->toHTML($rows['agency_name']).'</div><div><div style="background-image:url(\''.$rows['agent_profimg'].'\')"></div><a href="'.e_SELF.'?mode=estate_agencies&action=agent&id='.intval($rows['agent_idx']).'">'.$tp->toHTML($rows['agent_name']).'</a></div></div>';
-        return $text;
+        //$text = '<div class="estPropListAgentCont"><div>'.$tp->toHTML($rows['agency_name']).'</div><div><div style="background-image:url(\''.$rows['agent_profimg'].'\')"></div><a href="'.e_SELF.'?mode=estate_agencies&action=agent&id='.intval($rows['agent_idx']).'">'.$tp->toHTML($rows['agent_name']).'</a></div></div>';
+        return '[defunct]';
 				break;
 
 			case 'write': 
-        //$dta = $this->getController()->getModel()->getData();
-        $rows = $estateCore->estGetAgentById($curVal);
+        $dta = $this->getController()->getModel()->getData();
+        $AGTID = intval($dta['prop_agent']);
+        
+        $text = '';
+        
+        if($AGTID > 0){
+          $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_agents LEFT JOIN #estate_agencies ON agent_agcy=agency_idx LEFT JOIN #user ON user_id=agent_uid WHERE agent_idx='".$AGTID."' LIMIT 1");
+          $rows = $sql->fetch();
+          if(intval($rows['agent_imgsrc']) == 1 && trim($rows['agent_image']) !== ""){$SELLER_IMG = EST_PTHABS_AGENT.$tp->toHTML($rows['agent_image']);}
+          else{$SELLER_IMG = $tp->toAvatar($rows,array('type'=>'url'));}
+          $SELLER_NAME = $tp->toHTML($rows['agent_name']);
+          $AGENCY_NAME = $tp->toHTML($rows['agency_name']);
+          $AGENCY_ID = intval($rows['agent_agcy']);
+          }
+        else{
+          $USRID = (intval($dta['prop_idx']) === 0 ? USERID : intval($dta['prop_uidcreate']));
+          $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image FROM #user WHERE user_id='".$USRID."' LIMIT 1");
+          $rows = $sql->fetch();
+          $SELLER_IMG = $tp->toAvatar($rows,array('type'=>'url'));
+          $SELLER_NAME = $tp->toHTML(trim($rows['user_name']) !== '' ? $rows['user_name'] : $rows['user_loginname']);
+          $AGENCY_NAME = EST_GEN_PRIVATE.' '.EST_GEN_SELLER;
+          $AGENCY_ID = 0;
+          $DISAB = ' disabled="disabled"';
+          }
+        
+        
         $text .= '
-          <input type="hidden" name="prop_agent" value="'.intval($rows['agent_idx']).'">
-          <div id="estAgentContDiv" class="estBtnCont">
-            <button type="button" id="estAgencySelBtn" class="btn btn-default estNoRightBord" data-agcy="'.intval($rows['agent_agcy']).'">'.$tp->toHTML($rows['agency_name']).'</button>
-            <button type="button" id="estAgentSelBtn" class="btn btn-primary estNoLRBord">
-              <div id="estAgentMinPic" style="background-image:url(\''.$rows['agent_profimg'].'\')"></div>
-              <span id="estAgentSelBtnTxt">'.$tp->toHTML($rows['agent_name']).'</span>
-            </button>
-            <div id="estAgentEditDiv" class="estSonar">
-              <div class="estSonarBlip"></div>
-            </div>
-            <div id="estAgentOptsCont" class="form-control">
-              <div id="estAgentOptsL"></div>
-              <div id="estAgentOptsR"></div>
-            </div>
-          </div>';
+        <input type="hidden" name="prop_agent" value="'.intval($rows['agent_idx']).'">
+        <div id="estAgentContDiv" class="estBtnCont">
+          <button type="button" id="estAgencySelBtn" class="btn btn-default estNoRightBord" data-agcy="'.$AGENCY_ID.'"'.$DISAB.'>'.$AGENCY_NAME.'</button>
+          <button type="button" id="estAgentSelBtn" class="btn btn-primary estNoLRBord"'.$DISAB.'>
+            <div id="estAgentMinPic" style="background-image:url(\''.$SELLER_IMG.'\')"></div>
+            <span id="estAgentSelBtnTxt">'.$SELLER_NAME.'</span>
+          </button>
+          <div id="estAgentEditDiv" class="estSonar">
+            <div class="estSonarBlip"></div>
+          </div>
+          <div id="estAgentOptsCont" class="form-control">
+            <div id="estAgentOptsL"></div>
+            <div id="estAgentOptsR"></div>
+          </div>
+        </div>';
           
         return $text;
         break;

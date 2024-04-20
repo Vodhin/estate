@@ -3202,7 +3202,7 @@ class estateCore{
     
     if(in_array($FLD,$SERL)){$FVALUE = e107::unserialize($DTA[$FLD]);}
     elseif(in_array($FLD,$INTS)){$FVALUE = intval($DTA[$FLD]);}
-    else{$FVALUE = $tp->toFORM($DTA[$FLD]);}
+    else{$FVALUE = $DTA[$FLD];}
     
     $OPTARR = array();
     
@@ -3289,7 +3289,7 @@ class estateCore{
       
       case 'prop_timezone' :
         $timeZones = systemTimeZones();
-        $text .= $frm->select('prop_timezone', $timeZones, vartrue($FVALUE, $pref['timezone']),'size=xlarge');
+        $text .= $frm->select('prop_timezone', $timeZones, vartrue($tp->toFORM($FVALUE), $pref['timezone']),'size=xlarge');
         unset($timeZones);
         break;
       
@@ -3317,42 +3317,42 @@ class estateCore{
       
       case 'txtcntr' :
         $text = '<tr><td class="VAT">'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
-        $text .= $frm->textarea($FLD,$FVALUE,1,40,$options,1);
+        $text .= $frm->textarea($FLD,$tp->toFORM($FVALUE),1,40,$options,1);
         break;
       
       
       case 'switch' :
         //$options
         $labels = array('on'=>LAN_YES,'off'=>LAN_NO);
-        $text .= $frm->flipswitch($FLD,$FVALUE,$labels,$options);
+        $text .= $frm->flipswitch($FLD,$tp->toFORM($FVALUE),$labels,$options);
         break;
       
       case 'select' :
         if($LABS['wrap']){$text .= '<div class="estInptCont">';}
-        $text .= $frm->select($FLD,$OPTARR,$FVALUE,$options);
+        $text .= $frm->select($FLD,$OPTARR,$tp->toFORM($FVALUE),$options);
         if($LABS['wrap']){$text .= '</div>';}
         break;
       
       case 'datetime' :
-        $text .= $frm->datepicker($FLD,$FVALUE,array('size'=>'small WD256px','mode'=>'datetime'));
+        $text .= $frm->datepicker($FLD,$tp->toFORM($FVALUE),array('size'=>'small WD256px','mode'=>'datetime'));
         break;
         
       case 'number' :
         //$options = array('size'=>'small');
         $maxlength = 200;
         if($LABS['wrap']){$text .= '<div class="estInptCont">';}
-        $text .= $frm->number($FLD, $FVALUE, $maxlength, $options);
+        $text .= $frm->number($FLD, intval($FVALUE), $maxlength, $options);
         if($LABS['wrap']){$text .= '</div>';}
         break;
         
       case 'textarea' :
         $text = '<tr><td class="VAT">'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
-        $text .= $frm->textarea($FLD,$FVALUE,4,40,$options); //,$counter = true: add character counter
+        $text .= $frm->textarea($FLD,$tp->toFORM($FVALUE),4,40,$options); //,$counter = true: add character counter
         break;
         
       default :
         if($LABS['wrap']){$text .= '<div class="estInptCont">';}
-        $text .= $frm->text($FLD,$FVALUE, varset($ATTR['f']['max'],255),$options);
+        $text .= $frm->text($FLD,$tp->toTEXT($FVALUE), varset($ATTR['f']['max'],255),$options);
         if($LABS['wrap']){$text .= '</div>';}
         //'required'=>varset($ATTR['f']['req'],0)
         break;
