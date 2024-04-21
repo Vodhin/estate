@@ -48,13 +48,16 @@ else{
   $ESTATE_TEMPLATE['list']['map'] = '';
   }
 
+//
+
 $ESTATE_TEMPLATE['list']['item'] 	= '
-  <a href="{PROP_LIST_LINKVIEW}">
+  <a class="estListBlockA" href="{PROP_LIST_LINKVIEW}">
     <div class="estListBlock '.$EST_PREF['layout_list'].'">
       <div class="estListPropHead">
-        <div class="estPropName">{PROP_NAME}</div>
-        <div class="estILBullets">{PROP_BULLETS1} • {PROP_VIEWCOUNT}</div>
-        <div>{PROP_CITYSTATE}{PROP_SUBDIVNAME}</div>
+        <div class="estListPropHeadD1">{PROP_NAME}</div>
+        <div class="estListPropHeadD2">{PROP_BULLETS1} • {PROP_VIEWCOUNT}</div>
+        <div class="estListPropHeadD3">{PROP_CITYSTATE}{PROP_SUBDIVNAME}</div>
+        {PROP_LIST_EDITLNK}
       </div>
       <div class="estListPropImg" style="{PROP_THMSTY}">{PROP_LISTTHM_BANNER}</div>
       <div class="estListPropInfo">
