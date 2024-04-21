@@ -320,7 +320,28 @@ function htmlDecode(mode,xVal,dec=0){
     estBuildMap();
     estExpandArr();
     estLnkBar();
-    //$('a').on({click : function(e){e.preventDefault();}});
+    
+    
+    var edbtn = $('.estPropListEdtBtn');
+    var aCont = $('a.estListBlockA');
+    if(edbtn.length > 0){
+      if(edbtn.length < aCont.length){
+        //var msg = $('<div></div>',{'id':'estListOrderMsg'}).html('The Properties that belong to you have been moved to the top of the list').on({click : function(){$(this).remove();}});
+        //$('#estateCont').before(msg);
+        }
+      $(edbtn).each(function(i,ele){
+        //if(edbtn.length < aCont.length){$(ele).closest('a.estListBlockA').prependTo('#estateCont');}
+        $(ele).on({
+          click: function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.assign($(this).data('url'));
+            }
+          });
+        });
+      }
+    
+      
     });
 
 })(jQuery);

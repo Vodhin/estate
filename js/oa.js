@@ -3771,9 +3771,11 @@ function lightOrDark(color){
     
     $('select[name="prop_listype"]').change();
     
+    
     var dimU1v = Number($('input[name="prop_dimu1"]').val());
     var dimu1Btn = $(JQBTN,{'id':'dimu1Btn','class':'btn btn-primary estNoLeftBord'});
     var dimu1Btn2 = $(JQBTN,{'id':'dimu1Btn2','class':'btn btn-primary estNoLeftBord'});
+    
     $(dimu1Btn).html(defs.keys.dim1u[dimU1v][0]).on({
       click : function(e){
         e.preventDefault();
@@ -3975,7 +3977,14 @@ function lightOrDark(color){
   function estSetMap(){
     var defs = $('body').data('defs');
     var propId = Number($('body').data('propid'));
+    
+    var nTW = Math.floor($('#est_prop_MapCont').closest('table').width() * 0.60);
+    $('#est_prop_MapCont').width(nTW);
+    console.log(nTW);
+    
+    
     var mapW = defs.prefs.map_width;
+    
     var mapH = defs.prefs.map_height;
     
     var targCont = $('#est_prop_Map').parent();
@@ -4023,6 +4032,7 @@ function lightOrDark(color){
   
   
   function estBuildMap(){
+    
     var defs = $('body').data('defs');
     var mapSrchRes = $('#est_prop_SrchRes');
     var mapSrchBtn = $('#est_prop_SrchBtn');
@@ -4031,6 +4041,7 @@ function lightOrDark(color){
     var lonFld = $('input[name="prop_lon"]');
     var zoomFld = $('input[name="prop_zoom"]');
     var geoFld = $('input[name="prop_geoarea"]');
+    
     
     $('#est_prop_Map').parent().data({'latfld':latFld,'lonfld':lonFld,'zoomfld':zoomFld,'geofld':geoFld});
     
@@ -4044,7 +4055,8 @@ function lightOrDark(color){
         estSetMap();
         }
       }).appendTo(mapSrchRes).promise().done(function(){
-        var xHt = Number($(mapSrchRes).height()) - Number($(mapReset).height());
+        
+        var xHt = Number($(mapSrchRes).height()) - Number($('#mapReset-est_prop_Map').height());
         
         var foundCoordCont = $(JQDIV,{'id':'mapLookupRes-est_prop_Map','class':'estFoundMapCoordRes'}).css({'height':xHt+'px'}).appendTo(mapSrchRes);
         
@@ -4304,7 +4316,7 @@ function lightOrDark(color){
             }
           });
         });
-      
+      /**/
       $('#est_prop_MapCont').appendTo('#est_prop_MapCont_targ');
       $('#est_prop_SrchForm').appendTo('#est_prop_SrchForm_targ');
       $('#est_prop_SrchRes').appendTo('#est_prop_SrchRes_targ');
