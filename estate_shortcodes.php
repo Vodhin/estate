@@ -31,6 +31,35 @@ class estate_shortcodes extends e_shortcode{
     return $lnk;
     }
   
+  
+  
+  function sc_prop_list_editlnk($parm){
+    $AGENT = $this->estGetAgent();
+    $lnk = '';
+    $lnkgo = 0;
+    
+    if(EST_USERPERM > 0){
+      $AGENT = $this->estGetAgent();
+      $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
+      $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
+      if(EST_USERPERM > 2){$lnkgo++;}
+      elseif(EST_USERPERM == 2){
+        if(intval($this->var['prop_agent']) > 0 && intval($this->var['prop_agency']) == intval($AGENT['agent_agcy'])){$lnkgo++;}
+        }
+      elseif(EST_USERPERM == 1){
+        if(intval($this->var['prop_uidcreate']) == USERID || intval($AGENT['agent_uid']) == USERID){$lnkgo++;}
+        }
+      unset($url1,$url2);
+      }
+    else{
+      if(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){$lnkgo++;}
+      }
+    if($lnkgo > 0){
+      $lnk = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
+      }
+    return $lnk;
+    }
+  
   function sc_prop_editlnk($parm){
 		$tp = e107::getParser();
     $lnk = '';
@@ -284,7 +313,7 @@ class estate_shortcodes extends e_shortcode{
   
   function sc_prop_citystate($parm){
 		$tp = e107::getParser();
-    return $tp->toHTML($this->var['city_name']).', '.$tp->toHTML($this->var['state_init']);
+    return $tp->toHTML($this->var['city_name']).(trim($this->var['state_init']) ? ', '.$this->var['state_init'] : '');
     }
   
   function sc_prop_subdivname($parm){
