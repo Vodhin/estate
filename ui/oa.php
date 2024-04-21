@@ -142,9 +142,14 @@ else{
         }
       if($usr = $sql->retrieve("user",$USRSEL,"user_id='".intval($DTA['agent']['agent_uid'])."' LIMIT 1",true)){
         $DTA['user'] = $usr[0];
-        //extract($usr[0]);
         }
       }
+    }
+  else{
+    if($usr = $sql->retrieve("user",$USRSEL,"user_id='".USERID."' LIMIT 1",true)){
+        $usr[0]['user_profimg'] = $tp->toAvatar($usr[0],array('type'=>'url'));
+        $DTA['user'] = $usr[0];
+        }
     }
   }
 
@@ -225,43 +230,41 @@ if($_POST){
   $_POST['prop_views'] = intval($DTA['prop']['prop_views']);
   
   
-  
-  
   if(intval($DTA['prop']['prop_idx']) > 0){
     $PROPIDX = intval($DTA['prop']['prop_idx']);
     foreach($PROP_FLDS as $fld){
+      $DTA['prop'][$fld] = $_POST[$fld];
       if(!in_array($fld,$PROP_FIXD)){
         $QRY .= ($QRY ? ", " : "").$fld."='".$tp->toDB($_POST[$fld] ? $_POST[$fld] : $DTA['prop'][$fld])."'";
-        $postext .= '<div>['.$fld.'] '.$_POST[$fld].'</div>';
         }
       }
     $QRY .= "WHERE prop_idx='".$PROPIDX."' LIMIT 1";
     
-    $postext = '<h2>DB Update: #'.$PROPIDX.'</h2><div>'.$QRY.'</div><p>'.$postext.'</p>';
+    if($sql->update("estate_properties",$QRY)){
+      e107::getMessage()->addSuccess('Updated '.$tp->toHTML($_POST['prop_name']));
+      }
     }
   else{
+    $NDB = array();
     foreach($PROP_FLDS as $fld){
-      $QRY .= ($QRY ? ", " : "").$fld."='".$tp->toDB($_POST[$fld])."'";
-      $postext .= '<div>['.$fld.'] '.$_POST[$fld].'</div>';
+      $NDB[$fld] = $_POST[$fld];
+      $DTA['prop'][$fld] = $_POST[$fld];
+      $ERDV .= '<div>'.$fld.' = "'.$tp->toDB($_POST[$fld]).'"</div>';
       }
     
-    $postext = '<h2>DB INSERT</h2><div>'.$QRY.'</div><p>'.$postext.'</p>';
+    $NDB['prop_idx'] = intval(0);
     
-    $PROPIDX = 0; //insert new record
+    if($PROPIDX = $sql->insert("estate_properties",$NDB)){
+      if(intval($PROPIDX) > 0){e107::redirect(e_SELF."?edit.".intval($PROPIDX).".0");}
+      };
     }
   
   
   $dberr = $sql->getLastErrorText();
-  
-  if(intval($PROPIDX) > 0){
-    if($qs[0] == 'new' && intval($DTA['prop']['prop_idx']) == 0){
-      //e107::redirect(e_SELF."?edit.".intval($PROPIDX).".0");
-      }
-    
+  if($dberr){
+    e107::getMessage()->addError($dberr.'<p>'.($ERDV ? $ERDV : $QRY).'</p>');
     }
-  else{
-    
-    }
+  unset($dberr,$ERDV,$QRY);
   }
 
 
@@ -288,7 +291,7 @@ if(intval($DTA['prop']['prop_idx']) > 0){
   $nsHead .= '</div>'.EST_GEN_EDIT.': '.$tp->toHTML($DTA['prop']['prop_name']);
   }
 else{
-  $nsHead = EST_GEN_NEW.' '.EST_GEN_LISTING;
+  //$nsHead = EST_GEN_NEW.' '.EST_GEN_LISTING;
   }
 
 
@@ -313,9 +316,7 @@ if($_POST){
   }
 
 $estateCore = new estateCore;
-
-
-$OATXT = $postext.$pretext;
+$OATXT = $pretext;
 
 
 
@@ -333,14 +334,16 @@ $OATXT = $postext.$pretext;
 $TBSOPTS = array('active' => 0,'fade' => 0,'class' => 'estOATabs');
 $TBS = $estateCore->estOAFormTabs();
 
-foreach($TBS as $k=>$v){
-  $TBS[$k]['text'] = $estateCore->estOAFormTable($k,$DTA['prop']);
-  }
 
 $OATXT .= '
 <form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-OAform" enctype="multipart/form-data" autocomplete="off" data-propid="'.intval($DTA['prop']['prop_idx']).'" data-h5-instanceid="0" novalidate="novalidate">';
 
-$OATXT .= $frm->tabs($TBS, $TBSOPTS);
+  foreach($TBS as $k=>$v){
+    $TBS[$k]['text'] = $estateCore->estOAFormTable($k,$DTA['prop']);
+    }
+  
+  $OATXT .= $frm->tabs($TBS, $TBSOPTS);
+
 
 $OATXT .= '
 </form>

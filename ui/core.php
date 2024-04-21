@@ -3362,7 +3362,6 @@ class estateCore{
     return $text.'</td></tr>';
     }
   
-  
   //getCalTbl
   
   public function estPropHoursForm($DTA){
