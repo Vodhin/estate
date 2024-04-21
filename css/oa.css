@@ -14,21 +14,14 @@ td{
   margin-left: 5px;
   }
 
-.has-feedback-left input {
-    padding-left: 30px;
-}
+.has-feedback-left input{
+  padding-left: 30px;
+  }
 
 
 input[type="file"]{
   display:none !important;
   }
-
-.btn,
-.form-control {
-  //color: #000000 !important;
-  }
-
-
 
 .estOABlock{
   display:block;
@@ -110,7 +103,6 @@ input[type="file"]{
   }
 
 
-
 table.estOATable1{
   width: 100%;
   background-color: inherit;
@@ -136,14 +128,6 @@ table.estOATable1 colgroup:last-child{
   }
 
 
-
-
-
-@keyframes sonarBlip {
-  from {opacity: 0.5;}
-  to {transform: scale(3);opacity: 0;}
-  }
-
 .estInptCont button:last-child
 .estInptCont div button:last-child{
   border-top-right-radius:3px;
@@ -162,51 +146,11 @@ table.estOATable1 colgroup:last-child{
   width:256px !important;
   }
 
-.WD95{width:95% !important;}
 .WD85{width:85% !important;}
 .WD75{width:75% !important;}
 .WD65{width:65% !important;}
 .WD55{width:55% !important;}
 .WD45{width:45% !important;}
-
-#estClearkCover{
-  background-color:rgba(64,64,64,0.15);
-  }
-
-
-#propOPpctDiv{
-  display:block;
-  position:absolute;
-  width:67px;
-  height: 400px;
-  background-color:#212121;
-  overflow-x: hidden;
-  overflow-y: auto;
-  z-index:100002;
-  }
-#propOPpctDiv button{
-  width:100%;
-  }
-
-
-#estNoGalWarn{display:none;}
-
-#estGalFileSlipCont{
-  float:right;
-  margin:-5px 0px -5px 0px;
-  padding:0px;
-  }
-#estGalFileSlipCont label{
-  margin:0px;
-  }
-
-#estGalleryCont{
-  display:block;
-  position:relative;
-  width:100%;
-  }
-
-
 
 #estate-gallery-tabl{
   width:100%;
@@ -222,75 +166,6 @@ table.estOATable1 colgroup:last-child{
   }
 
 
-
-
-
-.estBeltLoop{
-  display:block;
-  position:relative;
-  width:100%;
-  min-height: 5em;
-  max-height: 12em;
-  background-color: rgba(25,25,25,0.15);
-  margin: 0px;
-  overflow-y: hidden;
-  overflow-x: auto;
-  }
-
-/*.estBeltLoop:hover{min-height: 10em;}*/
-
-.estBelt{
-  display: block;
-  position: relative;
-  max-width: max-content;
-  min-width: 100%;
-  height: 100%;
-  margin:0px;
-  padding:0px;
-  white-space: nowrap;
-  overflow:visible;
-  }
-
-#estGalleryUsed{
-  display: block;
-  position: relative;
-  width: 100%;
-  min-height: 10em;
-  background-color: rgba(25,25,25,0.15);
-  margin: 0px;
-  padding:0px;
-  white-space: normal;
-  }
-
-
-
-
-
-
-.listMediaCont.mediaOrder div.upldPvwBtn, .Dragable{
-  border:2px solid #6381FF !important;
-  cursor:move;
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.estCalTbl{
-  width:100%;
-  }
 .estCalTbl tr th,
 .estCalTbl tr td{
   text-align:center;
@@ -301,7 +176,6 @@ table.estOATable1 colgroup:last-child{
 .estCalTbl button{
   width:100%;
   }
-
 
 
 div.field-help{
@@ -373,95 +247,8 @@ table.estOAMap tr:first-child{
   }
 
 .estMapCont{
-  display: inline-block;
-  width: 386px;
-  height: 256px;
-  margin: 8px auto 0px auto;
+  width: 50vw;
   }
-
-.estMap{
-  display: block;
-  width: 386px;
-  height: 256px;
-  }
-
-
-.estMapSearchCont{
-  display: block;
-  position:relative;
-  width:100%;
-  margin:0px 0px 4px 0px !important;
-  }
-
-.estMapSearchCont:before {
-  content: "\f002";
-  position: absolute;
-  margin-left: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  z-index: 5;
-  }
-
-.estMapLookupAddr{
-  display: inline-block !important;
-  position: relative;
-  border-right: none !important;
-  border-top-right-radius: 0px !important;
-  border-bottom-right-radius: 0px !important;
-  vertical-align: top !important;
-  }
-
-.estMapSearchBtn{
-  display: inline-block !important;
-  position: relative;
-  left: -4px;
-  border-left: none !important;
-  margin-left:0px !important;
-  border-top-left-radius: 0px !important;
-  border-bottom-left-radius: 0px !important;
-  vertical-align:top !important;
-  }
-
-.estMapBtnCont{
-  display:block;
-  width:100%;
-  height: 368px;
-  vertical-align:top;
-  }
-.estMapBtnCont button{
-  width:100%;
-  }
-
-.estFoundMapCoordRes{
-  overflow-x: hidden;
-  overflow-y: auto;
-  }
-
-.estMapBtnCont button.estMapLUBtn{
-  white-space: normal !important;
-  text-align: left !important;
-  line-height: 1.25em !important;
-  }
-
-
-#MapSearchLoading{
-  display: block;
-  position: relative;
-  width: 99%;
-  height: 98%;
-  margin: 2px auto;
-  border-radius: 3px;
-  background-color: rgba(205,205,205,0.70);
-  background-image: url('../images/loading.gif');
-  background-position: center;
-  background-repeat: no-repeat;
-  }
-
-
-
-
 
 
 @media only screen and (min-device-width:100px) and (max-device-width:480px){

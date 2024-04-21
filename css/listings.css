@@ -712,7 +712,7 @@ ul.estDet2Cont{
   z-index: 5;
   }
 
-.estListPropHead div:first-child{
+.estListPropHead div.estListPropHeadD1{
   display: block;
   position: relative;
   width: 70%;
@@ -725,7 +725,7 @@ ul.estDet2Cont{
   white-space: nowrap;
   }
 
-.estListPropHead div:last-child{
+.estListPropHead div.estListPropHeadD3{
   display: block;
   position: absolute;
   right: 6px;
@@ -735,7 +735,7 @@ ul.estDet2Cont{
   font-weight: bold;
   text-align: right;
   }
-.estListPropHead div:last-child span{
+.estListPropHead div.estListPropHeadD3 span{
   display: block;
   position: absolute;
   top: 24px;
@@ -813,14 +813,6 @@ ul.estDet2Cont{
   height: 67%;
   }
 
-.estILBullets{
-  display: block;
-  position: relative;
-  width: 100%;
-  padding: 0px 6px 0px 6px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  }
 
 .estListSummary{
   display: block;
@@ -876,24 +868,36 @@ ul.estDet2Cont{
   }
 
 div.estListBlock.estListTiles{
-  height:100%;
+  height:320px;
   }
 
+
 div.estListBlock.estListTiles div.estListPropHead{
-  position: relative;
+  position: absolute;
   width: 100%;
   top: unset;
   left: unset;
-  height: unset;
+  height: 256px;
   padding-bottom: 12px;
+  color: #FFFFFF;
+  background-image: linear-gradient(180deg, rgba(0,0,0,0.25), transparent);
+  z-index: 4;
   }
 
-div.estListBlock.estListTiles div.estListPropHead div:first-child{
+div.estListBlock.estListTiles div.estListPropHead div.estListPropHeadD1{
   width: 100%;
   }
 
+.estListPropHeadD2{
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0px 6px 0px 6px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  }
 
-div.estListBlock.estListTiles div.estListPropHead div:last-child {
+div.estListBlock.estListTiles div.estListPropHead div.estListPropHeadD3 {
   display: block;
   position: relative;
   top: 4px;
@@ -903,10 +907,10 @@ div.estListBlock.estListTiles div.estListPropHead div:last-child {
   font-size: 1.2em;
   font-weight: bold;
   text-align: left;
-}
+  }
 
 
-div.estListBlock.estListTiles div.estListPropHead div:last-child span {
+div.estListBlock.estListTiles div.estListPropHead div.estListPropHeadD3 span {
   display: block;
   position: absolute;
   top: 2px;
@@ -915,26 +919,25 @@ div.estListBlock.estListTiles div.estListPropHead div:last-child span {
   }
 
 
-div.estListBlock.estListTiles div.estListPropImg{
-  position: relative;
+
+div.estListBlock.estListTiles div.estListPropImg {
   width: 100%;
-  top: unset;
-  left: unset;
-  height: 256px;
-  border: 6px solid transparent;
   background-position: top center;
   }
 
-
-
-div.estListBlock.estListTiles div.estListPropInfo{
-  position: relative;
+div.estListBlock.estListTiles div.estListPropInfo {
+  position: absolute;
+  bottom: 0px;
   width: 100%;
   top: unset;
   left: unset;
   height: unset;
-  padding-bottom: 32px;
+  padding: 32px 6px 12px 6px;
+  color: #FFFFFF;
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.75), transparent);
   }
+
+
 
 #estLayoutPrefECont{
   display:block;
@@ -947,6 +950,19 @@ div.estListBlock.estListTiles div.estListPropInfo{
   z-index:100;
   }
 
+
+.estPropListEdtBtn{
+  position: absolute;
+  right:6px;
+  top:6px;
+  min-width: 32px;
+  border:none;
+  background-color: transparent;
+  }
+
+.estPropListEdtBtn i{
+  font-size:1.5em;
+  }
 
 
 #estMainHelpPage div{
@@ -1160,11 +1176,11 @@ div.estListBlock.estListTiles div.estListPropInfo{
     padding-bottom: 6px;
     }
   
-  .estListPropHead div:first-child{
+  .estListPropHead div.estListPropHeadD1{
     width: 100%;
     }
   
-  .estListPropHead div:last-child {
+  .estListPropHead div.estListPropHeadD3 {
     position: relative;
     right: unset;
     top: unset;
@@ -1173,7 +1189,7 @@ div.estListBlock.estListTiles div.estListPropInfo{
     padding-left: 6px;
     }
   
-  .estListPropHead div:last-child span {
+  .estListPropHead div.estListPropHeadD3 span {
     display: block;
     position: absolute;
     top: 0px;
@@ -1200,8 +1216,7 @@ div.estListBlock.estListTiles div.estListPropInfo{
     height: unset;
     padding-bottom: 32px;
     }
-  
-  .estILBullets{
+  .estListPropHeadD2{
     white-space: normal;
     /*margin-bottom: 12px;*/
     }

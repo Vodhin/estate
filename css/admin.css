@@ -3016,6 +3016,7 @@ div.upldPvwBtn div.mediaPvwCapt:focus{
   white-space: normal !important;
   text-align: left !important;
   line-height: 1.25em !important;
+  height: auto !important;
   }
 
 #estPrefMapCont{
