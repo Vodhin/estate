@@ -257,7 +257,7 @@
   }
 
 .estViewSect p{
-  white-space: pre;
+  white-space: normal;
   }
 
 .estViewBoxCont div.estViewSect:last-child{
