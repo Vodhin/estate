@@ -1,0 +1,342 @@
+<?php
+if(!defined('e107_INIT')){exit;}
+
+
+if(e107::isInstalled('pm')){
+  //e107::getMessage()->addInfo('PM Installed');
+  }
+
+e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php'); //???
+
+
+
+//EST_SELLERUID
+
+  //e107::getMessage()->addInfo('Contact System Enabled');
+
+//USERIP
+
+if(EST_SELLERUID > 0){
+  //e107::getMessage()->addInfo('Test: '.USERIP);
+  
+  if(EST_AGENTID > 0){
+    
+    }
+  
+  
+  
+  }
+
+
+
+function est_msg_form($MODE,$DTA=null){
+	$tp = e107::getParser();
+  $STRTIMENOW = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+  /*
+    0=>array('unsaved_icon','Un Saved'),
+    1=>array('saved_icon','Saved '),
+  */
+  
+  $SELLERNAME = $tp->toHTML($DTA['prop_seller'] ? $tp->toHTML($DTA['prop_seller']) : EST_GEN_UNK);
+  $PROPNAME = (trim($DTA['prop_name']) !== '' ? $tp->toHTML($DTA['prop_name']) : EST_MSG_APROP);
+  $EST_MSG_MODES = array(
+    0=>EST_GEN_CONTACT.' '.$SELLERNAME,
+    1=>EST_MSG_IWANTVIEW.' '.$PROPNAME,
+    2=>EST_MSG_IWANTSELL,
+    3=>EST_MSG_IWANTOTHER
+    );
+  
+  
+  $msg_idx = (intval($DTA['msg_idx']) > 0 ? intval($DTA['msg_idx']) : intval(0)); //int(10) AUTO_INCREMENT,
+  $msg_sent = (intval($DTA['msg_sent']) > 0 ? intval($DTA['msg_sent']) : $STRTIMENOW); // DATETIME int(10)
+  $msg_read = (intval($DTA['msg_read']) > 0 ? intval($DTA['msg_read']) : intval(0)); // DATETIME int(10)
+  $msg_uid_to = (intval($DTA['msg_uid_to']) > 0 ? intval($DTA['msg_uid_to']) : intval(0)); //int(10)
+  $msg_mode = (intval($DTA['msg_mode']) > 0 ? intval($DTA['msg_mode']) : intval(0)); //tinyint(1)
+  $msg_propidx = (intval($DTA['msg_propidx']) > 0 ? intval($DTA['msg_propidx']) : (intval($DTA['prop_idx']) > 0 ? intval($DTA['prop_idx']) : intval(0)));
+  $msg_from_uid = intval($DTA['msg_from_uid'] ? $DTA['msg_from_uid'] : USERID); //int(10)
+  $msg_from_ip = $tp->toTEXT($DTA['msg_from_ip'] ? $DTA['msg_from_ip'] : USERIP); //varchar(55)
+  $msg_from_name = ($DTA['msg_from_name'] ? $DTA['msg_from_name'] : USERNAME); //varchar(55)
+  $msg_from_email = $tp->toTEXT($DTA['msg_from_email'] ? $DTA['msg_from_email'] : USEREMAIL); //varchar(65)
+  $msg_from_phone = $tp->toTEXT($DTA['msg_from_phone']); //varchar(25)
+  
+  
+  if(trim($DTA['msg_text']) == ''){
+    if($msg_mode == 3){}
+    elseif($msg_mode == 2){}
+    else{$DTA['msg_text'] = ' '.$PROPNAME.' ';}
+    }
+  
+  
+  $ret = '
+  <div class="WD100">
+    <input type="hidden" name="msg_idx" value="'.$msg_idx.'"/>
+    <input type="hidden" name="msg_sent" value="'.$msg_sent.'"/>
+    <input type="hidden" name="msg_read" value="'.$msg_read.'"/>
+    <input type="hidden" name="msg_uid_to" value="'.$msg_uid_to.'"/>
+    <input type="hidden" name="msg_propidx" value="'.$msg_propidx.'"/>
+    <input type="hidden" name="msg_from_uid" value="'.$msg_from_uid.'"/>
+    <input type="hidden" name="msg_from_ip" value="'.$msg_from_ip.'"/>
+    <table id="estMsgFormTabl" class="table table-striped">
+      <thead>
+        <tr>
+          <td>
+            <select name="msg_mode" value="'.$msg_mode.'" class="tbox form-control">';
+  foreach($EST_MSG_MODES as $k=>$v){
+    $ret .= '<option value="'.$k.'"'.($k == $msg_mode ? 'selected="selected"' : '').' >'.$tp->toHTML($v).'</option>';
+    }
+  
+  $ret .= '
+            </select>
+          </td>
+        </tr>
+      </thead>
+      <tbody'.($msg_idx > 0 ? '' : ' style="display:none;"').'>
+        <tr>
+          <td>
+            <input type="text" name="msg_from_name" class="tbox form-control" value="'.$tp->toTEXT($msg_from_name).'" placeholder="'.EST_MSG_YOURNAME.'" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" name="msg_from_email" class="tbox form-control" value="'.$tp->toTEXT($msg_from_email).'" placeholder="'.EST_MSG_YOUREMAIL.'" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" name="msg_from_phone" class="tbox form-control" value="'.$tp->toTEXT($msg_from_phone).'" placeholder="'.EST_MSG_YOUREPHONE.'" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <textarea name="" class="tbox form-control" cols="40" rows="6" placeholder="'.EST_MSG_MSGTXTPL.'">'.$tp->toTEXT($DTA['msg_text']).'</textarea>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>';
+  
+  return $ret;
+  }
+
+
+
+  /*
+  
+  EST_MSG_YOURNAME
+  
+  
+  
+  
+  
+  if('inbox' == $which)
+		{
+			$qry = "SELECT count(pm.pm_id) AS total, SUM(pm.pm_size)/1024 size, SUM(pm.pm_read = 0) as unread FROM `#private_msg` as pm WHERE pm.pm_to = ".USERID." AND pm.pm_read_del = 0";
+		}
+		else
+		{
+			$qry = "SELECT count(pm.pm_from) AS total, SUM(pm.pm_size)/1024 size, SUM(pm.pm_read = 0) as unread FROM `#private_msg` as pm WHERE pm.pm_from = ".USERID." AND pm.pm_sent_del = 0";
+		}
+    
+    
+    
+	function pm_get($pmid)
+	{
+		$qry = "
+		SELECT pm.*, ut.user_image AS sent_image, ut.user_name AS sent_name, uf.user_image AS from_image, uf.user_name AS from_name, uf.user_email as from_email, ut.user_email as to_email  FROM #private_msg AS pm
+		LEFT JOIN #user AS ut ON ut.user_id = pm.pm_to
+		LEFT JOIN #user AS uf ON uf.user_id = pm.pm_from
+		WHERE pm.pm_id='".intval($pmid)."'
+		";
+		if (e107::getDb()->gen($qry))
+		{
+			$row = e107::getDb()->fetch();
+			return $row;
+		}
+		return FALSE;
+	}
+    
+  
+	function add($vars)
+	{
+
+		$tp = e107::getParser();
+		$sql = e107::getDb();
+		$pmsize = 0;
+		$attachlist = '';
+		$pm_options = '';
+		$ret = '';
+		$addOutbox = TRUE;
+		$timestamp = time();
+		$a_list = array();
+
+		$maxSendNow = varset($this->pmPrefs['pm_max_send'],100);	// Maximum number of PMs to send without queueing them
+		if (isset($vars['pm_from']))
+		{	// Doing bulk send off cron task
+			$info = array();
+			foreach ($vars as $k => $v)
+			{
+				if (strpos($k, 'pm_') === 0)
+				{
+					$info[$k] = $v;
+					unset($vars[$k]);
+				}
+			}
+			$addOutbox = FALSE;			// Don't add to outbox - was done earlier
+		}
+		else
+		{	// Send triggered by user - may be immediate or bulk dependent on number of recipients
+			$vars['options'] = '';
+			if(isset($vars['receipt']) && $vars['receipt']) {$pm_options .= '+rr+';	}
+
+			if(isset($vars['uploaded']))
+			{
+				foreach($vars['uploaded'] as $u)
+				{
+					if (!isset($u['error']) || !$u['error'])
+					{
+						$pmsize += $u['size'];
+						$a_list[] = $u['name'];
+					}
+				}
+				$attachlist = implode(chr(0), $a_list);
+			}
+			$pmsize += strlen($vars['pm_message']);
+
+			$pm_subject = trim($tp->toDB($vars['pm_subject']));
+			$pm_message = trim($tp->toDB($vars['pm_message']));
+			
+			if (!$pm_subject && !$pm_message && !$attachlist)
+			{  // Error - no subject, no message body and no uploaded files
+				return LAN_PM_65;
+			}
+			
+			// Most of the pm info is fixed - just need to set the 'to' user on each send
+			$info = array(
+				'pm_from' => $vars['from_id'],
+				'pm_sent' => $timestamp,				
+				'pm_read' => 0,						
+				'pm_subject' => $pm_subject,
+				'pm_text' => $pm_message,
+				'pm_sent_del' => 0,						
+				'pm_read_del' => 0,						
+				'pm_attachments' => $attachlist,
+				'pm_option' => $pm_options,	
+				'pm_size' => $pmsize
+				);
+
+		//	print_a($info);
+		//	print_a($vars);
+		}
+
+		if(!empty($vars['pm_userclass']) || isset($vars['to_array']))
+		{
+			if(!empty($vars['pm_userclass']))
+			{
+				$toclass = e107::getUserClass()->getName($vars['pm_userclass']);
+				$tolist = $this->get_users_inclass($vars['pm_userclass']);
+				$ret .= LAN_PM_38.": {$toclass}<br />";
+				$class = TRUE;
+				$info['pm_sent_del'] = 1; // keep the outbox clean and limited to 1 entry when sending to an entire class.
+			}
+			else
+			{
+				$tolist = $vars['to_array'];
+				$class = FALSE;
+			}
+			// Sending multiple PMs here. If more than some number ($maxSendNow), need to split into blocks.
+			if (count($tolist) > $maxSendNow)
+			{
+				$totalSend = count($tolist);
+				$targets = array_chunk($tolist, $maxSendNow);		// Split into a number of lists, each with the maximum number of elements (apart from the last block, of course)
+				unset($tolist);
+
+				$pmInfo = $info;
+				$genInfo = array(
+					'gen_type' => 'pm_bulk',
+					'gen_datestamp' => time(),
+					'gen_user_id' => USERID,
+					'gen_ip' => ''
+					);
+				for ($i = 0; $i < count($targets) - 1; $i++)
+				{	// Save the list in the 'generic' table
+					$pmInfo['to_array'] = $targets[$i];			// Should be in exactly the right format
+					$genInfo['gen_intdata'] = count($targets[$i]);
+					$genInfo['gen_chardata'] = e107::serialize($pmInfo,TRUE);
+					$sql->insert('generic', array('data' => $genInfo, '_FIELD_TYPES' => array('gen_chardata' => 'string')));	// Don't want any of the clever sanitising now
+				}
+				$toclass .= ' ['.$totalSend.']';
+				$tolist = $targets[count($targets) - 1];		// Send the residue now (means user probably isn't kept hanging around too long if sending lots)
+				unset($targets);
+			}
+			foreach($tolist as $u)
+			{
+				set_time_limit(30);
+				$info['pm_to'] = intval($u['user_id']);		// Sending to a single user now
+
+				if($pmid = $sql->insert('private_msg', $info))
+				{
+					$info['pm_id'] = $pmid;
+					e107::getEvent()->trigger('user_pm_sent', $info);
+
+					unset($info['pm_id']); // prevent it from being used on the next record.
+
+					if($class == FALSE)
+					{
+						$toclass .= $u['user_name'].', ';
+					}
+					if(check_class($this->pmPrefs['notify_class'], null, $u['user_id']))
+					{
+						$vars['to_info'] = $u;
+						$vars['pm_sent'] = $timestamp;
+						$this->pm_send_notify($u['user_id'], $vars, $pmid, count($a_list));
+					}
+				}
+				else
+				{
+					$ret .= LAN_PM_39.": {$u['user_name']} <br />";
+					e107::getMessage()->addDebug($sql->getLastErrorText());
+				}
+			}
+			if ($addOutbox)
+			{
+				$info['pm_to'] = $toclass;		// Class info to put into outbox
+				$info['pm_sent_del'] = 0;
+				$info['pm_read_del'] = 1;
+				if(!$pmid = $sql->insert('private_msg', $info))
+				{
+					$ret .= LAN_PM_41.'<br />';
+				}
+			}
+			
+		}
+		else
+		{	// Sending to a single person
+			$info['pm_to'] = intval($vars['to_info']['user_id']);		// Sending to a single user now
+
+
+
+
+			if($pmid = $sql->insert('private_msg', $info))
+			{
+				$info['pm_id'] = $pmid;
+				$info['pm_sent'] = $timestamp;
+				e107::getEvent()->trigger('user_pm_sent', $info);
+
+
+				if(check_class($this->pmPrefs['notify_class'], null, $vars['to_info']['user_id']))
+				{
+					set_time_limit(20);
+					$vars['pm_sent'] = $timestamp;
+					$this->pm_send_notify($vars['to_info']['user_id'], $vars, $pmid, count($a_list));
+				}
+				$ret .= LAN_PM_40.": {$vars['to_info']['user_name']}<br />";
+			}
+		}
+		return $ret;
+	}
+    
+    
+  */
+
+
+?>

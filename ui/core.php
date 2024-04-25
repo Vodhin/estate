@@ -69,11 +69,13 @@ class estateCore{
         }
       }
     
-    if(!defined(EST_AGENTID)){
+    if(!defined("EST_AGENTID")){
       $EST_AGENT = $this->estGetUserById(USERID);
       $EST_AGENT['perm'] = intval(EST_USERPERM);
       define("EST_AGENTID",intval($EST_AGENT['agent_idx']));
       define("EST_AGENCYID",intval($EST_AGENT['agent_agcy']));
+      define("EST_SELLERUID",intval($EST_AGENT['agent_uid']));
+      $msg->addInfo('Defined in Core Init: '.$EST_AGENT['agent_name'].' ');
       }
     }
   
@@ -2158,7 +2160,6 @@ class estateCore{
   
   
   
-  //public function estGetAgentData($id=0){}
   
   
 	public function estGetCompContacts($id=0){

@@ -1091,6 +1091,45 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' => array (), 
         'writeParms' => array('size'=>'large'),
         ),
+			
+      'contact_notify'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_CONTACTNOTIFY,
+        'type'=>'boolean',
+        'data'=>'int',
+        'help'=>EST_PREF_CONTACTNOTIFYHLP,
+        ),
+        
+			'listing_save'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_LISTINGSAVE,
+        'type'=>'userclass',
+        'data'=>'int',
+        'help'=>EST_PREF_LISTINGSAVEHLP,
+        ),
+        
+			'contact_class' => array (
+        'tab'=>0,
+        'title' => EST_PREF_CONTACTFORM,
+        'type'=>'userclass',
+        'data' => 'str',
+        'width' => 'auto',
+        'help' => EST_PREF_CONTACTFORMHLP,
+        'readParms' => array (), 
+        'writeParms' => array('size'=>'large'),
+        ),
+      'contact_mode'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_CONTACTMODE,
+        'type'=>'dropdown',
+        'data'=>'str',
+        'help'=>EST_PREF_CONTACTMODEHLP,
+        'width' => 'auto',
+        'writeParms' => array(
+          'size'=>'xlarge',
+          'optArray'=>array(0=>EST_PREF_CONTACTMODE0,1=>EST_PREF_CONTACTMODE1,2=>EST_PREF_CONTACTMODE2,3=>EST_PREF_CONTACTMODE3)
+          ),
+        ),
         
 			'country' => array (
         'tab'=>0,
@@ -1113,7 +1152,7 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' => array (), 
         'writeParms' => array('size'=>'small','optArray'=>EST_CURSYMB),
         ),
-        
+      
       
       'layout_preview_listpage'=>array(
         'tab'=>1,
