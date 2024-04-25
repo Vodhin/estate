@@ -367,6 +367,23 @@ define("EST_PREF_AGNTBG0","No Agent Background");
 define("EST_PREF_AGNTBG1","Agent Smoked Glass Background");
 define("EST_PREF_AGNTCARDBG","Agent Card Background");
 
+
+
+define("EST_PREF_CONTACTFORM","Contact Form");
+define("EST_PREF_CONTACTFORMHLP","Who can use the Estate Plugin's Contact Form");
+
+define("EST_PREF_CONTACTNOTIFY","Agent/Seller Notifications");
+define("EST_PREF_CONTACTNOTIFYHLP","Notify the Agent/Seller via email when someone uses the Contact Form or Saves a Listing. Agents/Sellers can always review activity on this website.");
+
+define("EST_PREF_CONTACTMODE","Contact Mode");
+define("EST_PREF_CONTACTMODE0","For All Listings - Hide e-mail");
+define("EST_PREF_CONTACTMODE1","For All Listings - Display e-mail");
+define("EST_PREF_CONTACTMODE2","Only Agent Listings - Hide e-mail");
+define("EST_PREF_CONTACTMODE3","Only Agent Listings - Display e-mail");
+define("EST_PREF_CONTACTMODEHLP","Choose which Listings will use the Contact Form and if the Agent/Seller e-mail is displayed");
+
+
+
 define("EST_PREF_DEFAGTHRS","Default Agent Hours");
 define("EST_PREF_DEFAGTHRSHLP","The default hours for creating a New Agent. Each Agent can customize their own hours");
 define("EST_PREF_DEFEVTLEN","Default Event Lengths");
@@ -384,6 +401,8 @@ define("EST_PREF_HELPINFULL","Expanded Help Menu");
 define("EST_PREF_HELPINFULLHLP","If enabled, the Help Menu will always be shown in full height.");
 
 define("EST_PREF_LAYOUT_NOLISTINGS","No Listings To Preview");
+define("EST_PREF_LISTINGSAVE","Listing Saves");
+define("EST_PREF_LISTINGSAVEHLP","Who can Save Listings on their Device (Uses cookies). ");
 define("EST_PREF_MAPLISTABOVE","Map Above Listings");
 define("EST_PREF_MAPLISTBELOW","Map Below Listings");
 define("EST_PREF_MAPBG","MAP Background");
