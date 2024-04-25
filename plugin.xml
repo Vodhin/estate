@@ -19,6 +19,9 @@
 	<pluginPrefs>
 		<pref name='addnewuser'>3</pref>
 		<pref name='adminonly'>0</pref>
+		<pref name='contact_class'>0</pref>
+		<pref name='contact_notify'>1</pref>
+		<pref name='contact_mode'>1</pref>
 		<pref name='country'>us</pref>
     <pref name='currency'>0</pref>
 		<pref name='helpinfull'>1</pref>
@@ -38,6 +41,7 @@
 		<pref name='layout_view_spacetilebg'>estBGGrad2</pref>
 		<pref name='layout_view_spacedynbg'>estBGGrad2</pref>
 		<pref name='layout_view_summbg'>estBGGrad1</pref>
+		<pref name='listing_save'>1</pref>
 		<pref name='pref_addr_lookup'>New York, NY</pref>
 		<pref name='map_height'>320</pref>
     <pref name='map_jssrc'>1</pref>

@@ -7,6 +7,27 @@ if(e107::isInstalled('estate')){
   define("EST_USRLEVELS",array("",EST_ULVAGENT,EST_ULVMANAGER,EST_ULVADMIN,EST_ULVMAINADMIN));
   
   
+  if(USERID > 0){
+    $tp = e107::getParser();
+    $sql = e107::getDB();
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_class,user_admin,user_perms,user_signature,user_image FROM #user WHERE user_id = '".USERID."'");
+    if($ret1 = $sql->fetch()){
+      $ret1['user_profimg'] = $tp->toAvatar($ret1,array('type'=>'url'));
+      
+      if($sql->gen("SELECT #estate_agents.*, #estate_agencies.* FROM #estate_agents  LEFT JOIN #estate_agencies ON agent_agcy = agency_idx WHERE agent_uid = '".USERID."' LIMIT 1")){
+        $ret2 = $sql->fetch();
+        define("EST_AGENTID",intval($ret2['agent_idx']));
+        define("EST_AGENCYID",intval($ret2['agent_agcy']));
+        define("EST_SELLERUID",intval($ret2['agent_uid']));
+        //e107::getMessage()->addInfo('Defined in e_module: '.$ret2['agent_name'].' ');
+        }
+      }
+    }
+  
+  if(!defined("EST_SELLERUID")){define("EST_SELLERUID",intval(USERID));}
+  //e107::getMessage()->addInfo('SELLERUID: '.EST_SELLERUID.' ');
+  
+  
   // get classes for plugin and define them
   $EST_CLASSES = array('ESTATE ADMIN'=>false,'ESTATE MANAGER'=>false,'ESTATE AGENT'=>false);
   foreach($EST_CLASSES as $k=>$v){
@@ -21,7 +42,6 @@ if(e107::isInstalled('estate')){
     define("EST_USERPERM", 4);
     define("EST_USERROLE", EST_GEN_MAIN." ".EST_GEN_ADMIN);
     define("EST_USERMANAGE", array(ESTATE_ADMIN,ESTATE_MANAGER,ESTATE_AGENT));
-    //e107::getMessage()->addInfo(SITEURLBASE.e_ADMIN_ABS."updateadmin.php");
     }
   else{
     if(check_class(ESTATE_ADMIN)){
@@ -43,7 +63,6 @@ if(e107::isInstalled('estate')){
       define("EST_USERPERM", intval(0));
       }
     // NOT A MAIN ADMIN, redirect user to estate admin area if only access to estate plugin is allowed
-    
     if(e_ADMIN_AREA === true && EST_USERPERM > 0){
       $CHKESTPERMS = explode('.',ADMINPERMS);
       if(count($CHKESTPERMS) == 1 && in_array(EST_PLUGID,$CHKESTPERMS)){
@@ -57,6 +76,14 @@ if(e107::isInstalled('estate')){
         }
       unset($CHKESTPERMS);
       }
+    }
+  
+  //
+  if(check_class(e107::pref('estate','listing_save'))){
+    }
+  
+  if(check_class(e107::pref('estate','contact_class'))){
+    require_once(e_PLUGIN.'estate/ui/msg.php');
     }
   }
 ?>

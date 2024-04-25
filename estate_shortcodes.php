@@ -34,12 +34,12 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_prop_list_editlnk($parm){
-    $AGENT = $this->estGetAgent();
+    $AGENT = $this->estGetSeller();
     $lnk = '';
     $lnkgo = 0;
     
     if(EST_USERPERM > 0){
-      $AGENT = $this->estGetAgent();
+      $AGENT = $this->estGetSeller();
       $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
       $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
       if(EST_USERPERM > 2){$lnkgo++;}
@@ -64,7 +64,7 @@ class estate_shortcodes extends e_shortcode{
 		$tp = e107::getParser();
     $lnk = '';
     if(EST_USERPERM > 0){
-      $AGENT = $this->estGetAgent();
+      $AGENT = $this->estGetSeller();
       $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
       $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
       if(EST_USERPERM > 2){
@@ -104,7 +104,7 @@ class estate_shortcodes extends e_shortcode{
 		$tp = e107::getParser();
     $lnk = '';
     if(ADMIN){
-      $AGENT = $this->estGetAgent();
+      $AGENT = $this->estGetSeller();
       if(EST_USERPERM > 2){
         $lnk = '<a class="FR" href="'.EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']).'">EDIT</a>';
         }
@@ -498,16 +498,11 @@ class estate_shortcodes extends e_shortcode{
     }
   
   
-  //PROP_FEATURES
   function sc_prop_latlng($parm){}
   
   
   
-  function estGetAgency($AGYID){
-    }
-  
-  
-  function estGetAgent(){
+  function estGetSeller(){
     $sql = e107::getDb();
 		$tp = e107::getParser();
     $ret = array();
@@ -560,6 +555,7 @@ class estate_shortcodes extends e_shortcode{
       if($EUSR = $sql->retrieve("SELECT user_id,user_name,user_email,user_hideemail,user_image FROM #user WHERE user_id=".$PROPUID." ",true)){
         $ret['imgurl'] = $tp->toAvatar($EUSR[0],array('type'=>'url'));
         $ret['agent_name'] = $tp->toHTML($EUSR[0]['user_name']);
+        $ret['agent_uid'] = intval($EUSR[0]['user_id']);
         //if(intval($EUSR[0]['user_hideemail']) !== 1){
           $ret['contacts'][6][0] = array($tp->toHTML(EST_GEN_EMAIL),$tp->toHTML($EUSR[0]['user_email']));
           //}
@@ -577,9 +573,13 @@ class estate_shortcodes extends e_shortcode{
   
   function sc_prop_compcard($parm,$AGENT){}
   
+  
+  
+  
   function sc_prop_agentcard($parm){
 		$tp = e107::getParser();
-    $AGENT = $this->estGetAgent();
+    $EST_PREF = e107::pref('estate');
+    $AGENT = $this->estGetSeller();
     if(intval($AGENT['oa']) == 1){$dtastr = $this->estDataStr($AGENT);}
     
     $ret = '
@@ -591,9 +591,11 @@ class estate_shortcodes extends e_shortcode{
           <div class="estAgtAvatar" style="background-image:url(\''.$AGENT['imgurl'].'\')"></div>';
       }
      
-     $ret .= '
-          <div class="estAgtInfo1">
-            <h3>'.$tp->toHTML($AGENT['agent_name']).'</h3>';
+    $ret .= '
+          <div class="estAgtInfo1">';
+    
+    $ret .= '<h3>'.$tp->toHTML($AGENT['agent_name']).'</h3>';
+    
     
     if(trim($AGENT['agent_txt1']) !== ''){
       $ret .= '
@@ -601,7 +603,7 @@ class estate_shortcodes extends e_shortcode{
       }
     
       
-    if($AGENT['contacts'][6]){
+    if(count($AGENT['contacts'][6]) > 0){
       $ret .= '
             <div class="estAgContact">';
       foreach($AGENT['contacts'][6] as $ck=>$cv){
@@ -612,10 +614,29 @@ class estate_shortcodes extends e_shortcode{
             </div>';
       }
     
+    
+    
     $ret .= '
           </div>
-        </div>
+        </div>';
+    
+    if(check_class($EST_PREF['contact_class'])){
+      $ret .= '
+      </div>
+      <div id="estMsgModule" class="estViewSect noPADTB">';
+      $this->var['msg_uid_to'] = $AGENT['agent_uid'];
+      $this->var['prop_seller'] = $AGENT['agent_name'];
+      
+      $ret .= '
+          <div id="estMsgCard" class="estAgCard">';
+      $ret .= est_msg_form(1,$this->var);
+      $ret .= '
+        </div>';
+      }
+    else{
+        $ret .= '
       </div>';
+      }
     
     if($AGENT['agency']){
       
@@ -629,6 +650,34 @@ class estate_shortcodes extends e_shortcode{
   
   
   
+  function sc_prop_menu_head($parm){
+		$tp = e107::getParser();
+    $ret = $tp->toHTML($this->var['prop_name']);
+    if(check_class(e107::pref('estate','listing_save'))){
+        $ret .= '<a class="FR"><i class="fa fa-pencil-square-o"></i></a>';
+        }
+    
+    return $ret;
+    }
+  
+  
+  //PROP_AGENTCARD
+  
+  function sc_prop_saved_list($parm){
+    if(check_class(e107::pref('estate','listing_save'))){
+  		$tp = e107::getParser();
+      $ret .= '<div></div>';
+      return $ret;
+      }
+    }
+  
+  
+  function sc_prop_msg_card($parm){
+    if(check_class(e107::pref('estate','contact_class'))){
+		  $tp = e107::getParser();
+      return $ret;
+      }
+    }
   
   
   function estPropStat($DTA){

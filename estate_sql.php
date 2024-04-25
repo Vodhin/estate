@@ -149,6 +149,22 @@ CREATE TABLE `estate_media` (
   PRIMARY KEY (`media_idx`)
 ) ENGINE=InnoDB;
 
+CREATE TABLE `estate_msg` (
+  `msg_idx` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `msg_sent` int(10) unsigned NOT NULL default '0',
+  `msg_read` int(10) unsigned NOT NULL default '0',
+  `msg_uid_to` int(10) unsigned NOT NULL default '0',
+  `msg_mode` tinyint(1) unsigned NOT NULL default '0',
+  `msg_propidx` int(11) unsigned NOT NULL default '0',
+  `msg_from_uid` int(10) unsigned NOT NULL default '0',
+  `msg_from_ip` varchar(55) NOT NULL default '',
+  `msg_from_name` varchar(55) NOT NULL,
+  `msg_from_email` varchar(65) NOT NULL,
+  `msg_from_phone` varchar(25) NOT NULL,
+  `msg_text` text NOT NULL,
+  PRIMARY KEY (`msg_idx`)
+) ENGINE=InnoDB;
+
 CREATE TABLE `estate_properties` (
   `prop_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `prop_mlsno` varchar(100) NOT NULL,
@@ -262,13 +278,11 @@ CREATE TABLE `estate_subdiv` (
   PRIMARY KEY (`subd_idx`)
 ) ENGINE=InnoDB;
 
-
 CREATE TABLE `estate_user` (
   `user_idx` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_name` varchar(25) NOT NULL,
   PRIMARY KEY (`user_idx`)
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE `estate_zoning` (
   `zoning_idx` int(10) unsigned NOT NULL AUTO_INCREMENT,
