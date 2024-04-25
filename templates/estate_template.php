@@ -48,7 +48,7 @@ else{
   $ESTATE_TEMPLATE['list']['map'] = '';
   }
 
-//
+
 
 $ESTATE_TEMPLATE['list']['item'] 	= '
   <a class="estListBlockA" href="{PROP_LIST_LINKVIEW}">
@@ -74,7 +74,41 @@ $ESTATE_TEMPLATE['list']['item'] 	= '
 
 
 
+$ESTATE_TEMPLATE['menu']['head'] = '<div id="estPlugMenu0Cap">{PROP_MENU_HEAD}</div>';
 
+$ESTATE_TEMPLATE['menu']['saved'] = '
+  <div id="estSavedModule" class="estViewSect noPADTB">
+    <h3>Saved Listings</h3>
+    {PROP_SAVED_LIST}
+  </div>
+  ';
+
+$ESTATE_TEMPLATE['menu']['seller'] = '
+    <div id="estViewBoxSummaryMenu">
+      <div id="estInfoModule" class="estViewSect">
+        <div class="estViewMod">
+          <h3 id="estSidebar1Capt" class="sumCapt">{PROP_STATUS}</h3>
+          <div><span class="FR">{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
+          <div>{PROP_MODELNAME}</div>
+        </div>
+      </div>
+      
+      <div id="estAgntModule" class="estViewSect noPADTB">
+        {PROP_AGENTCARD:img=1}
+          {PROP_MSG_CARD}
+        </div>
+      </div>
+      
+      <div id="estOpenHouseModule" class="estViewSect">
+        <div class="estViewMod">
+          <h3 class="caption">'.EST_GEN_EVENTS.'</h3>
+          <div class="estDet2Cont">
+            {PROP_VIEW_OPENHOUSE}
+          </div>
+        </div>
+      </div>
+    </div>
+  ';
 
 
 //VIEW LISTING TEMPLATE
@@ -86,8 +120,13 @@ $ESTATE_TEMPLATE['view']['top'] = '
   </div>';
 
 
+
+
 $ESTATE_TEMPLATE['view']['sum'] = '
-  <div id="estViewBoxSummary" class="estViewBoxMid '.$EST_PREF['layout_view_agent'].' flexStretch '.$EST_PREF['layout_view_summbg'].'">
+  <div id="estViewBoxSummary" class="estViewBoxMid '.$EST_PREF['layout_view_agent'].' flexStretch '.$EST_PREF['layout_view_summbg'].'">';
+  
+if(strpos(strtolower(THEME_LAYOUT),'full') === true){
+  $ESTATE_TEMPLATE['view']['sum'] .= '
     <div id="estViewBoxSummarySB" class="'.$EST_PREF['layout_view_agntbg'].'">
       <div class="estViewBoxCont">
         <div id="estInfoModule" class="estViewSect">
@@ -109,7 +148,10 @@ $ESTATE_TEMPLATE['view']['sum'] = '
           </div>
         </div>
       </div>
-    </div>
+    </div>';
+  }
+
+$ESTATE_TEMPLATE['view']['sum'] .= '
     <div id="estViewBoxSummaryOverview">
       <div class="estViewBoxCont">
         <div class="estViewSect">
