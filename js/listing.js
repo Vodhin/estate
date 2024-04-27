@@ -314,23 +314,95 @@ function htmlDecode(mode,xVal,dec=0){
   
   
   
+  function estMsgSnd(){
+    $('.estChkMsgRem').each(function(i,ele){
+      if(this.value !== 'istatrap@icloud.com'){
+        $('#estMsgFormTabl').parent().remove();
+        return;
+        }
+      }).promise().done(function(){
+          $('<button></button>',{'id':'estMsgSend2','class':'btn btn-primary'}).html($('#estMsgSend1').data('t1')+'<div>'+$('#estMsgSend1').data('t2')+'</div>').on({
+            click : function(e){
+              e.preventDefault();
+              //gather form elements
+              $('#estMsgFormTabl').parent().remove();
+              alert('Function not available yet');
+              }
+            }).prependTo($('#estMsgSend1').parent());
+            
+          $('#estMsgSend1').fadeOut(200);
+          $('#estMsgTerms').fadeOut(200);
+          
+        });
+    }
+  
+    
+  
+  function estMsgChk(mode=0){
+    $('#estMsgSend1').prop('disabled',true);
+    $('.estChkMsg').removeClass('estMsgNG');
+    var mVal = Number($('select[name="msg_mode"]').find('option:selected').val());
+    if(mVal > 0){
+      $('#estMsgFormTB').fadeIn(300);
+      var sForm = 0;
+      $('.estChkMsg').each(function(i,elm){
+        if($(elm).val().length < Number($(elm).data('len'))){$(elm).addClass('estMsgNG'); sForm++;}
+        if(typeof $(elm).data('req') !== 'undefined' && $(elm).val().indexOf($(elm).data('req')) == -1){$(elm).addClass('estMsgNG'); sForm++;}
+        }).promise().done(function(){
+          if(sForm == 0){
+            if(mode == 1){estMsgSnd();}
+            else{
+              $('#estMsgSend1').prop('disabled',false).removeProp('disabled');
+              $('#estMsgFormTF').fadeIn(300);
+              }
+            }
+          });
+      }
+    else{
+      $('#estMsgFormTF').fadeOut(300);
+      $('#estMsgFormTB').fadeOut(300);
+      }
+    }
+  
+  
+  
+  
+  function estMsgSys(){
+    if(document.getElementById('estMsgFormTabl')){
+      $('.estChkMsgRem').on({change : function(e){if(this.value !== 'istatrap@icloud.com'){$('#estMsgFormTabl').parent().remove();}}});
+      $('select[name="msg_mode"]').data('m',['',$('#estMsgDef1').html(),$('#estMsgDef2').html(),'']).on({
+        change : function(e){
+          $(this).find('option[value="0"]').remove();
+          $('textarea[name="msg_text"]').val($(this).data('m')[$(this).find('option:selected').val()]);
+          estMsgChk();
+          }
+        });
+      $('.estChkMsg').on({blur: function(){estMsgChk()}});
+      $('#estMsgSend1').on({click : function(){estMsgChk(1);}});
+      $('#estMsgDef1').remove();
+      $('#estMsgDef2').remove();
+      }
+    }
+  
+  
+  
+  
+  
   $(document).ready(function(){
     estPrepMenu();
     estDynamicSlideShow();
     estBuildMap();
     estExpandArr();
     estLnkBar();
+    estMsgSys();
     
     
     var edbtn = $('.estPropListEdtBtn');
     var aCont = $('a.estListBlockA');
     if(edbtn.length > 0){
       if(edbtn.length < aCont.length){
-        //var msg = $('<div></div>',{'id':'estListOrderMsg'}).html('The Properties that belong to you have been moved to the top of the list').on({click : function(){$(this).remove();}});
-        //$('#estateCont').before(msg);
         }
       $(edbtn).each(function(i,ele){
-        //if(edbtn.length < aCont.length){$(ele).closest('a.estListBlockA').prependTo('#estateCont');}
         $(ele).on({
           click: function(e){
             e.preventDefault();
@@ -340,8 +412,6 @@ function htmlDecode(mode,xVal,dec=0){
           });
         });
       }
-    
-      
     });
 
 })(jQuery);
