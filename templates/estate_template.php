@@ -12,8 +12,8 @@ if(defined('THEME_LAYOUT')){
   if($EST_PREF['layout_view_spaces'] !== 'dynamicf' && strpos(strtolower(THEME_LAYOUT),'full') === false){$EST_PREF['layout_view_spaces'] = 'default';}
   }
 
+    
 $ESTATE_TEMPLATE = array();
-
 //CORE TEMPLATE
 $ESTATE_TEMPLATE['noview'] = '
 <div id="estateCont">
@@ -36,7 +36,7 @@ $ESTATE_TEMPLATE['pins'] = '{PROP_MAP_PINS}';
 
 
 //LIST OF LISTINGS
-$ESTATE_TEMPLATE['list']['elnk'] = '<div id="estMiniSrc">{PROP_NEWLNK}</div>';
+$ESTATE_TEMPLATE['list']['elnk'] = '<div id="estMiniSrc">{PROP_EDITICONS:for=new}</div>';
 
 if(intval($EST_PREF['layout_list_map']) > 0){
   $ESTATE_TEMPLATE['list']['map']	= '
@@ -49,15 +49,15 @@ else{
   }
 
 
-
+//{PROP_SUBDIVNAME}
 $ESTATE_TEMPLATE['list']['item'] 	= '
   <a class="estListBlockA" href="{PROP_LIST_LINKVIEW}">
     <div class="estListBlock '.$EST_PREF['layout_list'].'">
+      {PROP_EDITICONS:for=list}
       <div class="estListPropHead">
         <div class="estListPropHeadD1">{PROP_NAME}</div>
         <div class="estListPropHeadD2">{PROP_BULLETS1} • {PROP_VIEWCOUNT}</div>
-        <div class="estListPropHeadD3">{PROP_CITYSTATE}{PROP_SUBDIVNAME}</div>
-        {PROP_LIST_EDITLNK}
+        <div class="estListPropHeadD3">{PROP_CITYSTATE}</div>
       </div>
       <div class="estListPropImg" style="{PROP_THMSTY}">{PROP_LISTTHM_BANNER}</div>
       <div class="estListPropInfo">
@@ -112,7 +112,8 @@ $ESTATE_TEMPLATE['menu']['seller'] = '
 
 
 //VIEW LISTING TEMPLATE
-$ESTATE_TEMPLATE['view']['elnk'] = '<div id="estMiniSrc">{PROP_NEWLNK}{PROP_EDITLNK}</div>';
+//{PROP_NEWLNK}{PROP_EDITLNK}
+$ESTATE_TEMPLATE['view']['elnk'] = '<div id="estMiniSrc">{PROP_EDITICONS:for=view}</div>';
 
 $ESTATE_TEMPLATE['view']['top'] = '
   <div id="estViewBoxTop"'.($EST_PREF['slideshow_act'] == 1 ? ' class="estSlideshow" title="'.EST_GEN_PLAYPAUSESLIDE.'"' : '').'>
@@ -123,10 +124,7 @@ $ESTATE_TEMPLATE['view']['top'] = '
 
 
 $ESTATE_TEMPLATE['view']['sum'] = '
-  <div id="estViewBoxSummary" class="estViewBoxMid '.$EST_PREF['layout_view_agent'].' flexStretch '.$EST_PREF['layout_view_summbg'].'">';
-  
-if(strpos(strtolower(THEME_LAYOUT),'full') === true){
-  $ESTATE_TEMPLATE['view']['sum'] .= '
+  <div id="estViewBoxSummary" class="estViewBoxMid '.$EST_PREF['layout_view_agent'].' flexStretch '.$EST_PREF['layout_view_summbg'].'">
     <div id="estViewBoxSummarySB" class="'.$EST_PREF['layout_view_agntbg'].'">
       <div class="estViewBoxCont">
         <div id="estInfoModule" class="estViewSect">
@@ -148,10 +146,7 @@ if(strpos(strtolower(THEME_LAYOUT),'full') === true){
           </div>
         </div>
       </div>
-    </div>';
-  }
-
-$ESTATE_TEMPLATE['view']['sum'] .= '
+    </div>
     <div id="estViewBoxSummaryOverview">
       <div class="estViewBoxCont">
         <div class="estViewSect">
@@ -176,6 +171,9 @@ $ESTATE_TEMPLATE['view']['sum'] .= '
     </div>
   </div>';
   
+
+//
+$EST_PREF['layout_view_spaces'] = 'tiles';
 
 if(count($GLOBALS['EST_SPACES'])){
   $ESTATE_TEMPLATE['view']['spaces'] = '
