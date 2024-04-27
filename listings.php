@@ -20,6 +20,7 @@ if($phpinf[0] > 7 || $phpinf[0] < 5){
 
 
 
+
 e107::css('url',e_PLUGIN.'estate/css/listings.css');
 e107::css('url',e_PLUGIN.'estate/css/viewtop.css');
 e107::css('url',e_PLUGIN.'estate/css/spaces.css');
@@ -99,7 +100,7 @@ if(!ADMIN){$WHERE = "WHERE prop_status > 0 AND (prop_datepull > ".$STRTIMENOW." 
 
 
 $MQRY = "
-  SELECT #estate_properties.*, city_name, city_url, city_timezone, state_init, state_url, cnty_name, cnty_url
+  SELECT #estate_properties.*, city_name, city_url, city_timezone, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.*
   FROM #estate_properties
   LEFT JOIN #estate_city
   ON city_idx = prop_city
@@ -107,6 +108,12 @@ $MQRY = "
   ON cnty_idx = prop_county
   LEFT JOIN #estate_states
   ON state_idx = prop_state
+  LEFT JOIN #estate_agents
+  ON agent_idx = prop_agent
+  LEFT JOIN #user
+  ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid)
+  LEFT JOIN #estate_agencies 
+  ON agent_agcy=agency_idx 
   ";
   
   
@@ -136,9 +143,35 @@ if(!$estQdta = $sql->retrieve($query,true)){
   exit;
   }
 
+
+$dberr = $sql->getLastErrorText();
+if($dberr){e107::getMessage()->addError($dberr);}
+
+
+
 include_once('ui/qry.php');
 
 if(count($EST_PROP) > 0){
+
+  foreach($EST_PROP as $PK=>$PV){
+    $DBTST .= '<p>';
+    foreach($PV as $DK=>$DV){
+      $DBTST .= '<div>['.$DK.']';
+      if(is_array($DV)){
+        foreach($DV as $CK=>$CV){
+          $DBTST .= '<div>...['.$CK.'] '.$CV.'</div>';
+          }
+        }
+      else{
+        $DBTST .= ' '.$DV;
+        }
+      $DBTST .= '</div>';
+      }
+    $DBTST .= '</p><br />';
+    }
+  unset($DBTST);
+  
+  
   
   if($qs[0] == 'view'){
     
@@ -156,7 +189,7 @@ if(count($EST_PROP) > 0){
         $PROPDTA[0]['prop_views'] = $PROPDTA[0]['prop_views'] + 1;
         $sql->update("estate_properties","prop_views='".$PROPDTA[0]['prop_views']."' WHERE prop_idx='".$PROPID."' LIMIT 1");
         }
-        
+      
       
       $tmpl = e107::getTemplate('estate');
       $sc = e107::getScBatch('estate',true);
@@ -174,6 +207,11 @@ if(count($EST_PROP) > 0){
       //e107::meta('apple-mobile-web-app-capable','yes'); // example
       
       require_once(HEADERF);
+      if($DBTST){
+        $ns->tablerender('DB TEST',$DBTST,'estate-test');
+        unset($DBTST);
+        }
+        
       
       $estText .= $tp->parseTemplate($tmpl['start'], false);
       $estText .= $tp->parseTemplate($tmpl['view']['top'], false, $sc);
@@ -204,6 +242,7 @@ if(count($EST_PROP) > 0){
             $EST_PREF['layout_list'] = $tp->toTEXT($NP[0]);
             $EST_PREF['layout_list_map'] = intval($NP[1]);
             $EST_PREF['layout_list_mapagnt'] = intval($NP[2]);
+            $EST_PREF['layout_list_agent'] = intval($NP[3]);
             break;
           
           case 'top' :

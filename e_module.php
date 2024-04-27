@@ -27,7 +27,6 @@ if(e107::isInstalled('estate')){
   if(!defined("EST_SELLERUID")){define("EST_SELLERUID",intval(USERID));}
   //e107::getMessage()->addInfo('SELLERUID: '.EST_SELLERUID.' ');
   
-  
   // get classes for plugin and define them
   $EST_CLASSES = array('ESTATE ADMIN'=>false,'ESTATE MANAGER'=>false,'ESTATE AGENT'=>false);
   foreach($EST_CLASSES as $k=>$v){

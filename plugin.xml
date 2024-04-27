@@ -22,6 +22,8 @@
 		<pref name='contact_class'>0</pref>
 		<pref name='contact_notify'>1</pref>
 		<pref name='contact_mode'>1</pref>
+		<pref name='contact_phone'>1</pref>
+		<pref name='contact_terms'></pref>
 		<pref name='country'>us</pref>
     <pref name='currency'>0</pref>
 		<pref name='helpinfull'>1</pref>
@@ -29,6 +31,7 @@
 		<pref name='layout_list'>estListTiles estListTile45</pref>
 		<pref name='layout_list_map'>1</pref>
 		<pref name='layout_list_mapagnt'>1</pref>
+		<pref name='layout_list_agent'>1</pref>
 		<pref name='layout_view_agent'>flexRev</pref>
 		<pref name='layout_view_agntbg'>estBGGrad2</pref>
 		<pref name='layout_view_gallbg'>estBGGrad1</pref>

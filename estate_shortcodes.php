@@ -7,122 +7,18 @@ if (!defined('e107_INIT')) { exit; }
 
 class estate_shortcodes extends e_shortcode{
   
-  function admLinks(){
-    
-    }
   
-  
-  function sc_prop_newlnk($parm){
-		$tp = e107::getParser();
-    $lnk = '';
-    if(EST_USERPERM > 0){
-      $lnk = '
-      <a title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a>
-        <p>
-          <a class="btn btn-primary noMobile" href="'.EST_PTH_ADMIN.'?action=create" title="'.EST_GEN_FULLADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_FULLADDLIST.'</a>
-          <a class="btn btn-primary" href="'.EST_PTH_LISTINGS.'?new.0.0" title="'.EST_GEN_QUICKADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_QUICKADDLIST.'</a>
-        </p>';
-      }
-    elseif(intval($GLOBALS['EST_PREF']['public_act']) !== 0){
-      if(USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
-        $lnk = '<a class="FR" href="'.EST_PTH_LISTINGS.'?new.0.0" title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a>';
-        }
-      }
-    return $lnk;
-    }
-  
-  
-  
-  function sc_prop_list_editlnk($parm){
+  function sc_prop_editicons($parm){
     $AGENT = $this->estGetSeller();
-    $lnk = '';
-    $lnkgo = 0;
-    
-    if(EST_USERPERM > 0){
-      $AGENT = $this->estGetSeller();
-      $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
-      $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
-      if(EST_USERPERM > 2){$lnkgo++;}
-      elseif(EST_USERPERM == 2){
-        if(intval($this->var['prop_agent']) > 0 && intval($this->var['prop_agency']) == intval($AGENT['agent_agcy'])){$lnkgo++;}
-        }
-      elseif(EST_USERPERM == 1){
-        if(intval($this->var['prop_uidcreate']) == USERID || intval($AGENT['agent_uid']) == USERID){$lnkgo++;}
-        }
-      unset($url1,$url2);
-      }
-    else{
-      if(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){$lnkgo++;}
-      }
-    if($lnkgo > 0){
-      $lnk = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
-      }
-    return $lnk;
+    if($parm['for'] == 'new'){return $AGENT['new'];}
+    if($parm['for'] == 'list'){return $AGENT['lstedit'];}
+    if($parm['for'] == 'view'){return $AGENT['edit'];}
     }
-  
-  function sc_prop_editlnk($parm){
-		$tp = e107::getParser();
-    $lnk = '';
-    if(EST_USERPERM > 0){
-      $AGENT = $this->estGetSeller();
-      $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
-      $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
-      if(EST_USERPERM > 2){
-        $lnk = '<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p>
-      <a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a>
-      <a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
-        }
-      elseif(EST_USERPERM == 2){
-        if(intval($this->var['prop_agent']) > 0 && intval($this->var['prop_agency']) == intval($AGENT['agent_agcy'])){
-          $lnk = '<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p>
-      <a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a>
-      <a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
-          }
-        }
-      elseif(EST_USERPERM == 1){
-        if(intval($this->var['prop_uidcreate']) == USERID || intval($AGENT['agent_uid']) == USERID){
-          $lnk = '<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p>
-      <a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a>
-      <a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
-          }
-        }
-      unset($url1,$url2);
-      }
-    else{
-      if(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){
-        $lnk = '<a class="FR" href="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'" title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a>';
-        }
-      }
-    return $lnk;
-    }
-  
-  
   
   
   
   function sc_prop_admlnk($parm){
-		$tp = e107::getParser();
-    $lnk = '';
-    if(ADMIN){
-      $AGENT = $this->estGetSeller();
-      if(EST_USERPERM > 2){
-        $lnk = '<a class="FR" href="'.EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']).'">EDIT</a>';
-        }
-      elseif(EST_USERPERM == 2){
-        if(intval($this->var['prop_agency']) == intval($AGENT['agent_agcy'])){
-          $lnk = '<a class="FR" href="'.EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']).'">EDIT</a>';
-          }
-        }
-      elseif(EST_USERPERM == 1){
-        if(intval($this->var['prop_uidcreate']) == USERID || intval($AGENT['agent_uid']) == USERID){
-          $lnk = '<a class="FR" href="'.EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']).'">EDIT</a>';
-          }
-        }
-      }
-    elseif(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){
-      $lnk = '<a class="FR" href="'.e_SELF.'?edit.'.intval($this->var['prop_idx']).'">EDIT</a>';
-      }
-    return $lnk;
+    return '[DEFUNCT]';//$AGENT['edit'];
     }
   
   function sc_prop_viewcount($parm){
@@ -503,69 +399,116 @@ class estate_shortcodes extends e_shortcode{
   
   
   function estGetSeller(){
-    $sql = e107::getDb();
 		$tp = e107::getParser();
     $ret = array();
     
-    $PROPAGNT = intval($this->var['prop_agent']);
-    $PROPUID = intval($this->var['prop_uidcreate']);
-    if($PROPAGNT > 0){
-      if($AGENT = $sql->retrieve("SELECT * FROM #estate_agents WHERE agent_idx=".$PROPAGNT." ",true)){
-        if(intval($AGENT[0]['agent_idx']) > 0){
-          $ret = $AGENT[0];
-          
-          if(intval($ret['agent_imgsrc']) == 1 && trim($ret['agent_image']) !== ""){$ret['imgurl'] = EST_PTHABS_AGENT.$ret['agent_image'];}
-          else{
-            if(intval($ret['agent_uid']) > 0){
-              if($EUSR = $sql->retrieve("SELECT user_email,user_hideemail,user_image FROM #user WHERE user_id=".intval($ret['agent_uid'])." ",true)){
-                $ret['imgurl'] = $tp->toAvatar($EUSR[0],array('type'=>'url'));
-                }
-              }
-            }
-          
-          if($ACONT = $sql->retrieve("SELECT * FROM #estate_contacts WHERE contact_tabidx=".intval($ret['agent_idx'])." ORDER BY contact_ord ASC ",true)){
-            foreach($ACONT as $k=>$v){
-              $ret['contacts'][$v['contact_tabkey']][$k] = array($v['contact_key'],$v['contact_data']);
-              /*
-              if(strtoupper($v['contact_key']) == EST_GEN_EMAIL){
-                $ret['contacts'][$v['contact_tabkey']][$k] = array(EST_GEN_EMAIL,(intval($EUSR[0]['user_hideemail']) !== 1 ? $v['contact_data'] : 'hidden'));
-                }
-              else{
-                $ret['contacts'][$v['contact_tabkey']][$k] = array($v['contact_key'],$v['contact_data']);
-                }
-              */
-              }
-            }
-          
-          if($AGY = $sql->retrieve("SELECT * FROM #estate_agencies WHERE agency_idx=".intval($ret['agent_agcy'])." && agency_pub=1 ",true)){
-            $ret['agency'] = $AGY[0];
-            
-            if(intval($ret['agency']['agency_imgsrc']) == 1 && trim($ret['agency']['agency_image']) !== ''){
-              $ret['agency']['agylogo'] = EST_PTHABS_AGENCY.$tp->toHTML($ret['agency']['agency_image']);
-              }
-            else{
-              $pref = e107::pref();
-              $ret['agency']['agylogo'] = $tp->thumbUrl($pref['sitelogo'],false,false,true);
-              }
-            }
+    $USRDTA = array(
+      'user_id'=>$this->var['user_id'],
+      'user_name'=>$this->var['user_name'],
+      'user_loginname'=>$this->var['user_loginname'],
+      'user_email'=>$this->var['user_email'],
+      'user_admin'=>$this->var['user_admin'],
+      'user_perms'=>$this->var['user_perms'],
+      'user_class'=>$this->var['user_class'],
+      'user_signature'=>$this->var['user_signature'],
+      'user_image'=>$this->var['user_image']
+      );
+    $ret['imgurl'] = $tp->toAvatar($USRDTA,array('type'=>'url'));
+    unset($USRDTA);
+    
+    
+    
+    if(intval($this->var['agent_imgsrc']) == 1 && trim($this->var['agent_image']) !== ""){$ret['imgurl'] = EST_PTHABS_AGENT.$this->var['agent_image'];}
+    
+    if(intval($this->var['agency_imgsrc']) == 1 && trim($this->var['agency_image']) !== ''){
+      $ret['agylogo'] = EST_PTHABS_AGENCY.$tp->toHTML($this->var['agency_image']);
+      }
+    else{
+      $ret['agylogo'] = $tp->thumbUrl(e107::pref('sitelogo'),false,false,true);
+      }
+    
+      
+    
+    
+    if(intval($this->var['agent_idx']) > 0){
+      $ret['agent_roll'] = EST_GEN_AGENT;
+      $ret['agent_name'] = $this->var['agent_name'];
+      
+      if($ACONT = e107::getDb()->retrieve("SELECT * FROM #estate_contacts WHERE contact_tabidx=".intval($this->var['agent_idx'])." ORDER BY contact_ord ASC ",true)){
+        foreach($ACONT as $k=>$v){
+          $ret['contacts'][$v['contact_tabkey']][$k] = array($v['contact_key'],$v['contact_data']);
           }
+        }
+      else{
+        $ret['contacts'][6][0] = array($tp->toHTML(EST_GEN_EMAIL),$tp->toHTML($this->var['user_email']));
         }
       }
     else{
-      if($EUSR = $sql->retrieve("SELECT user_id,user_name,user_email,user_hideemail,user_image FROM #user WHERE user_id=".$PROPUID." ",true)){
-        $ret['imgurl'] = $tp->toAvatar($EUSR[0],array('type'=>'url'));
-        $ret['agent_name'] = $tp->toHTML($EUSR[0]['user_name']);
-        $ret['agent_uid'] = intval($EUSR[0]['user_id']);
-        //if(intval($EUSR[0]['user_hideemail']) !== 1){
-          $ret['contacts'][6][0] = array($tp->toHTML(EST_GEN_EMAIL),$tp->toHTML($EUSR[0]['user_email']));
-          //}
-        if(check_class($GLOBALS['EST_PREF']['public_act']) && USERID > 0 && $PROPUID == USERID){
-          $ret['oa'] = 1;
-          }
+      $ret['agent_roll'] = EST_GEN_PRIVATESELLER;
+      $ret['agent_name'] = $this->var['user_name'];
+      $ret['agent_uid'] = intval($this->var['user_id']);
+      $ret['agent_txt1'] = $this->var['user_signature'];
+      //if(intval($this->var['user_hideemail']) !== 1){
+        $ret['contacts'][6][0] = array($tp->toHTML(EST_GEN_EMAIL),$this->var['user_email']);
+        //}
+      
+      if(check_class($GLOBALS['EST_PREF']['public_act']) && USERID > 0 && USERID == intval($this->var['prop_uidcreate'])){
+        $ret['oa'] = 1;
         }
       }
       
-    unset($AGENT,$ACONT,$AGY);
+      
+      
+    if(EST_USERPERM > 0){
+      $XRP = explode('.',$this->var['user_perms']);
+      $XRC = explode(',',$this->var['user_class']);
+      $XGO = 0; // if > 0 then no edit
+      
+      if(intval(USERID) !== 1 && in_array('0',$XRP) && USERID !== $ret['agent_uid']){$XGO++;}
+      if(EST_USERPERM == 3 && in_array(ESTATE_ADMIN,$XRC) && USERID !== $ret['agent_uid']){$XGO++;}
+      if(EST_USERPERM == 2){
+        if(intval($this->var['agent_agcy']) > 0 && intval($this->var['agent_agcy']) !== intval(EST_AGENCYID)){$XGO++;}
+        if(in_array(ESTATE_ADMIN,$XRC) || in_array(ESTATE_MANAGER,$XRC) && USERID !== $ret['agent_uid']){$XGO++;}
+        if(intval($this->var['user_admin']) > 0){
+          foreach($XRC as $tk=>$tv){
+            if(!in_array($tv,EST_USERMANAGE)){$XGO++;}
+            }
+          }
+        }
+      elseif(EST_USERPERM == 1){
+        if(intval($this->var['prop_uidcreate']) !== USERID || intval($ret['agent_uid']) !== USERID){$XGO++;}
+        }
+      
+      
+      if($XGO == 0){
+        $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
+        $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
+        
+        $ret['new'] = '<a title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a><p><a class="btn btn-primary noMobile" href="'.EST_PTH_ADMIN.'?action=create" title="'.EST_GEN_FULLADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_FULLADDLIST.'</a><a class="btn btn-primary" href="'.EST_PTH_LISTINGS.'?new.0.0" title="'.EST_GEN_QUICKADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_QUICKADDLIST.'</a></p>';
+        
+        $ret['edit'] = $ret['new'].'<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p><a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a><a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
+      
+        $ret['lstedit'] = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
+        
+        }
+      }
+    elseif(intval($GLOBALS['EST_PREF']['public_act']) !== 0 && USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
+      
+      if(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){
+        $ret['new'] = '<a class="FR" href="'.EST_PTH_LISTINGS.'?new.0.0" title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a>';
+        $ret['edit'] = $ret['new'].'<a class="FR" href="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'" title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a>';
+        $ret['lstedit'] = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
+        
+        }
+      }
+    
+    if($GLOBALS['EST_PREF']['layout_list_agent'] == 1){
+      $ret['lstedit'] = '<div class="estPropListAgtCont">'.$ret['lstedit'].'<div class="estPropListAgtImg" style="background-image:url('.$ret['imgurl'].')"></div><div class="estPropListAgtName"><div>'.$ret['agent_roll'].'</div><div>'.$ret['agent_name'].'</div></div></div>';
+      }
+    
+    
+    
+    unset($ACONT,$XRP,$XRC,$XGO,$url1,$url2);
     return $ret;
     }
   
@@ -580,63 +523,72 @@ class estate_shortcodes extends e_shortcode{
 		$tp = e107::getParser();
     $EST_PREF = e107::pref('estate');
     $AGENT = $this->estGetSeller();
+    
+    if($AGENT['error']){
+      if(ADMIN){e107::getMessage()->addWarning($AGENT['error']);}
+      return;
+      }
+    
     if(intval($AGENT['oa']) == 1){$dtastr = $this->estDataStr($AGENT);}
+    
+    $HideEmail = 0;
+    $CFormOK = check_class($EST_PREF['contact_class']);
+    if($CFormOK){
+      //contact_mode 0 or 2 hides email if form enabled
+      if($EST_PREF['contact_mode'] == 0 || $EST_PREF['contact_mode'] == 2){$HideEmail++;}
+      }
+    
     
     $ret = '
       <div id="estAgCard" class="estAgCard'.(intval($AGENT['oa']) == 1 ? ' estOA' : '').'" '.$dtastr.'>
         <div class="estAgCardInner">';
     
     if(($parm['mode'] == 'full' || $parm['img'] > 0) && $AGENT['imgurl']){
-      $ret .= '
-          <div class="estAgtAvatar" style="background-image:url(\''.$AGENT['imgurl'].'\')"></div>';
+      $ret .= '<div class="estAgtAvatar" style="background-image:url(\''.$AGENT['imgurl'].'\')"></div>';
       }
-     
-    $ret .= '
-          <div class="estAgtInfo1">';
     
+    $ret .= '<div class="estAgtInfo1">';
     $ret .= '<h3>'.$tp->toHTML($AGENT['agent_name']).'</h3>';
     
+    //https://estate.vodhin.org/user.php?id.intval($AGENT['agent_uid'])
     
+    
+    $ret .= '<h4>'.$tp->toHTML(trim($AGENT['agency_name']) !== '' ? $AGENT['agency_name'] : EST_GEN_PRIVATE.' '.EST_GEN_SELLER).'</h4>';
+
     if(trim($AGENT['agent_txt1']) !== ''){
-      $ret .= '
-            <p class="FSITAL">'.$tp->toHTML($AGENT['agent_txt1']).'</p>';
+      $ret .= '<p class="FSITAL">'.$tp->toHTML($AGENT['agent_txt1']).'</p>';
       }
     
-      
+    
     if(count($AGENT['contacts'][6]) > 0){
-      $ret .= '
-            <div class="estAgContact">';
+      $ret .= '<div class="estAgContact">';
       foreach($AGENT['contacts'][6] as $ck=>$cv){
-        $ret .= '
-              <div>'.$tp->toHTML($cv[0]).' '.$tp->toHTML($cv[1]).'</div>';
+        $CONTKEY = $tp->toHTML($cv[0]);
+        if($HideEmail > 0 && strtoupper($CONTKEY) == strtoupper(EST_GEN_EMAIL)){}
+        else{$ret .= '<div>'.$CONTKEY.' '.$tp->toHTML($cv[1]).'</div>';}
         }
-      $ret .= '
-            </div>';
+      $ret .= '</div>';
       }
-    
-    
     
     $ret .= '
           </div>
         </div>';
     
-    if(check_class($EST_PREF['contact_class'])){
-      $ret .= '
-      </div>
-      <div id="estMsgModule" class="estViewSect noPADTB">';
+    if($CFormOK){
       $this->var['msg_uid_to'] = $AGENT['agent_uid'];
       $this->var['prop_seller'] = $AGENT['agent_name'];
-      
       $ret .= '
-          <div id="estMsgCard" class="estAgCard">';
+      </div>
+      <div id="estMsgModule" class="estViewSect noPADTB">
+        <div id="estMsgCard" class="estAgCard TAL">';
       $ret .= est_msg_form(1,$this->var);
       $ret .= '
         </div>';
       }
-    else{
-        $ret .= '
-      </div>';
-      }
+    
+    $ret .= '
+    </div>';
+    
     
     if($AGENT['agency']){
       
