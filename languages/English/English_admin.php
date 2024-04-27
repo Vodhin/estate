@@ -373,7 +373,7 @@ define("EST_PREF_CONTACTFORM","Contact Form");
 define("EST_PREF_CONTACTFORMHLP","Who can use the Estate Plugin's Contact Form");
 
 define("EST_PREF_CONTACTNOTIFY","Agent/Seller Notifications");
-define("EST_PREF_CONTACTNOTIFYHLP","Notify the Agent/Seller via email when someone uses the Contact Form or Saves a Listing. Agents/Sellers can always review activity on this website.");
+define("EST_PREF_CONTACTNOTIFYHLP","Notify the Agent/Seller via email when someone uses the Contact Form or Saves a Listing. Agents/Sellers can always review activity on this website");
 
 define("EST_PREF_CONTACTMODE","Contact Mode");
 define("EST_PREF_CONTACTMODE0","For All Listings - Hide e-mail");
@@ -382,6 +382,12 @@ define("EST_PREF_CONTACTMODE2","Only Agent Listings - Hide e-mail");
 define("EST_PREF_CONTACTMODE3","Only Agent Listings - Display e-mail");
 define("EST_PREF_CONTACTMODEHLP","Choose which Listings will use the Contact Form and if the Agent/Seller e-mail is displayed");
 
+
+define("EST_PREF_CONTACTPHONEREQ","Require Phone Number");
+define("EST_PREF_CONTACTPHONEREQHLP","If enabled, the Sender will bequired to include their phone number");
+
+define("EST_PREF_CONTACTTERMS","Contact Terms");
+define("EST_PREF_CONTACTTERMSHLP","The Terms a visitor must agree to to send a message through the Contact Form. If left blank, the default Terms written for this plugin will be used");
 
 
 define("EST_PREF_DEFAGTHRS","Default Agent Hours");
@@ -399,6 +405,9 @@ define("EST_PREF_EVENTLEN","Event Length");
 define("EST_PREF_GALBG","Gallery Background");
 define("EST_PREF_HELPINFULL","Expanded Help Menu");
 define("EST_PREF_HELPINFULLHLP","If enabled, the Help Menu will always be shown in full height.");
+
+
+define("EST_PREF_LAYOUT_INCLUDEAGENT","Include Agent Card");
 
 define("EST_PREF_LAYOUT_NOLISTINGS","No Listings To Preview");
 define("EST_PREF_LISTINGSAVE","Listing Saves");
