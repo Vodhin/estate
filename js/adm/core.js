@@ -8813,23 +8813,15 @@ function estGetSubDivs(){
     op[0] = $('select[name="layout_list"] option:selected').val();
     op[1] = Number($('select[name="layout_list_map"] option:selected').val());
     op[2] = Number($('select[name="layout_list_mapagnt"] option:selected').val());
+    op[3] = Number($('input[name="layout_list_agent"]').val());
     
-    
-    if(Number(op[2]) == 0){$('select[name="layout_list_mapagnt"]').prop('disabled',true);}
+    if(Number(op[1]) == 0){$('select[name="layout_list_mapagnt"]').prop('disabled',true);}
     else{$('select[name="layout_list_mapagnt"]').prop('disabled',false).removeProp('disabled');}
     
     var pvwSrc = vreBasePath+'listings.php?pview.0';
     
-    $('#estLayoutPreviewIframeList').prop('src',pvwSrc+'.list.'+op[0]+'|'+op[1]+'|'+op[2]+'.0').on({
-        load : function(){
-          var innerDoc = this.contentDocument || this.contentWindow.document;
-          var iH = $(innerDoc).find('#estDtaCont').height() * 0.75;
-          if(iH > 128){$('#estLayoutPreviewIframe-'+mode).animate({'height':iH+'px'});}
-          console.log(iH);
-          }
-        });
+    $('#estLayoutPreviewIframeList').prop('src',pvwSrc+'.list.'+op[0]+'|'+op[1]+'|'+op[2]+'|'+op[3]+'.0')
     }
-  
   
   
   function estSetSlideShowPref(mode){
@@ -8946,6 +8938,8 @@ function estGetSubDivs(){
       $('select[name="layout_list"]').closest('tr').appendTo('#estPrefListPageOptTB');
       $('select[name="layout_list_map"]').closest('tr').appendTo('#estPrefListPageOptTB');
       $('select[name="layout_list_mapagnt"]').closest('tr').appendTo('#estPrefListPageOptTB');
+      $('input[name="layout_list_agent"]').closest('tr').appendTo('#estPrefListPageOptTB');
+      
       $('input[name="slideshow_act"]').closest('tr').appendTo('#estPrefSlideShowOptTB');
       $('input[name="slideshow_time"]').closest('tr').appendTo('#estPrefSlideShowOptTB');
       $('input[name="slideshow_delay"]').closest('tr').appendTo('#estPrefSlideShowOptTB');
@@ -8965,6 +8959,7 @@ function estGetSubDivs(){
       $('select[name="layout_list"]').on({change : function(){estSetListPagePref()}});
       $('select[name="layout_list_map"]').on({change : function(){estSetListPagePref()}});
       $('select[name="layout_list_mapagnt"]').on({change : function(){estSetListPagePref()}});
+      $('input[name="layout_list_agent"]').on({change : function(){estSetListPagePref()}});
       $('input[name="slideshow_act"]').on({change : function(){estSetSlideShowPref('top')}});
       $('input[name="slideshow_time"]').on({change : function(){estSetSlideShowPref('top')}});
       $('input[name="slideshow_delay"]').on({change : function(){estSetSlideShowPref('top')}});
@@ -8981,8 +8976,34 @@ function estGetSubDivs(){
       $('select[name="layout_view_mapagnt"]').on({change : function(){estSetSlideShowPref('map')}});
       $('select[name="layout_view_mapbg"]').on({change : function(){estSetSlideShowPref('map')}});
       $('select[name="layout_view_gallbg"]').on({change : function(){estSetSlideShowPref('gal')}});
-    
-    
+      
+      
+      $('#estLayoutPreviewIframeList').on({
+        load : function(){
+          var innerDoc = this.contentDocument || this.contentWindow.document;
+          var iH = $(innerDoc).find('#estDtaCont').height() * 0.75;
+          if(iH > 128){$('#estLayoutPreviewIframeList').animate({'height':iH+'px'});}
+          }
+        });
+      
+      
+      
+      $('#prefSetDefTerms').on({
+        click : function(e){
+          e.preventDefault();
+          if($('#contact-terms-def').is(':visible')){
+            $('#prefSetDefTerms').html($('#prefSetDefTerms').data('t1'));
+            $('#contact-terms-def').fadeOut(200);
+            $('#contact-terms').fadeIn(200);
+            }
+          else{
+            $('#prefSetDefTerms').html($('#prefSetDefTerms').data('t2'));
+            $('#contact-terms').val('').fadeOut(200);
+            $('#contact-terms-def').fadeIn(200);
+            }
+          }
+        }).appendTo('#prefSetDefTermsTarg');
+      
     
     $.ajax({
       url: vreFeud+'?0||0',
