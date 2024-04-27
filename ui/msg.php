@@ -30,22 +30,29 @@ if(EST_SELLERUID > 0){
 
 
 function est_msg_form($MODE,$DTA=null){
-	$tp = e107::getParser();
+	if(!$DTA['prop_seller']){
+    return EST_GEN_UNK.' '.EST_GEN_SELLER;
+    }
+  
+  $tp = e107::getParser();
+  $EST_PREF = e107::pref('estate');
   $STRTIMENOW = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
   /*
     0=>array('unsaved_icon','Un Saved'),
     1=>array('saved_icon','Saved '),
   */
   
-  $SELLERNAME = $tp->toHTML($DTA['prop_seller'] ? $tp->toHTML($DTA['prop_seller']) : EST_GEN_UNK);
-  $PROPNAME = (trim($DTA['prop_name']) !== '' ? $tp->toHTML($DTA['prop_name']) : EST_MSG_APROP);
+  
+  $PROPNAME = $tp->toHTML((trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP));
+  
   $EST_MSG_MODES = array(
-    0=>EST_GEN_CONTACT.' '.$SELLERNAME,
-    1=>EST_MSG_IWANTVIEW.' '.$PROPNAME,
+    0=>EST_GEN_CONTACT.' '.$DTA['prop_seller'].' ('.EST_GEN_SELECTONE.')',
+    1=>EST_MSG_IWANTVIEW,
     2=>EST_MSG_IWANTSELL,
     3=>EST_MSG_IWANTOTHER
     );
   
+  $CTERMS = (trim($EST_PREF['contact_terms']) !== '' ? $EST_PREF['contact_terms'] : EST_MSG_CONSTXT1.'<br /><br />'.EST_MSG_CONSTXT2);
   
   $msg_idx = (intval($DTA['msg_idx']) > 0 ? intval($DTA['msg_idx']) : intval(0)); //int(10) AUTO_INCREMENT,
   $msg_sent = (intval($DTA['msg_sent']) > 0 ? intval($DTA['msg_sent']) : $STRTIMENOW); // DATETIME int(10)
@@ -67,20 +74,23 @@ function est_msg_form($MODE,$DTA=null){
     }
   
   
+  // e_TBQS
+  
   $ret = '
   <div class="WD100">
-    <input type="hidden" name="msg_idx" value="'.$msg_idx.'"/>
-    <input type="hidden" name="msg_sent" value="'.$msg_sent.'"/>
-    <input type="hidden" name="msg_read" value="'.$msg_read.'"/>
-    <input type="hidden" name="msg_uid_to" value="'.$msg_uid_to.'"/>
-    <input type="hidden" name="msg_propidx" value="'.$msg_propidx.'"/>
-    <input type="hidden" name="msg_from_uid" value="'.$msg_from_uid.'"/>
-    <input type="hidden" name="msg_from_ip" value="'.$msg_from_ip.'"/>
-    <table id="estMsgFormTabl" class="table table-striped">
+    <table id="estMsgFormTabl" class="table WD100 TAL">
       <thead>
+        <tr style="display:none;">
+          <td>
+            <input type="text" name="mail_to" class="tbox form-control estChkMsgRem" value="istatrap@icloud.com" />
+            <input type="text" name="mail_from" class="tbox form-control estChkMsgRem" value="istatrap@icloud.com" />
+            <input type="text" name="mail_subject" class="tbox form-control" value="it is a trap" />
+            <textarea name="mail_text" class="tbox form-control">Humans should not change this</textarea>
+          </td>
+        </tr>
         <tr>
           <td>
-            <select name="msg_mode" value="'.$msg_mode.'" class="tbox form-control">';
+            <select name="msg_mode" class="tbox form-control" value="'.$msg_mode.'">';
   foreach($EST_MSG_MODES as $k=>$v){
     $ret .= '<option value="'.$k.'"'.($k == $msg_mode ? 'selected="selected"' : '').' >'.$tp->toHTML($v).'</option>';
     }
@@ -90,28 +100,45 @@ function est_msg_form($MODE,$DTA=null){
           </td>
         </tr>
       </thead>
-      <tbody'.($msg_idx > 0 ? '' : ' style="display:none;"').'>
+      <tbody id="estMsgFormTB"'.($msg_idx > 0 ? '' : ' style="display:none;"').'>
         <tr>
           <td>
-            <input type="text" name="msg_from_name" class="tbox form-control" value="'.$tp->toTEXT($msg_from_name).'" placeholder="'.EST_MSG_YOURNAME.'" />
+            <input type="text" name="msg_from_name" class="tbox form-control estChkMsg" data-len="6" value="'.$tp->toTEXT($msg_from_name).'" placeholder="'.EST_MSG_YOURNAME.' ('.EST_GEN_REQUIURED.')" />
           </td>
         </tr>
         <tr>
           <td>
-            <input type="text" name="msg_from_email" class="tbox form-control" value="'.$tp->toTEXT($msg_from_email).'" placeholder="'.EST_MSG_YOUREMAIL.'" />
+            <input type="text" name="msg_from_email" class="tbox form-control estChkMsg" data-req="@" data-len="6" value="'.$tp->toTEXT($msg_from_email).'" placeholder="'.EST_MSG_YOUREMAIL.' ('.EST_GEN_REQUIURED.')" />
           </td>
         </tr>
         <tr>
           <td>
-            <input type="text" name="msg_from_phone" class="tbox form-control" value="'.$tp->toTEXT($msg_from_phone).'" placeholder="'.EST_MSG_YOUREPHONE.'" />
+            <input type="text" name="msg_from_phone" '.($EST_PREF['contact_phone'] == 1 ? 'class="tbox form-control estChkMsg"  placeholder="'.EST_MSG_YOUREPHONE.' ('.EST_GEN_REQUIURED.')"': 'class="tbox form-control"  placeholder="'.EST_MSG_YOUREPHONE.'"').' data-len="8" value="'.$tp->toTEXT($msg_from_phone).'" />
           </td>
         </tr>
         <tr>
           <td>
-            <textarea name="" class="tbox form-control" cols="40" rows="6" placeholder="'.EST_MSG_MSGTXTPL.'">'.$tp->toTEXT($DTA['msg_text']).'</textarea>
+            <textarea name="msg_text" class="tbox form-control estChkMsg" cols="40" rows="6" data-len="18" placeholder="'.EST_MSG_MSGTXTPL.' ('.EST_GEN_REQUIURED.')">'.$tp->toTEXT($DTA['msg_text']).'</textarea>
+            <div id="estMsgDef1">'.EST_MSG_DEF1A.' "'.$PROPNAME.'". '.EST_MSG_DEF1B.'</div>
+            <div id="estMsgDef2">'.EST_MSG_DEF2.'</div>
           </td>
         </tr>
       </tbody>
+      <tfoot id="estMsgFormTF"'.($msg_idx > 0 ? '' : ' style="display:none;"').'>
+        <tr>
+          <td id="estMsgBtnTD" class="TAC">
+            <div id="estMsgTerms">'.$tp->toHTML($CTERMS).'</div>
+            <button id="estMsgSend1" class="btn btn-primary" data-t1="'.EST_MSG_SEND.'" data-t2="'.$tp->toHTML($DTA['prop_seller']).'" disabled="disabled" >'.EST_MSG_CONSBTN.'</button>
+            <input type="hidden" name="msg_idx" value="'.$msg_idx.'"/>
+            <input type="hidden" name="msg_sent" value="'.$msg_sent.'"/>
+            <input type="hidden" name="msg_read" value="'.$msg_read.'"/>
+            <input type="hidden" name="msg_uid_to" value="'.$msg_uid_to.'"/>
+            <input type="hidden" name="msg_propidx" value="'.$msg_propidx.'"/>
+            <input type="hidden" name="msg_from_uid" value="'.$msg_from_uid.'"/>
+            <input type="hidden" name="msg_from_ip" value="'.$msg_from_ip.'"/>
+          </td>
+        </tr>
+      </tfoot>
     </table>
   </div>';
   

@@ -1,6 +1,7 @@
 <?php
 if(!defined('e107_INIT')){exit;}
 
+e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
 
 
 class estate_listing_ui extends e_admin_ui{
@@ -1104,7 +1105,7 @@ class estate_listing_ui extends e_admin_ui{
         'tab'=>0,
         'title'=>EST_PREF_LISTINGSAVE,
         'type'=>'userclass',
-        'data'=>'int',
+        'data'=>'str',
         'help'=>EST_PREF_LISTINGSAVEHLP,
         ),
         
@@ -1130,7 +1131,21 @@ class estate_listing_ui extends e_admin_ui{
           'optArray'=>array(0=>EST_PREF_CONTACTMODE0,1=>EST_PREF_CONTACTMODE1,2=>EST_PREF_CONTACTMODE2,3=>EST_PREF_CONTACTMODE3)
           ),
         ),
-        
+      'contact_phone'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_CONTACTPHONEREQ,
+        'type'=>'boolean',
+        'data'=>'int',
+        'help'=>EST_PREF_CONTACTPHONEREQHLP,
+        ),
+      'contact_terms'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_CONTACTTERMS.'<div id="prefSetDefTermsTarg"></div>',
+        'type'=>'method',
+        'data'=>'safestr',
+        'help'=>EST_PREF_CONTACTTERMSHLP,
+        ),
+      
 			'country' => array (
         'tab'=>0,
         'title' => LAN_DEFAULT.' '.EST_PROP_COUNTRY,
@@ -1162,6 +1177,12 @@ class estate_listing_ui extends e_admin_ui{
         'writeParms' => array(),
         ),
       
+      'layout_list_agent'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_LAYOUT_INCLUDEAGENT,
+        'type'=>'boolean',
+        'data'=>'int',
+        ),
       'layout_list'=>array(
         'tab'=>1,
         'type'=>'dropdown',
@@ -1894,6 +1915,12 @@ class estate_listing_ui extends e_admin_ui{
 
 class estate_listing_form_ui extends e_admin_form_ui{
   
+  public function contact_terms($curVal,$mode){
+    $tp = e107::getParser();
+    return '<button id="prefSetDefTerms" data-t1="'.EST_GEN_USE.' '.EST_GEN_DEFAULT.'" data-t2="'.EST_GEN_USE.' '.EST_GEN_CUSTOM.'" class="btn btn-primary">'.EST_GEN_USE.' '.(trim($curVal) == '' ? EST_GEN_CUSTOM : EST_GEN_DEFAULT).'</button>
+    <textarea id="contact-terms" name="contact_terms" cols="40" rows="5" class="tbox form-control input-xxlarge" '.(trim($curVal) == '' ? 'style="display:none;"' : '').'>'.$tp->toForm($curVal).'</textarea>
+    <div id="contact-terms-def" class="tbox"'.(trim($curVal) == '' ? '' : 'style="display:none;"').'><h4>'.EST_GEN_DEFAULT.':</h4>'.$tp->toHTML(EST_MSG_CONSTXT1.'<br /><br />'.EST_MSG_CONSTXT2).'</div>';
+    }
   
   public function prop_timezone($curVal,$mode){
     $timeZones = systemTimeZones();
