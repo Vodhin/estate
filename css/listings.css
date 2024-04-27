@@ -86,6 +86,84 @@
   cursor:pointer;
   }
 
+
+.estPropListAgtCont{
+  display:block;
+  position:absolute;
+  top:6px;
+  right:6px;
+  /*width:128px;*/
+  /*height:144px;*/
+  color: #EFEFEF;
+  border-radius: 3px;
+  overflow: hidden;
+  z-index: 1010;
+  box-shadow: 1px 1px 2px #0000009C;
+  -webkit-box-shadow: 1px 1px 2px #0000009C;
+  -moz-box-shadow: 1px 1px 2px #0000009C;
+  }
+.estPropListAgtImg{
+  display:block;
+  position:relative;
+  width:96px;
+  height:112px;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center center;
+  /*border: 0.35em solid transparent;*/
+  }
+.estPropListAgtName{
+  display:block;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  width:100%;
+  text-transform:uppercase;
+  padding: 4px 2px 2px 2px;
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.125));
+  }
+
+.estPropListAgtName div:first-child{
+  display:block;
+  position:relative;
+  width:100%;
+  font-size: 6pt;
+  font-style:italic;
+  text-align:center;
+  line-height: 1.1em;
+  white-space:nowrap;
+  overflow:hidden;
+  }
+.estPropListAgtName div:last-child{
+  display:block;
+  position:relative;
+  width:100%;
+  font-size: 8pt;
+  font-weight:bold;
+  text-align:center;
+  line-height: 1.3em;
+  }
+
+
+.estPropListEdtBtn{
+  position: absolute;
+  right:4px;
+  top:4px;
+  min-width: 32px;
+  border:none;
+  background-color: transparent;
+  z-index: 3;
+  }
+
+.estPropListEdtBtn i{
+  font-size:1.5em;
+  }
+
+
+
+
 .estExpBtn.estEBopen{transform: rotate(180deg);}
 
 .estAdmView{
@@ -951,20 +1029,6 @@ div.estListBlock.estListTiles div.estListPropInfo {
   }
 
 
-.estPropListEdtBtn{
-  position: absolute;
-  right:6px;
-  top:6px;
-  min-width: 32px;
-  border:none;
-  background-color: transparent;
-  }
-
-.estPropListEdtBtn i{
-  font-size:1.5em;
-  }
-
-
 #estMainHelpPage div{
   padding: 8px 8px 8px 8px;
   }
@@ -1021,6 +1085,17 @@ div.estListBlock.estListTiles div.estListPropInfo {
 .WD48{width:48%;}
 .WD32{width: 32%;}
 
+#estMsgTerms{
+  display: block;
+  position: relative;
+  width: 97%;
+  font-size: 9pt;
+  text-align: left;
+  margin: 2px auto 12px auto;
+  }
+
+.estChkMsg{border:1px solid rgba(128,128,128,0.7);}
+.estMsgNG{border:1px solid #AA0000;}
 
 .noPAD{
   padding:0px 0px 0px 0px !important;

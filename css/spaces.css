@@ -94,8 +94,7 @@ div.estViewSpTxt ul{
 
 
 
-
-
+div#estViewSpaceBtnCont{width: 100%;}
 
 #estViewBoxSpacesCont div#estViewSpaceBtnCont div#estViewSpaceBtns{
   display: flex;
