@@ -10,7 +10,6 @@ class estate_shortcodes extends e_shortcode{
   
   function sc_prop_editicons($parm){
     $AGENT = $this->estGetSeller();
-    if($parm['for'] == 'new'){return $AGENT['new'];}
     if($parm['for'] == 'list'){return $AGENT['lstedit'];}
     if($parm['for'] == 'view'){return $AGENT['edit'];}
     }
@@ -397,6 +396,16 @@ class estate_shortcodes extends e_shortcode{
   function sc_prop_latlng($parm){}
   
   
+  function sc_prop_newicon(){
+		$tp = e107::getParser();
+    if(EST_USERPERM > 0){
+      return '<a title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a><p><a class="btn btn-primary noMobile" href="'.EST_PTH_ADMIN.'?action=create" title="'.EST_GEN_FULLADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_FULLADDLIST.'</a><a class="btn btn-primary" href="'.EST_PTH_LISTINGS.'?new.0.0" title="'.EST_GEN_QUICKADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_QUICKADDLIST.'</a></p>';
+      }
+    if(intval($GLOBALS['EST_PREF']['public_act']) !== 0 && USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
+      return '<a class="FR" href="'.EST_PTH_LISTINGS.'?new.0.0" title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a>';
+      }
+    }
+  
   
   function estGetSeller(){
 		$tp = e107::getParser();
@@ -413,26 +422,35 @@ class estate_shortcodes extends e_shortcode{
       'user_signature'=>$this->var['user_signature'],
       'user_image'=>$this->var['user_image']
       );
+    
     $ret['imgurl'] = $tp->toAvatar($USRDTA,array('type'=>'url'));
+    
+    $ret['agylogo'] = $tp->thumbUrl(e107::pref('sitelogo'),false,false,true);
+    $ret['agency_name'] = EST_GEN_PRIVATE.' '.EST_GEN_SELLER;
+    
     unset($USRDTA);
     
     
     
-    if(intval($this->var['agent_imgsrc']) == 1 && trim($this->var['agent_image']) !== ""){$ret['imgurl'] = EST_PTHABS_AGENT.$this->var['agent_image'];}
     
-    if(intval($this->var['agency_imgsrc']) == 1 && trim($this->var['agency_image']) !== ''){
-      $ret['agylogo'] = EST_PTHABS_AGENCY.$tp->toHTML($this->var['agency_image']);
-      }
-    else{
-      $ret['agylogo'] = $tp->thumbUrl(e107::pref('sitelogo'),false,false,true);
+    if(intval($this->var['agency_idx']) > 0){
+      $ret['agency_idx'] = intval($this->var['agency_idx']);
+      $ret['agency_name'] = $this->var['agency_name'];
+      if(intval($this->var['agency_imgsrc']) == 1 && trim($this->var['agency_image']) !== ''){
+        $ret['agylogo'] = EST_PTHABS_AGENCY.$tp->toHTML($this->var['agency_image']);
+        }
       }
     
-      
+    
     
     
     if(intval($this->var['agent_idx']) > 0){
       $ret['agent_roll'] = EST_GEN_AGENT;
       $ret['agent_name'] = $this->var['agent_name'];
+      $ret['agent_uid'] = intval($this->var['agent_uid']);
+      if(intval($this->var['agent_imgsrc']) == 1 && trim($this->var['agent_image']) !== ""){
+        $ret['imgurl'] = EST_PTHABS_AGENT.$this->var['agent_image'];
+        }
       
       if($ACONT = e107::getDb()->retrieve("SELECT * FROM #estate_contacts WHERE contact_tabidx=".intval($this->var['agent_idx'])." ORDER BY contact_ord ASC ",true)){
         foreach($ACONT as $k=>$v){
@@ -457,36 +475,42 @@ class estate_shortcodes extends e_shortcode{
         }
       }
       
-      
+    
+    
       
     if(EST_USERPERM > 0){
-      $XRP = explode('.',$this->var['user_perms']);
-      $XRC = explode(',',$this->var['user_class']);
-      $XGO = 0; // if > 0 then no edit
+      $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
+      $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
       
-      if(intval(USERID) !== 1 && in_array('0',$XRP) && USERID !== $ret['agent_uid']){$XGO++;}
-      if(EST_USERPERM == 3 && in_array(ESTATE_ADMIN,$XRC) && USERID !== $ret['agent_uid']){$XGO++;}
-      if(EST_USERPERM == 2){
-        if(intval($this->var['agent_agcy']) > 0 && intval($this->var['agent_agcy']) !== intval(EST_AGENCYID)){$XGO++;}
-        if(in_array(ESTATE_ADMIN,$XRC) || in_array(ESTATE_MANAGER,$XRC) && USERID !== $ret['agent_uid']){$XGO++;}
-        if(intval($this->var['user_admin']) > 0){
-          foreach($XRC as $tk=>$tv){
-            if(!in_array($tv,EST_USERMANAGE)){$XGO++;}
+      $XGO = 0; // if > 0 then no edit
+      if(intval(USERID) !== 1){
+        $XRP = explode('.',$this->var['user_perms']);
+        $XRC = explode(',',$this->var['user_class']);
+        
+        if(intval($this->var['prop_idx']) > 0){
+          if(in_array('0',$XRP) && intval($this->var['agent_uid']) > 0 && intval($this->var['agent_uid']) !== USERID){$XGO++;}
+          if(EST_USERPERM == 3 && in_array(ESTATE_ADMIN,$XRC) && intval($this->var['agent_uid']) > 0 && intval($this->var['agent_uid']) !==  USERID){$XGO++;}
+          if(EST_USERPERM == 2){
+            if(intval($this->var['agent_agcy']) > 0 && intval($this->var['agent_agcy']) !== intval(EST_AGENCYID)){$XGO++;}
+            if(in_array(ESTATE_ADMIN,$XRC) || in_array(ESTATE_MANAGER,$XRC) && USERID !== intval($this->var['agent_uid'])){$XGO++;}
+            if(intval($this->var['user_admin']) > 0){
+              foreach($XRC as $tk=>$tv){
+                if(!in_array($tv,EST_USERMANAGE)){$XGO++;}
+                }
+              }
+            }
+          elseif(EST_USERPERM == 1){
+            if(intval($this->var['prop_uidcreate']) !== USERID || intval($ret['agent_uid']) !== USERID){$XGO++;}
             }
           }
         }
-      elseif(EST_USERPERM == 1){
-        if(intval($this->var['prop_uidcreate']) !== USERID || intval($ret['agent_uid']) !== USERID){$XGO++;}
-        }
+        
       
       
       if($XGO == 0){
-        $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
-        $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
+        //PROP_EDITICONS
         
-        $ret['new'] = '<a title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a><p><a class="btn btn-primary noMobile" href="'.EST_PTH_ADMIN.'?action=create" title="'.EST_GEN_FULLADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_FULLADDLIST.'</a><a class="btn btn-primary" href="'.EST_PTH_LISTINGS.'?new.0.0" title="'.EST_GEN_QUICKADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_QUICKADDLIST.'</a></p>';
-        
-        $ret['edit'] = $ret['new'].'<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p><a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a><a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
+        $ret['edit'] = '<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p><a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a><a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
       
         $ret['lstedit'] = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
         
@@ -495,8 +519,7 @@ class estate_shortcodes extends e_shortcode{
     elseif(intval($GLOBALS['EST_PREF']['public_act']) !== 0 && USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
       
       if(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){
-        $ret['new'] = '<a class="FR" href="'.EST_PTH_LISTINGS.'?new.0.0" title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a>';
-        $ret['edit'] = $ret['new'].'<a class="FR" href="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'" title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a>';
+        $ret['edit'] = '<a class="FR" href="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'" title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a>';
         $ret['lstedit'] = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
         
         }
@@ -538,27 +561,23 @@ class estate_shortcodes extends e_shortcode{
       if($EST_PREF['contact_mode'] == 0 || $EST_PREF['contact_mode'] == 2){$HideEmail++;}
       }
     
-    
+    //'.$dtastr.'
     $ret = '
-      <div id="estAgCard" class="estAgCard'.(intval($AGENT['oa']) == 1 ? ' estOA' : '').'" '.$dtastr.'>
+      <div id="estAgCard" class="estAgCard'.(intval($AGENT['oa']) == 1 ? ' estOA' : '').'" >
         <div class="estAgCardInner">';
     
-    if(($parm['mode'] == 'full' || $parm['img'] > 0) && $AGENT['imgurl']){
+    if(($parm['mode'] == 'full' || $parm['img'] > 0) && trim($AGENT['imgurl']) !== ''){
       $ret .= '<div class="estAgtAvatar" style="background-image:url(\''.$AGENT['imgurl'].'\')"></div>';
       }
     
-    $ret .= '<div class="estAgtInfo1">';
-    $ret .= '<h3>'.$tp->toHTML($AGENT['agent_name']).'</h3>';
+    $ret .= '<div class="estAgtInfo1"><h3>'.$tp->toHTML($AGENT['agent_name']).'</h3>';
     
     //https://estate.vodhin.org/user.php?id.intval($AGENT['agent_uid'])
     
     
-    $ret .= '<h4>'.$tp->toHTML(trim($AGENT['agency_name']) !== '' ? $AGENT['agency_name'] : EST_GEN_PRIVATE.' '.EST_GEN_SELLER).'</h4>';
+    $ret .= '<h4>'.$tp->toHTML($AGENT['agency_name']).'</h4>';
+    $ret .= (trim($AGENT['agent_txt1']) !== '' ? '<p class="FSITAL">'.$tp->toHTML($AGENT['agent_txt1']).'</p>' : '');
 
-    if(trim($AGENT['agent_txt1']) !== ''){
-      $ret .= '<p class="FSITAL">'.$tp->toHTML($AGENT['agent_txt1']).'</p>';
-      }
-    
     
     if(count($AGENT['contacts'][6]) > 0){
       $ret .= '<div class="estAgContact">';
@@ -581,7 +600,7 @@ class estate_shortcodes extends e_shortcode{
       </div>
       <div id="estMsgModule" class="estViewSect noPADTB">
         <div id="estMsgCard" class="estAgCard TAL">';
-      $ret .= est_msg_form(1,$this->var);
+      $ret .= est_msg_form($this->var);
       $ret .= '
         </div>';
       }

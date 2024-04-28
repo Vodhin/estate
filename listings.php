@@ -78,7 +78,6 @@ e107::js('estate','js/listing.js', 'jquery');
 require_once('estate_defs.php');
 
 $PROPID = intval($qs[1]);
-
 if($qs[0] == 'edit' || $qs[0] == 'new'){
   require_once(e_PLUGIN.'estate/ui/oa.php');
   }
@@ -89,10 +88,13 @@ if($qs[0] == 'edit' || $qs[0] == 'new'){
 
 
 
+
+
+
 $order = "DESC";
 $orderBy = "prop_dateupdated";
 $from = 0;
-$records = 50;
+$records = 150;
 
 
 $WHERE = "";
@@ -113,11 +115,24 @@ $MQRY = "
   LEFT JOIN #user
   ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid)
   LEFT JOIN #estate_agencies 
-  ON agent_agcy=agency_idx 
+  ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)
   ";
   
   
-  if($PROPID > 0){
+  if($qs[0] == 'agent'){
+    $AGENTID = intval($qs[1]);
+    $PROPID = 0;
+    $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_agent=" : " AND prop_agent=").$AGENTID." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
+    }
+  
+  elseif($qs[0] == 'listby'){
+    $AGENTID = intval($qs[1]);
+    $PROPID = 0;
+    $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_uidcreate=" : " AND prop_uidcreate=").$AGENTID." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
+    }
+  
+  
+  elseif($PROPID > 0){
     $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_idx=" : " AND prop_idx=").$PROPID." LIMIT 1";
     $NPQRY = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE NOT prop_idx=" : " AND NOT prop_idx=").$PROPID."
     ORDER BY ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
