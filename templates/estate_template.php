@@ -36,7 +36,7 @@ $ESTATE_TEMPLATE['pins'] = '{PROP_MAP_PINS}';
 
 
 //LIST OF LISTINGS
-$ESTATE_TEMPLATE['list']['elnk'] = '<div id="estMiniSrc">{PROP_EDITICONS:for=new}</div>';
+$ESTATE_TEMPLATE['list']['elnk'] = '<div id="estMiniSrc">{PROP_NEWICON}</div>';
 
 if(intval($EST_PREF['layout_list_map']) > 0){
   $ESTATE_TEMPLATE['list']['map']	= '
@@ -113,7 +113,7 @@ $ESTATE_TEMPLATE['menu']['seller'] = '
 
 //VIEW LISTING TEMPLATE
 //{PROP_NEWLNK}{PROP_EDITLNK}
-$ESTATE_TEMPLATE['view']['elnk'] = '<div id="estMiniSrc">{PROP_EDITICONS:for=view}</div>';
+$ESTATE_TEMPLATE['view']['elnk'] = '<div id="estMiniSrc">{PROP_NEWICON}{PROP_EDITICONS:for=view}</div>';
 
 $ESTATE_TEMPLATE['view']['top'] = '
   <div id="estViewBoxTop"'.($EST_PREF['slideshow_act'] == 1 ? ' class="estSlideshow" title="'.EST_GEN_PLAYPAUSESLIDE.'"' : '').'>
