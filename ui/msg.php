@@ -29,51 +29,59 @@ if(EST_SELLERUID > 0){
 
 
 
-function est_msg_form($MODE,$DTA=null){
+
+function est_msg_proc($DTA){
+  $tp = e107::getParser();
+  if(trim($DTA['msg_text']) == ''){
+    $DTA['msg_text'] = EST_MSG_DEF1A.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'. '.EST_MSG_DEF1B;
+    }
+  
+  $MSG = array(
+    'msg_idx'=>(intval($DTA['msg_idx']) > 0 ? intval($DTA['msg_idx']) : intval(0)),
+    'msg_sent'=>(intval($DTA['msg_sent']) > 0 ? intval($DTA['msg_sent']) : mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"))),
+    'msg_read'=>(intval($DTA['msg_read']) > 0 ? intval($DTA['msg_read']) : intval(0)),
+    'msg_uid_to'=>(intval($DTA['msg_uid_to']) > 0 ? intval($DTA['msg_uid_to']) : intval(0)),
+    'msg_mode'=>(intval($DTA['msg_mode']) > 0 ? intval($DTA['msg_mode']) : intval(0)),
+    'msg_propidx'=>(intval($DTA['msg_propidx']) > 0 ? intval($DTA['msg_propidx']) : (intval($DTA['prop_idx']) > 0 ? intval($DTA['prop_idx']) : intval(0))),
+    'msg_from_uid'=>intval($DTA['msg_from_uid'] ? $DTA['msg_from_uid'] : USERID),
+    'msg_from_ip'=>$tp->toTEXT($DTA['msg_from_ip'] ? $DTA['msg_from_ip'] : USERIP),
+    'msg_from_name'=>$tp->toTEXT(trim($DTA['msg_from_name']) !== '' ? $DTA['msg_from_name'] : (defined("USERNAME") ? USERNAME : '')),
+    'msg_from_email'=>$tp->toTEXT(trim($DTA['msg_from_email']) ? $DTA['msg_from_email'] : USEREMAIL),
+    'msg_from_phone'=>$tp->toTEXT($DTA['msg_from_phone']),
+    'msg_text'=>$tp->toTEXT($DTA['msg_text']),
+    );
+  
+  return $MSG;
+  
+  }
+
+
+
+
+function est_msg_form($DTA=null){
 	if(!$DTA['prop_seller']){
     return EST_GEN_UNK.' '.EST_GEN_SELLER;
     }
   
   $tp = e107::getParser();
   $EST_PREF = e107::pref('estate');
-  $STRTIMENOW = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+  
   /*
     0=>array('unsaved_icon','Un Saved'),
     1=>array('saved_icon','Saved '),
   */
   
-  
-  $PROPNAME = $tp->toHTML((trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP));
+  $MSG = est_msg_proc($DTA);
+  extract($MSG);
   
   $EST_MSG_MODES = array(
     0=>EST_GEN_CONTACT.' '.$DTA['prop_seller'].' ('.EST_GEN_SELECTONE.')',
-    1=>EST_MSG_IWANTVIEW,
-    2=>EST_MSG_IWANTSELL,
     3=>EST_MSG_IWANTOTHER
     );
+  if(intval($DTA['agent_idx']) > 0){$EST_MSG_MODES[1] = EST_MSG_IWANTVIEW;}
+  if(intval($DTA['agent_idx']) > 0){$EST_MSG_MODES[2] = EST_MSG_IWANTSELL;}
   
-  $CTERMS = (trim($EST_PREF['contact_terms']) !== '' ? $EST_PREF['contact_terms'] : EST_MSG_CONSTXT1.'<br /><br />'.EST_MSG_CONSTXT2);
-  
-  $msg_idx = (intval($DTA['msg_idx']) > 0 ? intval($DTA['msg_idx']) : intval(0)); //int(10) AUTO_INCREMENT,
-  $msg_sent = (intval($DTA['msg_sent']) > 0 ? intval($DTA['msg_sent']) : $STRTIMENOW); // DATETIME int(10)
-  $msg_read = (intval($DTA['msg_read']) > 0 ? intval($DTA['msg_read']) : intval(0)); // DATETIME int(10)
-  $msg_uid_to = (intval($DTA['msg_uid_to']) > 0 ? intval($DTA['msg_uid_to']) : intval(0)); //int(10)
-  $msg_mode = (intval($DTA['msg_mode']) > 0 ? intval($DTA['msg_mode']) : intval(0)); //tinyint(1)
-  $msg_propidx = (intval($DTA['msg_propidx']) > 0 ? intval($DTA['msg_propidx']) : (intval($DTA['prop_idx']) > 0 ? intval($DTA['prop_idx']) : intval(0)));
-  $msg_from_uid = intval($DTA['msg_from_uid'] ? $DTA['msg_from_uid'] : USERID); //int(10)
-  $msg_from_ip = $tp->toTEXT($DTA['msg_from_ip'] ? $DTA['msg_from_ip'] : USERIP); //varchar(55)
-  $msg_from_name = ($DTA['msg_from_name'] ? $DTA['msg_from_name'] : USERNAME); //varchar(55)
-  $msg_from_email = $tp->toTEXT($DTA['msg_from_email'] ? $DTA['msg_from_email'] : USEREMAIL); //varchar(65)
-  $msg_from_phone = $tp->toTEXT($DTA['msg_from_phone']); //varchar(25)
-  
-  
-  if(trim($DTA['msg_text']) == ''){
-    if($msg_mode == 3){}
-    elseif($msg_mode == 2){}
-    else{$DTA['msg_text'] = ' '.$PROPNAME.' ';}
-    }
-  
-  
+  ksort($EST_MSG_MODES);
   // e_TBQS
   
   $ret = '
@@ -119,15 +127,17 @@ function est_msg_form($MODE,$DTA=null){
         <tr>
           <td>
             <textarea name="msg_text" class="tbox form-control estChkMsg" cols="40" rows="6" data-len="18" placeholder="'.EST_MSG_MSGTXTPL.' ('.EST_GEN_REQUIURED.')">'.$tp->toTEXT($DTA['msg_text']).'</textarea>
-            <div id="estMsgDef1">'.EST_MSG_DEF1A.' "'.$PROPNAME.'". '.EST_MSG_DEF1B.'</div>
-            <div id="estMsgDef2">'.EST_MSG_DEF2.'</div>
+            <div id="estMsgDef1" style="display:none;">'.$msg_text.'</div>
+            <div id="estMsgDef2" style="display:none;">'.EST_MSG_DEF2.'</div>
           </td>
         </tr>
       </tbody>
       <tfoot id="estMsgFormTF"'.($msg_idx > 0 ? '' : ' style="display:none;"').'>
         <tr>
           <td id="estMsgBtnTD" class="TAC">
-            <div id="estMsgTerms">'.$tp->toHTML($CTERMS).'</div>
+            <div id="estMsgTerms">
+              '.$tp->toHTML(trim($EST_PREF['contact_terms']) !== '' ? $EST_PREF['contact_terms'] : EST_MSG_CONSTXT1.'<br /><br />'.EST_MSG_CONSTXT2).'
+            </div>
             <button id="estMsgSend1" class="btn btn-primary" data-t1="'.EST_MSG_SEND.'" data-t2="'.$tp->toHTML($DTA['prop_seller']).'" disabled="disabled" >'.EST_MSG_CONSBTN.'</button>
             <input type="hidden" name="msg_idx" value="'.$msg_idx.'"/>
             <input type="hidden" name="msg_sent" value="'.$msg_sent.'"/>

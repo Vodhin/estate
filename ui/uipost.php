@@ -430,7 +430,10 @@ function estChkOrphanFiles($PTH,$BASENAME,$FMATCH=''){
 
 function estMediaRemove($MDTA,$THMBFILEDIR,$FULLFILEDIR,$VIDFILEDIR,$DBDO=0){
   $RES = array();
-  if(EST_USERPERM > 0){
+  $EST_PREF = e107::pref('estate');
+  if(EST_USERPERM > 0 || (intval($EST_PREF['public_act']) !== 0 && USERID > 0 && check_class($EST_PREF['public_act']))){
+    
+    //need to add check to see if user owns image...
     if(!is_writable($THMBFILEDIR)){
       $RES['error'] .= EST_GEN_DIRECTORY.': '.$THMBFILEDIR.' '.EST_GEN_ISNOTACCESS;
       }

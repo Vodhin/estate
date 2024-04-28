@@ -48,6 +48,7 @@ else{
 
 
 $DTA = array();
+$DTA['prop'] = array();
 
 if(!$err && intval($qs[1]) > 0){
   if($prop = $sql->retrieve("estate_properties","*","prop_idx='".intval($qs[1])."' LIMIT 1",true)){
@@ -56,7 +57,7 @@ if(!$err && intval($qs[1]) > 0){
       if($agt = $sql->retrieve("estate_agents","*","agent_idx='".intval($DTA['prop']['prop_agent'])."' LIMIT 1",true)){
         $DTA['agent'] = $agt[0];
         if(intval($DTA['agent']['agent_imgsrc']) == 1 && trim($DTA['agent']['agent_image']) !== ""){
-          $DTA['agent']['agent_profimg'] = EST_PTHABS_AGENT.$tp->toHTML($DTA['agent']['agent_image']);
+          $DTA['imgurl'] = EST_PTHABS_AGENT.$tp->toHTML($DTA['agent']['agent_image']);
           }
         
         if($agy = $sql->retrieve("estate_agencies","*","agency_idx='".intval($DTA['prop']['prop_agency'])."' LIMIT 1",true)){
@@ -64,14 +65,14 @@ if(!$err && intval($qs[1]) > 0){
           }
         if($usr = $sql->retrieve("user",$USRSEL,"user_id='".intval($DTA['agent']['agent_uid'])."' LIMIT 1",true)){
           $DTA['user'] = $usr[0];
-          $DTA['user']['user_profimg'] = $tp->toAvatar($DTA['user'],array('type'=>'url'));
-          if(!$DTA['agent']['agent_profimg']){$DTA['agent']['agent_profimg'] = $DTA['user']['user_profimg'];}
+          $DTA['imgurl'] = $tp->toAvatar($DTA['user'],array('type'=>'url'));
+          if(!$DTA['imgurl']){$DTA['imgurl'] = $DTA['user']['user_profimg'];}
           }
         }
       }
     else{
       if($usr = $sql->retrieve("user",$USRSEL,"user_id='".intval($DTA['prop']['prop_uidcreate'])."' LIMIT 1",true)){
-        $usr[0]['user_profimg'] = $tp->toAvatar($usr[0],array('type'=>'url'));
+        $DTA['imgurl'] = $tp->toAvatar($usr[0],array('type'=>'url'));
         $DTA['user'] = $usr[0];
         }
       }
@@ -125,29 +126,33 @@ if(intval($DTA['prop']['prop_idx']) > 0){
 else{
   if($qs[0] !== 'new'){e107::redirect(e_SELF."?new.0.0");}
   $DTA['prop']['prop_idx'] = intval(0);
-  $DTA['prop']['prop_agency'] = intval(EST_AGENCYID);
-  $DTA['prop']['prop_agent'] = intval(EST_AGENTID);
+  $DTA['prop']['prop_agency'] = EST_AGENCYID;
+  $DTA['prop']['prop_agent'] = EST_AGENTID;
   $DTA['prop']['prop_uidcreate'] = USERID;
   $DTA['prop']['prop_uidupdate'] = USERID;
   $DTA['prop']['prop_datecreated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
   $DTA['prop']['prop_dateupdated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
   
   if($DTA['prop']['prop_agent'] > 0){
-    if($agt = $sql->retrieve("estate_agents","*","agent_idx='".intval($DTA['prop']['prop_agent'])."' LIMIT 1",true)){
+    if($agt = $sql->retrieve("estate_agents","*","agent_idx='".$DTA['prop']['prop_agent']."' LIMIT 1",true)){
       $DTA['agent'] = $agt[0];
-      //extract($agt[0]);
-      if($agy = $sql->retrieve("estate_agencies","*","agency_idx='".intval($DTA['prop']['prop_agency'])."' LIMIT 1",true)){
+      
+      if($agy = $sql->retrieve("estate_agencies","*","agency_idx='".$DTA['prop']['prop_agency']."' LIMIT 1",true)){
         $DTA['agency'] = $agy[0];
-        //extract($agy[0]);
         }
-      if($usr = $sql->retrieve("user",$USRSEL,"user_id='".intval($DTA['agent']['agent_uid'])."' LIMIT 1",true)){
+      if($usr = $sql->retrieve("user",$USRSEL,"user_id='".$DTA['agent']['agent_uid']."' LIMIT 1",true)){
         $DTA['user'] = $usr[0];
         }
+      
+      if(intval($DTA['agent']['agent_imgsrc']) == 1 && trim($DTA['agent']['agent_image']) !== ""){
+        $DTA['imgurl'] = EST_PTHABS_AGENT.$DTA['agent']['agent_image'];
+        }
+      else{$DTA['imgurl'] = $tp->toAvatar($usr[0],array('type'=>'url'));}
       }
     }
   else{
     if($usr = $sql->retrieve("user",$USRSEL,"user_id='".USERID."' LIMIT 1",true)){
-        $usr[0]['user_profimg'] = $tp->toAvatar($usr[0],array('type'=>'url'));
+        $DTA['imgurl'] = $tp->toAvatar($usr[0],array('type'=>'url'));
         $DTA['user'] = $usr[0];
         }
     }
@@ -158,14 +163,14 @@ else{
 
 
 $pretext = '
-  <h2>'.(intval($DTA['prop']['prop_idx']) > 0 ? '' : EST_GEN_NEW.' ').(intval($DTA['prop']['prop_agent']) > 0 ? EST_GEN_AGENT : EST_GEN_PRIVATE).' '.EST_GEN_LISTING.'</h2>
+  <h2>'.(intval($DTA['prop']['prop_idx']) > 0 ? '' : EST_GEN_NEW.' ').($DTA['prop']['prop_agent'] > 0 ? EST_GEN_AGENT : EST_GEN_PRIVATE).' '.EST_GEN_LISTING.'</h2>
   <div id="estAgCard" class="estAgCard">
   <div class="estAgCardInner">
   ';
 
 if($DTA['agent']){
   $pretext .= '
-  <div class="estAgtAvatar" style="background-image:url(\''.$DTA['agent']['agent_profimg'].'\')"></div>
+  <div class="estAgtAvatar" style="background-image:url(\''.$DTA['imgurl'].'\')"></div>
   <div class="estAgtInfo1">
     <h3>'.$tp->toHTML($DTA['agent']['agent_name']).'</h3>
     <p class="FSITAL">'.$tp->toHTML($DTA['agent']['agent_txt1']).'</p>';
@@ -180,12 +185,11 @@ if($DTA['agent']){
     
     $pretext .= '
   </div>';
-  //$pretext .= '<div>'.$DTA['user']['user_profimg'].'</div>';
    
   }
 else{
   $pretext .= '
-  <div class="estAgtAvatar" style="background-image:url(\''.$DTA['user']['user_profimg'].'\')"></div>
+  <div class="estAgtAvatar" style="background-image:url(\''.$DTA['imgurl'].'\')"></div>
   <div class="estAgtInfo1">
     <h3>'.$tp->toHTML($DTA['user']['user_name']).'</h3>
     <div class="estAgContact">
@@ -194,7 +198,7 @@ else{
   </div>';
   }
 
-$pretext .= '<div>Created By UID: '.$DTA['prop']['prop_uidcreate'].' (Updated By UID '.$DTA['prop']['prop_uidupdate'].')</div></div></div>';
+$pretext .= '<div>Created By AGENT: '.$DTA['prop']['prop_agent'].', UID: '.$DTA['prop']['prop_uidcreate'].' (Updated By UID '.$DTA['prop']['prop_uidupdate'].')</div></div></div>';
 
 if($err){
   foreach($err as $k=>$v){e107::getMessage()->addError($v);}
