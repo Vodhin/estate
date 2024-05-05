@@ -344,7 +344,8 @@ define("EST_PLCH95","eg. Main Office");
 define("EST_PLCH97","Additional Agency Info");
 
 
-
+define("EST_PREF_CONTACTCC","Allow CC Sender");
+define("EST_PREF_CONTACTCCHLP","Users in this class can opt to have a copy of their email sent to their email address. MAY BE MISUSED, set with caution!");
 define("EST_PREF_DEFCURRENCYHLP","The default Currency selected when creating a New Listing");
 define("EST_PREF_DEFCOUNTRYHLP","The default Country selected when creating a New Listing");
 
