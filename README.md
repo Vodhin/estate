@@ -3,6 +3,7 @@ A plugin for the e107 Content management System to manage Real Estate Agencies, 
 
 The _Estate_ plugin is not ready yet. I have a lot to do before it can be published. The Current repository should be mostly usable if anyone wants to try it out. A live production site using this plugin can be viewed here https://www.sandpiperhome.org
 
+5 May 2024: Almost ready for a stable release! Still have to finish coding Community Information Forms and add some UI elements for Likes/Saves and Communication History.  
 
 REQUIREMENTS:
 
@@ -41,12 +42,10 @@ Comprehensive Help Sidebar displays relavent Help for current form and selected 
 
 Front-end Templates are customizable through the Estate Preferences form.
 
-
-
-FURTURE FEATURES
+Extensive Help system.
 
 Front-end Quick Add/Edit functionality
 
 Non-Agent Private listings (For Sale By Owner) available to a selected User Class
 
-Expansion of the already extensive Help system.
+Agent/Seller email Contact Form with notifications through PM integration
