@@ -5,6 +5,8 @@
 if (!defined('e107_INIT')) { exit; }
 
 
+// THEME
+
 class estate_shortcodes extends e_shortcode{
   
   
@@ -431,8 +433,6 @@ class estate_shortcodes extends e_shortcode{
     unset($USRDTA);
     
     
-    
-    
     if(intval($this->var['agency_idx']) > 0){
       $ret['agency_idx'] = intval($this->var['agency_idx']);
       $ret['agency_name'] = $this->var['agency_name'];
@@ -440,8 +440,6 @@ class estate_shortcodes extends e_shortcode{
         $ret['agylogo'] = EST_PTHABS_AGENCY.$tp->toHTML($this->var['agency_image']);
         }
       }
-    
-    
     
     
     if(intval($this->var['agent_idx']) > 0){
@@ -594,7 +592,8 @@ class estate_shortcodes extends e_shortcode{
         </div>';
     
     if($CFormOK){
-      $this->var['msg_uid_to'] = $AGENT['agent_uid'];
+      $this->var['msg_to_uid'] = $AGENT['agent_uid'];
+      $this->var['msg_from_uid'] = USERID;
       $this->var['prop_seller'] = $AGENT['agent_name'];
       $ret .= '
       </div>

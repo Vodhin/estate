@@ -19,6 +19,7 @@
 	<pluginPrefs>
 		<pref name='addnewuser'>3</pref>
 		<pref name='adminonly'>0</pref>
+		<pref name='contact_cc'>255</pref>
 		<pref name='contact_class'>0</pref>
 		<pref name='contact_notify'>1</pref>
 		<pref name='contact_mode'>1</pref>

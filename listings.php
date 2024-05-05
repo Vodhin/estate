@@ -25,6 +25,8 @@ e107::css('url',e_PLUGIN.'estate/css/listings.css');
 e107::css('url',e_PLUGIN.'estate/css/viewtop.css');
 e107::css('url',e_PLUGIN.'estate/css/spaces.css');
 
+//e107::css('url',e_PLUGIN.'estate/css/msg.css');
+
 
 $e107 = e107::getInstance();
 if(!$e107->isInstalled('estate')){
