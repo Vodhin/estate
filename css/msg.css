@@ -1,0 +1,137 @@
+#estMsgWarn{
+  color: #AA0000;
+  background-color: rgba(256, 0, 0, 0.15);
+  padding: 12px 8px 12px 8px;
+  border-radius: 3px;
+  }
+#estMsgWarn,
+#estMsgPrevDiv,
+#estMsgResult{
+  display: block;
+  position: relative;
+  width: 96%;
+  margin: 4px auto 12px auto;
+  line-height: 1.15em;
+  }
+#estMsgResult p{
+  margin: 4px 0px 4px 0px;
+  }
+
+#estMsgPrevDiv h4{
+  width:100%;
+  margin: 0px;
+  text-align:left;
+  cursor:pointer;
+  }
+
+#estMsgPrevBelt{
+  display: none;
+  position: relative;
+  width: 100%;
+  height:0px;
+  max-height:256px;
+  overflow-y:auto;
+  }
+
+#estMsgPrevDiv div.estMsgBtn{
+  
+  }
+#estMsgPrevDiv div.estMsgBtn button{
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+#estMsgPrevDiv div.estMsgP{
+  display:none;
+  position:relative;
+  background-color: rgba(32, 32, 32, 0.125);
+  width: 98%;
+  padding: 8px 2%;
+  border-radius: 3px;
+  margin: 4px auto 16px auto;
+  }
+
+
+
+#estMsgFormTabl{
+  margin:0px;
+  }
+
+#estMsgFormTB fieldset{
+  
+  }
+
+#estMsgFormTB fieldset legend{
+  display: block;
+  width: 100%;
+  font-size:9pt;
+  text-align:left;
+  font-style:italic;
+  padding: 0;
+  margin: 0px;
+  line-height: inherit;
+  color: #333;
+  border: 0;
+  border-bottom: none;
+  }
+
+#estMsgCCdiv{padding: 4px 2px 0px 4px;}
+#estMsgCCdiv label{
+  font-size:10pt;
+  font-weight:normal;
+  margin-left:6px;
+  vertical-align: middle;
+  cursor:pointer;
+  }
+
+
+#estMsgTerms{
+  display: block;
+  position: relative;
+  width: 97%;
+  font-size: 9pt;
+  text-align: left;
+  margin: 2px auto 12px auto;
+  }
+
+.estChkMsg{border:1px solid rgba(128,128,128,0.7);}
+.estMsgNG{border:1px solid #AA0000;}
+
+
+@media screen and (orientation:landscape){
+  .dummy{}
+  }
+
+@media screen and (orientation:portrait){
+  .dummy{}
+
+  }
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1023px){
+  .dummy{}
+
+  }
+
+@media only screen and (min-device-width:1024px) and (max-device-width:1365px) and (orientation:portrait){
+  .dummy{}
+
+  }
+
+@media only screen and (min-device-width:1024px) and (max-device-width:1365px) and (orientation:landscape){
+  .dummy{}
+
+  }
+
+
+@media only screen and (min-device-width:1024px){
+  .dummy{}
+  
+  }
+
+
+@media only screen and (min-device-width:100px) and (max-device-width:480px){
+  .dummy{}
+  
+  }
