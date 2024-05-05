@@ -137,10 +137,6 @@ class estateCore{
     $tp = e107::getParser();
     $ret1 = array();
     
-    //if($sql->select('estate_agents', '*', '')){
-      //while($row = $sql->fetch()){$AGNT[$row['agent_uid']] = $row;}
-      //}
-    
     $usrClasses = $this->getUsrClassIds(1);
     
     $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_image,user_signature FROM #user WHERE user_admin='1'".($mode == 1 ? "" : " AND user_class IN (".$usrClasses.")").((EST_USERPERM === 4 || USERID === 1) ? "" : " AND NOT user_perms='0'").(USERID === 1 ? "" : " AND NOT user_id='1'")." ORDER BY user_name ASC");

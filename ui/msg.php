@@ -1,59 +1,308 @@
 <?php
-if(!defined('e107_INIT')){exit;}
-
-
-if(e107::isInstalled('pm')){
-  //e107::getMessage()->addInfo('PM Installed');
-  }
-
-e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php'); //???
-
-
-
-//EST_SELLERUID
-
-  //e107::getMessage()->addInfo('Contact System Enabled');
-
-//USERIP
-
-if(EST_SELLERUID > 0){
-  //e107::getMessage()->addInfo('Test: '.USERIP);
-  
-  if(EST_AGENTID > 0){
+if(!defined('e107_INIT')){
+  if(isset($_POST['sndMsg']) && isset($_POST['tdta'])){
+    define('e_TOKEN_DISABLE',true);
+    require_once('../../../class2.php');
+    e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
+    //e107::includeLan('/'.e_LANGUAGE.'lan_mail_handler.php'); ???
     
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $EST_PREF = e107::pref('estate');
+    $RES = array();
+    //$RES['sent']['raw'] = $_POST['tdta'];
+    $TOUID = intval($_POST['tdta']['msg_to_uid']);
+    $ei = 0;
+    
+    if($TOUID == 0){$RES['error'][$ei] = EST_MSG_ERRNOUID; $ei++;}
+    
+    $MSG = est_msg_proc($_POST['tdta']);
+    //$RES['sent']['proc'] = $MSG;
+    if(intval($TOUID) !== intval($MSG['msg_to_uid'])){$RES['error'][$ei] = EST_MSG_ERRUIDNOMATCH; $ei++;}
+    
+    $MSG['msg_from_ip'] = USERIP;
+    
+    if($sql->select("estate_agents", "*", "agent_uid = '".$TOUID."'")){
+      $AGENT = $sql->fetch();
+      $AGTID = intval($AGENT['agent_idx']);
+      if($AGTID > 0){
+        $EMAIL_TO_NAME = $AGENT['agent_name'];
+        if($CONT = $sql->retrieve("SELECT * FROM #estate_contacts WHERE contact_tabidx=".$AGTID." ORDER BY contact_ord ASC ",true)){
+          foreach($CONT as $k=>$v){
+            if(strtolower($v['contact_key']) == strtolower(EST_GEN_EMAIL)){$EMAIL_TO_ADDR = $v['contact_data'];}
+            $AGENT['contacts'][$k] = array($v['contact_key'],$v['contact_data']);
+            }
+          }
+        $RES['found']['agent'] = $AGENT;
+        }
+      }
+    
+    
+    if(!$AGENT && intval($MSG['msg_mode']) == 2){$RES['error'][$ei] = EST_MSG_ERRNOTAGENT; $ei++;}
+    
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_login,user_email,user_lastvisit FROM #user WHERE user_id = '".$TOUID."'");
+    $TOUSER = $sql->fetch();
+    if(intval($TOUSER['user_id']) == 0){$RES['error'][$ei] = EST_MSG_ERRTOUSRNOTFOUND; $ei++;}
+    
+    $MSG['msg_to_uid'] = intval($TOUSER['user_id']);
+    if(!$EMAIL_TO_NAME){$EMAIL_TO_NAME = (trim($TOUSER['user_name']) !== '' ? $TOUSER['user_name'] : $TOUSER['user_loginname']);}
+    if(!$EMAIL_TO_ADDR){$EMAIL_TO_ADDR = $TOUSER['user_email'];}
+    
+    if(!$EMAIL_TO_ADDR){$RES['error'][$ei] = EST_MSG_ERRTOUSRNOEMAIL; $ei++;}
+    if($EST_PREF['contact_phone'] == 1 && trim($MSG['msg_from_phone']) == ''){$RES['error'][$ei] = EST_MSG_ERRFROMNOPHONE; $ei++;}
+    
+    
+    if(USERID > 0){
+      $sql->gen("SELECT user_id,user_name,user_loginname,user_login,user_email,user_lastvisit FROM #user WHERE user_id = '".USERID."'");
+      $FROMUSER = $sql->fetch();
+      }
+    
+    if(trim($MSG['msg_from_addr']) == ''){$RES['error'][$ei] = EST_MSG_ERRFROMUSRNOEMAIL; $ei++;}
+    
+    
+    $MSGTXT = $MSG['msg_text'];
+    $MSGFOOT = EST_MSG_MYCONTINFO.': <br />'.$MSG['msg_from_name'].' <br />'.$MSG['msg_from_addr'].' <br />'.$MSG['msg_from_phone'];
+    
+    $MSG['msg_sent'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+    $MSG['msg_to_addr'] = $tp->toDB($EMAIL_TO_ADDR);
+		$MSG['msg_to_name'] = $tp->toDB($EMAIL_TO_NAME);
+		$MSG['msg_from_addr'] = $tp->toDB($MSG['msg_from_addr']);
+		$MSG['msg_from_name'] = $tp->toDB($MSG['msg_from_name']);
+		$MSG['msg_top'] = $tp->toDB($MSG['msg_top']);
+		$MSG['msg_text'] = $tp->toDB($MSGTXT.' <br /><br />'.$MSGFOOT);
+    
+    
+    if($RES['error']){
+      $RES['msg'] = $MSG;
+      echo $tp->toJSON($RES);
+      exit;
+      }
+    
+    
+		//$triggerData = $MSG;
+	  //e107::getEvent()->trigger('estate_message', $triggerData);
+	  //ob_start();
+		//$this->trackEmail($MSG);
+		//ob_end_clean();
+    
+    
+		$recipients = array();
+    // send to
+		$recipients[0] = array(
+			'mail_recipient_id'=>intval($MSG['msg_to_uid']),
+			'mail_recipient_name'=>$MSG['msg_to_name'],
+			'mail_recipient_email'=>$MSG['msg_to_addr'],
+      'mail_copy_to'=>$MSG['msg_from_addr'],
+			'mail_target_info'=>array(
+				'USERID'=>intval($MSG['msg_to_uid']),
+				'DISPLAYNAME'=>(trim($TOUSER['user_name']) !== '' ? $TOUSER['user_name'] : $TOUSER['user_loginname']),
+				'SUBJECT'=>$MSG['msg_top'],
+				'USERNAME'=>$TOUSER['user_loginname'],
+				'USERLASTVISIT'=>$TOUSER['user_lastvisit'],
+				'DATE_SHORT'=>$tp->toDate(time(),'short'),
+				'DATE_LONG'=>$tp->toDate(time(),'long'),
+				)
+			);
+    
+    if(check_class($EST_PREF['contact_cc']) && intval($MSG['msg_from_cc']) == 1){
+      $recipients[1] = array(
+  			'mail_recipient_id'=> intval($MSG['msg_from_uid']),
+  			'mail_recipient_name'=> $MSG['msg_from_name'],
+  			'mail_recipient_email'=> $MSG['msg_from_addr'],
+  			'mail_target_info'=> array(
+  				'USERID'=> intval($MSG['msg_from_uid']),
+  				'DISPLAYNAME'=>(trim($FROMUSER['user_login']) !== '' ? $FROMUSER['user_login'] : ($FROMUSER['user_name'] ? $FROMUSER['user_name'] : EST_MSG_NOTMEMBER)),
+  				'SUBJECT'=> $MSG['msg_top'],
+  				'USERNAME'=> ($FROMUSER['user_name'] ? $FROMUSER['user_name'] : EST_MSG_NOTMEMBER),
+  				'USERLASTVISIT'=> ($FROMUSER['user_lastvisit'] ? $FROMUSER['user_lastvisit'] : intval($MSG['msg_sent'])),
+  				'DATE_SHORT'=> $tp->toDate(time(),'short'),
+  				'DATE_LONG'=> $tp->toDate(time(),'long'),
+  				)
+  			);
+      }
+    
+    if(ADMINPERMS === '0'){$RES['email']['to'] = $recipients;}
+    
+      
+    //<em>$text</em> print tags
+    
+  
+		require_once(e_HANDLER.'mail_manager_class.php');
+		$mailer = new e107MailManager;
+
+		$vars = array('x'=>$MSG['msg_from_name'], 'y'=>$MSG['msg_to_name'], 'z'=>$MSG['msg_top']);
+    $message = "[html]".$tp->lanVars('<strong>'.EST_MSG_DONOTRPLY.'</strong> '.EST_MSG_TOPPER, $vars,true)." <br /><br /><blockquote>".$tp->toEmail($MSGTXT.' <br /><br />'.$MSGFOOT, false)."</blockquote>[/html]";
+    
+  
+		// Create the mail body
+		$mailData = array(
+				'mail_total_count'      => count($recipients),
+				'mail_content_status' 	=> MAIL_STATUS_TEMP,
+				'mail_create_app' 		=> 'estate',
+				'mail_title' 			=> 'ESTATE TRACKING',
+				'mail_subject' 			=> $MSG['msg_top'],
+				'mail_sender_email' 	=> e107::getPref('replyto_email',SITEADMINEMAIL), //$MSG['msg_from_addr'],
+				'mail_sender_name'		=> $MSG['msg_from_name'].' via '.SITENAME.'',
+				'mail_notify_complete' 	=> 0,	// NEVER notify when this email sent!
+				'mail_body' 			=> $message,
+				'template'				=> 'default',
+				'mail_send_style'       => 'default',
+        'overrides'=>array(
+          'replyto_email'=>$MSG['msg_from_addr'],
+          'replyto_name'=>$MSG['msg_from_name']
+          )
+		  );
+  
+    
+    if(ADMINPERMS === '0'){$RES['email']['data'] = $mailData;}
+    
+		$opts =  array(); // array('mail_force_queue'=>1); array(email_replyto)
+    $emsent = $mailer->sendEmails('default', $mailData, $recipients, $opts);
+    $MSG['msg_email'] = ($emsent == true ? 1 : 0);
+    
+    //	$thread_name = str_replace('&quot;', '"', $thread_name);// This not picked up by toText();
+  
+    
+		$MSGID = $sql->insert('estate_msg', $MSG);
+		$MSG['msg_idx'] = $MSGID;
+  
+  
+    if(e107::isInstalled('pm')){
+      $PM_TO_UID = intval();
+      if($MSG['msg_to_uid'] > 0){
+        $pm_prefs = e107::getPlugPref('pm');
+        //$pmClass = varset($pm_prefs['pm_class'], e_UC_NOBODY);
+        //check_class($pmClass)
+        
+        //EST_USERPERM
+        
+  		  
+      
+        if($MSG['msg_from_uid'] == 0){
+          // not a member, send as if an admin
+          if($AGENT){
+            if($sql->gen("SELECT user_id,user_name, #estate_agents.* FROM #estate_agents LEFT JOIN #user ON user_id = agent_uid WHERE user_perms='0' AND agent_agcy='".intval($AGENT['agent_agcy'])."' AND NOT agent_uid='".$MSG['msg_to_uid']."' LIMIT 1")){
+              $mgr = $sql->fetch();
+              $MSG['msg_from_uid'] = intval($mgr['user_id']);
+              }
+            else{
+              $sql->gen("SELECT user_id,user_name FROM #user WHERE user_perms='0' LIMIT 1");
+              $mgr = $sql->fetch();
+              $MSG['msg_from_uid'] = intval($mgr['user_id']);
+              }
+            $RES['mgr'] = $mgr;
+            }
+          
+          if($MSG['msg_from_uid'] == 0){$MSG['msg_from_uid'] = 1;}
+          //SITEADMIN
+          //SITEADMINEMAIL
+          }
+        
+        
+        $pm = array();
+        $pmf = $sql->db_FieldList('private_msg');
+        foreach($pmf as $k=>$v){$pm[$v]='';}
+        $pm['pm_id'] = intval(0);
+        $pm['pm_from'] = $MSG['msg_from_uid'];
+        $pm['pm_to'] = $MSG['msg_to_uid']; //$MSG['msg_to_name'];
+        $pm['pm_sent'] = intval($MSG['msg_sent']);
+        $pm['pm_read'] = intval(0);//date
+        $pm['pm_subject'] = $MSG['msg_top'];
+        $pm['pm_text'] = $MSG['msg_text'];
+        $pm['pm_sent_del'] = intval(0);
+        $pm['pm_read_del'] = intval(0);
+        $pm['pm_size'] = strlen($MSG['msg_text']);
+        $MSG['msg_pm'] = $sql->insert('private_msg', $pm);
+        }
+      }
+    
+    
+    $RES['msg'] = $MSG;
+    $RES['pvw'][0] = estPrevMsgPvw($MSG);
+    $RES['pvw'][1] = estPrevMsgPvw($MSG,1);
+    
+    $dberr = $sql->getLastErrorText();
+    if($dberr){
+      $RES['error'][0] = $dberr;
+      unset($dberr);
+      }
+    echo $tp->toJSON($RES);
+    unset($RES,$TOUID,$MSG,$AGENT,$TOUSER,$EMAIL_TO_NAME,$EMAIL_TO_ADDR,$FROMUSER);
     }
-  
-  
-  
+  exit;
   }
 
 
+	//$randnum = rand(1000, 9999);
+
+e107::css('url',e_PLUGIN.'estate/css/msg.css');
+e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
 
 
 function est_msg_proc($DTA){
   $tp = e107::getParser();
-  if(trim($DTA['msg_text']) == ''){
-    $DTA['msg_text'] = EST_MSG_DEF1A.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'. '.EST_MSG_DEF1B;
+  //if(trim($DTA['msg_text']) == ''){$DTA['msg_text'] = EST_MSG_TXT1A;}
+  if(USERID > 0 && trim($DTA['msg_from_name']) == ''){
+    $sql = e107::getDB();
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_login,user_email FROM #user WHERE user_id = '".USERID."'");
+    $udta = $sql->fetch();
+    $DTA['msg_from_addr'] = $udta['user_email'];
+    if(trim($udta['user_login']) !== ''){
+      $DTA['msg_from_name'] = $udta['user_login'].(trim($udta['user_name']) !== '' ? ' ('.$udta['user_name'].')' : '');
+      }
+    else{
+      $DTA['msg_from_name'] = ($udta['user_name'] ? $udta['user_name'] : '');
+      }
+    
+    unset($udta);
     }
   
   $MSG = array(
     'msg_idx'=>(intval($DTA['msg_idx']) > 0 ? intval($DTA['msg_idx']) : intval(0)),
     'msg_sent'=>(intval($DTA['msg_sent']) > 0 ? intval($DTA['msg_sent']) : mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"))),
     'msg_read'=>(intval($DTA['msg_read']) > 0 ? intval($DTA['msg_read']) : intval(0)),
-    'msg_uid_to'=>(intval($DTA['msg_uid_to']) > 0 ? intval($DTA['msg_uid_to']) : intval(0)),
+    'msg_to_uid'=>(intval($DTA['msg_to_uid']) > 0 ? intval($DTA['msg_to_uid']) : intval(0)),
+    'msg_to_addr'=>$tp->toTEXT(trim($DTA['msg_to_addr']) ? $DTA['msg_to_addr'] : ''),
+    'msg_to_name'=>$tp->toTEXT(trim($DTA['msg_to_name']) ? $DTA['msg_to_name'] : ''),
     'msg_mode'=>(intval($DTA['msg_mode']) > 0 ? intval($DTA['msg_mode']) : intval(0)),
     'msg_propidx'=>(intval($DTA['msg_propidx']) > 0 ? intval($DTA['msg_propidx']) : (intval($DTA['prop_idx']) > 0 ? intval($DTA['prop_idx']) : intval(0))),
+    'msg_from_cc'=>(intval($DTA['msg_from_cc']) > 0 ? intval($DTA['msg_from_cc']) : intval(0)),
     'msg_from_uid'=>intval($DTA['msg_from_uid'] ? $DTA['msg_from_uid'] : USERID),
     'msg_from_ip'=>$tp->toTEXT($DTA['msg_from_ip'] ? $DTA['msg_from_ip'] : USERIP),
-    'msg_from_name'=>$tp->toTEXT(trim($DTA['msg_from_name']) !== '' ? $DTA['msg_from_name'] : (defined("USERNAME") ? USERNAME : '')),
-    'msg_from_email'=>$tp->toTEXT(trim($DTA['msg_from_email']) ? $DTA['msg_from_email'] : USEREMAIL),
+    'msg_from_name'=>$tp->toTEXT(trim($DTA['msg_from_name']) !== '' ? $DTA['msg_from_name'] : ''), //(defined("USERNAME") ? USERNAME : '')
+    'msg_from_addr'=>$tp->toTEXT(trim($DTA['msg_from_addr']) ? $DTA['msg_from_addr'] : ''), //(defined("USEREMAIL") ? USEREMAIL : '')
     'msg_from_phone'=>$tp->toTEXT($DTA['msg_from_phone']),
+    'msg_top'=>$tp->toTEXT($DTA['msg_top']),
     'msg_text'=>$tp->toTEXT($DTA['msg_text']),
     );
   
-  return $MSG;
   
+  return $MSG;
   }
+
+
+
+function estPrevMsgPvw($mv,$mde=0){
+  $tp = e107::getParser();
+  if($mde == 1){
+    return '
+      <div class="estMsgP" style="display:block;">
+        <h5>'.$tp->toDate($mv['msg_sent'],'long').' '.$tp->toHTML($mv['msg_top']).'</h5>
+        <p>'.$tp->toHTML($mv['msg_text']).'</p>
+      </div>';
+    }
+  else{
+    return '
+      <div class="estMsgBtn">
+        <button class="btn btn-default">'.$tp->toHTML($mv['msg_top']).'</button>
+        <div class="estMsgP">
+          <h5>'.$tp->toDate($mv['msg_sent'],'long').' '.$tp->toHTML($mv['msg_top']).'</h5>
+          <p>'.$tp->toHTML($mv['msg_text']).'</p>
+        </div>
+      </div>';
+    }
+  }
+
 
 
 
@@ -63,6 +312,7 @@ function est_msg_form($DTA=null){
     return EST_GEN_UNK.' '.EST_GEN_SELLER;
     }
   
+  $sql = e107::getDB();
   $tp = e107::getParser();
   $EST_PREF = e107::pref('estate');
   
@@ -71,6 +321,7 @@ function est_msg_form($DTA=null){
     1=>array('saved_icon','Saved '),
   */
   
+  
   $MSG = est_msg_proc($DTA);
   extract($MSG);
   
@@ -78,57 +329,181 @@ function est_msg_form($DTA=null){
     0=>EST_GEN_CONTACT.' '.$DTA['prop_seller'].' ('.EST_GEN_SELECTONE.')',
     3=>EST_MSG_IWANTOTHER
     );
-  if(intval($DTA['agent_idx']) > 0){$EST_MSG_MODES[1] = EST_MSG_IWANTVIEW;}
+  
+  $EST_COOKIE = $_COOKIE['estate-'.USERID.'-msgs']; //.intval($MSG['msg_propidx'])]
+  
+  $SUBTXT = EST_MSG_SUB1A;
+  $TXTTXT = EST_MSG_TXT1A;
+  
+  switch(intval($DTA['prop_status'])){
+    case 4 :  //Pending
+      $EST_MSG_MODES[1] = EST_MSG_IWANTOFFER;
+      $SUBTXT = EST_MSG_SUB1B;
+      $TXTTXT = EST_MSG_TXT1B;
+      break;
+    case 3 : 
+      $EST_MSG_MODES[1] = EST_MSG_IWANTVIEW;
+      break;
+       
+    case 2 : 
+      if(intval($DTA['prop_datelive']) > 0 && intval($DTA['prop_datelive']) <= $MSG['msg_sent']){
+        $EST_MSG_MODES[1] = EST_MSG_IWANTVIEW;
+        }
+      elseif(USERID > 0 && (intval($DTA['prop_dateprevw']) > 0 && intval($DTA['prop_dateprevw']) <= $MSG['msg_sent'])){
+        $EST_MSG_MODES[1] = EST_MSG_IWANTVIEW;
+        }
+      else{
+        
+        }
+      break;
+    }
+  
+  
+  
+  
   if(intval($DTA['agent_idx']) > 0){$EST_MSG_MODES[2] = EST_MSG_IWANTSELL;}
   
+  
+  //e107::getDate()->convert_date($post_list[0]['post_datestamp'], "forum")
+  
+  
+  
   ksort($EST_MSG_MODES);
-  // e_TBQS
+  
+  $PREVMSG = array();
+  
+  $MQRY = "SELECT #estate_msg.* FROM #estate_msg WHERE msg_propidx='".$MSG['msg_propidx']."' AND ".(USERID > 0 ? "msg_from_uid='".USERID."'" : "msg_from_ip=".USERIP."'")." ORDER BY msg_sent DESC LIMIT 50";
+  
+  $mi = 0;
+  $sql->gen($MQRY);
+  while($rows = $sql->fetch()){
+    $PREVMSG[$mi] = $rows;
+    $mi++;
+    }
+  
+  $PMSGCT = count($PREVMSG);
+  $PREVDIV = '
+  <div id="estMsgPrevDiv" class="WD100">
+    <h4 class="btn btn-primary"'.($PMSGCT > 0 ? '' : ' style="display:none;"').'>'.EST_MSG_PREVMSG.' ('.$PMSGCT.')</h4>';
+  
+  if($PMSGCT > 0){
+    if($PMSGCT == 1){
+      $PREVDIV .= estPrevMsgPvw($PREVMSG[0],1);
+      }
+    else{
+      $PREVDIV .= '
+    <div id="estMsgPrevBelt">';
+      foreach($PREVMSG as $mk=>$mv){$PREVDIV .= estPrevMsgPvw($mv);}
+      $PREVDIV .= '
+    </div>';
+      }
+    }
+  $PREVDIV .= '
+  </div>';
+  
   
   $ret = '
-  <div class="WD100">
+  <div id="estMsgFormDiv" class="WD100">';
+  if($PMSGCT > 15){
+    $ret .= '<div id="estMsgWarn">'.EST_MSG_REACHMAX1.' '.$tp->toHTML($DTA['prop_seller']).' '.EST_MSG_REACHMAX2.'</div>';
+    }
+  else{
+    $ret .= '
     <table id="estMsgFormTabl" class="table WD100 TAL">
       <thead>
         <tr style="display:none;">
           <td>
-            <input type="text" name="mail_to" class="tbox form-control estChkMsgRem" value="istatrap@icloud.com" />
-            <input type="text" name="mail_from" class="tbox form-control estChkMsgRem" value="istatrap@icloud.com" />
-            <input type="text" name="mail_subject" class="tbox form-control" value="it is a trap" />
+            <input type="text" name="mail_to" class="tbox form-control estChkMsgRem" data-domn="'.e_DOMAIN.'" value="itsatrap@'.e_DOMAIN.'" />
+            <input type="text" name="mail_from" class="tbox form-control estChkMsgRem" data-domn="'.e_DOMAIN.'" value="itsatrap@'.e_DOMAIN.'" />
+            <input type="text" name="mail_subject" class="tbox form-control" value="itsatrap" />
             <textarea name="mail_text" class="tbox form-control">Humans should not change this</textarea>
           </td>
         </tr>
         <tr>
           <td>
             <select name="msg_mode" class="tbox form-control" value="'.$msg_mode.'">';
-  foreach($EST_MSG_MODES as $k=>$v){
-    $ret .= '<option value="'.$k.'"'.($k == $msg_mode ? 'selected="selected"' : '').' >'.$tp->toHTML($v).'</option>';
-    }
+    foreach($EST_MSG_MODES as $k=>$v){
+      $ret .= '<option value="'.$k.'"'.($k == $msg_mode ? 'selected="selected"' : '').' >'.$tp->toHTML($v).'</option>';
+      }
+
   
-  $ret .= '
+    $ret .= '
             </select>
+            <div id="estMsgDefs" style="display:none;">
+              <div id="estT1">'.$TXTTXT.' '.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'. '.EST_MSG_END.'</div>
+              <div id="estT2">'.EST_MSG_TXT2.'</div>
+              <div id="estS1">'.$SUBTXT.': '.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'</div>
+              <div id="estS2">'.EST_MSG_SUB2.'</div>
+              <div id="estMsgFNG">'.EST_MSG_FNG.'</div>
+              <div id="estEmS1">'.EST_MSG_SEND.'<div>'.$tp->toHTML($DTA['prop_seller']).'</div></div>
+              <div id="estMsgRes">'.EST_MSG_RESULTS.'</div>
+              <div id="estEmSent0">'.EST_MSG_EMSENT0.'</div>
+              <div id="estEmSent1">'.EST_MSG_EMSENT1.'</div>
+              <div id="estEmSent4">'.EST_MSG_EMSENT4.'</div>
+              <div id="estEmSent5">'.EST_MSG_EMSENT5.'</div>
+              <div id="estPmSent">'.EST_MSG_PMSENT.'</div>
+              <div id="estThks1">'.EST_MSG_THANKS1.'</div>
+              <div id="estThks2">'.EST_MSG_THANKS2.'</div>
+            </div>
           </td>
         </tr>
       </thead>
       <tbody id="estMsgFormTB"'.($msg_idx > 0 ? '' : ' style="display:none;"').'>
         <tr>
           <td>
+            <fieldset><legend>'.EST_MSG_YOURNAME.':</legend>
             <input type="text" name="msg_from_name" class="tbox form-control estChkMsg" data-len="6" value="'.$tp->toTEXT($msg_from_name).'" placeholder="'.EST_MSG_YOURNAME.' ('.EST_GEN_REQUIURED.')" />
+            <input type="hidden" name="msg_idx" value="'.$msg_idx.'"/>
+            <input type="hidden" name="msg_sent" value="'.$msg_sent.'"/>
+            <input type="hidden" name="msg_read" value="'.$msg_read.'"/>
+            <input type="hidden" name="msg_to_uid" value="'.$msg_to_uid.'"/>
+            <input type="hidden" name="msg_to_addr" value="'.$msg_to_addr.'"/>
+            <input type="hidden" name="msg_propidx" value="'.$msg_propidx.'"/>
+            <input type="hidden" name="msg_top" value="'.$msg_top.'"/>
+            <input type="hidden" name="msg_from_uid" value="'.$msg_from_uid.'"/>
+            <input type="hidden" name="msg_from_ip" value="'.$msg_from_ip.'"/>
+            </fieldset>
           </td>
         </tr>
         <tr>
           <td>
-            <input type="text" name="msg_from_email" class="tbox form-control estChkMsg" data-req="@" data-len="6" value="'.$tp->toTEXT($msg_from_email).'" placeholder="'.EST_MSG_YOUREMAIL.' ('.EST_GEN_REQUIURED.')" />
+            <fieldset><legend>'.EST_MSG_YOUREMAIL.':</legend>
+            <input type="text" name="msg_from_addr" class="tbox form-control estChkMsg" data-req="@" data-len="6" value="'.$tp->toTEXT($msg_from_addr).'" placeholder="'.EST_MSG_YOUREMAIL.' ('.EST_GEN_REQUIURED.')" />';
+            
+          if(check_class($EST_PREF['contact_cc'])){
+            $ret .= '
+            <div id="estMsgCCdiv">
+              <input type="checkbox" id="msg-from-cc" name="msg_from_cc" value="1" class="tbox INLBLK" /><label for="msg-from-cc">'.EST_MSG_CCME.'</label>
+            </div>';
+            }
+          $ret .= '
+            </fieldset>
           </td>
         </tr>
         <tr>
           <td>
+            <fieldset><legend>'.EST_MSG_YOUREPHONE.':</legend>
             <input type="text" name="msg_from_phone" '.($EST_PREF['contact_phone'] == 1 ? 'class="tbox form-control estChkMsg"  placeholder="'.EST_MSG_YOUREPHONE.' ('.EST_GEN_REQUIURED.')"': 'class="tbox form-control"  placeholder="'.EST_MSG_YOUREPHONE.'"').' data-len="8" value="'.$tp->toTEXT($msg_from_phone).'" />
+            </fieldset>
+          </td>
+        </tr>
+        <tr id="msgTopTR">
+          <td>
+            <fieldset><legend>'.EST_MSG_SUBJECT.':</legend>
+            <input type="text" name="msg_top" class="tbox form-control estChkMsg" value="'.$msg_top.'" data-len="6" placeholder="'.EST_MSG_SUBJECT.'"/>
+            </fieldset>
           </td>
         </tr>
         <tr>
           <td>
+            <fieldset><legend>'.EST_MSG_YOURMSG.':</legend>
             <textarea name="msg_text" class="tbox form-control estChkMsg" cols="40" rows="6" data-len="18" placeholder="'.EST_MSG_MSGTXTPL.' ('.EST_GEN_REQUIURED.')">'.$tp->toTEXT($DTA['msg_text']).'</textarea>
-            <div id="estMsgDef1" style="display:none;">'.$msg_text.'</div>
-            <div id="estMsgDef2" style="display:none;">'.EST_MSG_DEF2.'</div>
+            </fieldset>
+          </td>
+        </tr>
+        <tr>
+          <td class="TAC">
+            <button id="estMsgSend0" class="btn btn-primary">'.EST_MSG_VIEWAGREE.'</button>
           </td>
         </tr>
       </tbody>
@@ -139,241 +514,19 @@ function est_msg_form($DTA=null){
               '.$tp->toHTML(trim($EST_PREF['contact_terms']) !== '' ? $EST_PREF['contact_terms'] : EST_MSG_CONSTXT1.'<br /><br />'.EST_MSG_CONSTXT2).'
             </div>
             <button id="estMsgSend1" class="btn btn-primary" data-t1="'.EST_MSG_SEND.'" data-t2="'.$tp->toHTML($DTA['prop_seller']).'" disabled="disabled" >'.EST_MSG_CONSBTN.'</button>
-            <input type="hidden" name="msg_idx" value="'.$msg_idx.'"/>
-            <input type="hidden" name="msg_sent" value="'.$msg_sent.'"/>
-            <input type="hidden" name="msg_read" value="'.$msg_read.'"/>
-            <input type="hidden" name="msg_uid_to" value="'.$msg_uid_to.'"/>
-            <input type="hidden" name="msg_propidx" value="'.$msg_propidx.'"/>
-            <input type="hidden" name="msg_from_uid" value="'.$msg_from_uid.'"/>
-            <input type="hidden" name="msg_from_ip" value="'.$msg_from_ip.'"/>
           </td>
         </tr>
       </tfoot>
-    </table>
+    </table>';
+    }
+    
+  $ret .= '
   </div>';
   
+  $ret .= $PREVDIV;
+  
+  unset($PREVDIV);
   return $ret;
   }
-
-
-
-  /*
-  
-  EST_MSG_YOURNAME
-  
-  
-  
-  
-  
-  if('inbox' == $which)
-		{
-			$qry = "SELECT count(pm.pm_id) AS total, SUM(pm.pm_size)/1024 size, SUM(pm.pm_read = 0) as unread FROM `#private_msg` as pm WHERE pm.pm_to = ".USERID." AND pm.pm_read_del = 0";
-		}
-		else
-		{
-			$qry = "SELECT count(pm.pm_from) AS total, SUM(pm.pm_size)/1024 size, SUM(pm.pm_read = 0) as unread FROM `#private_msg` as pm WHERE pm.pm_from = ".USERID." AND pm.pm_sent_del = 0";
-		}
-    
-    
-    
-	function pm_get($pmid)
-	{
-		$qry = "
-		SELECT pm.*, ut.user_image AS sent_image, ut.user_name AS sent_name, uf.user_image AS from_image, uf.user_name AS from_name, uf.user_email as from_email, ut.user_email as to_email  FROM #private_msg AS pm
-		LEFT JOIN #user AS ut ON ut.user_id = pm.pm_to
-		LEFT JOIN #user AS uf ON uf.user_id = pm.pm_from
-		WHERE pm.pm_id='".intval($pmid)."'
-		";
-		if (e107::getDb()->gen($qry))
-		{
-			$row = e107::getDb()->fetch();
-			return $row;
-		}
-		return FALSE;
-	}
-    
-  
-	function add($vars)
-	{
-
-		$tp = e107::getParser();
-		$sql = e107::getDb();
-		$pmsize = 0;
-		$attachlist = '';
-		$pm_options = '';
-		$ret = '';
-		$addOutbox = TRUE;
-		$timestamp = time();
-		$a_list = array();
-
-		$maxSendNow = varset($this->pmPrefs['pm_max_send'],100);	// Maximum number of PMs to send without queueing them
-		if (isset($vars['pm_from']))
-		{	// Doing bulk send off cron task
-			$info = array();
-			foreach ($vars as $k => $v)
-			{
-				if (strpos($k, 'pm_') === 0)
-				{
-					$info[$k] = $v;
-					unset($vars[$k]);
-				}
-			}
-			$addOutbox = FALSE;			// Don't add to outbox - was done earlier
-		}
-		else
-		{	// Send triggered by user - may be immediate or bulk dependent on number of recipients
-			$vars['options'] = '';
-			if(isset($vars['receipt']) && $vars['receipt']) {$pm_options .= '+rr+';	}
-
-			if(isset($vars['uploaded']))
-			{
-				foreach($vars['uploaded'] as $u)
-				{
-					if (!isset($u['error']) || !$u['error'])
-					{
-						$pmsize += $u['size'];
-						$a_list[] = $u['name'];
-					}
-				}
-				$attachlist = implode(chr(0), $a_list);
-			}
-			$pmsize += strlen($vars['pm_message']);
-
-			$pm_subject = trim($tp->toDB($vars['pm_subject']));
-			$pm_message = trim($tp->toDB($vars['pm_message']));
-			
-			if (!$pm_subject && !$pm_message && !$attachlist)
-			{  // Error - no subject, no message body and no uploaded files
-				return LAN_PM_65;
-			}
-			
-			// Most of the pm info is fixed - just need to set the 'to' user on each send
-			$info = array(
-				'pm_from' => $vars['from_id'],
-				'pm_sent' => $timestamp,				
-				'pm_read' => 0,						
-				'pm_subject' => $pm_subject,
-				'pm_text' => $pm_message,
-				'pm_sent_del' => 0,						
-				'pm_read_del' => 0,						
-				'pm_attachments' => $attachlist,
-				'pm_option' => $pm_options,	
-				'pm_size' => $pmsize
-				);
-
-		//	print_a($info);
-		//	print_a($vars);
-		}
-
-		if(!empty($vars['pm_userclass']) || isset($vars['to_array']))
-		{
-			if(!empty($vars['pm_userclass']))
-			{
-				$toclass = e107::getUserClass()->getName($vars['pm_userclass']);
-				$tolist = $this->get_users_inclass($vars['pm_userclass']);
-				$ret .= LAN_PM_38.": {$toclass}<br />";
-				$class = TRUE;
-				$info['pm_sent_del'] = 1; // keep the outbox clean and limited to 1 entry when sending to an entire class.
-			}
-			else
-			{
-				$tolist = $vars['to_array'];
-				$class = FALSE;
-			}
-			// Sending multiple PMs here. If more than some number ($maxSendNow), need to split into blocks.
-			if (count($tolist) > $maxSendNow)
-			{
-				$totalSend = count($tolist);
-				$targets = array_chunk($tolist, $maxSendNow);		// Split into a number of lists, each with the maximum number of elements (apart from the last block, of course)
-				unset($tolist);
-
-				$pmInfo = $info;
-				$genInfo = array(
-					'gen_type' => 'pm_bulk',
-					'gen_datestamp' => time(),
-					'gen_user_id' => USERID,
-					'gen_ip' => ''
-					);
-				for ($i = 0; $i < count($targets) - 1; $i++)
-				{	// Save the list in the 'generic' table
-					$pmInfo['to_array'] = $targets[$i];			// Should be in exactly the right format
-					$genInfo['gen_intdata'] = count($targets[$i]);
-					$genInfo['gen_chardata'] = e107::serialize($pmInfo,TRUE);
-					$sql->insert('generic', array('data' => $genInfo, '_FIELD_TYPES' => array('gen_chardata' => 'string')));	// Don't want any of the clever sanitising now
-				}
-				$toclass .= ' ['.$totalSend.']';
-				$tolist = $targets[count($targets) - 1];		// Send the residue now (means user probably isn't kept hanging around too long if sending lots)
-				unset($targets);
-			}
-			foreach($tolist as $u)
-			{
-				set_time_limit(30);
-				$info['pm_to'] = intval($u['user_id']);		// Sending to a single user now
-
-				if($pmid = $sql->insert('private_msg', $info))
-				{
-					$info['pm_id'] = $pmid;
-					e107::getEvent()->trigger('user_pm_sent', $info);
-
-					unset($info['pm_id']); // prevent it from being used on the next record.
-
-					if($class == FALSE)
-					{
-						$toclass .= $u['user_name'].', ';
-					}
-					if(check_class($this->pmPrefs['notify_class'], null, $u['user_id']))
-					{
-						$vars['to_info'] = $u;
-						$vars['pm_sent'] = $timestamp;
-						$this->pm_send_notify($u['user_id'], $vars, $pmid, count($a_list));
-					}
-				}
-				else
-				{
-					$ret .= LAN_PM_39.": {$u['user_name']} <br />";
-					e107::getMessage()->addDebug($sql->getLastErrorText());
-				}
-			}
-			if ($addOutbox)
-			{
-				$info['pm_to'] = $toclass;		// Class info to put into outbox
-				$info['pm_sent_del'] = 0;
-				$info['pm_read_del'] = 1;
-				if(!$pmid = $sql->insert('private_msg', $info))
-				{
-					$ret .= LAN_PM_41.'<br />';
-				}
-			}
-			
-		}
-		else
-		{	// Sending to a single person
-			$info['pm_to'] = intval($vars['to_info']['user_id']);		// Sending to a single user now
-
-
-
-
-			if($pmid = $sql->insert('private_msg', $info))
-			{
-				$info['pm_id'] = $pmid;
-				$info['pm_sent'] = $timestamp;
-				e107::getEvent()->trigger('user_pm_sent', $info);
-
-
-				if(check_class($this->pmPrefs['notify_class'], null, $vars['to_info']['user_id']))
-				{
-					set_time_limit(20);
-					$vars['pm_sent'] = $timestamp;
-					$this->pm_send_notify($vars['to_info']['user_id'], $vars, $pmid, count($a_list));
-				}
-				$ret .= LAN_PM_40.": {$vars['to_info']['user_name']}<br />";
-			}
-		}
-		return $ret;
-	}
-    
-    
-  */
-
 
 ?>

@@ -1138,6 +1138,17 @@ class estate_listing_ui extends e_admin_ui{
         'data'=>'int',
         'help'=>EST_PREF_CONTACTPHONEREQHLP,
         ),
+      
+			'contact_cc' => array (
+        'tab'=>0,
+        'title' => EST_PREF_CONTACTCC,
+        'type'=>'userclass',
+        'data' => 'str',
+        'width' => 'auto',
+        'help' => EST_PREF_CONTACTCCHLP,
+        'readParms' => array (), 
+        'writeParms' => array('size'=>'large'),
+        ),
       'contact_terms'=>array(
         'tab'=>0,
         'title'=>EST_PREF_CONTACTTERMS.'<div id="prefSetDefTermsTarg"></div>',
