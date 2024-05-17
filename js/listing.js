@@ -57,8 +57,8 @@ function htmlDecode(mode,xVal,dec=0){
   
   function estDynamicSlideShow(){
     console.log('load slideshow');
-    if($('#estViewBoxTop').hasClass('estSlideshow')){
-      $('#estViewBoxTop').on({
+    if($('#estSlideShow').hasClass('estSlideshow')){
+      $('#estSlideShow').on({
         click : function(e){
           if($(this).hasClass('estSSPaused')){$(this).removeClass('estSSPaused');}
           else{$(this).addClass('estSSPaused');}
@@ -88,7 +88,6 @@ function htmlDecode(mode,xVal,dec=0){
     
     if($('#estViewBoxSpacesCont').hasClass('estSpaceDynamic')){
       if($('#estViewSpaceImgPvwCont').is(':visible')){
-        //$('#estViewSpaceImgPvwCont').css({'min-height':$('#estViewSpaceBtnCont').outerHeight(true)+'px'});
         }
       
       var picCt = [0,null,0];
@@ -168,16 +167,13 @@ function htmlDecode(mode,xVal,dec=0){
     }
   
   function estBuildMap(){
-    if(document.getElementById('estMap')){
-      console.log(estMapPins);
-      
+    if(typeof estMapPins !== 'undefined' && document.getElementById('estMap')){
       if(estMapPins.agcy.length == 0 && estMapPins.prop.length == 0){
         $('#estMapCont').remove();
         return;
         }
       
       var estJSpth = $('#estJSpth').data('pth');
-      
     	var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     		minZoom: 4,
     		maxZoom: 17,
@@ -276,39 +272,13 @@ function htmlDecode(mode,xVal,dec=0){
   
   
   function estPrepMenu(){
-    if(document.getElementById('estPlugMenu1') && $('#estPlugMenu1').is(':visible')){
-      if(document.getElementById('estSidebar1Capt')){
-        
-        /*
-        $('#estSidebar1Capt').appendTo('#estPlugMenu1Cap');
-        $('#estMiniNav').appendTo('#estSidebar1Capt');
-        $('#estInfoModule').appendTo('#estPlugMenu1');
-        $('#estAgntModule').appendTo('#estPlugMenu1');
-        $('#estOpenHouseModule').appendTo('#estPlugMenu1').promise().done(function(){
-          
-          $('#estViewBoxSummarySB').hide();
-          if(document.getElementById('estFeaturesModule') && $('#estFeaturesModule').is(':visible')){
-            $('#estFeaturesModule').appendTo('#estSideMenuFeat').promise().done(function(){
-              if(document.getElementById('estViewSpacePvwCont') && $('#estViewSpacePvwCont').is(':visible')){
-                $('#estViewSpaceBtnCont').appendTo('#estSideMenuSpaces');
-                $('div.estViewSpaceBtn').removeClass('estBGGrad2').addClass('btn btn-primary');
-                
-                var smTop = Math.floor($('#estViewSpacePvwCont').offset().top);
-                var m3Top = Math.floor($('#estSideMenuSpaces').position().top);
-                
-                console.log(smTop,m3Top,(smTop-m3Top));
-                
-                $('#estSideMenuFeat').css({'min-height':(smTop-m3Top)+'px'});
-                $('#estSideMenuSpaces').css({'min-height':$('#estViewSpacePvwCont').outerHeight()+'px'});
-                
-                }
-              });
-            }
-          });
-        
-        */
-        }
+    var agtMods = $('.estAgntModule');
+    if(agtMods.length > 1){
+      //agtMods[0].remove();
       }
+    else{
+      }
+    estMsgSys();
     }
   
   
@@ -430,9 +400,8 @@ function htmlDecode(mode,xVal,dec=0){
   
   
   function estMsgSys(){
-    if(document.getElementById('estMsgWarn')){return;}
     if(document.getElementById('estMsgPrevDiv')){
-      $('#estMsgPrevDiv h4').on({
+      $('#estPrevMsgBtn').on({
         click :function(){
           if($('#estMsgPrevBelt').is(':visible')){
             $('#estMsgPrevBelt').animate({'height':'0px'},500,'swing',function(){$('#estMsgPrevBelt').hide()});
@@ -455,6 +424,12 @@ function htmlDecode(mode,xVal,dec=0){
             }
           })
         });
+      }
+    
+    
+    if(document.getElementById('estMsgWarn')){
+      $('#estMsgFormTabl').remove();
+      return;
       }
     
     if(document.getElementById('estMsgFormTabl')){
@@ -483,6 +458,12 @@ function htmlDecode(mode,xVal,dec=0){
     }
   
   
+  function estBanners(){
+    $('.estListBanner1').each(function(i,ele){
+      var ht = ($(ele).outerHeight() + $(ele).parent()[0].offsetTop) * -1;
+      $(ele).animate({'margin-bottom':ht+'px','top':ht+'px'});
+      });
+    }
   
   
   
@@ -490,9 +471,9 @@ function htmlDecode(mode,xVal,dec=0){
     estPrepMenu();
     estDynamicSlideShow();
     estBuildMap();
+    estBanners();
     estExpandArr();
     estLnkBar();
-    estMsgSys();
     
     
     var edbtn = $('.estPropListEdtBtn');
