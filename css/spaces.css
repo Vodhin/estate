@@ -78,11 +78,62 @@ div.estViewSpTxt ul{
   }
 
 
-#estViewBoxSpacesCont div#estViewBoxSpacesCapt,
 #estViewBoxSpacesCont div#estViewSpacePvwCont,
 #estViewBoxSpacesCont div#estViewSpaceImgPvwCont{
   display:none;
   }
+
+
+
+
+div.estTableGroupShell{
+  
+  }
+
+div.estTableGroupWrapper{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-start;
+  align-items: stretch;
+  }
+
+
+div.estTableGroupTile{
+  display: flex;
+  flex: 32%;
+  flex-direction: column;
+  max-width: 33%;
+  }
+
+
+div.estTableGroupTile div.estImgSlide{
+  display:block;
+  width: 98%;
+  height:192px;
+  background-clip: content-box;
+  background-origin: padding-box;
+  border: 0.35em solid transparent;
+  border-radius: 5px;
+  }
+
+div.estTableGroupTile div.estViewSpTxt{
+  font-size:0.9em;
+  text-transform:normal;
+  }
+
+div.estTableGroupTile div.estViewSpTxt li{
+  width:96%;
+  font-size:0.9em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+
+
+
 
 
 
@@ -162,7 +213,11 @@ div#estViewSpaceBtnCont{width: 100%;}
   cursor: auto;
   }
 
-
+#estViewBoxSpacesCont.estSideBarAct div.estSpaceGroup div.estViewSpaceBtn{
+    flex: 49%;
+    min-width: 49%;
+    max-width: 49%;
+    }
 
 
 .estViewSpaceImgBlock div.estSpTtl,
@@ -240,9 +295,6 @@ div#estViewSpaceBtnCont{width: 100%;}
     margin-bottom: 6px;
     }
   
-  #estViewBoxSpacesCont.estSpaceDynamic div#estViewBoxSpacesCapt{
-    display:block;
-    }
   
   #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpacePvwCont{
     display: flex;

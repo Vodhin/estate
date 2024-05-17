@@ -2841,21 +2841,6 @@ div.upldPvwBtn div.mediaPvwCapt:focus{
   position:relative;
   }
 
-.estLayoutPreviewCont{
-  display: block;
-  position: relative;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  min-height: 256px;
-  max-height: 640px;
-  border: none;
-  }
-
-#estLayoutPreviewIframe-spaces{
-  min-height: 480px;
-  max-height: 640px;
-  }
 
 
 #estLayoutPrefEContB{
@@ -2931,10 +2916,6 @@ div.upldPvwBtn div.mediaPvwCapt:focus{
   margin-top:8px;
   white-space: normal;
   line-height: 1.15em;
-  }
-
-#estLayoutPreviewIframeList{
-  min-height:600px;
   }
 
 

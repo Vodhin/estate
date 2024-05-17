@@ -3,23 +3,46 @@
 
 /*div.container{background-color: inherit;}*/
 
-#estateCont{
-  display: block;
+#estateCont {
+  display: flex;
   position: relative;
   width: 99%;
   line-height: 1.5em;
   text-align: left;
   margin: 0px auto 0px auto;
   z-index: 0;
+  flex-direction: row;
+  flex-wrap: wrap;
   }
 
-#estMapCont a, #estateCont a{color:unset;}
-#estMapCont a:hover, #estateCont a:hover{text-decoration:none;}
+#estMapCont a, 
+#estateCont a{
+  color:unset;
+  text-decoration:none;
+  }
+
+#estMapCont a:hover,
+#estateCont a:hover{
+  text-decoration:none;
+  }
 
 
 #estMobTst{
   display:none;
   }
+
+#estEventList{
+  display:block;
+  position: relative;
+  text-align:left;
+  }
+#estSavedPropList{
+  display:block;
+  position: relative;
+  text-align:left;
+  }
+
+
 
 .estSideMenu{
   display: block;
@@ -32,8 +55,6 @@
   overflow-x: hidden;
   }
 
-.estBGGrad1, .estBGGrad2{background-image: linear-gradient(0deg, rgba(0,0,0,0.05), rgba(64,64,64,0.15));}
-
 #estMiniSrc{
   display:none;
   }
@@ -42,7 +63,6 @@
   position:relative;
   float:right;
   }
-
 
 #estMiniNav a{
   margin-left:8px;
@@ -72,6 +92,37 @@
   white-space: nowrap;
   }
 
+
+
+#estGalCont{
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: auto;
+  margin: auto;
+  overflow: visible;
+  text-align: left;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-evenly;
+  }
+
+
+#estGalCont img{
+  display: flex;
+  position: relative;
+  height: 55vh;
+  margin: 0px auto 16px auto;
+  border-radius: 5px;
+  }
+
+
+
+
+
+
+
+
 .estExpBtn{
   display:block;
   position:absolute;
@@ -87,79 +138,6 @@
   }
 
 
-.estPropListAgtCont{
-  display:block;
-  position:absolute;
-  top:6px;
-  right:6px;
-  /*width:128px;*/
-  /*height:144px;*/
-  color: #EFEFEF;
-  border-radius: 3px;
-  overflow: hidden;
-  z-index: 1010;
-  box-shadow: 1px 1px 2px #0000009C;
-  -webkit-box-shadow: 1px 1px 2px #0000009C;
-  -moz-box-shadow: 1px 1px 2px #0000009C;
-  }
-.estPropListAgtImg{
-  display:block;
-  position:relative;
-  width:96px;
-  height:112px;
-  background-repeat: no-repeat;
-  background-clip: content-box;
-  background-origin: content-box;
-  background-size: cover;
-  background-position: center center;
-  /*border: 0.35em solid transparent;*/
-  }
-.estPropListAgtName{
-  display:block;
-  position:absolute;
-  bottom:0px;
-  right:0px;
-  width:100%;
-  text-transform:uppercase;
-  padding: 4px 2px 2px 2px;
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.125));
-  }
-
-.estPropListAgtName div:first-child{
-  display:block;
-  position:relative;
-  width:100%;
-  font-size: 6pt;
-  font-style:italic;
-  text-align:center;
-  line-height: 1.1em;
-  white-space:nowrap;
-  overflow:hidden;
-  }
-.estPropListAgtName div:last-child{
-  display:block;
-  position:relative;
-  width:100%;
-  font-size: 8pt;
-  font-weight:bold;
-  text-align:center;
-  line-height: 1.3em;
-  }
-
-
-.estPropListEdtBtn{
-  position: absolute;
-  right:4px;
-  top:4px;
-  min-width: 32px;
-  border:none;
-  background-color: transparent;
-  z-index: 3;
-  }
-
-.estPropListEdtBtn i{
-  font-size:1.5em;
-  }
 
 
 .estExpBtn.estEBopen{transform: rotate(180deg);}
@@ -170,10 +148,6 @@
   cursor:pointer;
   }
 
-.estModlNam{
-  font-style: italic;
-  font-size: 1.15em;
-  }
 
 .estPrefScale75{
   width: 133% !important;
@@ -206,7 +180,7 @@
   }
 
 
-#estViewBoxTop{
+#estSlideShow{
   display: block;
   position:relative;
   width: 100%;
@@ -286,7 +260,7 @@
   padding: 8px 0px 32px 0px;
   margin:auto;
   }
-
+/*
 .estViewBoxMid{
   display: flex;
   flex: 99%;
@@ -312,7 +286,7 @@
   justify-content: flex-start;
   align-items: center;
   }
-
+*/
 .flexRev{
   flex-direction: row-reverse;
   align-items: stretch;
@@ -320,24 +294,17 @@
 
 .flexStretch{align-items: stretch;}
 
-.estViewBoxCont{
-  width: 96%;
-  }
 
 .estViewSect{
   display:block;
   position:relative;
-  border-bottom: 1px dotted #555555;
+  /*border-bottom: 1px dotted #555555;*/
   padding:6px 0px 16px 0px;
   margin:0px 0px 16px 0px;
   }
 
 .estViewSect p{
   white-space: normal;
-  }
-
-.estViewBoxCont div.estViewSect:last-child{
-  border-bottom: none !important;
   }
 
 
@@ -365,7 +332,7 @@ h3.sumCapt{
 
 
 
-#estViewBoxSummarySB{
+.estSummaryMenu{
   display: flex;
   flex: 34%;
   min-width: 320px;
@@ -378,7 +345,12 @@ h3.sumCapt{
   overflow: hidden;
   }
 
-#estViewBoxSummaryOverview{
+.estSummaryMenu div{
+  width: 100%;
+  }
+
+
+.estSummaryMain{
   display: flex;
   flex: 65%;
   flex-direction: column;
@@ -391,10 +363,6 @@ h3.sumCapt{
   overflow: hidden;
   }
 
-#estViewBoxSummaryOverview h4{
-  margin-top:8px;
-  margin-bottom:0px;
-  }
 
 #estInfoModule1{
   display: flex;
@@ -430,7 +398,7 @@ h3.sumCapt{
   position:relative;
   }
 
-#estAgntModule{
+.estAgntModule{
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -446,7 +414,6 @@ h3.sumCapt{
 .estAgCardInner{
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
   justify-content: flex-start;
   align-content: flex-start;
   align-items: flex-start;
@@ -459,7 +426,8 @@ h3.sumCapt{
 .estAgtAvatar{
   display: block;
   position: relative;
-  min-width: 96px; 
+  width: 96px; 
+  max-width: 96px; 
   height: 112px;
   border: 1px solid #333333;
   border-radius: 5px;
@@ -485,7 +453,7 @@ h3.sumCapt{
 .estAgtInfo1{
   display: block;
   position: relative;
-  width: 68%;
+  width: calc(100% - 112px);
   margin-left: 8px;
   }
 
@@ -714,121 +682,166 @@ ul.estDet2Cont{
 
 
 
-/*
-#estGalSect{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: center;
-  }
-*/
-
-#estGalCont{
-  display: flex;
-  position: relative;
-  width: 100%;
-  height: auto;
-  /* max-height: 2000px; */
-  margin: auto;
-  overflow: visible;
-  text-align: left;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-content: flex-start;
-  align-items: flex-start;
-  }
 
 
 
 
-#estGalCont img{
-  display: inline-block;
-  position: relative;
-  height: 80vh;
-  margin: 0px auto 16px auto;
-  border-radius: 5px;
-  }
+
+
 
 
 
 
 /*LIST PAGE CSS*/
 
-.estListPropCont{
-  display:inline-block;
-  position:relative;
-  width:31%;
-  background-color: rgba(64,64,64,0.15);
-  margin:auto;
-  padding: 0px 1% 0px 1%;
+
+#estateCont.estListTiles{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-start;
+  align-items: stretch;
   }
 
-.estListBlock {
+
+#estateCont div.estCard{
+  display: flex;
+  position: relative;
+  width: fit-content;
+  margin: 1em 0.125% 1em  0.125%;
+  padding: 0px 1% 0px 1%;
+  vertical-align:top;
+  }
+
+
+#estateCont div.estCard h2,
+#estateCont div.estCard h3{
+  overflow:visible;
+  }
+
+div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
+  min-width: 40vw;
+  }
+
+
+#estateCont div.estCardTop{
+  display:block;
+  position:relative;
+  padding-top: 4px;
+  white-space:normal;
+  min-width: 20vw;
+  }
+
+#estateCont div.estCardTop div{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+
+.estPropListEdtBtn{
+  position: absolute;
+  right:4px;
+  top:4px;
+  min-width: 32px;
+  border:none;
+  background-color: transparent;
+  z-index: 3;
+  }
+
+.estPropListEdtBtn i{
+  font-size:1.5em;
+  }
+
+
+.estListBanner1{
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: min-content;
+  min-width: 40%;
+  text-align: left;
+  z-index: -1;
+  line-height: 1;
+  padding: 4px 6px;
+  background-color: rgba(0,0,0,0.125);
+  color: inherit;
+  border-radius:3px 3px 0px 0px;
+  }
+
+
+.estListBanner1 h5{
+  display:block;
+  position:relative;
+  width:100%;
+  font-size: 10pt;
+  font-weight:bold;
+  margin: 0px;
+  text-transform: uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+.estListBanner1 p{
   display: block;
   position: relative;
   width: 100%;
-  height: 160px;
-  background-color: rgba(64,64,64,0.1);
-  text-align: left;
-  margin: 0px 0px 12px 0px;
-  overflow: hidden;
-  border-radius: 5px;
+  font-size: 9pt;
+  font-weight:normal;
+  margin: 0px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
   }
 
-.estListPropHead {
-  display: block;
-  position: absolute;
-  top: 0px;
-  left: 25%;
-  width: 75%;
-  height: 33%;
-  line-height: 1.2em;
-  background-color: rgba(64,64,64,0.1);
-  z-index: 5;
-  }
-
-.estListPropHead div.estListPropHeadD1{
-  display: block;
-  position: relative;
-  width: 70%;
-  font-size: 1.5em;
+div.estCardPropName{
+  position:relative;
+  width: calc(100% - 32px);
+  margin-top: 0px;
+  font-size: 12pt;
   font-weight: bold;
-  padding: 6px;
+  overflow: hidden;
   text-transform: uppercase;
   text-overflow: ellipsis;
-  overflow: hidden;
   white-space: nowrap;
   }
 
-.estListPropHead div.estListPropHeadD3{
-  display: block;
-  position: absolute;
-  right: 6px;
-  top: 6px;
-  width: 29%;
-  font-size: 1.2em;
-  font-weight: bold;
-  text-align: right;
+
+div.estCardPropCity{
+  position:relative;
+  width: 100%;
+  font-size: 11pt;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   }
-.estListPropHead div.estListPropHeadD3 span{
-  display: block;
-  position: absolute;
-  top: 24px;
-  right: 0px;
-  font-size:0.85em;
+
+
+div.estCardPropBul1{
+  position:relative;
+  width: 100%;
+  font-size: 10pt;
   }
 
 
 
 
-.estListPropImg {
+
+#estateCont div.estCardMain{
+  display:block;
+  position:relative;
+  max-width: 30vw;
+  }
+
+
+.estListCardImg{
   display: block;
-  position: absolute;
-  width: 25%;
-  top: 0px;
-  left: 0px;
-  height: 100%;
+  position: relative;
+  width: 100%;
+  top: unset;
+  left: unset;
+  height: 224px;
   background-image: linear-gradient(0deg, rgba(35,35,35,0.12), rgba(75,75,75,0.12));
   background-repeat: no-repeat;
   background-clip: content-box;
@@ -838,37 +851,71 @@ ul.estDet2Cont{
   overflow: hidden;
   }
 
-.estListPropImgBanner1{
+
+
+.estModlNam{
+  font-style: italic;
+  }
+
+.estPropListAgtCont {
   display: block;
   position: absolute;
-  top: 32px;
-  left: -64px;
-  width: 256px;
-  text-align: center;
-  z-index: 10;
-  line-height: 1;
-  padding: 4px 6px;
-  background-color: #B30000;
+  top: 0px;
+  right: 0px;
   color: #FFFFFF;
-  transform: rotate(317deg);
+  /* border-radius: 3px; */
+  overflow: hidden;
+  z-index: 1010;
+  box-shadow: 1px 1px 2px #0000009C;
+  -webkit-box-shadow: -1px 1px 2px #0000009C;
+  -moz-box-shadow: 1px 1px 2px #0000009C;
   }
 
 
-.estListPropImgBanner1 h5, .estListPropImgBanner2 h5{
+.estPropListAgtImg{
   display:block;
   position:relative;
-  width:96%;
-  font-size: 1em;
-  margin: 0px;
-  text-transform: uppercase;
+  width:96px;
+  height:112px;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center center;
+  /*border: 0.35em solid transparent;*/
   }
-.estListPropImgBanner1 p, .estListPropImgBanner2 p{
-  display: block;
-  position: relative;
-  width: 96%;
-  font-size: 0.9em;
-  margin: 3px 2% 3px 2%;
+.estPropListAgtName{
+  display:block;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  width:100%;
+  text-transform:uppercase;
+  padding: 4px 2px 2px 2px;
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.125));
   }
+
+.estPropListAgtName div:first-child{
+  display:block;
+  position:relative;
+  width:100%;
+  font-size: 6pt;
+  font-style:italic;
+  text-align:center;
+  line-height: 1.1em;
+  white-space:nowrap;
+  overflow:hidden;
+  }
+.estPropListAgtName div:last-child{
+  display:block;
+  position:relative;
+  width:100%;
+  font-size: 8pt;
+  font-weight:bold;
+  text-align:center;
+  line-height: 1.3em;
+  }
+
 
 
 .estPriceDrop{
@@ -878,15 +925,6 @@ ul.estDet2Cont{
   font-size: 0.9em;
   padding: 0px 3px;
   /*opacity:0.85;*/
-  }
-
-.estListPropInfo{
-  display: block;
-  position: absolute;
-  top: 33%;
-  left: 25%;
-  width: 75%;
-  height: 67%;
   }
 
 
@@ -909,29 +947,8 @@ ul.estDet2Cont{
   filter: hue-rotate(266deg);
   }
 
-
-#estateCont.estListTiles{
-  display:flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  justify-content: flex-start;
-  align-items: stretch;
-  }
-
-#estateCont.estListTiles a{
-  display:flex;
-  margin: 2px 0.25%;
-  padding: 6px 4px;
-  }
-
-#estateCont.estListTile30 a{
-  flex: 30%;
-  max-width: 33%;
-  }
-#estateCont.estListTile45 a{
-  flex: 45%;
-  max-width: 50%;
+.estFLEXCont{
+  display:flex !important;
   }
 
 .estFLEX30{
@@ -943,75 +960,9 @@ ul.estDet2Cont{
   max-width: 50%;
   }
 
-div.estListBlock.estListTiles{
-  height:320px;
-  }
-
-
-div.estListBlock.estListTiles div.estListPropHead{
-  position: absolute;
-  width: 100%;
-  top: unset;
-  left: unset;
-  height: 256px;
-  padding-bottom: 12px;
-  color: #FFFFFF;
-  background-image: linear-gradient(180deg, rgba(0,0,0,0.25), transparent);
-  z-index: 4;
-  }
-
-div.estListBlock.estListTiles div.estListPropHead div.estListPropHeadD1{
-  width: 100%;
-  }
-
-.estListPropHeadD2{
-  display: block;
-  position: relative;
-  width: 100%;
-  padding: 0px 6px 0px 6px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  }
-
-div.estListBlock.estListTiles div.estListPropHead div.estListPropHeadD3 {
-  display: block;
-  position: relative;
-  top: 4px;
-  right: unset;
-  left: 6px;
-  width: 100%;
-  font-size: 1.2em;
-  font-weight: bold;
-  text-align: left;
-  }
-
-
-div.estListBlock.estListTiles div.estListPropHead div.estListPropHeadD3 span {
-  display: block;
-  position: absolute;
-  top: 2px;
-  right: 12px;
-  font-size: 0.85em;
-  }
 
 
 
-div.estListBlock.estListTiles div.estListPropImg {
-  width: 100%;
-  background-position: top center;
-  }
-
-div.estListBlock.estListTiles div.estListPropInfo {
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-  top: unset;
-  left: unset;
-  height: unset;
-  padding: 32px 6px 12px 6px;
-  color: #FFFFFF;
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.75), transparent);
-  }
 
 
 
@@ -1167,20 +1118,8 @@ div.estListBlock.estListTiles div.estListPropInfo {
     background-size: 96px 48px;
     }
   
-  .estViewBoxMid,
-  .estViewBoxBot{
-    display: block;
-    }
   
-  .estViewBoxCont{
-    margin: 6px 2%;
-    }
   
-  #estViewBoxMap div.estViewSect{
-    border-bottom: none;
-    padding: 6px 0px 0px 0px;
-    margin: 0px 0px 16px 0px;
-    }
   
   #estMap{
     width: 100%;
@@ -1209,39 +1148,38 @@ div.estListBlock.estListTiles div.estListPropInfo {
   #estateCont.estListTiles{
     display:flex;
     }
+  /*
   #estateCont.estListTiles a {
     display: block;
     width:100%;
     margin: 2px auto;
     padding: 6px 4px;
     }
-  
+  */
   
   .estFLEX30,
-  .estFLEX45,
-  #estateCont.estListTile30 a,
-  #estateCont.estListTile45 a{
+  .estFLEX45{
     flex: 100%;
     max-width: 100%;
     }
   
-  .estListBlock{
-    height:unset;
-    }
-  
-  .estListPropHead{
-    position: relative;
-    width: 100%;
-    top: unset;
-    left: unset;
-    padding-bottom: 6px;
-    }
-  
-  .estListPropHead div.estListPropHeadD1{
+  #estateCont div.estCard{
+    display:block;
     width: 100%;
     }
   
-  .estListPropHead div.estListPropHeadD3 {
+  div.estCard div:first-child{
+    width: inherit;
+    }
+  
+  #estateCont div.estCardMain{
+    display:block;
+    position:relative;
+    max-width: unset;
+    }
+  
+  
+  div.estCardPropBul1 {
     position: relative;
     right: unset;
     top: unset;
@@ -1250,7 +1188,7 @@ div.estListBlock.estListTiles div.estListPropInfo {
     padding-left: 6px;
     }
   
-  .estListPropHead div.estListPropHeadD3 span {
+  div.estCardPropBul1 span {
     display: block;
     position: absolute;
     top: 0px;
@@ -1259,25 +1197,8 @@ div.estListBlock.estListTiles div.estListPropInfo {
     }
   
   
-  .estListPropImg{
-    position: relative;
-    width: 100%;
-    top: unset;
-    left: unset;
-    height: 224px;
-    border: 6px solid transparent;
-    }
   
-  
-  .estListPropInfo{
-    position: relative;
-    width: 100%;
-    top: unset;
-    left: unset;
-    height: unset;
-    padding-bottom: 32px;
-    }
-  .estListPropHeadD2{
+  .estCardPropCity{
     white-space: normal;
     /*margin-bottom: 12px;*/
     }
