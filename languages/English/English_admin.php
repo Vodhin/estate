@@ -187,8 +187,8 @@ define("EST_GEN_GROUP", "Group");
 define("EST_GEN_GROUPS", "Groups");
 define("EST_GEN_HIDEOTHERUSERS", "Hide Other Users");
 define("EST_GEN_IMPORTANT","IMPORTANT!");
-define("EST_GEN_LAYOUT_LIST", "List Page");
-define("EST_GEN_LAYOUT_VIEW", "View Page");
+
+
 define("EST_GEN_LISTYPES", "Listing Types");
 define("EST_GEN_LOGO", "Logo");
 define("EST_GEN_MAINADMIN", "Main Admin");
@@ -344,55 +344,48 @@ define("EST_PLCH95","eg. Main Office");
 define("EST_PLCH97","Additional Agency Info");
 
 
-define("EST_PREF_CONTACTCC","Allow CC Sender");
-define("EST_PREF_CONTACTCCHLP","Users in this class can opt to have a copy of their email sent to their email address. MAY BE MISUSED, set with caution!");
-define("EST_PREF_DEFCURRENCYHLP","The default Currency selected when creating a New Listing");
-define("EST_PREF_DEFCOUNTRYHLP","The default Country selected when creating a New Listing");
 
 
-define("EST_PREF_LISTPAGESECT","Listing Page Layout");
-
-//define("EST_PROP_ADDNEWCOMP","Add New Company");
-
-//define("EST_PROP_COMPANYAE","Add/Edit Parent Company");
-//define("EST_PROP_COMPANYSEL","Select Parent Company");
-
-define("EST_PREF_2TILEACROSS","2 Tiles Across");
-define("EST_PREF_3TILEACROSS","3 Tiles Across");
 
 define("EST_PREF_ADMINONLY","Close ".EST_PLUGNAME." to public");
 define("EST_PREF_ADMINONLYHLP","If enabled, only Admins can view this plugin");
 
-define("EST_PREF_AGNTCARD","Agent Placement");
-define("EST_PREF_AGNTBG0","No Agent Background");
-define("EST_PREF_AGNTBG1","Agent Smoked Glass Background");
-define("EST_PREF_AGNTCARDBG","Agent Card Background");
 
 
-
-define("EST_PREF_CONTACTFORM","Contact Form");
+define("EST_PREF_CONTACTCC","Allow CC Sender*");
+define("EST_PREF_CONTACTCCHLP","Users in this class can opt to have a copy of their email sent to their email address. MAY BE MISUSED, set with caution! REQUIRES your Site Prefs to allow Email Copy Sender.");
+define("EST_PREF_CONTACTFORM","Contact Form Access");
 define("EST_PREF_CONTACTFORMHLP","Who can use the Estate Plugin's Contact Form");
-
-define("EST_PREF_CONTACTNOTIFY","Agent/Seller Notifications");
-define("EST_PREF_CONTACTNOTIFYHLP","Notify the Agent/Seller via email when someone uses the Contact Form or Saves a Listing. Agents/Sellers can always review activity on this website");
-
-define("EST_PREF_CONTACTMODE","Contact Mode");
-define("EST_PREF_CONTACTMODE0","For All Listings - Hide e-mail");
-define("EST_PREF_CONTACTMODE1","For All Listings - Display e-mail");
+define("EST_PREF_CONTACTLIFE","Message Life");
+define("EST_PREF_CONTACTLIFEHLP","How long the system keeps a record of sent messages. Works with Message Maximum to prevent abuse of the contact system");
+define("EST_PREF_CONTACTMAX","Message Maximum");
+define("EST_PREF_CONTACTMAXHLP","Sets the Maximum number of messages a visitor can send during the Message Life duration. Applies to All Messages");
+define("EST_PREF_CONTACTMODE","Contact Form Mode");
+define("EST_PREF_CONTACTMODE0","Agent & Non-Agent Listings - Hide e-mail");
+define("EST_PREF_CONTACTMODE1","Agent & Non-Agent Listings - Display e-mail");
 define("EST_PREF_CONTACTMODE2","Only Agent Listings - Hide e-mail");
 define("EST_PREF_CONTACTMODE3","Only Agent Listings - Display e-mail");
-define("EST_PREF_CONTACTMODEHLP","Choose which Listings will use the Contact Form and if the Agent/Seller e-mail is displayed");
-
-
+define("EST_PREF_CONTACTMODEHLP","Choose which Listings will include a Contact Form and if the Agent/Seller e-mail address is displayed. Listings that do not include a Contact Form will always display a contacte-mail address");
+define("EST_PREF_CONTACTNOTIFY","Agent/Seller Notifications");
+define("EST_PREF_CONTACTNOTIFYHLP","Notify the Agent/Seller via email when someone uses the Contact Form or Saves a Listing. Agents/Sellers can always review activity on this website");
 define("EST_PREF_CONTACTPHONEREQ","Require Phone Number");
-define("EST_PREF_CONTACTPHONEREQHLP","If enabled, the Sender will bequired to include their phone number");
-
+define("EST_PREF_CONTACTPHONEREQHLP","If enabled, the Sender will be required to include their phone number");
+define("EST_PREF_CONTACTMAXTO","Maximum Applies To");
+define("EST_PREF_CONTACTMAXTO0","All Messages Sent");
+define("EST_PREF_CONTACTMAXTO1","Messages Sent Per Property Listing");
+define("EST_PREF_CONTACTMAXTO2","All Unread Messages");
+define("EST_PREF_CONTACTMAXTO3","Unread Messages Sent Per Property Listing");
+define("EST_PREF_CONTACTMAXTOHLP","Maximum Applies To");
+define("EST_PREF_CONTACTPROPHLP","");
 define("EST_PREF_CONTACTTERMS","Contact Terms");
 define("EST_PREF_CONTACTTERMSHLP","The Terms a visitor must agree to to send a message through the Contact Form. If left blank, the default Terms written for this plugin will be used");
 
 
+
 define("EST_PREF_DEFAGTHRS","Default Agent Hours");
 define("EST_PREF_DEFAGTHRSHLP","The default hours for creating a New Agent. Each Agent can customize their own hours");
+define("EST_PREF_DEFCURRENCYHLP","The default Currency selected when creating a New Listing");
+define("EST_PREF_DEFCOUNTRYHLP","The default Country selected when creating a New Listing");
 define("EST_PREF_DEFEVTLEN","Default Event Lengths");
 define("EST_PREF_DEFEVTLENHLP","Set default Event Lengths when adding an event to a property's calendar. Each event can be customized");
 define("EST_PREF_DEFHRSHINT0","First Event Start Time");
@@ -407,23 +400,25 @@ define("EST_PREF_GALBG","Gallery Background");
 define("EST_PREF_HELPINFULL","Expanded Help Menu");
 define("EST_PREF_HELPINFULLHLP","If enabled, the Help Menu will always be shown in full height.");
 
-
-define("EST_PREF_LAYOUT_INCLUDEAGENT","Include Agent Card");
-
 define("EST_PREF_LAYOUT_NOLISTINGS","No Listings To Preview");
 define("EST_PREF_LISTINGSAVE","Listing Saves");
 define("EST_PREF_LISTINGSAVEHLP","Who can Save Listings on their Device (Uses cookies). ");
+define("EST_PREF_LISTPAGESECT","Listing Page Layout");
+
 define("EST_PREF_MAPLISTABOVE","Map Above Listings");
 define("EST_PREF_MAPLISTBELOW","Map Below Listings");
-define("EST_PREF_MAPBG","MAP Background");
-define("EST_PREF_MAPVIEWNOMAP","No Map");
-define("EST_PREF_MAPVIEWPROPMAP","Include Property Map");
-define("EST_PREF_MAPVIEWNOMAPAG","No Agency Pins");
-define("EST_PREF_MAPVIEWPROPMAPAG","Include Nearby Agency Pins");
+
+define("EST_PREF_MAPAGENCY","Include Agency Pins");
+define("EST_PREF_MAPAGENCYHLP","Include nearby Agency Pins in the Map on the View Page");
+define("EST_PREF_MAPAGENCY_NO","No Agency Pins");
+define("EST_PREF_MAPAGENCY_YES","Include Nearby Agency Pins");
+
 define("EST_PREF_MAPACT1","List Page");
 define("EST_PREF_MAPACT1HLP","Include the Map on the Listing Page");
+
 define("EST_PREF_MAPACT2","View Page");
 define("EST_PREF_MAPACT2HLP","Include the Map on each property's View page");
+
 define("EST_PREF_MAPMAP_JSSRC","Source For Map Files");
 define("EST_PREF_MAPMAP_JSSRCHLP","Choose how the Leaflet Javascript files are loaded. If external, these files are called from a remote server as defined below.");
 define("EST_PREF_MAPMAP_JSSRCOPT0","Use Internal Map Files");
@@ -437,42 +432,28 @@ define("EST_PREF_MAPURLHLP","This key is provided by Leaflet and used to authent
 define("EST_PREF_MULTICOMP","Multi-Company");
 define("EST_PREF_MULTICOMPHLP","When Enabled you canlist Agencies from different Companies. When Disabled all Agencies belong to a single company");
 
-define("EST_PREF_OVERVIEWNORM","Agent Left & Overview Right");
-define("EST_PREF_OVERVIEWREV","Overview Left & Agent Right");
-define("EST_PREF_ROWLAYOUT","Row Layout");
 
-define("EST_PREF_SAMPLISTING","Sample Listing");
-define("EST_PREF_SECTIONBG0","No Background");
-define("EST_PREF_SECTIONBG1","Smoked Glass Background");
+
+
 define("EST_PREF_SLIDESHOWACT","Slideshow");
-define("EST_PREF_SLIDESHOWACTHLP","If enabled the top of the Property View Page will cycle through available Gallery pictures, otherwise only the first picture will be shown");
-define("EST_PREF_SLIDESHOWACTHLP1","If enabled each Space will cycle through their available pictures, otherwise only the first picture will be shown");
+define("EST_PREF_SLIDESHOWACTHLP","If enabled, this will cycle through Pictures on the View Page, otherwise only the first picture will be shown.");
+
 define("EST_PREF_SLIDESHOWDELAY","Start Delay");
 define("EST_PREF_SLIDESHOWDELAYHLP","The time in Seconds before the Slideshow will start cycling though the slides");
-define("EST_PREF_SLIDESHOWSECT","SlideShow Section");
 define("EST_PREF_SLIDESHOWTIMING","Slide Duration");
 define("EST_PREF_SLIDESHOWTIMINGHLP","The time in Seconds between slide changes");
-define("EST_PREF_SPACES","Spaces Layout");
-define("EST_PREF_SPACESBG","Spaces Background");
-define("EST_PREF_SPACEDYNAM","Dynamic Layout");
-define("EST_PREF_SPACEDYNAMF","Forced Dynamic Layout");
-define("EST_PREF_SPACES_DYNAMBG","Dynamic Layout");
-define("EST_PREF_SPDYNBG0","Dynamic 1");
-define("EST_PREF_SPDYNBG1","Dynamic 2");
-define("EST_PREF_SPACETILES","Tile Layout");
-define("EST_PREF_SPACES_TILEBG","Tile Bckground");
-define("EST_PREF_SPACEHLP1","NOTE: The Dynamic Layout does NOT work on mobile phones or other narrow displays: it will always revert to 'Tile Layout' for these devices.");
-define("EST_PREF_SPACEHLP2","The Dynamic Layout only works when your Site Theme Layout contains the word 'full' for the listings.php' page, specifically the View mode eg: 'estate/listings.php?view'");
-define("EST_PREF_SPACEHLP3","If your site theme is a Full Width layout and the the Spaces section is not displaying the Dynamic layout, you can set this to 'Forced Dynamic Layout'");
-define("EST_PREF_SPTILEBG0","No Tile Background");
-define("EST_PREF_SPTILEBG1","Smoked Glass Tiles");
-define("EST_PREF_SUMMBG","Summary Background");
-define("EST_PREF_SUMMSECT","Summary Section");
 
-define("EST_PREF_TEMPLATEHLP","Choose a template to edit");
-define("EST_PREF_TILELAYOUT","Tile Layout");
-define("EST_PREF_VIEWTEMPLATE","View Template");
-define("EST_PREF_VIEWLAYOUTHLP","Choose a sample page from existing listings to preview each section");
+define("EST_PREF_TEMPLATES", "Template Layouts");
+define("EST_PREF_MENU", "Menu Options");
+
+
+define("EST_PREF_TEMPLATE_LIST","List Page Template");
+define("EST_PREF_TEMPLATE_LISTHLP","Choose a template for the List Page");
+
+
+define("EST_PREF_TEMPLATE_VIEW","View Page Template");
+define("EST_PREF_TEMPLATE_VIEWHLP","Choose a template for the View Page");
+
 
 
 
@@ -561,6 +542,8 @@ define("EST_HLPMNU_LISTING3","Many Dropdown Lists may also filter options in oth
 define("EST_HLPMNU_LISTING4","Required: [i]Zoning Category[/i] selector sets the Primary Category for the Property and is used to filter many other options available in this plugin's forms, such as the [i]Property Type[/i] selector below it.");
 define("EST_HLPMNU_LISTING5","Required: The [i]Property Type[/i] selector further categorizes the Property and sets addtional filters used thoughout this plugin's forms.");
 
+define("EST_HLPMNU_PREF_TEMPLATES01","Set options for the List and View Page Templates");
+define("EST_HLPMNU_PREF_MENU01","Set Options for the Estate Menu");
 
 define("EST_HLPMNU_PRESETS30","These are lists of preset data used in your listings. You can add & edit this information directly in the Listing Form, too.");
 define("EST_HLPMNU_PRESETS33","This populates a drop-down list on the Property Listing Form used to define what type of property it is (Single Family, Apartment, Condo, etc).");

@@ -131,6 +131,7 @@ define("EST_GEN_CUSTOM","Custom");
 define("EST_GEN_CURRENCY","Currency");
 define("EST_GEN_CURRENTLY","Currently");
 define("EST_GEN_DATA","Data");
+define("EST_GEN_DAYS","Days");
 define("EST_GEN_DEFAULT","Default");
 define("EST_GEN_DELETE","Delete");
 define("EST_GEN_DELETED","Deleted");
@@ -217,6 +218,7 @@ define("EST_GEN_MEDIAERRORS1","There were Errors with some Media files");
 
 define("EST_GEN_MEETING","Meeting");
 define("EST_GEN_MEMBER","Member");
+define("EST_GEN_MESSAGES","Messages");
 define("EST_GEN_MOBILE","Mobile");
 define("EST_GEN_MODELNAME","Model Name");
 define("EST_GEN_MONTH","Month");
