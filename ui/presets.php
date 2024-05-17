@@ -1,6 +1,8 @@
 <?php
 if(!defined('e107_INIT')){exit;}
-
+/*
+ * Not Used. 
+ */
 if(isset($_POST['estPresetsSubmit'])){
   
   $sql = e107::getDB();

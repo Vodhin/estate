@@ -3,6 +3,7 @@ if(!defined('e107_INIT')){exit;}
 
 e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
 
+include_once(e_PLUGIN.'estate/templates/estate_template.php');
 
 class estate_listing_ui extends e_admin_ui{
   
@@ -1064,7 +1065,7 @@ class estate_listing_ui extends e_admin_ui{
 
 
 
-		protected $preftabs = array(EST_GEN_GENERAL,EST_GEN_LAYOUT_LIST,EST_GEN_LAYOUT_VIEW,EST_GEN_SCHEDULING,EST_GEN_MAP,EST_GEN_NONAGENTLISTINGS);
+		protected $preftabs = array(EST_GEN_GENERAL,EST_PREF_TEMPLATES,EST_PREF_MENU,EST_GEN_SCHEDULING,EST_GEN_MAP,EST_GEN_NONAGENTLISTINGS);
 		protected $prefs = array(
 			'adminonly'=>array(
         'tab'=>0,
@@ -1080,6 +1081,26 @@ class estate_listing_ui extends e_admin_ui{
         'type'=>'boolean',
         'data'=>'int',
         'help'=>EST_PREF_HELPINFULLHLP,
+        ),
+			'country' => array (
+        'tab'=>0,
+        'title' => LAN_DEFAULT.' '.EST_PROP_COUNTRY,
+        'type' => 'dropdown',
+        'data' => 'str',
+        'width' => 'auto',
+        'help' => EST_PREF_DEFCOUNTRYHLP,
+        'readParms' => array (), 
+        'writeParms' => array('size'=>'large'),
+        ),
+			'currency' => array (
+        'tab'=>0,
+        'title' => LAN_DEFAULT.' '.EST_GEN_CURRENCY,
+        'type' => 'dropdown',
+        'data' => 'str',
+        'width' => 'auto',
+        'help' => EST_PREF_DEFCURRENCYHLP,
+        'readParms' => array (), 
+        'writeParms' => array('size'=>'small','optArray'=>EST_CURSYMB),
         ),
       
 			'addnewuser' => array (
@@ -1127,7 +1148,7 @@ class estate_listing_ui extends e_admin_ui{
         'help'=>EST_PREF_CONTACTMODEHLP,
         'width' => 'auto',
         'writeParms' => array(
-          'size'=>'xlarge',
+          'size'=>'xxlarge',
           'optArray'=>array(0=>EST_PREF_CONTACTMODE0,1=>EST_PREF_CONTACTMODE1,2=>EST_PREF_CONTACTMODE2,3=>EST_PREF_CONTACTMODE3)
           ),
         ),
@@ -1149,6 +1170,43 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' => array (), 
         'writeParms' => array('size'=>'large'),
         ),
+      
+      'contact_max'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_CONTACTMAX,
+        'type'=>'dropdown',
+        'data'=>'str',
+        'help'=>EST_PREF_CONTACTMAXHLP,
+        'width' => 'auto',
+        'writeParms' => array(
+          'size'=>'xlarge',
+          'optArray'=>array(10=>'10 '.EST_GEN_MESSAGES,20=>'20 '.EST_GEN_MESSAGES,30=>'30 '.EST_GEN_MESSAGES,40=>'40 '.EST_GEN_MESSAGES,50=>'50 '.EST_GEN_MESSAGES)
+          ),
+        ),
+      'contact_maxto'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_CONTACTMAXTO,
+        'type'=>'dropdown',
+        'data'=>'str',
+        'help'=>EST_PREF_CONTACTMAXTOHLP,
+        'width' => 'auto',
+        'writeParms' => array(
+          'size'=>'xlarge',
+          'optArray'=>array(0=>EST_PREF_CONTACTMAXTO0,1=>EST_PREF_CONTACTMAXTO1,2=>EST_PREF_CONTACTMAXTO2,3=>EST_PREF_CONTACTMAXTO3)
+          ),
+        ),
+      'contact_life'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_CONTACTLIFE,
+        'type'=>'dropdown',
+        'data'=>'str',
+        'help'=>EST_PREF_CONTACTLIFEHLP,
+        'width' => 'auto',
+        'writeParms' => array(
+          'size'=>'xlarge',
+          'optArray'=>array(30=>'30 '.EST_GEN_DAYS,60=>'60 '.EST_GEN_DAYS,90=>'90 '.EST_GEN_DAYS,180=>'180 '.EST_GEN_DAYS)
+          ),
+        ),
       'contact_terms'=>array(
         'tab'=>0,
         'title'=>EST_PREF_CONTACTTERMS.'<div id="prefSetDefTermsTarg"></div>',
@@ -1157,87 +1215,24 @@ class estate_listing_ui extends e_admin_ui{
         'help'=>EST_PREF_CONTACTTERMSHLP,
         ),
       
-			'country' => array (
-        'tab'=>0,
-        'title' => LAN_DEFAULT.' '.EST_PROP_COUNTRY,
-        'type' => 'dropdown',
-        'data' => 'str',
-        'width' => 'auto',
-        'help' => EST_PREF_DEFCOUNTRYHLP,
-        'readParms' => array (), 
-        'writeParms' => array('size'=>'large'),
-        ),
-        
-			'currency' => array (
-        'tab'=>0,
-        'title' => LAN_DEFAULT.' '.EST_GEN_CURRENCY,
-        'type' => 'dropdown',
-        'data' => 'str',
-        'width' => 'auto',
-        'help' => EST_PREF_DEFCURRENCYHLP,
-        'readParms' => array (), 
-        'writeParms' => array('size'=>'small','optArray'=>EST_CURSYMB),
-        ),
-      
-      
-      'layout_preview_listpage'=>array(
+      'template_list'=>array(
         'tab'=>1,
-        'title'=>EST_PREF_LISTPAGESECT.'<table class="table adminform WD100 BGCTransp"><colgroup style="width:50%"></colgroup><colgroup style="width:50%"></colgroup><tbody id="estPrefListPageOptTB"></tbody></table>',
-        'type'=>'method',
-        'data'=>false,
-        'writeParms' => array(),
-        ),
-      
-      'layout_list_agent'=>array(
-        'tab'=>0,
-        'title'=>EST_PREF_LAYOUT_INCLUDEAGENT,
-        'type'=>'boolean',
-        'data'=>'int',
-        ),
-      'layout_list'=>array(
-        'tab'=>1,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        //'estListTiles'=>EST_PREF_TILELAYOUT
-        'writeParms' => array(
-          'nolabel'=>1,
-          'size'=>'xlarge',
-          'optArray'=>array(''=>EST_PREF_ROWLAYOUT,'estListTiles estListTile45'=>EST_PREF_2TILEACROSS,'estListTiles estListTile30'=>EST_PREF_3TILEACROSS)
-          ),
-        ),
-      /*
-      'layout_list_wd'=>array(
-        'tab'=>1,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(),
-        ),
-      */
-      'layout_list_map'=>array(
-        'tab'=>1,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(0=>EST_PREF_MAPVIEWNOMAP,1=>EST_PREF_MAPLISTABOVE,2=>EST_PREF_MAPLISTBELOW)),
-        ),
-      
-      'layout_list_mapagnt'=>array(
-        'tab'=>1,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(0=>EST_PREF_MAPVIEWNOMAPAG,1=>EST_PREF_MAPVIEWPROPMAPAG)),
-        ),
-      
-      
-      'view_template'=>array(
-        'tab'=>2,
-        'title'=>EST_PREF_VIEWTEMPLATE,
+        'title'=>EST_PREF_TEMPLATE_LIST,
         'type'=>'method',
         'data'=>'safestr',
-        'help'=>EST_PREF_TEMPLATEHLP,
+        'help'=>EST_PREF_TEMPLATE_LISTHLP,
+        'inline'=>false,
+        'nolist'=>true,
+        'class' => 'left',
+        'thclass' => 'left',
+        'writeParms' => array(),
+        ),
+      'template_view'=>array(
+        'tab'=>1,
+        'title'=>EST_PREF_TEMPLATE_VIEW,
+        'type'=>'method',
+        'data'=>'safestr',
+        'help'=>EST_PREF_TEMPLATE_VIEWHLP,
         'inline'=>false,
         'nolist'=>true,
         'class' => 'left',
@@ -1245,182 +1240,35 @@ class estate_listing_ui extends e_admin_ui{
         'writeParms' => array(),
         ),
       
-      'layout_preview'=>array(
-        'tab'=>2,
-        'title'=>EST_PREF_SAMPLISTING,
-        'type'=>'method',
-        'data'=>false,
-        'help'=>EST_PREF_VIEWLAYOUTHLP,
-        'writeParms' => array(),
-        ),
       
-      'layout_preview_top'=>array(
-        'tab'=>2,
-        'title'=>EST_PREF_SLIDESHOWSECT.'<table class="table adminform WD100 BGCTransp"><colgroup style="width:50%"></colgroup><colgroup style="width:50%"></colgroup><tbody id="estPrefSlideShowOptTB"></tbody></table>',
-        'type'=>'method',
-        'data'=>false,
-        'writeParms' => array(),
-        ),
+      
       'slideshow_act'=>array(
-        'tab'=>2,
+        'tab'=>1,
         'title'=>EST_PREF_SLIDESHOWACT,
         'type'=>'boolean',
         'data'=>'int',
         'help'=>EST_PREF_SLIDESHOWACTHLP,
         ),
+      
       'slideshow_time'=>array(
-        'tab'=>2,
+        'tab'=>1,
         'title'=>EST_PREF_SLIDESHOWTIMING,
         'type'=>'number',
         'data'=>'int',
         'help'=>EST_PREF_SLIDESHOWTIMINGHLP,
         'writeParms' => array('size'=>'small','min'=>2,'max'=>15),
         ),
+      
       'slideshow_delay'=>array(
-        'tab'=>2,
+        'tab'=>1,
         'title'=>EST_PREF_SLIDESHOWDELAY,
         'type'=>'number',
         'data'=>'int',
         'help'=>EST_PREF_SLIDESHOWDELAYHLP,
         'writeParms' => array('size'=>'small','min'=>2,'max'=>10),
         ),
+        
       
-      
-      
-      'layout_preview_summary'=>array(
-        'tab'=>2,
-        'title'=>'<table class="table adminform WD100 BGCTransp"><colgroup style="width:50%"></colgroup><colgroup style="width:50%"></colgroup><tbody id="estPrefAgentTB"></tbody></table>',
-        'type'=>'method',
-        'data'=>false,
-        'writeParms' => array(),
-        ),
-      
-      'layout_view_summbg'=>array(
-        'tab'=>2,
-        'title'=>EST_PREF_SUMMSECT,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(''=>EST_PREF_SECTIONBG0,'estBGGrad1'=>EST_PREF_SECTIONBG1)),
-        ),
-      'layout_view_agent'=>array(
-        'tab'=>2,
-        //'title'=>EST_PREF_AGNTCARD,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(''=>EST_PREF_OVERVIEWNORM,'flexRev'=>EST_PREF_OVERVIEWREV)),
-        ),
-      'layout_view_agntbg'=>array(
-        'tab'=>2,
-        //'title'=>EST_PREF_AGNTCARDBG,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(''=>EST_PREF_AGNTBG0,'estBGGrad2'=>EST_PREF_AGNTBG1)),
-        ),
-      
-      
-      'layout_preview_spaces'=>array(
-        'tab'=>2,
-        'title'=>'<table class="table adminform WD100 BGCTransp"><colgroup style="width:50%"></colgroup><colgroup style="width:50%"></colgroup><tbody id="estPrefSpacesTB"></tbody></table><div id="estPrefSpcLay1"><p>'.EST_PREF_SPACEHLP1.'</p><p>'.EST_PREF_SPACEHLP2.'</p><p>'.EST_PREF_SPACEHLP3.'</p></div>',
-        'type'=>'method',
-        'data'=>false,
-        'writeParms' => array(),
-        ),
-      'layout_view_spacesbg'=>array(
-        'tab'=>2,
-        'title'=>EST_PREF_SPACES,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(''=>EST_PREF_SECTIONBG0,'estBGGrad1'=>EST_PREF_SECTIONBG1)),
-        ),
-      
-      'layout_view_spaces_ss'=>array(
-        'tab'=>2,
-        'title'=>EST_PREF_SLIDESHOWACT,
-        'type'=>'boolean',
-        'data'=>'int',
-        'help'=>EST_PREF_SLIDESHOWACTHLP1,
-        ),
-      
-      'layout_view_spaces'=>array(
-        'tab'=>2,
-        //'title'=>EST_PREF_SPACES,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array('tiles'=>EST_PREF_SPACETILES,'dynamic'=>EST_PREF_SPACEDYNAM,'dynamicf'=>EST_PREF_SPACEDYNAMF)),
-        ),
-      'layout_view_spacetilebg'=>array(
-        'tab'=>2,
-        //'title'=>EST_PREF_SPACES_TILEBG,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(''=>EST_PREF_SPTILEBG0,'estBGGrad2'=>EST_PREF_SPTILEBG1)),
-        ),
-      'layout_view_spacedynbg'=>array(
-        'tab'=>2,
-        //'title'=>EST_PREF_SPACES_DYNAMBG,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(''=>EST_PREF_SPDYNBG0,'estBGGrad2'=>EST_PREF_SPDYNBG1)),
-        ),
-      
-      
-      'layout_preview_mapview'=>array(
-        'tab'=>2,
-        'title'=>'<table class="table adminform WD100 BGCTransp"><colgroup style="width:50%"></colgroup><colgroup style="width:50%"></colgroup><tbody id="estPrefMapOptTB"></tbody></table>',
-        'type'=>'method',
-        'data'=>false,
-        'writeParms' => array(),
-        ),
-      
-      
-      'layout_view_map'=>array(
-        'tab'=>2,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(0=>EST_PREF_MAPVIEWNOMAP,1=>EST_PREF_MAPVIEWPROPMAP)),
-        ),
-      
-      'layout_view_mapagnt'=>array(
-        'tab'=>2,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(0=>EST_PREF_MAPVIEWNOMAPAG,1=>EST_PREF_MAPVIEWPROPMAPAG)),
-        ),
-      
-      'layout_view_mapbg'=>array(
-        'tab'=>2,
-        //'title'=>EST_PREF_MAPBG,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(''=>EST_PREF_SECTIONBG0,'estBGGrad1'=>EST_PREF_SECTIONBG1)),
-        ),
-      
-      
-      'layout_preview_gallery'=>array(
-        'tab'=>2,
-        'title'=>'<table class="table adminform WD100 BGCTransp"><colgroup style="width:50%"></colgroup><colgroup style="width:50%"></colgroup><tbody id="estPrefgalOptTB"></tbody></table>',
-        'type'=>'method',
-        'data'=>false,
-        'writeParms' => array(),
-        ),
-      'layout_view_gallbg'=>array(
-        'tab'=>2,
-        'title'=>EST_PREF_GALBG,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'writeParms' => array('nolabel'=>1,'size'=>'xlarge','optArray'=>array(''=>EST_PREF_SECTIONBG0,'estBGGrad1'=>EST_PREF_SECTIONBG1)),
-        ),
       
       'sched_agt_times'=>array(
         'tab'=>3,
@@ -1443,6 +1291,17 @@ class estate_listing_ui extends e_admin_ui{
         'type'=>'method',
         'data'=>'array',
         'help'=>EST_PREF_DEFEVTLENHLP,
+        ),
+      
+      
+      'map_include_agency'=>array(
+        'tab'=>4,
+        'title'=>EST_PREF_MAPAGENCY,
+        'help'=>EST_PREF_MAPAGENCYHLP,
+        'type'=>'dropdown',
+        'data'=>'str',
+        'width' => 'auto',
+        'writeParms' => array('size'=>'xlarge','optArray'=>array(0=>EST_PREF_MAPAGENCY_NO,1=>EST_PREF_MAPAGENCY_YES)),
         ),
       
       'map_jssrc'=>array( 
@@ -1850,12 +1709,12 @@ class estate_listing_ui extends e_admin_ui{
             <p id="estHlp-prefGen1">'.EST_GEN_GENERALOPTSHLP1.'</p>
           </div>
           <div id="estEditHelp-1" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">List Page Template</b>
-            <p id="estHlp-prefGen1">Set options for the Property Listings Page</p>
+            <b id="estHlp-prefGen1">'.EST_PREF_TEMPLATES.'</b>
+            <p id="estHlp-prefGen1">'.EST_HLPMNU_PREF_TEMPLATES01.'</p>
           </div>
           <div id="estEditHelp-2" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">View Page Template</b>
-            <p id="estHlp-prefGen1">Set Options for the View Listing Template</p>
+            <b id="estHlp-prefGen1">'.EST_PREF_MENU.'</b>
+            <p id="estHlp-prefGen1">'.EST_HLPMNU_PREF_MENU01.'</p>
           </div>
           <div id="estEditHelp-3" class="estEditHelpSect">
             <b id="estHlp-prefGen1">'.EST_GEN_SCHEDULEOPTS.'</b>
@@ -2543,96 +2402,23 @@ class estate_listing_form_ui extends e_admin_form_ui{
     }
   
   
-  public function layout_preview_listpage($curVal,$mode){
+  
+  public function template_list($curVal,$mode){
     switch($mode){
 			case 'read':
 				break;
 			case 'write': 
-        return '<iframe id="estLayoutPreviewIframeList" class="estLayoutPreviewCont"></iframe>';
-        break;
-      }
-    }
-  
-  public function layout_preview_top($curVal,$mode){
-    switch($mode){
-			case 'read':
-				break;
-			case 'write': 
-        return '<iframe id="estLayoutPreviewIframe-top" scrolling="no" class="estLayoutPreviewCont"></iframe>';
-        break;
-      }
-    }
-  
-  public function layout_preview_summary($curVal,$mode){
-    switch($mode){
-			case 'read':
-				break;
-			case 'write': 
-        return '<iframe id="estLayoutPreviewIframe-sum" scrolling="no" class="estLayoutPreviewCont"></iframe>';
-        break;
-      }
-    }
-  
-  public function layout_preview_spaces($curVal,$mode){
-    switch($mode){
-			case 'read':
-				break;
-			case 'write': 
-        return '<iframe id="estLayoutPreviewIframe-spaces" scrolling="no" class="estLayoutPreviewCont"></iframe>';
-        break;
-      }
-    }
-  
-  
-  public function layout_preview_mapview($curVal,$mode){
-    switch($mode){
-			case 'read':
-				break;
-			case 'write': 
-        return '<iframe id="estLayoutPreviewIframe-map" scrolling="no" class="estLayoutPreviewCont"></iframe>';
-        break;
-      }
-    }
-  
-  public function layout_preview_gallery($curVal,$mode){
-    switch($mode){
-			case 'read':
-				break;
-			case 'write': 
-        return '<iframe id="estLayoutPreviewIframe-gal" class="estLayoutPreviewCont"></iframe>';
-        break;
-      }
-    }
-  
-  public function layout_preview($curVal,$mode){
-    switch($mode){
-			case 'read':
-				break;
-			case 'write': 
-        $tp = e107::getParser();
-        $sql = e107::getDB();
-        $pOpt = array();//'<option value="0">'.EST_GEN_LISTINGS.'</option>';
-        $retrn = '<select id="estPrefPropSel">';
         
-        $PVQRY = 'SELECT prop_idx, prop_name FROM #estate_properties ORDER BY prop_datecreated DESC LIMIT 5';
-        /*
-        $PVQRY = 'SELECT prop_idx, prop_name, space_idx, space_propidx
-        FROM #estate_spaces
-        LEFT JOIN #estate_properties
-        ON prop_idx = space_propidx
-        GROUP BY space_propidx
-        ORDER BY prop_datecreated DESC LIMIT 5';
-        */
-        
-        if($data = $sql->retrieve($PVQRY,true)){
-          if(count($data) > 0){foreach($data as $row){$pOpt[$row['prop_idx']] = $row['prop_name'];}}
+        $ret = '<select id="template-list" name="template_list" class="tbox form-control xlarge">';
+        $ret .= '<option value="default">Default</option>';
+        if(count($GLOBALS['ESTATE_TEMPLATE']['list']) > 0){
+          foreach($GLOBALS['ESTATE_TEMPLATE']['list'] as $k=>$v){
+            $ret .= '<option value="'.$k.'">'.$v['tempname'].'</option>';
+            }
           }
-        if(count($pOpt) > 0){foreach($pOpt as $k=>$v){$retrn .= '<option value="'.intval($k).'">'.$tp->toHTML($v).'</option>';}}
-        else{$retrn .= '<option value="-1">'.EST_PREF_LAYOUT_NOLISTINGS.'</option>';}
-        
-        $retrn .= '</select>';
-        $retrn .= '<select id="estPrefPropOpt1"><option value="1">Desktop</option><option value="2">Mobile</option></select>';
-        return $retrn;
+        else{$ret .= '<option value="default">Default</option>';}
+        $ret .= '</select>';
+        return $ret;
         break;
 			case 'filter':
 			case 'batch':
@@ -2640,16 +2426,21 @@ class estate_listing_form_ui extends e_admin_form_ui{
       }
     }
   
-  
-  public function view_template($curVal,$mode){
+  public function template_view($curVal,$mode){
     switch($mode){
 			case 'read':
 				break;
 			case 'write': 
-        $retrn = '<select id="estPrefTemplateSel">';
-        $retrn .= '<option value="default">Default</option>';
-        $retrn .= '</select>';
-        return $retrn;
+        
+        $ret = '<select id="template-view" name="template_view" class="tbox form-control xlarge">';
+        if(count($GLOBALS['ESTATE_TEMPLATE']['view']) > 0){
+          foreach($GLOBALS['ESTATE_TEMPLATE']['view'] as $k=>$v){
+            $ret .= '<option value="'.$k.'">'.$v['tempname'].'</option>';
+            }
+          }
+        else{$ret .= '<option value="default">Default</option>';}
+        $ret .= '</select>';
+        return $ret;
         break;
 			case 'filter':
 			case 'batch':

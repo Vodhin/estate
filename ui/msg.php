@@ -4,7 +4,6 @@ if(!defined('e107_INIT')){
     define('e_TOKEN_DISABLE',true);
     require_once('../../../class2.php');
     e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
-    //e107::includeLan('/'.e_LANGUAGE.'lan_mail_handler.php'); ???
     
     $sql = e107::getDB();
     $tp = e107::getParser();
@@ -104,7 +103,10 @@ if(!defined('e107_INIT')){
 				)
 			);
     
-    if(check_class($EST_PREF['contact_cc']) && intval($MSG['msg_from_cc']) == 1){
+    //$SITE_PREF['contact_emailcopy']
+    $COPY_PREF = e107::pref('contact_emailcopy');
+    
+    if($COPY_PREF == 1 && check_class($EST_PREF['contact_cc']) && intval($MSG['msg_from_cc']) == 1){
       $recipients[1] = array(
   			'mail_recipient_id'=> intval($MSG['msg_from_uid']),
   			'mail_recipient_name'=> $MSG['msg_from_name'],
@@ -141,9 +143,9 @@ if(!defined('e107_INIT')){
 				'mail_create_app' 		=> 'estate',
 				'mail_title' 			=> 'ESTATE TRACKING',
 				'mail_subject' 			=> $MSG['msg_top'],
-				'mail_sender_email' 	=> e107::getPref('replyto_email',SITEADMINEMAIL), //$MSG['msg_from_addr'],
+				'mail_sender_email' 	=> e107::getPref('replyto_email',SITEADMINEMAIL),
 				'mail_sender_name'		=> $MSG['msg_from_name'].' via '.SITENAME.'',
-				'mail_notify_complete' 	=> 0,	// NEVER notify when this email sent!
+				'mail_notify_complete' 	=> 0,
 				'mail_body' 			=> $message,
 				'template'				=> 'default',
 				'mail_send_style'       => 'default',
@@ -194,8 +196,6 @@ if(!defined('e107_INIT')){
             }
           
           if($MSG['msg_from_uid'] == 0){$MSG['msg_from_uid'] = 1;}
-          //SITEADMIN
-          //SITEADMINEMAIL
           }
         
         
@@ -287,7 +287,8 @@ function estPrevMsgPvw($mv,$mde=0){
   if($mde == 1){
     return '
       <div class="estMsgP" style="display:block;">
-        <h5>'.$tp->toDate($mv['msg_sent'],'long').' '.$tp->toHTML($mv['msg_top']).'</h5>
+        <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
+        <h5>'.$tp->toDate($mv['msg_sent'],'long').(intval($mv['msg_read']) > 0 ? ' <i>'.EST_MSG_RECD.' '.$tp->toDate($mv['msg_read'],'short').'</i>' : '').'</h5>
         <p>'.$tp->toHTML($mv['msg_text']).'</p>
       </div>';
     }
@@ -296,7 +297,8 @@ function estPrevMsgPvw($mv,$mde=0){
       <div class="estMsgBtn">
         <button class="btn btn-default">'.$tp->toHTML($mv['msg_top']).'</button>
         <div class="estMsgP">
-          <h5>'.$tp->toDate($mv['msg_sent'],'long').' '.$tp->toHTML($mv['msg_top']).'</h5>
+        <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
+        <h5>'.$tp->toDate($mv['msg_sent'],'long').(intval($mv['msg_read']) > 0 ? ' <i>'.EST_MSG_RECD.' '.$tp->toDate($mv['msg_read'],'short').'</i>' : '').'</h5>
           <p>'.$tp->toHTML($mv['msg_text']).'</p>
         </div>
       </div>';
@@ -309,11 +311,13 @@ function estPrevMsgPvw($mv,$mde=0){
 
 function est_msg_form($DTA=null){
 	if(!$DTA['prop_seller']){
-    return EST_GEN_UNK.' '.EST_GEN_SELLER;
+    return (ADMIN ? EST_GEN_UNK.' '.EST_GEN_SELLER : '');
     }
   
   $sql = e107::getDB();
   $tp = e107::getParser();
+  $COPY_PREF = e107::pref('contact_emailcopy');
+  
   $EST_PREF = e107::pref('estate');
   
   /*
@@ -371,8 +375,25 @@ function est_msg_form($DTA=null){
   ksort($EST_MSG_MODES);
   
   $PREVMSG = array();
+  $AGO = mktime(0,0,0, date("m"), date("d") - intval($EST_PREF['contact_life']), date("Y"));
   
-  $MQRY = "SELECT #estate_msg.* FROM #estate_msg WHERE msg_propidx='".$MSG['msg_propidx']."' AND ".(USERID > 0 ? "msg_from_uid='".USERID."'" : "msg_from_ip=".USERIP."'")." ORDER BY msg_sent DESC LIMIT 50";
+  $MQRY = "SELECT #estate_msg.* FROM #estate_msg WHERE ".(USERID > 0 ? " msg_from_uid='".USERID."'" : " msg_from_ip=".USERIP."' AND NOT msg_from_uid > '0'")." AND msg_sent >= '".$AGO."'";
+  
+  if(intval($EST_PREF['contact_maxto']) > 1){$MQRY .= " AND msg_read = '0'";}
+  
+  if(intval($MSG['msg_propidx']) > 0){
+    if(intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3){
+      $MQRY .= " AND msg_propidx='".$MSG['msg_propidx']."'";
+      }
+    }
+  else{
+    if(intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3){
+      $MQRY .= " AND NOT msg_propidx > '0'";
+      }
+    }
+  
+  
+  $MQRY .= " ORDER BY msg_sent DESC LIMIT ".intval($EST_PREF['contact_max']);
   
   $mi = 0;
   $sql->gen($MQRY);
@@ -384,7 +405,7 @@ function est_msg_form($DTA=null){
   $PMSGCT = count($PREVMSG);
   $PREVDIV = '
   <div id="estMsgPrevDiv" class="WD100">
-    <h4 class="btn btn-primary"'.($PMSGCT > 0 ? '' : ' style="display:none;"').'>'.EST_MSG_PREVMSG.' ('.$PMSGCT.')</h4>';
+    <h4 id="estPrevMsgBtn" class="btn btn-primary"'.($PMSGCT > 0 ? '' : ' style="display:none;"').'>'.EST_MSG_PREVMSG.' ('.$PMSGCT.')</h4>';
   
   if($PMSGCT > 0){
     if($PMSGCT == 1){
@@ -392,7 +413,7 @@ function est_msg_form($DTA=null){
       }
     else{
       $PREVDIV .= '
-    <div id="estMsgPrevBelt">';
+    <div id="estMsgPrevBelt" style="display:none;">';
       foreach($PREVMSG as $mk=>$mv){$PREVDIV .= estPrevMsgPvw($mv);}
       $PREVDIV .= '
     </div>';
@@ -402,10 +423,14 @@ function est_msg_form($DTA=null){
   </div>';
   
   
+  //<div>['.$tp->toDate($AGO,'short').']<p>'.$MQRY.'</p></div>
+  
   $ret = '
   <div id="estMsgFormDiv" class="WD100">';
-  if($PMSGCT > 15){
-    $ret .= '<div id="estMsgWarn">'.EST_MSG_REACHMAX1.' '.$tp->toHTML($DTA['prop_seller']).' '.EST_MSG_REACHMAX2.'</div>';
+  if($PMSGCT >= intval($EST_PREF['contact_max'])){
+    $ret .= '<div id="estMsgWarn">'.EST_MSG_REACHMAX1.' '.$tp->toHTML($DTA['prop_seller']).' 
+    '.(intval($MSG['msg_propidx']) > 0 && (intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3) ? EST_MSG_REACHMAX2 : '').'
+    </div>';
     }
   else{
     $ret .= '
@@ -470,7 +495,7 @@ function est_msg_form($DTA=null){
             <fieldset><legend>'.EST_MSG_YOUREMAIL.':</legend>
             <input type="text" name="msg_from_addr" class="tbox form-control estChkMsg" data-req="@" data-len="6" value="'.$tp->toTEXT($msg_from_addr).'" placeholder="'.EST_MSG_YOUREMAIL.' ('.EST_GEN_REQUIURED.')" />';
             
-          if(check_class($EST_PREF['contact_cc'])){
+          if($COPY_PREF == 1 && check_class($EST_PREF['contact_cc'])){
             $ret .= '
             <div id="estMsgCCdiv">
               <input type="checkbox" id="msg-from-cc" name="msg_from_cc" value="1" class="tbox INLBLK" /><label for="msg-from-cc">'.EST_MSG_CCME.'</label>

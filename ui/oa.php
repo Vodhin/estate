@@ -38,15 +38,6 @@ else{
   }
 
 
-//$tp = e107::getParser();
-//$ret1['user_profimg'] = $tp->toAvatar($ret1,array('type'=>'url'));
-    
-// Load Listing by ID if any
-
-
-
-
-
 $DTA = array();
 $DTA['prop'] = array();
 
@@ -165,8 +156,7 @@ else{
 $pretext = '
   <h2>'.(intval($DTA['prop']['prop_idx']) > 0 ? '' : EST_GEN_NEW.' ').($DTA['prop']['prop_agent'] > 0 ? EST_GEN_AGENT : EST_GEN_PRIVATE).' '.EST_GEN_LISTING.'</h2>
   <div id="estAgCard" class="estAgCard">
-  <div class="estAgCardInner">
-  ';
+  <div class="estAgCardInner">';
 
 if($DTA['agent']){
   $pretext .= '
@@ -183,9 +173,8 @@ if($DTA['agent']){
     $pretext .= '</div>';
     }
     
-    $pretext .= '
+  $pretext .= '
   </div>';
-   
   }
 else{
   $pretext .= '
@@ -285,8 +274,6 @@ require_once(e_PLUGIN.'estate/ui/core.php');
 include_once('qry.php');
 
 
-
-
 if(intval($DTA['prop']['prop_idx']) > 0){
   $nsHead = '<div id="estMiniNav"><a href="'.e_SELF.'?view.'.$DTA['prop']['prop_idx'].'" title="'.EST_GEN_VIEWLISTING.'"><i class="fa fa-eye"></i></a>';
   if(getperms('P')){
@@ -298,21 +285,18 @@ else{
   //$nsHead = EST_GEN_NEW.' '.EST_GEN_LISTING;
   }
 
-
-
-
-
+/*
 $tmpl = e107::getTemplate('estate');
 $sc = e107::getScBatch('estate',true);
 $sc->setVars($prop[0]);
-
-
 e107::js('inline','var estMapPins = '.$tp->parseTemplate($tmpl['pins'], false, $sc).'; ', 'jquery',2);
+*/
+$PINS = est_map_pins();
+e107::js('inline','var estMapPins = '.$PINS.'; ', 'jquery',2);
+
 
 $frm = e107::getForm(false, true);
 $timeZones = systemTimeZones();
-
-
 
 
 if($_POST){
@@ -323,16 +307,11 @@ $estateCore = new estateCore;
 $OATXT = $pretext;
 
 
-
-
 /*
   e_TOKEN
   <input type="hidden" name="" value="'.$tp->toForm($DTA['prop']['']).'" />
 
 */
-
-
-
 
 
 $TBSOPTS = array('active' => 0,'fade' => 0,'class' => 'estOATabs');
@@ -342,11 +321,11 @@ $TBS = $estateCore->estOAFormTabs();
 $OATXT .= '
 <form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-OAform" enctype="multipart/form-data" autocomplete="off" data-propid="'.intval($DTA['prop']['prop_idx']).'" data-h5-instanceid="0" novalidate="novalidate">';
 
-  foreach($TBS as $k=>$v){
-    $TBS[$k]['text'] = $estateCore->estOAFormTable($k,$DTA['prop']);
-    }
+foreach($TBS as $k=>$v){
+  $TBS[$k]['text'] = $estateCore->estOAFormTable($k,$DTA['prop']);
+  }
   
-  $OATXT .= $frm->tabs($TBS, $TBSOPTS);
+$OATXT .= $frm->tabs($TBS, $TBSOPTS);
 
 
 $OATXT .= '
@@ -355,13 +334,9 @@ $OATXT .= '
 <div id="estMobTst"></div>
 <div id="estMiniNav"></div>';
 
-
-
 require_once(HEADERF);
 $ns->tablerender($nsHead,$OATXT,'estEditProp');
 unset($nsHead,$OATXT,$USRSEL,$TBS,$TBSOPTS);
 require_once(FOOTERF);
 exit;
-
-
 ?>

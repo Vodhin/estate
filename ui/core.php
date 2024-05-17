@@ -3192,7 +3192,7 @@ class estateCore{
     $LABS = $this->estOALabels($FLD);
     
     if($LABS['hlp']){
-      $INFICO = $frm->help($LABS['hlp']);
+      $INFICO = $frm->help($tp->toHTML($LABS['hlp']));
       }
     
     $text = '<tr><td>'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
@@ -3602,6 +3602,24 @@ class estateCore{
     clearstatcache();
     return $RES;
     }
+  
+  public function estFileFetch($DIR){
+    $res = array();
+    $i = 0;
+    if(is_dir($DIR)){
+      if($DIR = opendir($DIR)){
+        while(false !== (($FNAME = readdir($DIR)))){
+          if($FNAME !=='.' && $FNAME !=='..' && strtolower($FNAME) !== 'index.html' && strtolower($FNAME) !== 'index.php'){
+            $res[$i] = $FNAME;
+            $i++;
+            }
+          }
+        }
+      }
+    sort($res);
+    return $res;
+    }
+  
   
   
   public function estHelpMenu($SECT,$hlpmode,$hlpactn){}
