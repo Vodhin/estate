@@ -1,3 +1,18 @@
+<?php
+/*
+ * e107 website system
+ *
+ * Copyright (C) e107 Inc (e107.org)
+ * Released under the terms and conditions of the
+ * GNU General Public License (http://www.gnu.org/licenses/gpl.txt)
+ *
+ * Estate SQL
+ *
+*/
+header("location:../../index.php");
+exit;
+?>
+
 CREATE TABLE `estate_agencies` (
   `agency_idx` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `agency_pub` tinyint(1) NOT NULL default '1',

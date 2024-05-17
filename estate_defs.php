@@ -266,9 +266,7 @@ function estGetSpaces($PROPID,$PSTAT=0){
   $RET = array();
   $MQRY = "SELECT #estate_media.* FROM #estate_media WHERE media_propidx=".$PROPID." ";
   if($PSTAT == 1){$MQRY .= "AND media_galord='1' LIMIT 1";}
-  else{
-    $MQRY .= "AND media_type='1' ORDER BY media_galord ASC";
-    }
+  else{$MQRY .= "AND media_type='1' ORDER BY media_galord ASC";}
   
   if($data2 = $sql->retrieve($MQRY,true)){
     $i = 0;

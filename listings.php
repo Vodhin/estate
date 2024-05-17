@@ -3,10 +3,11 @@
 if(!defined('e107_INIT')){require_once(__DIR__ . '/../../class2.php');}
 
 e107::lan('estate',true,true);
-
 $ns = e107::getRender();
 $tp = e107::getParser();
 
+
+/*
 $phpver = phpversion();
 $phpinf = explode('.',$phpver);
 if($phpinf[0] > 7 || $phpinf[0] < 5){
@@ -17,8 +18,9 @@ if($phpinf[0] > 7 || $phpinf[0] < 5){
   exit;
   }
 
+*/
 
-
+$EST_PREF = e107::pref('estate');
 
 
 e107::css('url',e_PLUGIN.'estate/css/listings.css');
@@ -38,7 +40,6 @@ if(!$e107->isInstalled('estate')){
 
 
 $sql = e107::getDb();
-$EST_PREF = e107::pref('estate');
 
 if(intval($EST_PREF['adminonly']) == 1){
   if(ADMIN){$estText = '<div class="WD100 TAC FWB">'.EST_GEN_PLUGADMINONLY.'</div>';}
@@ -82,14 +83,8 @@ require_once('estate_defs.php');
 $PROPID = intval($qs[1]);
 if($qs[0] == 'edit' || $qs[0] == 'new'){
   require_once(e_PLUGIN.'estate/ui/oa.php');
+  exit;
   }
-
-
-
-
-
-
-
 
 
 
@@ -103,22 +98,7 @@ $WHERE = "";
 if(!ADMIN){$WHERE = "WHERE prop_status > 0 AND (prop_datepull > ".$STRTIMENOW." OR prop_datepull = 0) ";} //
 
 
-$MQRY = "
-  SELECT #estate_properties.*, city_name, city_url, city_timezone, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.*
-  FROM #estate_properties
-  LEFT JOIN #estate_city
-  ON city_idx = prop_city
-  LEFT JOIN #estate_county
-  ON cnty_idx = prop_county
-  LEFT JOIN #estate_states
-  ON state_idx = prop_state
-  LEFT JOIN #estate_agents
-  ON agent_idx = prop_agent
-  LEFT JOIN #user
-  ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid)
-  LEFT JOIN #estate_agencies 
-  ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)
-  ";
+$MQRY = "SELECT #estate_properties.*, city_name, city_url, city_timezone, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_properties LEFT JOIN #estate_city ON city_idx = prop_city LEFT JOIN #estate_county ON cnty_idx = prop_county LEFT JOIN #estate_states ON state_idx = prop_state LEFT JOIN #estate_agents ON agent_idx = prop_agent LEFT JOIN #user ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid) LEFT JOIN #estate_agencies ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)";
   
   
   if($qs[0] == 'agent'){
@@ -143,19 +123,16 @@ $MQRY = "
     $query = $MQRY.$WHERE." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
     }
 
+
 if(!$estQdta = $sql->retrieve($query,true)){
   require_once(HEADERF);
-  $tmpl = e107::getTemplate('estate');
   if($PROPID > 0){
-    $thead = EST_GEN_PROPERTY.' '.EST_GEN_VIEW;
-    $text = $tp->parseTemplate($tmpl['noview'], false);
+    $ns->tablerender(EST_GEN_PROPERTY.' '.EST_GEN_VIEW,'<div id="estateCont"><h3>'.EST_GEN_PROPERTY.' #'.$GLOBALS['PROPID'].' '.EST_GEN_NOTFOUND.'</h3><div>'.EST_ERR_HLP1a.' '.$GLOBALS['PROPID'].' '.EST_ERR_HLP1b.' <a href="'.e_SELF.'"><b>'.EST_GEN_VIEWLISTINGS.'</b></a></div></div>','estate-invalid');
     }
   else{
-    $thead = EST_GEN_LISTINGS;
-    $text = $tp->parseTemplate($tmpl['nolist'], false);
+    $ns->tablerender(EST_GEN_LISTINGS,'<div id="estateCont"><h3>'.EST_GEN_NOLISTINGS.'</h3><div>'.EST_GEN_CHECKLATER.'</div></div>','estate-invalid');
     }
-  $ns->tablerender($thead, $text,'estate-invalid');
-  unset($query,$PROPID,$WHERE,$EST_PROP,$thead,$text);
+  unset($query,$PROPID,$MQRY,$WHERE,$EST_PROP);
   require_once(FOOTERF);
   exit;
   }
@@ -164,31 +141,15 @@ if(!$estQdta = $sql->retrieve($query,true)){
 $dberr = $sql->getLastErrorText();
 if($dberr){e107::getMessage()->addError($dberr);}
 
-
-
 include_once('ui/qry.php');
 
-if(count($EST_PROP) > 0){
 
-  foreach($EST_PROP as $PK=>$PV){
-    $DBTST .= '<p>';
-    foreach($PV as $DK=>$DV){
-      $DBTST .= '<div>['.$DK.']';
-      if(is_array($DV)){
-        foreach($DV as $CK=>$CV){
-          $DBTST .= '<div>...['.$CK.'] '.$CV.'</div>';
-          }
-        }
-      else{
-        $DBTST .= ' '.$DV;
-        }
-      $DBTST .= '</div>';
-      }
-    $DBTST .= '</p><br />';
+if(count($EST_PROP) > 0){
+  
+  if($qs[0] == 'pview'){
+    //include_once('ui/preview.php');
+    exit;
     }
-  unset($DBTST);
-  
-  
   
   if($qs[0] == 'view'){
     
@@ -208,163 +169,56 @@ if(count($EST_PROP) > 0){
         }
       
       
-      $tmpl = e107::getTemplate('estate');
-      $sc = e107::getScBatch('estate',true);
-      $sc->setVars($PROPDTA[0]);
-      e107::js('inline','var estMapPins = '.$tp->parseTemplate($tmpl['pins'], false, $sc).'; ', 'jquery',2);
+      $PINS = est_map_pins();
+      e107::js('inline','var estMapPins = '.$PINS.'; ', 'jquery',2);
       
       $estHead = $tp->toHTML($PROPDTA[0]['prop_name']);
       define('e_PAGETITLE',$estHead);
       
-      
       //define('PAGE_NAME', 'Members');
-      
       //e107::meta($name, $content, $extended);
       //e107::meta('keywords','some words'); // example
       //e107::meta('apple-mobile-web-app-capable','yes'); // example
       
+      $sc = e107::getScBatch('estate',true);
+      $sc->setVars($PROPDTA[0]);
       require_once(HEADERF);
-      if($DBTST){
-        $ns->tablerender('DB TEST',$DBTST,'estate-test');
-        unset($DBTST);
+      $tmpl = e107::getTemplate('estate');
+      if(is_array($tmpl['view'][$EST_PREF['template_view']]['txt'])){
+        ksort($tmpl['view'][$EST_PREF['template_view']]['txt']);
+        foreach($tmpl['view'][$EST_PREF['template_view']]['txt'] as $k=>$tmpv){
+          $estText .= $tp->parseTemplate($tmpv, false, $sc);
+          }
         }
-        
-      
-      $estText .= $tp->parseTemplate($tmpl['start'], false);
-      $estText .= $tp->parseTemplate($tmpl['view']['top'], false, $sc);
-      $estText .= $tp->parseTemplate($tmpl['view']['sum'], false, $sc);
-      $estText .= $tp->parseTemplate($tmpl['view']['spaces'], false, $sc);
-      $estText .= $tp->parseTemplate($tmpl['view']['map'], false, $sc);
-      //$estText .= $tp->parseTemplate($tmpl['view']['nplisting'], false, $sc);
-      if($IDIV){$estText .= $tp->parseTemplate($tmpl['view']['gal'], false, $sc);}
-      
-      $estText .= $tp->parseTemplate($tmpl['end'], false);
-      
-      $estText .= $tp->parseTemplate($tmpl['view']['elnk'], false, $sc);
-      
-      $ns->tablerender('<span id="estMiniNav"></span>'.$estHead,$estText,'estate-view');
+      else{
+        $estText = $tp->parseTemplate($tmpl['view'][$TMPLTYPE]['txt'], false, $sc);
+        }
+      $ns->setStyle('main');
+      $ns->tablerender('<span id="estMiniNav"></span>'.$estHead,'<div id="estateCont">'.$estText.'</div>','estate-view');
       unset($estHead,$estText,$EST_PROP);
       }
     }
   
-  elseif($qs[0] == 'pview'){
-    if(ADMIN){
-      $e107_popup = 1;
-            
-      if(strpos($qs[3],'|') > -1){
-        $NP = explode('|',$qs[3]);
-        
-        switch($qs[2]){
-          case 'list' :
-            $EST_PREF['layout_list'] = $tp->toTEXT($NP[0]);
-            $EST_PREF['layout_list_map'] = intval($NP[1]);
-            $EST_PREF['layout_list_mapagnt'] = intval($NP[2]);
-            $EST_PREF['layout_list_agent'] = intval($NP[3]);
-            break;
-          
-          case 'top' :
-            $EST_PREF['slideshow_act'] = intval($NP[0]);
-            $EST_PREF['slideshow_time'] = intval($NP[1]);
-            $EST_PREF['slideshow_delay'] = intval($NP[2]);
-            break;
-          
-          case 'sum' :
-            $EST_PREF['layout_view_summbg'] = $tp->toTEXT($NP[0]);
-            $EST_PREF['layout_view_agent'] = $tp->toTEXT($NP[1]);
-            $EST_PREF['layout_view_agntbg'] = $tp->toTEXT($NP[2]);
-            break;
-          
-          case 'spaces' :
-            $EST_PREF['layout_view_spacesbg'] = $tp->toTEXT($NP[0]);
-            $EST_PREF['layout_view_spaces_ss'] = intval($NP[1]);
-            $EST_PREF['layout_view_spaces'] = $tp->toTEXT($NP[2]);
-            $EST_PREF['layout_view_spacedynbg'] = $tp->toTEXT($NP[3]);
-            $EST_PREF['layout_view_spacetilebg'] = $tp->toTEXT($NP[4]);
-            break;
-          
-          case 'map' :
-            $EST_PREF['layout_view_map'] = intval($NP[0]);
-            $EST_PREF['layout_view_mapagnt'] = intval($NP[1]);
-            $EST_PREF['layout_view_mapbg'] = $tp->toTEXT($NP[2]);
-            break;
-          
-          case 'gal' :
-            $EST_PREF['layout_view_gallbg'] = $tp->toTEXT($NP[0]);
-            break;
-          }
-        }
-      
-      
-      e107::css('inline', 'body{padding-top: 0px;}');
-      if($PROPID > 0){
-        $ESTDTA = estGetSpaces($PROPID);
-        $IDIV = estViewCSS($ESTDTA);
-        $EST_SPACES = $ESTDTA[1];
-        $PROPDTA[0] = $EST_PROP[$PROPID];
-        
-        $tmpl = e107::getTemplate('estate');
-        $sc = e107::getScBatch('estate',true);
-        $sc->setVars($PROPDTA[0]);
-        
-        e107::js('inline','var estMapPins = '.$tp->parseTemplate($tmpl['pins'], false, $sc).'; ', 'jquery',2);
-        require_once(HEADERF);
-        $estText .= $tp->parseTemplate($tmpl['view'][$qs[2]], false, $sc);
-        $ns->tablerender('','<div id="estDtaCont" class="estPrefScale75">'.$estText.'</div>','estate-view'); //
-        }
-      else{
-        $tmpl = e107::getTemplate('estate');
-        $sc = e107::getScBatch('estate',true);
-        e107::js('inline','var estMapPins = '.$tp->parseTemplate($tmpl['pins'], false, $sc).'; ', 'jquery',2);
-        
-        if($EST_PREF['layout_list_map'] == 1){$estText .= $tp->parseTemplate($tmpl['list']['map'], false);}
-        $estText .= '<div id="estateCont" class="'.$EST_PREF['layout_list'].'">';
-        if(count($EST_PROP) > 0){
-          foreach($EST_PROP as $k=>$v){
-            $sc->setVars($v);
-            $estText .= $tp->parseTemplate($tmpl['list']['item'], false, $sc);
-            }
-          }
-        $estText .= '</div>';
-        if($EST_PREF['layout_list_map'] == 2){$estText .= $tp->parseTemplate($tmpl['list']['map'], false);}
-                
-        $e107_popup = 1;
-        require_once(HEADERF);
-        $ns->tablerender('','<div id="estDtaCont" class="estPrefScale75">'.$estText.'</div>','estate-list');
-        }
-      
-      }
-    }
-  
-  
   else{
-    
-    $tmpl = e107::getTemplate('estate');
-    $sc = e107::getScBatch('estate',true);
-    e107::js('inline','var estMapPins = '.$tp->parseTemplate($tmpl['pins'], false, $sc).'; ', 'jquery',2);
-    
-    $estHead = EST_GEN_LISTINGS;
+    $PINS = est_map_pins();
+    e107::js('inline','var estMapPins = '.$PINS.'; ', 'jquery',2);
     
     require_once(HEADERF);
-    
-    
-    //$estText .= $tp->parseTemplate($tmpl['start'], false);
-    
-    if($EST_PREF['layout_list_map'] == 1){$estText .= $tp->parseTemplate($tmpl['list']['map'], false, $sc);}
-    $estText .= '<div id="estateCont" class="'.$EST_PREF['layout_list'].'">';
-    if(count($EST_PROP) > 0){
-      foreach($EST_PROP as $k=>$v){
-        $sc->setVars($v);
-        $estText .= $tp->parseTemplate($tmpl['list']['item'], false, $sc);
+    $tmpl = e107::getTemplate('estate');
+    $sc = e107::getScBatch('estate',true);
+    if(is_array($tmpl['list'][$EST_PREF['template_list']]['txt'])){
+      ksort($tmpl['list'][$EST_PREF['template_list']]['txt']);
+      foreach($tmpl['list'][$EST_PREF['template_list']]['txt'] as $k=>$tmpv){
+        $estText .= $tp->parseTemplate($tmpv, false, $sc);
         }
       }
-    $estText .= '</div>';
-    if($EST_PREF['layout_list_map'] == 2){$estText .= $tp->parseTemplate($tmpl['list']['map'], false, $sc);}
-    //$estText .= $tp->parseTemplate($tmpl['end'], false);
-    
-    $estText .= $tp->parseTemplate($tmpl['list']['elnk'], false, $sc);
-    
-    $ns->tablerender('<span id="estMiniNav"></span>'.$estHead,$estText,'estate-list');
-    unset($estHead,$estText,$EST_PROP);
+    else{
+      $estText = $tp->parseTemplate($tmpl['list'][$EST_PREF['template_list']]['txt'], false, $sc);
+      }
+      
+    $ns->setStyle('main');
+    $ns->tablerender('<span id="estMiniNav"></span>'.EST_GEN_LISTINGS,'<div id="estateCont">'.$estText.'</div>','estate-list');
+    unset($estText,$EST_PROP);
     }
   }
   
@@ -385,7 +239,7 @@ function estViewImgCSS($cssName,$gal,$actv,$stime,$sdelay){
   $CSS = array();
   $galCt = count($gal);
   if($galCt == 0){
-    $CSS[0] = '#estViewBoxTop{background-image: url("'.EST_PATHABS_IMAGES.'imgnotavail.png");}';
+    $CSS[0] = '#estSlideShow{background-image: url("'.EST_PATHABS_IMAGES.'imgnotavail.png");}';
     $CSS[1] .= '
         <img src="'.EST_PATHABS_IMAGES.'imgnotavail.png" />';
     }
@@ -440,7 +294,7 @@ function estViewImgCSS($cssName,$gal,$actv,$stime,$sdelay){
 
 function estViewCSS($ESTDTA){
   global $EST_PREF;
-  $CSSTOP = estViewImgCSS('#estViewBoxTop',$ESTDTA[0],$EST_PREF['slideshow_act'],$EST_PREF['slideshow_time'],$EST_PREF['slideshow_delay']);
+  $CSSTOP = estViewImgCSS('#estSlideShow',$ESTDTA[0],$EST_PREF['slideshow_act'],$EST_PREF['slideshow_time'],$EST_PREF['slideshow_delay']);
   if($CSSTOP[0]){
     $CSSTOP[0] = '
     
@@ -477,4 +331,146 @@ function estViewCSS($ESTDTA){
   }
 
 
+function est_map_pins(){
+  $pref = e107::pref();
+  $sql = e107::getDb();
+	$tp = e107::getParser();
+  $ARR1 = array('agcy'=>array(),'prop'=>array());
+  
+  if($pref['estate']['map_include_agency'] == 1){
+    if($AGY = $sql->retrieve("SELECT #estate_agencies.* FROM #estate_agencies WHERE NOT agency_lat='' AND NOT agency_lon='' ",true)){
+      $i = 0;
+      foreach($AGY as $k=>$v){
+        if(intval($v['agency_pub']) > 0){
+          $ARR1['agcy'][$i] = array(
+            'idx'=>$v['agency_idx'],
+            'name1'=>$v['agency_name'],
+            'name2'=>'',
+            'addr'=>$v['agency_addr'],
+            'lat'=>$v['agency_lat'],
+            'lon'=>$v['agency_lon'],
+            'thm'=>(intval($v['agency_imgsrc']) == 1 && trim($v['agency_image']) !== '' ? EST_PTHABS_AGENCY.$tp->toHTML($v['agency_image']) : $tp->thumbUrl($pref['sitelogo'],false,false,true)),
+            'zoom'=>$pref['estate']['map_zoom_def']
+            );
+          $i++;
+          }
+        }
+      }
+    }
+  
+  if($GLOBALS['EST_PROP']){
+    if(count($GLOBALS['EST_PROP']) > 0){
+      if(intval($GLOBALS['PROPID']) > 0){
+        foreach($GLOBALS['PROPDTA'] as $k=>$v){
+          $ARR1['prop'][0] = array(
+            'idx'=>$v['prop_idx'],
+            'lat'=>$v['prop_lat'],
+            'lon'=>$v['prop_lon'],
+            'lnk'=>null,
+            'name1'=>$tp->toHTML($v['prop_name']),
+            'zoom'=>$v['prop_zoom']
+            );
+          }
+        }
+      else{
+        $i = 0;
+        foreach($GLOBALS['EST_PROP'] as $k=>$v){
+          if(intval($v['prop_status']) > 1 && intval($v['prop_status']) < 5 && trim($v['prop_lat']) !== '' && trim($v['prop_lon']) !== ''){
+            $ARR1['prop'][$i] = array(
+              'drop'=>est_PinsPriceDrop($v,1),
+              'feat'=>explode(',',$v['prop_features']),
+              'idx'=>$v['prop_idx'],
+              'lat'=>$v['prop_lat'],
+              'lon'=>$v['prop_lon'],
+              'lnk'=>EST_PTH_LISTINGS.'?view.'.intval($v['prop_idx']).'.0',
+              'name1'=>$tp->toHTML($v['prop_name']),
+              'prc'=>estPinsPrice($v,1),
+              'sta'=>$tp->toHTML(estPinsPropStat($v)),
+              'stat'=>intval($v['prop_status']),
+              'thm'=>$v['img'][1]['t'],
+              'type'=>$v['prop_listype'],
+              'zoom'=>$v['prop_zoom']
+              );
+            $i++;
+            }
+          }
+        }
+      }
+    }
+  return json_encode($ARR1);
+  }
 
+
+
+
+function estPinsPrice($DTA,$NOADV=0){
+	$tp = e107::getParser();
+  $nf = new NumberFormatter('en_US', \NumberFormatter::CURRENCY);
+  $nf->setTextAttribute(NumberFormatter::CURRENCY_CODE, 'USD');
+  $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
+  
+  $ListPrice = $nf->format($DTA['prop_listprice']).($DTA['prop_listype'] == 0 ? '/'.$GLOBALS['EST_LEASEFREQ'][$DTA['prop_leasefreq']] : '');
+  $ListPrice .= est_PinsPriceDrop($DTA,0);
+  
+  if(ADMIN && (intval($DTA['prop_status']) < 2 || intval($DTA['prop_status']) > 4)){
+    $ADMVIEW = '<span class="estAdmView" title="'.EST_GEN_ADMVIEW.'">'.$ListPrice.'</span>';
+    }
+
+  if(intval($DTA['prop_status']) == 5){
+    if($ADMVIEW){$ret = $ADMVIEW;}
+    }
+  elseif(intval($DTA['prop_status']) == 4 || intval($DTA['prop_status']) == 3){
+    $ret = $ListPrice;
+    }
+  elseif(intval($DTA['prop_status']) == 2){
+    if(intval($DTA['prop_datelive']) > 0 && intval($DTA['prop_datelive']) <= $GLOBALS['STRTIMENOW']){
+      $ret = $ListPrice;
+      }
+    elseif(USERID > 0 && (intval($DTA['prop_dateprevw']) > 0 && intval($DTA['prop_dateprevw']) <= $GLOBALS['STRTIMENOW'])){
+      $ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ListPrice;
+      }
+    elseif($ADMVIEW){$ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ADMVIEW;}
+    }
+  elseif(intval($DTA['prop_status']) == 1){
+    if($ADMVIEW){$ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ADMVIEW;}
+    }
+  unset($nf,$ListPrice,$ADMVIEW);
+  return $ret;
+  }
+
+
+function est_PinsPriceDrop($DTA,$MODE){
+  if(intval($DTA['prop_listprice']) !== intval($DTA['prop_origprice'])){
+    $OPLP = round((1 -(intval($DTA['prop_listprice']) / intval($DTA['prop_origprice']))) * 100, 1);
+    if($MODE > 0){
+      if($MODE == 1){return $OPLP;}
+      }
+    else{
+      if($OPLP > 0){return '<span class="estPriceDrop">↓'.$OPLP.'%</span>';} // style="color:#009900"
+      else{return'<span class="estPriceDrop">↑'.$OPLP.'%</span>';} // style="color:#990000"
+      }
+    }
+  }
+
+function estPinsPropStat($DTA){
+  if(intval($DTA['prop_status']) == 5){$ret = (intval($DTA['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);}
+  elseif(intval($DTA['prop_status']) == 4){$ret = EST_GEN_PENDING; $parm = '';}
+  elseif(intval($DTA['prop_status']) == 3){$ret = $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']]; $parm = '';}
+  elseif(intval($DTA['prop_status']) == 2){
+    $parm = '';
+    if(intval($DTA['prop_datelive']) > 0 && intval($DTA['prop_datelive']) <= $GLOBALS['STRTIMENOW']){
+      $ret = $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']];
+      }
+    elseif(USERID > 0 && (intval($DTA['prop_dateprevw']) > 0 && intval($DTA['prop_dateprevw']) <= $GLOBALS['STRTIMENOW'])){
+      $ret = EST_GEN_PREVIEW;
+      }
+    else{$ret = EST_GEN_COMINGSOON;}
+    }
+  elseif(intval($DTA['prop_status']) == 1){
+    $ret = EST_GEN_COMINGSOON;
+    if(!ADMIN){$parm = '';}
+    }
+  else{$ret = EST_GEN_OFFMARKET;}
+  if($ret){return $ret.($parm == 'bullet' ? ' • ' : '');}
+  else{return '';}
+  }

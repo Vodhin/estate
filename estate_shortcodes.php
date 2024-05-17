@@ -5,17 +5,27 @@
 if (!defined('e107_INIT')) { exit; }
 
 
-// THEME
+if(defined('THEME_LAYOUT')){}
 
 class estate_shortcodes extends e_shortcode{
+  
+  function sc_agent_roll($parm){
+    $AGENT = $this->estGetSeller();
+    return $AGENT['agent_roll'];
+    }
   
   
   function sc_prop_editicons($parm){
     $AGENT = $this->estGetSeller();
+    if($parm['for'] == 'card'){return $AGENT['eicon'];}
     if($parm['for'] == 'list'){return $AGENT['lstedit'];}
     if($parm['for'] == 'view'){return $AGENT['edit'];}
     }
   
+  function sc_prop_agentmini($parm){
+    $AGENT = $this->estGetSeller();
+    if($parm['for'] == 'card'){return $AGENT['lstagent'];}
+    }
   
   
   function sc_prop_admlnk($parm){
@@ -45,81 +55,21 @@ class estate_shortcodes extends e_shortcode{
   
   
   
-  
-  function sc_prop_map_pins($parm){
-    //$GLOBALS['EST_PREF']
-    $sql = e107::getDb();
-		$tp = e107::getParser();
-    $pref = e107::pref();
-    $ARR1 = array('agcy'=>array(),'prop'=>array());
-    //intval($GLOBALS['PROPID']) == 0 && 
-    if($GLOBALS['EST_PREF']['layout_list_mapagnt'] == 1){
-      if($AGY = $sql->retrieve("SELECT #estate_agencies.* FROM #estate_agencies WHERE NOT agency_lat='' AND NOT agency_lon='' ",true)){
-        $i = 0;
-        foreach($AGY as $k=>$v){
-          if(intval($v['agency_pub']) > 0){
-            $ARR1['agcy'][$i] = array(
-              'idx'=>$v['agency_idx'],
-              'name1'=>$v['agency_name'],
-              'name2'=>'',
-              'addr'=>$v['agency_addr'],
-              'lat'=>$v['agency_lat'],
-              'lon'=>$v['agency_lon'],
-              'thm'=>(intval($v['agency_imgsrc']) == 1 && trim($v['agency_image']) !== '' ? EST_PTHABS_AGENCY.$tp->toHTML($v['agency_image']) : $tp->thumbUrl($pref['sitelogo'],false,false,true)),
-              'zoom'=>$GLOBALS['EST_PREF']['map_zoom_def']
-              );
-            $i++;
-            }
-          }
-        }
-      }
+  function sc_est_view_gallery($parm){
+    //
     
-    
-    if($GLOBALS['EST_PROP']){
-      if(count($GLOBALS['EST_PROP']) > 0){
-        if(intval($GLOBALS['PROPID']) > 0){
-          foreach($GLOBALS['PROPDTA'] as $k=>$v){
-            $ARR1['prop'][0] = array(
-              'idx'=>$v['prop_idx'],
-              'lat'=>$v['prop_lat'],
-              'lon'=>$v['prop_lon'],
-              'lnk'=>null,
-              'name1'=>$tp->toHTML($v['prop_name']),
-              'zoom'=>$v['prop_zoom']
-              );
-            }
-          }
-        else{
-          $i = 0;
-          foreach($GLOBALS['EST_PROP'] as $k=>$v){
-            if(intval($v['prop_status']) > 1 && intval($v['prop_status']) < 5 && trim($v['prop_lat']) !== '' && trim($v['prop_lon']) !== ''){
-              $ARR1['prop'][$i] = array(
-                'drop'=>$this->estPriceDrop($v,1),
-                'feat'=>explode(',',$v['prop_features']),
-                'idx'=>$v['prop_idx'],
-                'lat'=>$v['prop_lat'],
-                'lon'=>$v['prop_lon'],
-                'lnk'=>EST_PTH_LISTINGS.'?view.'.intval($v['prop_idx']).'.0',
-                'name1'=>$tp->toHTML($v['prop_name']),
-                'prc'=>$this->estPropPrice($v,1),
-                'sta'=>$tp->toHTML($this->estPropStat($v)),
-                'stat'=>intval($v['prop_status']),
-                'thm'=>$v['img'][1]['t'],
-                'type'=>$v['prop_listype'],
-                'zoom'=>$v['prop_zoom']
-                );
-              $i++;
-              }
-            }
-          }
-        }
-      }
-    
-    return json_encode($ARR1);
+    return '<div id="estGalCont">'.$GLOBALS['IDIV'].'</div>';
     }
   
+  
+  function sc_est_leaflet_map($parm){
+    $EST_PREF = e107::pref('estate');
+    return '<div id="estMapCont"><div id="estMap" style="width: 100%;"></div></div>';
+    }
+  
+  
   function sc_prop_map_agydta($parm){
-    //$GLOBALS['EST_PREF']
+    
     $sql = e107::getDb();
 		$tp = e107::getParser();
     
@@ -148,9 +98,9 @@ class estate_shortcodes extends e_shortcode{
       foreach($this->var['evt'] as $ok=>$ov){
         $OPH .= '
         <li class="estOHItem">
-          <h4>'.date('D F j, Y',$ov['event_start']).'<br/>'.date('g:i a',$ov['event_start']).' - '.date('g:i a',$ov['event_end']).'</h4>
+          <h4>'.date('D F j, Y',$ov['event_start']).'</h4>
           <h5>'.$tp->toHTML($ov['event_name']).'</h5>
-          <p>'.$tp->toHTML($ov['event_text']).'</p>
+          <p>'.date('g:i a',$ov['event_start']).' - '.date('g:i a',$ov['event_end']).'<br />'.$tp->toHTML($ov['event_text']).'</p>
         </li>';
         }
       $OPH .= '</ul>';
@@ -159,15 +109,17 @@ class estate_shortcodes extends e_shortcode{
     return $OPH;
     }
   
-  function sc_prop_listthm_banner($parm){
+  function sc_prop_list_banner($parm){
     $i=0;
     if($this->var['evt']){
       foreach($this->var['evt'] as $ok=>$ov){
         if($i == 0){
+          $tp = e107::getParser(); 
+          //$tp->toDate($ov['event_start'],'short')          
           return '
-          <div class="estListPropImgBanner1">
-            <h5>'.EST_GEN_OPENHOUSE.'</h5>
-            <p>'.date('D F j',$ov['event_start']).'<br>'.date('g:i a',$ov['event_start']).' - '.date('g:i a',$ov['event_end']).'</p>
+          <div class="estListBanner1">
+            <h5>'.$tp->toHTML($ov['event_name']).'</h5>
+            <p>'.date('D F j',$ov['event_start']).' '.date('g:i a',$ov['event_start']).' - '.date('g:i a',$ov['event_end']).'</p>
           </div>';
           }
         $i++;
@@ -182,8 +134,8 @@ class estate_shortcodes extends e_shortcode{
         }
       if($BTXT){
         return '
-        <div class="estListPropImgBanner1">
-          <h5>'.$BTXT.'</h5>
+        <div class="estListBanner1">
+          <h5>'.e107::getParser()->toHTML($BTXT).'</h5>
         </div>';
         }
       }      
@@ -363,39 +315,119 @@ class estate_shortcodes extends e_shortcode{
     return $text;
     }
   
-  function sc_prop_viewspacebtns($parm){
-		$tp = e107::getParser();
+  
+  
+  function sc_view_spacestable($parm){
     $SPACES = $GLOBALS['EST_SPACES'];
     $text = '';
     if(count($SPACES) > 0){
+  		$tp = e107::getParser();
+      $ns = e107::getRender();
       usort($SPACES, "spgrpsort");
       foreach($SPACES as $k=>$v){
-        $text .= '
-            <div class="estSpaceGroup" style="order:'.$v['ord'].'">
-              <h3>'.$tp->toHTML($v['n']).'</h3>';
         foreach($v['sp'] as $sok=>$sov){
           ksort($sov);
           foreach($sov as $sk=>$sv){
             $estkeyid = $this->spacesKeyId($v,$sok,$sk);
             $SPACETXT = $this->spacesTxt($sv);
-            $text .= '
-              <div id="'.$estkeyid.'btn" class="estViewSpaceBtn '.$GLOBALS['EST_PREF']['layout_view_spacetilebg'].(count($sv['m']) > 0 ? '' : ' noPics').'" data-getimg="'.$estkeyid.'dynImg">
+            $TXT .= '
+              <div id="'.$estkeyid.'btn" class="estViewSpaceBtn estTableGroupTile'.(count($sv['m']) > 0 ? '' : ' noPics').'" data-getimg="'.$estkeyid.'dynImg">
                 <div class="estSpTtl">'.$tp->toHTML($sv['n']).'</div>
                 <div class="estImgSlide'.(count($sv['m']) > 0 ? ' '.$estkeyid.'img' : '').'" data-ict="'.count($sv['m']).'"></div>
                 <div class="estViewSpTxt">'.$SPACETXT.'</div>
               </div>';
             }
           }
-        $text .= '
-            </div>';
+        $text .= '<div class="estTableGroupShell" style="order:'.$v['ord'].'">'.$ns->tablerender($tp->toHTML($v['n']),'<div class="estTableGroupWrapper">'.$TXT.'</div>','menu',true).'</div>';
+        unset($TXT,$SPACETXT);
         }
+      }
+    return '<div id="estViewSpaceBtns" class="estViewSect">'.$text.'</div>';
+    }
+  
+  
+  
+  function sc_prop_viewspacebtns($parm){
+		$tp = e107::getParser();
+    $SPACES = $GLOBALS['EST_SPACES'];
+    $text = '';
+    if(count($SPACES) > 0){
+      usort($SPACES, "spgrpsort");
+      if($parm['as'] == 'table'){
+        $ns = e107::getRender();
+        foreach($SPACES as $k=>$v){
+          foreach($v['sp'] as $sok=>$sov){
+            ksort($sov);
+            foreach($sov as $sk=>$sv){
+              $estkeyid = $this->spacesKeyId($v,$sok,$sk);
+              $SPACETXT = $this->spacesTxt($sv);
+              $TXT .= '
+                <div id="'.$estkeyid.'btn" class="estViewSpaceBtn'.(count($sv['m']) > 0 ? '' : ' noPics').'" data-getimg="'.$estkeyid.'dynImg">
+                  <div class="estSpTtl">'.$tp->toHTML($sv['n']).'</div>
+                  <div class="estImgSlide'.(count($sv['m']) > 0 ? ' '.$estkeyid.'img' : '').'" data-ict="'.count($sv['m']).'"></div>
+                  <div class="estViewSpTxt">'.$SPACETXT.'</div>
+                </div>';
+              }
+            }
+          
+          }
+        }
+      else{
+        foreach($SPACES as $k=>$v){
+          $text .= '
+              <div class="estSpaceGroup" style="order:'.$v['ord'].'">
+                <h3>'.$tp->toHTML($v['n']).'</h3>';
+          foreach($v['sp'] as $sok=>$sov){
+            ksort($sov);
+            foreach($sov as $sk=>$sv){
+              $estkeyid = $this->spacesKeyId($v,$sok,$sk);
+              $SPACETXT = $this->spacesTxt($sv);
+              $text .= '
+                <div id="'.$estkeyid.'btn" class="estViewSpaceBtn'.(count($sv['m']) > 0 ? '' : ' noPics').'" data-getimg="'.$estkeyid.'dynImg">
+                  <div class="estSpTtl">'.$tp->toHTML($sv['n']).'</div>
+                  <div class="estImgSlide'.(count($sv['m']) > 0 ? ' '.$estkeyid.'img' : '').'" data-ict="'.count($sv['m']).'"></div>
+                  <div class="estViewSpTxt">'.$SPACETXT.'</div>
+                </div>';
+              }
+            }
+          $text .= '
+              </div>';
+          }
+        }
+        
       }
     unset($SPACETXT);
     return $text;
     }
   
   
+  function sc_prop_spacepvw($parm){
+    $txt = '
+          <div id="estViewSpaceImgPvwCont">
+            <div id="estViewSpaceImgPvwSlider" class="estViewSect">
+              <div id="estArrBordR"></div>
+              <div id="estViewSpaceImgCont">';
+    $txt .= $this->sc_prop_viewspaceimgs($parm);
+    $txt .= '</div>
+            </div>
+          </div>';
+    return $txt;
+    }
+  
+  
   function sc_prop_latlng($parm){}
+  
+  
+  
+  
+  function sc_spaces_menu($parm){
+		$tp = e107::getParser();
+    $txt = 'Spaces Here';
+    
+    return $txt;
+    }
+  
+  
   
   
   function sc_prop_newicon(){
@@ -472,10 +504,7 @@ class estate_shortcodes extends e_shortcode{
         $ret['oa'] = 1;
         }
       }
-      
     
-    
-      
     if(EST_USERPERM > 0){
       $url1 = EST_PTH_ADMIN.'?action=edit&id='.intval($this->var['prop_idx']);
       $url2 = EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
@@ -502,7 +531,7 @@ class estate_shortcodes extends e_shortcode{
             }
           }
         }
-        
+      
       
       
       if($XGO == 0){
@@ -515,19 +544,18 @@ class estate_shortcodes extends e_shortcode{
         }
       }
     elseif(intval($GLOBALS['EST_PREF']['public_act']) !== 0 && USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
-      
       if(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){
         $ret['edit'] = '<a class="FR" href="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'" title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a>';
         $ret['lstedit'] = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
         
         }
       }
+    $ret['eicon'] = $ret['lstedit'];
     
-    if($GLOBALS['EST_PREF']['layout_list_agent'] == 1){
-      $ret['lstedit'] = '<div class="estPropListAgtCont">'.$ret['lstedit'].'<div class="estPropListAgtImg" style="background-image:url('.$ret['imgurl'].')"></div><div class="estPropListAgtName"><div>'.$ret['agent_roll'].'</div><div>'.$ret['agent_name'].'</div></div></div>';
-      }
+    $ret['lstagent'] = '<div class="estPropListAgtCont"><div class="estPropListAgtImg" style="background-image:url('.$ret['imgurl'].')"></div><div class="estPropListAgtName"><div>'.$ret['agent_roll'].'</div><div>'.$ret['agent_name'].'</div></div></div>';
     
-    
+    $ret['lstedit'] = '<div class="estPropListAgtCont">'.$ret['lstedit'].'<div class="estPropListAgtImg" style="background-image:url('.$ret['imgurl'].')"></div><div class="estPropListAgtName"><div>'.$ret['agent_roll'].'</div><div>'.$ret['agent_name'].'</div></div></div>';
+      
     
     unset($ACONT,$XRP,$XRC,$XGO,$url1,$url2);
     return $ret;
@@ -535,15 +563,13 @@ class estate_shortcodes extends e_shortcode{
   
   
   
-  function sc_prop_compcard($parm,$AGENT){}
-  
-  
-  
   
   function sc_prop_agentcard($parm){
+    //if(defined("ESTAGENTRENDERED")){return '<div id="estAgentCardDupe"></div>';}
 		$tp = e107::getParser();
     $EST_PREF = e107::pref('estate');
     $AGENT = $this->estGetSeller();
+    
     
     if($AGENT['error']){
       if(ADMIN){e107::getMessage()->addWarning($AGENT['error']);}
@@ -564,7 +590,7 @@ class estate_shortcodes extends e_shortcode{
       <div id="estAgCard" class="estAgCard'.(intval($AGENT['oa']) == 1 ? ' estOA' : '').'" >
         <div class="estAgCardInner">';
     
-    if(($parm['mode'] == 'full' || $parm['img'] > 0) && trim($AGENT['imgurl']) !== ''){
+    if(trim($AGENT['imgurl']) !== ''){
       $ret .= '<div class="estAgtAvatar" style="background-image:url(\''.$AGENT['imgurl'].'\')"></div>';
       }
     
@@ -621,33 +647,25 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_prop_menu_head($parm){
-		$tp = e107::getParser();
-    $ret = $tp->toHTML($this->var['prop_name']);
     if(check_class(e107::pref('estate','listing_save'))){
-        $ret .= '<a class="FR"><i class="fa fa-pencil-square-o"></i></a>';
-        }
-    
-    return $ret;
+		  $tp = e107::getParser();
+      return '<a id="estLikeIcon" class="FR"><i class="fa fa-heart"></i></a>';
+      }
     }
   
   
-  //PROP_AGENTCARD
   
   function sc_prop_saved_list($parm){
     if(check_class(e107::pref('estate','listing_save'))){
   		$tp = e107::getParser();
-      $ret .= '<div></div>';
+      $ret = '
+      <div id="estSavedModule" class="estViewSect noPADTB">
+      </div>';
       return $ret;
       }
     }
   
   
-  function sc_prop_msg_card($parm){
-    if(check_class(e107::pref('estate','contact_class'))){
-		  $tp = e107::getParser();
-      return $ret;
-      }
-    }
   
   
   function estPropStat($DTA){
@@ -696,7 +714,6 @@ class estate_shortcodes extends e_shortcode{
     
     $ListPrice = $nf->format($DTA['prop_listprice']).($DTA['prop_listype'] == 0 ? '/'.$GLOBALS['EST_LEASEFREQ'][$DTA['prop_leasefreq']] : '');
     $ListPrice .= $this->estPriceDrop($this->var,0);
-    
     
     if(ADMIN && (intval($DTA['prop_status']) < 2 || intval($DTA['prop_status']) > 4)){
       $ADMVIEW = '<span class="estAdmView" title="'.EST_GEN_ADMVIEW.'">'.$ListPrice.'</span>';
