@@ -67,8 +67,8 @@ function htmlDecode(mode,xVal,dec=0){
       }
       
     
-    if($('#estViewBoxSpacesCont').hasClass('estSlideshow')){
-      $('#estViewBoxSpacesCont div.estImgSlide').each(function(i,iEle){
+    if($('#estSpacesCont').hasClass('estSlideshow')){
+      $('#estSpacesCont div.estImgSlide').each(function(i,iEle){
         if($(iEle).data('ict') > 0){
           $('<div class="estSSict">'+$(iEle).data('ict')+'</div>').appendTo(iEle);
           if($(iEle).data('ict') > 1){
@@ -86,7 +86,7 @@ function htmlDecode(mode,xVal,dec=0){
     
       
     
-    if($('#estViewBoxSpacesCont').hasClass('estSpaceDynamic')){
+    if($('#estSpacesCont').hasClass('estSpaceDynamic')){
       if($('#estViewSpaceImgPvwCont').is(':visible')){
         }
       
@@ -114,7 +114,7 @@ function htmlDecode(mode,xVal,dec=0){
                   var imgT = btnT - (($(btn).outerHeight(true) - $(btn).height()) * 2);
                   var imgM = $('#estViewSpaceImgPvwCont').outerHeight(true) - $('#estViewSpaceImgPvwSlider').outerHeight(true);
                   imgT = (imgT > imgM ? imgM : (imgT < 0 ? 0 : imgT));
-                  var arrT = ((btnT - imgT) - $(btn).height());
+                  var arrT = ((btnT - imgT) - $(btn).height())+32;
                   if((arrT + $("#estArrBordR").outerHeight(true)) > (imgT + imgH)){arrT = (imgH + imgT) - ($("#estArrBordR").outerHeight(true));}
                   $('#estViewSpaceImgPvwSlider').animate({'top':(imgT < 0 ? 0 : imgT)+'px'});
                   $('#estArrBordR').animate({'top':(arrT < 4 ? 4 : arrT)+'px'});
@@ -223,7 +223,7 @@ function htmlDecode(mode,xVal,dec=0){
             if(px.lnk !== null){
               var pMrkr = '<a href="'+px.lnk+'" class="estMapPopClk">';
               pMrkr += '<div class="estMapPopThm" style=\'background-image:url('+estJSpth+(px.thm !== null ? 'media/prop/thm/'+px.thm : 'images/imgnotavail.png')+')\'></div>';
-              pMrkr += '<div class="estMapPopH1"><div class="estPosR">'+px.prc+'</div>'+px.sta+'</div>';
+              pMrkr += '<div class="estMapPopH1">'+px.sta+'</div><div class="estMapPopH1">'+px.prc+'</div>';// class="estPosR"
               
               if(px.drop !== null){
                 //if(Number(px.drop) > 0){pMrkr += '<div class="estMapPopH1"><div class="estPosR">↓ '+px.drop+'%</div></div>';}
@@ -271,15 +271,6 @@ function htmlDecode(mode,xVal,dec=0){
     }
   
   
-  function estPrepMenu(){
-    var agtMods = $('.estAgntModule');
-    if(agtMods.length > 1){
-      //agtMods[0].remove();
-      }
-    else{
-      }
-    estMsgSys();
-    }
   
   
   
@@ -458,39 +449,34 @@ function htmlDecode(mode,xVal,dec=0){
     }
   
   
-  function estBanners(){
-    $('.estListBanner1').each(function(i,ele){
+  function estCardTabs(){
+    $('.estCardTopTab').each(function(i,ele){
       var ht = ($(ele).outerHeight() + $(ele).parent()[0].offsetTop) * -1;
-      $(ele).animate({'margin-bottom':ht+'px','top':ht+'px'});
+      $(ele).animate({'top':ht+'px'});
+      });
+    
+    $('.estCardTopBtn').each(function(i,ele){
+      $(ele).on({
+        click: function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          window.location.assign($(this).data('url'));
+          }
+        });
       });
     }
   
   
   
   $(document).ready(function(){
-    estPrepMenu();
     estDynamicSlideShow();
     estBuildMap();
-    estBanners();
+    estCardTabs();
     estExpandArr();
     estLnkBar();
+    estMsgSys();
     
     
-    var edbtn = $('.estPropListEdtBtn');
-    var aCont = $('a.estListBlockA');
-    if(edbtn.length > 0){
-      if(edbtn.length < aCont.length){
-        }
-      $(edbtn).each(function(i,ele){
-        $(ele).on({
-          click: function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            window.location.assign($(this).data('url'));
-            }
-          });
-        });
-      }
     });
 
 })(jQuery);
