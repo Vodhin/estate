@@ -1,6 +1,5 @@
 /* CSS Document */
-
-#estViewBoxSpacesCont{
+#estSpacesCont{
   display: block;
   position:relative;
   width: 100%;
@@ -11,6 +10,17 @@
   overflow: hidden;
   }
 
+#estSpacesCont.estSpaceDynamic{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  }
+
+#estViewSpaceImgPvwCont{
+  width: 100%;
+  }
 
 #estViewSpaceImgPvwSlider{
   display:block;
@@ -48,7 +58,6 @@
   height: 24px;
   transform: rotate(45deg);
   vertical-align: middle;
-  z-index: -1;
   }
 
 .estViewSpTxt{
@@ -78,8 +87,8 @@ div.estViewSpTxt ul{
   }
 
 
-#estViewBoxSpacesCont div#estViewSpacePvwCont,
-#estViewBoxSpacesCont div#estViewSpaceImgPvwCont{
+#estSpacesCont div#estViewSpacePvwCont,
+#estSpacesCont div#estViewSpaceImgPvwCont{
   display:none;
   }
 
@@ -120,7 +129,7 @@ div.estTableGroupTile div.estImgSlide{
 
 div.estTableGroupTile div.estViewSpTxt{
   font-size:0.9em;
-  text-transform:normal;
+  text-transform:none;
   }
 
 div.estTableGroupTile div.estViewSpTxt li{
@@ -147,7 +156,7 @@ div.estTableGroupTile div.estViewSpTxt li{
 
 div#estViewSpaceBtnCont{width: 100%;}
 
-#estViewBoxSpacesCont div#estViewSpaceBtnCont div#estViewSpaceBtns{
+#estSpacesCont div#estViewSpaceBtnCont div#estViewSpaceBtns{
   display: flex;
   width: 100%;
   flex-wrap: wrap;
@@ -157,7 +166,7 @@ div#estViewSpaceBtnCont{width: 100%;}
   }
 
 
-#estViewBoxSpacesCont div.estSpaceGroup{
+#estSpacesCont div.estSpaceGroup{
   display: flex;
   width: 100%;
   border-bottom: 1px solid rgba(128,128,128,0.75);
@@ -169,25 +178,25 @@ div#estViewSpaceBtnCont{width: 100%;}
   align-items: stretch;
   }
 
-#estViewBoxSpacesCont div.estSpaceGroup:last-child{
+#estSpacesCont div.estSpaceGroup:last-child{
   border-bottom: none;
   padding-bottom: 0px;
   }
 
-#estViewBoxSpacesCont div.estSpaceGroup h3{
+#estSpacesCont div.estSpaceGroup h3{
   flex: 100%;
   }
 
 
-#estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+#estSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
   display:block;
   height:192px;
   }
-#estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt{
+#estSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt{
   display:block;
   }
 
-#estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt ul li{
+#estSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt ul li{
   white-space: normal;
   font-size: 0.8em;
   }
@@ -201,7 +210,7 @@ div#estViewSpaceBtnCont{width: 100%;}
   }
 
 
-#estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn{
+#estSpacesCont div.estSpaceGroup div.estViewSpaceBtn{
   display: flex;
   position: relative;
   max-width: 32%;
@@ -213,7 +222,7 @@ div#estViewSpaceBtnCont{width: 100%;}
   cursor: auto;
   }
 
-#estViewBoxSpacesCont.estSideBarAct div.estSpaceGroup div.estViewSpaceBtn{
+#estSpacesCont.estSideBarAct div.estSpaceGroup div.estViewSpaceBtn{
     flex: 49%;
     min-width: 49%;
     max-width: 49%;
@@ -284,19 +293,19 @@ div#estViewSpaceBtnCont{width: 100%;}
 @media only screen and (min-device-width:1024px){
   .dummy{}
   
-  #estViewBoxSpacesCont div.estSpaceGroup,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup{
+  #estSpacesCont div.estSpaceGroup,
+  #estSpacesCont.estSpaceDynamic div.estSpaceGroup{
     border-bottom: none;
     padding-bottom: 0px;
     }
   
   
-  #estViewBoxSpacesCont.estSpaceDynamic h3{
+  #estSpacesCont.estSpaceDynamic h3{
     margin-bottom: 6px;
     }
   
   
-  #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpacePvwCont{
+  #estSpacesCont.estSpaceDynamic div#estViewSpacePvwCont{
     display: flex;
     flex: 65%;
     flex-direction: column;
@@ -311,7 +320,7 @@ div#estViewSpaceBtnCont{width: 100%;}
     }
   
   
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+  #estSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
     flex: 100%;
     width: 100%;
     max-width: unset;
@@ -329,26 +338,26 @@ div#estViewSpaceBtnCont{width: 100%;}
     }
   
   
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.estBGGrad2{
+  #estSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.estBGGrad2{
     background-color:transparent;
     background-image: linear-gradient(0deg, rgba(0,0,0,0.08), rgba(64,64,64,0.07));
     }
   
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn:hover{
+  #estSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn:hover{
     border-left-color:#04caf7;
     }
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.actv,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.actv:hover{
+  #estSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.actv,
+  #estSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn.actv:hover{
     border-left-color:#34b6cb;
     }
   
-  #estViewBoxSpacesCont.estSpaceDynamic div.estBGGrad1 div.estViewSpaceBtn.actv,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estBGGrad1 div.estViewSpaceBtn.actv:hover{
+  #estSpacesCont.estSpaceDynamic div.estBGGrad1 div.estViewSpaceBtn.actv,
+  #estSpacesCont.estSpaceDynamic div.estBGGrad1 div.estViewSpaceBtn.actv:hover{
     border-left-color:#FFFFFF;
     }
   
-  #estViewBoxSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estImgSlide,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estViewSpTxt{
+  #estSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estImgSlide,
+  #estSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estViewSpTxt{
     display:none !important;
     }
   
@@ -362,12 +371,12 @@ div#estViewSpaceBtnCont{width: 100%;}
     display:none !important;
     }
   
-  #estViewBoxSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estViewSpTxt ul li{
+  #estSpacesCont.estSpaceDynamic div.estViewSpaceBtn div.estViewSpTxt ul li{
     white-space: nowrap;
     margin-right: 10px;
     }
   
-  #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpaceImgPvwCont{
+  #estSpacesCont.estSpaceDynamic div#estViewSpaceImgPvwCont{
     display:block;
     position:relative;
     min-height: 500px;
@@ -380,7 +389,7 @@ div#estViewSpaceBtnCont{width: 100%;}
     /*z-index: -3;*/
     }
   
-  #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpaceBtnCont{
+  #estSpacesCont.estSpaceDynamic div#estViewSpaceBtnCont{
     display: flex;
     flex: 34%;
     min-width: 300px;
@@ -393,7 +402,7 @@ div#estViewSpaceBtnCont{width: 100%;}
     overflow: unset;
     }
   
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup{
+  #estSpacesCont.estSpaceDynamic div.estSpaceGroup{
     display: flex;
     width: 100%;
     margin-bottom: 12px;
@@ -440,8 +449,7 @@ div#estViewSpaceBtnCont{width: 100%;}
     display:none !important;
     }
   
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+  #estSpacesCont div.estSpaceGroup div.estViewSpaceBtn{
     display: flex;
     position: relative;
     max-width: 48%;
@@ -459,8 +467,7 @@ div#estViewSpaceBtnCont{width: 100%;}
 @media only screen and (min-device-width:640px) and (max-device-width:767px){
   .dummy{}
   
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+  #estSpacesCont div.estSpaceGroup div.estViewSpaceBtn{
     display: flex;
     position: relative;
     max-width: 48%;
@@ -477,8 +484,7 @@ div#estViewSpaceBtnCont{width: 100%;}
 @media only screen and (min-device-width:544px) and (max-device-width:639px){
   .dummy{}
   
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+  #estSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
     height: 320px;
     }
   }
@@ -487,8 +493,7 @@ div#estViewSpaceBtnCont{width: 100%;}
 @media only screen and (min-device-width:480px) and (max-device-width:543px){
   .dummy{}
   
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+  #estSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
     height: 256px;
     }
   }
@@ -496,8 +501,7 @@ div#estViewSpaceBtnCont{width: 100%;}
 @media only screen and (min-device-width:100px) and (max-device-width:479px){
   .dummy{}
   
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
+  #estSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
     height: 192px;
     }
   }
@@ -508,14 +512,12 @@ div#estViewSpaceBtnCont{width: 100%;}
 @media only screen and (min-device-width:100px) and (max-device-width:639px){
   .dummy{}
   
-  #estViewBoxSpacesCont,
-  #estViewBoxSpacesCont.estSpaceDynamic{
+  #estSpacesCont div#estViewSpacePvwCont{
     background-image:none !important;
     background-color:transparent !important;
     }
   
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
+  #estSpacesCont div.estSpaceGroup div.estViewSpaceBtn{
     display: flex;
     position: relative;
     max-width: unset;
@@ -529,105 +531,13 @@ div#estViewSpaceBtnCont{width: 100%;}
   
   
   
-  
-  
-  
-  
-  #estViewBoxSpacesCont div.estImgSlide{
+  #estSpacesCont div.estImgSlide{
     width: 100%;
     height: 256px;
     }
   }
 
 
-
-
-
-
-
-/*
-
-  .dummy{}
-  
-  #estViewBoxSpacesCont.estSpaceDynamic div#estViewSpacePvwCont{
-    display:none;
-    }
-  
-  #estViewBoxSpacesCont div#estViewSpaceBtnCont{
-    flex:100%;
-    height:unset;
-    min-height:unset;
-    background-image: none !important;
-    }
-  
-  
-  #estViewBoxSpacesCont div.estSpaceGroup,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup{
-    display: flex;
-    width:100%;
-    flex: auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    }
-    
-  #estViewBoxSpacesCont div.estSpaceGroup h3,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup h3{
-    flex: 100%;
-    margin-top: 12px;
-    }
-  
-  
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn{
-    flex: 100%;
-    max-width: unset;
-    border: none;
-    border-top: none;
-    border-right: none;
-    border-bottom: none;
-    border-left: none;
-    padding: 8px 6px 8px 6px;
-    margin: 8px 0px 12px 0px;
-    cursor: auto;
-    }
-  
-  
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estSpTtl,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estSpTtl{
-    display:block;
-    margin: 6px 0px 0px 6px;
-    }
-
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estImgSlide{
-    display:block;
-    height:192px;
-    }
-  
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estSpTtl,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estSpTtl{
-    font-weight: bold;
-    font-size: 1.35em;
-    }
-  
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt{
-    display:block;
-    position:relative;
-    text-transform: none;
-    }
-  
-  #estViewBoxSpacesCont div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt ul li,
-  #estViewBoxSpacesCont.estSpaceDynamic div.estSpaceGroup div.estViewSpaceBtn div.estViewSpTxt ul li{
-    white-space: normal;
-    font-size: 0.8em;
-    }
-  
-  }
-
-*/
 
 
 

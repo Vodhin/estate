@@ -3063,6 +3063,34 @@ div.upldPvwBtn div.mediaPvwCapt:focus{
   }
 
 
+#estListOrderCont,
+#estMenuOrderCont,
+#estViewOrderCont{
+  display:block;
+  position:relative;
+  width:256px;
+  }
+
+.estTemplateSectCont{
+  display:none;
+  position:relative;
+  width:100%;
+  
+  }
+.estTemplateSectCont div.btn{
+  display:block !important;
+  position:relative;
+  width:100% !important;
+  cursor:ns-resize;
+  }
+.estTemplateSectCont div.btn label{
+  margin-left:6px;
+  text-transform:capitalize;
+  vertical-align:middle;
+  }
+
+
+
 .estAgentAgyList{
   
   }
