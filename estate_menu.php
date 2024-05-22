@@ -10,12 +10,17 @@
 if (!defined('e107_INIT')) { exit; }
 if (!e107::isInstalled('estate')) { return; }
 
+if(defined("EST_MENU_RENDERED")){return;}
+
 if(e_QUERY){$qs = explode(".", e_QUERY);}
 else{$qs = array('list',0);}
+
 
 $EST_PREF = e107::pref('estate');
 $tp = e107::getParser();
 $ns = e107::getRender();
+$ns->setStyle('menu');
+
 
 $tmpl = e107::getTemplate('estate');
 $sc = e107::getScBatch('estate',true);
@@ -23,35 +28,26 @@ $sc = e107::getScBatch('estate',true);
 if(e_PAGE == 'listings.php'){
   if($qs[0] == 'view'){
     if(strpos(strtolower(THEME_LAYOUT),'full') !== false){return '';}
+    $EST_PREF['template_menu'] = 'default';
     
-    $CAPT = $tp->parseTemplate($tmpl['menu']['title']['cap'], false, $sc);
-    $TXT = $tp->parseTemplate($tmpl['menu']['title']['txt'], false, $sc);
-    $ns->tablerender($CAPT, $TXT, 'estSideMenuTitle',true);
-    
-    
-    $CAPT = $tp->parseTemplate($tmpl['menu']['seller']['cap'], false, $sc);
-    $TXT = $tp->parseTemplate($tmpl['menu']['seller']['txt'], false, $sc);
-    $ns->tablerender($CAPT, $TXT,'estSideMenuSeller',true);
-    
-    
-    $TXT = $tp->parseTemplate($tmpl['menu']['events']['txt'], false, $sc);
-    $ns->tablerender(EST_GEN_EVENTS, $TXT, 'estSideMenuEvents',true);
-    define("ESTAGENTRENDERED",1);
-    
-    $TXT = $tp->parseTemplate($tmpl['menu']['saved']['txt'], false, $sc);
-    $ns->tablerender(EST_GEN_SAVEDLISTINGS, $TXT, 'estSideMenuSaved',true);
-    
-    $TXT = $tp->parseTemplate($tmpl['menu']['spaces']['txt'], false, $sc);
-    $ns->tablerender(EST_GEN_SPACES, $TXT, 'estSideMenuSpaces',true);
-    
+    if(is_array($tmpl['menu'][$EST_PREF['template_menu']]['txt'])){
+      ksort($tmpl['menu'][$EST_PREF['template_menu']]['txt']);
+      foreach($tmpl['menu'][$EST_PREF['template_menu']]['txt'] as $k=>$tmpv){
+        echo $tp->parseTemplate($tmpv, false, $sc);
+        }
+      }
+    else{
+      echo $tp->parseTemplate($tmpl['menu'][$EST_PREF['template_menu']]['txt'], false, $sc);
+      }
     }
   else{
     $TXT = $tp->parseTemplate($tmpl['menu']['saved']['txt'], false, $sc);
-    $ns->tablerender(EST_GEN_SAVEDLISTINGS, $TXT, 'menu',true);
+    $ns->tablerender(EST_GEN_SAVEDLISTINGS, $TXT, 'menu');
     }
   }
 else{
   $ns->tablerender('Estate MEenu', 'not on the listings page', 'estSideMenu1',true);
   }
+define("EST_MENU_RENDERED",true);
 unset($CAPT,$TXT,$ns,$tp);
 ?>

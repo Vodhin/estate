@@ -146,7 +146,19 @@
 		<pref name='slideshow_delay'>5</pref>
 		<pref name='slideshow_time'>4</pref>
 		<pref name='template_list'>default</pref>
+		<pref name='template_menu'>default</pref>
 		<pref name='template_view'>default</pref>
+		<pref name='template_view_ord'><![CDATA[array(
+      'default'=>array(
+        'slideshow'=>1,
+        'summary'=>1,
+        'spaces'=>1,
+        'map'=>1,
+        'nearby'=>1,
+        'comminuty'=>1,
+        'gallery'=>1
+        )
+      )]]></pref>
 	</pluginPrefs>
 	<siteLinks>
 		<link name="Listings" url="{e_PLUGIN}estate/listings.php" sef='' lan="EST_PLUGNAME">Listings</link>

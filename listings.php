@@ -184,16 +184,29 @@ if(count($EST_PROP) > 0){
       $sc->setVars($PROPDTA[0]);
       require_once(HEADERF);
       $tmpl = e107::getTemplate('estate');
-      if(is_array($tmpl['view'][$EST_PREF['template_view']]['txt'])){
-        ksort($tmpl['view'][$EST_PREF['template_view']]['txt']);
-        foreach($tmpl['view'][$EST_PREF['template_view']]['txt'] as $k=>$tmpv){
-          $estText .= $tp->parseTemplate($tmpv, false, $sc);
+      $tkey = (trim($EST_PREF['template_view']) !=='' ? $EST_PREF['template_view'] : 'default');
+      
+      if(is_array($tmpl['view'][$tkey]['txt'])){
+        if($tmpl['view'][$tkey]['ord'] && count($EST_PREF['template_view_ord'][$tkey]) > 0){
+          foreach($EST_PREF['template_view_ord'][$tkey] as $ok=>$ov){
+            if(isset($tmpl['view'][$tkey]['txt'][$ok]) && $ov == 1){
+              $estText .= $tp->parseTemplate($tmpl['view'][$tkey]['txt'][$ok], false, $sc);
+              }
+            }
+          }
+        else{
+          ksort($tmpl['view'][$tkey]['txt']);
+          foreach($tmpl['view'][$tkey]['txt'] as $k=>$tmpv){
+            $estText .= $tp->parseTemplate($tmpv, false, $sc);
+            }
           }
         }
       else{
-        $estText = $tp->parseTemplate($tmpl['view'][$TMPLTYPE]['txt'], false, $sc);
+        $estText = $tp->parseTemplate($tmpl['view'][$tkey]['txt'], false, $sc);
         }
+      
       $ns->setStyle('main');
+      $estText .= $tp->parseTemplate('<div id="estMiniSrc">{PROP_NEWICON}{PROP_EDITICONS:for=view}</div>', false, $sc);
       $ns->tablerender('<span id="estMiniNav"></span>'.$estHead,'<div id="estateCont">'.$estText.'</div>','estate-view');
       unset($estHead,$estText,$EST_PROP);
       }
@@ -205,15 +218,30 @@ if(count($EST_PROP) > 0){
     
     require_once(HEADERF);
     $tmpl = e107::getTemplate('estate');
+    $tkey = (trim($EST_PREF['template_list']) !=='' ? $EST_PREF['template_list'] : 'default');
+    
+    //$id loads {$plug_name}/templates/{$plug_name}_template.php and an array ${PLUG_NAME}_TEMPLATE
+    
+    /** 
+    * @param string $plug_name if null getCoreTemplate method will be called
+    * @param string $id - file prefix, e.g. calendar for calendar_template.php, or 'true' or 'null' for same as plugin name.
+    * @param string|null $key $YOURTEMPLATE_TEMPLATE[$key]
+    * @param boolean $override see {@link getThemeInfo()}
+    * @param boolean $merge merge theme with plugin templates, default is false
+    * @param boolean $info retrieve template info only
+    * 
+    * function getTemplate($plug_name, $id = null, $key = null, $override = true, $merge = false, $info = false){}
+    **/
+    
     $sc = e107::getScBatch('estate',true);
-    if(is_array($tmpl['list'][$EST_PREF['template_list']]['txt'])){
-      ksort($tmpl['list'][$EST_PREF['template_list']]['txt']);
-      foreach($tmpl['list'][$EST_PREF['template_list']]['txt'] as $k=>$tmpv){
+    if(is_array($tmpl['list'][$tkey]['txt'])){
+      ksort($tmpl['list'][$tkey]['txt']);
+      foreach($tmpl['list'][$tkey]['txt'] as $k=>$tmpv){
         $estText .= $tp->parseTemplate($tmpv, false, $sc);
         }
       }
     else{
-      $estText = $tp->parseTemplate($tmpl['list'][$EST_PREF['template_list']]['txt'], false, $sc);
+      $estText = $tp->parseTemplate($tmpl['list'][$tkey]['txt'], false, $sc);
       }
       
     $ns->setStyle('main');

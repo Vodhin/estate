@@ -56,8 +56,6 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_est_view_gallery($parm){
-    //
-    
     return '<div id="estGalCont">'.$GLOBALS['IDIV'].'</div>';
     }
   
@@ -91,54 +89,58 @@ class estate_shortcodes extends e_shortcode{
     if(trim($this->var['prop_modelname']) !== ""){return '"'.e107::getParser()->toHTML($this->var['prop_modelname']).'"';}
     }
   
-  function sc_prop_view_openhouse($parm){
+  
+  function sc_prop_events($parm){
     if($this->var['evt']){
+      $ns = e107::getRender();
       $tp = e107::getParser();
-      $OPH = '<ul id="estOHCont">';
+      $STRDATETOM = mktime(23, 59, 59, date("m"), date("d")+1, date("Y"));
       foreach($this->var['evt'] as $ok=>$ov){
-        $OPH .= '
-        <li class="estOHItem">
-          <h4>'.date('D F j, Y',$ov['event_start']).'</h4>
-          <h5>'.$tp->toHTML($ov['event_name']).'</h5>
-          <p>'.date('g:i a',$ov['event_start']).' - '.date('g:i a',$ov['event_end']).'<br />'.$tp->toHTML($ov['event_text']).'</p>
-        </li>';
+        $CAPT = $tp->toHTML((strtotime(date('m/d/Y',$ov['event_start'])) <= $GLOBALS['STRDATETODAY'] ? EST_GEN_TODAY : (strtotime(date('m/d/Y',$ov['event_start'])) <= $STRDATETOM ? EST_GEN_TOMORROW : date('D F j, Y',$ov['event_start']))));
+        $TXT = $tp->toHTML('<h5>'.$ov['event_name'].'</h5><p>'.($ov['event_start'] <= $GLOBALS['STRTIMENOW'] ? EST_GEN_NOW : date('g:i a',$ov['event_start'])).' - '.date('g:i a',$ov['event_end']).'<br />'.$ov['event_text'].'</p>');
+        $LITM .= '<li class="estOHItem"><h4>'.$CAPT.'</h4>'.$TXT.'</li>';
+        $OPH .= $ns->tablerender(EST_GEN_EVENT.': '.$CAPT, $TXT, 'estSideMenuEvents-'.$ok,true);
         }
-      $OPH .= '</ul>';
+      
+      
       }
-    else{$OPH .= EST_GEN_NOOPENHOUSE;}
-    return $OPH;
+    else{$LITM = '<li class="estOHItem">'.EST_GEN_NOEVENTS.'</li>';}
+    
+    if($parm['as'] == 'ul' && $LITM){
+      unset($OPH);
+      return '<ul id="estOHCont">'.$LITM.'</ul>';
+      }
+    elseif($OPH){
+      unset($LITM);
+      return $OPH;
+      }
     }
   
   function sc_prop_list_banner($parm){
-    $i=0;
+    if(intval($this->var['prop_status']) == 4){
+      $CAPT = EST_GEN_PENDING;
+      }
+    elseif(intval($this->var['prop_status']) == 5){
+      $CAPT = (intval($this->var['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);
+      }
+    
+    
     if($this->var['evt']){
+      $i=0;
+      $STRDATETOM = mktime(23, 59, 59, date("m"), date("d")+1, date("Y"));
       foreach($this->var['evt'] as $ok=>$ov){
         if($i == 0){
-          $tp = e107::getParser(); 
-          //$tp->toDate($ov['event_start'],'short')          
-          return '
-          <div class="estListBanner1">
-            <h5>'.$tp->toHTML($ov['event_name']).'</h5>
-            <p>'.date('D F j',$ov['event_start']).' '.date('g:i a',$ov['event_start']).' - '.date('g:i a',$ov['event_end']).'</p>
-          </div>';
+          $CAPT .= ($CAPT ? ' • ' : '').$ov['event_name'];
+          $TXT = '<p>'.(strtotime(date('m/d/Y',$ov['event_start'])) <= $GLOBALS['STRDATETODAY'] ? EST_GEN_TODAY : (strtotime(date('m/d/Y',$ov['event_start'])) <= $STRDATETOM ? EST_GEN_TOMORROW : date('D F j',$ov['event_start']))).($ov['event_start'] <= $GLOBALS['STRTIMENOW'] ? ': '.EST_GEN_NOW : ' '.date('g:i a',$ov['event_start'])).' - '.date('g:i a',$ov['event_end']).'</p>';
           }
         $i++;
         }
+      unset($i);
       }
-    else{
-      if(intval($this->var['prop_status']) == 5){
-        $BTXT = (intval($this->var['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);
-        }
-      elseif(intval($this->var['prop_status']) == 4){
-        $BTXT = EST_GEN_PENDING;
-        }
-      if($BTXT){
-        return '
-        <div class="estListBanner1">
-          <h5>'.e107::getParser()->toHTML($BTXT).'</h5>
-        </div>';
-        }
-      }      
+    
+    if($CAPT){
+      return '<div class="estCardTopTab">'.e107::getParser()->toHTML('<h5>'.$CAPT.'</h5>'.$TXT.'</div>');
+      }
     }
   
   function sc_prop_openhouseli($parm){
@@ -342,7 +344,7 @@ class estate_shortcodes extends e_shortcode{
         unset($TXT,$SPACETXT);
         }
       }
-    return '<div id="estViewSpaceBtns" class="estViewSect">'.$text.'</div>';
+    return '<div id="estViewSpaceBtns">'.$text.'</div>';
     }
   
   
@@ -404,7 +406,7 @@ class estate_shortcodes extends e_shortcode{
   function sc_prop_spacepvw($parm){
     $txt = '
           <div id="estViewSpaceImgPvwCont">
-            <div id="estViewSpaceImgPvwSlider" class="estViewSect">
+            <div id="estViewSpaceImgPvwSlider">
               <div id="estArrBordR"></div>
               <div id="estViewSpaceImgCont">';
     $txt .= $this->sc_prop_viewspaceimgs($parm);
@@ -419,10 +421,30 @@ class estate_shortcodes extends e_shortcode{
   
   
   
+  function sc_linkme($parm){
+    if($parm['as']){
+      switch($parm['as']){
+        case 'url': 
+          return $this->var['link_url'];
+          break;
+        case 'a': 
+          return '<a href="'.$this->var['link_url'].'" class="'.($parm['class'] ? $parm['class'] : 'link').'">'.$this->var['prop_name'].'</a>';
+          break;
+        case 'button': 
+          return '<button class="btn '.($parm['class'] ? $parm['class'] : 'btn-default').'" onclick="window.location.assign(\''.$this->var['link_url'].'\')">'.$this->var['prop_name'].'</button>';
+          break;
+        }
+      }
+    else{
+      return '<a href="'.$this->var['link_url'].'"'.($parm['class'] ? ' class="'.$parm['class'].'"' : '').'>'.$this->var['prop_name'].'</a>';
+      }
+    }
+  
   
   function sc_spaces_menu($parm){
 		$tp = e107::getParser();
-    $txt = 'Spaces Here';
+    
+    $txt = '<div id="estSpacesMenu">Spaces Here</div>';
     
     return $txt;
     }
@@ -539,22 +561,22 @@ class estate_shortcodes extends e_shortcode{
         
         $ret['edit'] = '<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p><a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a><a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
       
-        $ret['lstedit'] = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
+        $ret['lstedit'] = '<button class="estCardTopBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
         
         }
       }
     elseif(intval($GLOBALS['EST_PREF']['public_act']) !== 0 && USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
       if(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){
         $ret['edit'] = '<a class="FR" href="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'" title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a>';
-        $ret['lstedit'] = '<button class="estPropListEdtBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
+        $ret['lstedit'] = '<button class="estCardTopBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
         
         }
       }
     $ret['eicon'] = $ret['lstedit'];
     
-    $ret['lstagent'] = '<div class="estPropListAgtCont"><div class="estPropListAgtImg" style="background-image:url('.$ret['imgurl'].')"></div><div class="estPropListAgtName"><div>'.$ret['agent_roll'].'</div><div>'.$ret['agent_name'].'</div></div></div>';
+    $ret['lstagent'] = '<div class="estCardTopR"><div class="estCardTopRImg" style="background-image:url('.$ret['imgurl'].')"></div><div class="estCardTopRL1"><div>'.$ret['agent_roll'].'</div><div>'.$ret['agent_name'].'</div></div></div>';
     
-    $ret['lstedit'] = '<div class="estPropListAgtCont">'.$ret['lstedit'].'<div class="estPropListAgtImg" style="background-image:url('.$ret['imgurl'].')"></div><div class="estPropListAgtName"><div>'.$ret['agent_roll'].'</div><div>'.$ret['agent_name'].'</div></div></div>';
+    $ret['lstedit'] = '<div class="estCardTopR">'.$ret['lstedit'].'<div class="estCardTopRImg" style="background-image:url('.$ret['imgurl'].')"></div><div class="estCardTopRL1"><div>'.$ret['agent_roll'].'</div><div>'.$ret['agent_name'].'</div></div></div>';
       
     
     unset($ACONT,$XRP,$XRC,$XGO,$url1,$url2);
@@ -623,7 +645,7 @@ class estate_shortcodes extends e_shortcode{
       $this->var['prop_seller'] = $AGENT['agent_name'];
       $ret .= '
       </div>
-      <div id="estMsgModule" class="estViewSect noPADTB">
+      <div id="estMsgModule" class="noPADTB">
         <div id="estMsgCard" class="estAgCard TAL">';
       $ret .= est_msg_form($this->var);
       $ret .= '
@@ -631,7 +653,8 @@ class estate_shortcodes extends e_shortcode{
       }
     
     $ret .= '
-    </div>';
+      </div>
+    ';
     
     
     if($AGENT['agency']){
@@ -659,7 +682,7 @@ class estate_shortcodes extends e_shortcode{
     if(check_class(e107::pref('estate','listing_save'))){
   		$tp = e107::getParser();
       $ret = '
-      <div id="estSavedModule" class="estViewSect noPADTB">
+      <div id="estSavedModule" class="noPADTB">
       </div>';
       return $ret;
       }
@@ -757,9 +780,6 @@ class estate_shortcodes extends e_shortcode{
 		$tp = e107::getParser();
     $ret = '';
     
-    /*
-    $prefW = e107::getPlugPref('gallery', 'pop_w');
-    */
     $stat4 = $this->sc_prop_status('bullet');
     $price = $this->sc_prop_price();
     if($stat4){$ret = $tp->toHTML($stat4);}
