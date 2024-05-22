@@ -807,6 +807,9 @@ else{
 if($DSPL == 'js'){
   $RES['userlevs'] = EST_USRLEVELS;
   $RES['prefs'] = e107::pref('estate');
+  include_once(e_PLUGIN.'estate/templates/estate_template.php');
+  foreach($ESTATE_TEMPLATE as $sk=>$sv){foreach($sv as $tkey=>$tele){unset($ESTATE_TEMPLATE[$sk][$tkey]['txt']);}}
+  $RES['prefs']['templates'] = $ESTATE_TEMPLATE;
   echo $tp->toJSON($RES);
   }
 else{echo $RES;}
@@ -1205,6 +1208,7 @@ function estJStext(){
     'dimu1'=>$DIMU[1],
     'dragto'=>EST_GEN_DRAGTO,
     'edit'=>EST_GEN_EDIT,
+    'enabdisab'=>EST_GEN_ENABLEDIS,
     'error1'=>LAN_ERROR,
     'error500'=>EST_ERR_500,
     'event'=>EST_GEN_EVENT,
@@ -1277,6 +1281,8 @@ function estJStext(){
     'cropbtns'=>array(EST_IMG_MOVEL,EST_IMG_MOVER,EST_IMG_MOVEU,EST_IMG_MOVED,EST_IMG_ZOOMO,EST_IMG_ZOOMI,EST_IMG_ROTL,EST_IMG_ROTR,EST_IMG_FLIPH,EST_IMG_FLIPV,EST_IMG_RESETC,EST_IMG_CROP),
     'subdiv'=>EST_PROP_SUBDIV,
     'table'=>EST_PROP_MSG_TABLE,
+    'templnoopt'=>EST_PREF_TEMPLATE_NOORD,
+    'templvieword'=>EST_PREF_TEMPLATE_VIEWORD,
     'thisclrfrm'=>EST_PROP_THISCLRFRM,
     'unk'=>EST_GEN_UNK,
     'sqr'=>EST_GEN_SQR,

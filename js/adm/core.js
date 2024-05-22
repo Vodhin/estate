@@ -8830,6 +8830,80 @@ function estGetSubDivs(){
     }
   
   
+  function estTemplateReorder(btn){
+    if($(btn.nextSibling).find('input[type="checkbox"]').is(':checked')){
+      $(btn).find('input[type="checkbox"]').prop('checked','checked');
+      }
+    }
+  
+  function estTemplates(){
+    var defs = $('body').data('defs');
+    
+    $('select[name="template_view"]').on({
+      change : function(){
+        $('.estTemplateSectCont').hide();
+        $('#estTemplateSect-'+this.value).show();
+        }
+      }).empty().promise().done(function(){
+        $.each(defs.prefs.templates.view, function(tname,tdta){
+          console.log(tdta);
+          var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="template_view"]');
+          var scont = $(JQDIV,{'id':'estTemplateSect-'+tname,'class':'estTemplateSectCont'}).appendTo('#estViewOrderCont');
+          
+          if(tname == defs.prefs.template_view){
+            $(selectOpt).prop('selected','selected');
+            $(scont).show();
+            }
+          
+          if(typeof tdta.ord === 'undefined' || tdta.ord === null){
+            $(JQDIV,{'class':'TAL'}).html(defs.txt.templnoopt).appendTo(scont);
+            }
+          else{
+            $(selectOpt).data(tdta.ord);
+            var preford = Object.keys(tdta.ord);
+            if(typeof defs.prefs.template_view_ord[tname] !== 'undefined'){
+              preford = Object.keys(defs.prefs.template_view_ord[tname]);
+              }
+            
+          
+            var xi = preford.length;
+            $(tdta.ord).each(function(bi,bname){
+              var btn = $(JQDIV,{'class':'btn btn-default btn-sm TAL','title':defs.txt.reorder+' '+defs.txt.templvieword});
+              var cb = $(JQNPT,{'type':'checkbox','id':'template-view-ord['+tname+']['+bname+']','name':'template_view_ord['+tname+']['+bname+']','title':defs.txt.enabdisab+' '+bname}).val(1).appendTo(btn);
+              var lab = $('<label></label>',{'title':defs.txt.enabdisab+' '+bname}).prop('for','template-view-ord['+tname+']['+bname+']').html(bname).appendTo(btn);
+              
+              var bord = preford.indexOf(bname);
+              if(bord > -1){$(cb).prop('checked','checked');}
+              else{bord = xi; xi++;}
+              $(btn).data('ord',bord).appendTo(scont);
+              }).promise().done(function(){
+                var estViewOrderCont = document.getElementById('estTemplateSect-'+tname);
+                $(estViewOrderCont).children('div.btn').sort(function (a, b) {
+                  var cA = $(a).data('ord'); var cB = $(b).data('ord');
+                  return (cA > cB) ? 1 : (cA < cB) ? -1 : 0;
+                  }).appendTo(estViewOrderCont);
+                Sortable.create(estViewOrderCont,{
+                  draggable: 'div.btn',
+                  sort: true,
+                  animation: 450,
+                  ghostClass: 'sortTR-ghost',
+                  chosenClass: 'sortTR-chosen', 
+                  dragClass: 'sortTR-drag',
+                  onChoose: function(evt){},
+                  onEnd: function(evt){estTemplateReorder(evt.item);}
+                  });
+                });
+            }
+          });
+        });
+    
+        
+              
+          
+    
+    }
+  
+  
   
   
   
@@ -8867,8 +8941,10 @@ function estGetSubDivs(){
             $('body').data({'defs':ret,'propid':0}).promise().done(function(){
             
               estSetHelpInFull();
-            
+              estTemplates();
               estBuildMap('pref');
+              
+            
               $('select[name="map_jssrc"]').on({
                 change : function(){
                   if(this.value == 1){
