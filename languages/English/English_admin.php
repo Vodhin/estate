@@ -444,15 +444,25 @@ define("EST_PREF_SLIDESHOWTIMING","Slide Duration");
 define("EST_PREF_SLIDESHOWTIMINGHLP","The time in Seconds between slide changes");
 
 define("EST_PREF_TEMPLATES", "Template Layouts");
+
+define("EST_PREF_TEMPLATESDEF", array("Default List Template","Default View Template","Default Menu Template"));
 define("EST_PREF_MENU", "Menu Options");
 
 
 define("EST_PREF_TEMPLATE_LIST","List Page Template");
 define("EST_PREF_TEMPLATE_LISTHLP","Choose a template for the List Page");
 
+define("EST_PREF_TEMPLATE_MENU","Menu Template");
+define("EST_PREF_TEMPLATE_MENUHLP","Choose a template for the otpional Menu");
+define("EST_PREF_TEMPLATE_MENUORD","Menu Layout");
+define("EST_PREF_TEMPLATE_MENUORDHLP","Enable/Disable and reorder each section of the Menu layout. Available only if the Template selected supports re-ordering");
 
+define("EST_PREF_TEMPLATE_NOORD","Template does not support re-ordering");
 define("EST_PREF_TEMPLATE_VIEW","View Page Template");
 define("EST_PREF_TEMPLATE_VIEWHLP","Choose a template for the View Page");
+
+define("EST_PREF_TEMPLATE_VIEWORD","View Page Layout");
+define("EST_PREF_TEMPLATE_VIEWORDHLP","Enable/Disable and reorder each section of the View Page layout. Available only if the Template selected supports re-ordering");
 
 
 
