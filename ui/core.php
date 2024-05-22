@@ -2582,6 +2582,47 @@ class estateCore{
     }
   
   
+  
+  
+  public function estTemplateOrd($curVal){
+    /*
+    
+    if(isset($GLOBALS['ESTATE_TEMPLATE']['view'][$tkey]['ord']) && count($GLOBALS['ESTATE_TEMPLATE']['view'][$tkey]['ord']) > 0){
+      
+      $sects = $GLOBALS['ESTATE_TEMPLATE']['view'][$tkey]['ord'];
+      }
+    else{
+      $sects = array('slideshow'=>0,'summary'=>0,'spaces'=>0,'map'=>0,'comminuty'=>0,'next-prev'=>0,'gallery'=>0);
+      }
+    
+    
+    if(!$curVal || count($curVal) == 0){
+      $curVal = array('slideshow'=>1,'summary'=>1,'spaces'=>1,'map'=>1,'comminuty'=>1,'next-prev'=>0,'gallery'=>1);
+      }
+    
+    
+    //sched_agt_times
+        
+    //$dtaStr = $this->estDataStr($contdta);
+    $ret = '<div id="estViewOrderCont" class="estTemplateSectCont">';
+    foreach($curVal as $k=>$v){
+      if($k !== 'xx'){
+        $ret .= '<div class="btn btn-default btn-sm TAL" value="'.$k.'" title="'.EST_GEN_REORDER.' '.EST_PREF_TEMPLATE_VIEWORD.'">
+        <input type="checkbox" id="template-view-ord['.$k.']" name="template_view_ord['.$k.']" value="1" '.($v == 1 ? ' checked="checked"' : '').' title="'.EST_GEN_ENABLEDIS.' '.$k.'" />
+        <label for="template-view-ord['.$k.']" title="'.EST_GEN_ENABLEDIS.' '.$k.'">'.$tp->toHTML($k).'*</label>
+        </div>';
+        }
+      unset($sects[$k]);
+      }
+    $ret .= '</div>';
+    
+    //$curVal = e107::unserialize($curVal);
+    $ret .= '<div>'.$curVal.'</div>';
+    return $ret;
+    */
+    
+    }
+  
   private function getContSects(){
     
     }

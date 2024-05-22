@@ -3,7 +3,7 @@ if(!defined('e107_INIT')){exit;}
 
 e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
 
-include_once(e_PLUGIN.'estate/templates/estate_template.php');
+
 
 class estate_listing_ui extends e_admin_ui{
   
@@ -1218,7 +1218,7 @@ class estate_listing_ui extends e_admin_ui{
       'template_list'=>array(
         'tab'=>1,
         'title'=>EST_PREF_TEMPLATE_LIST,
-        'type'=>'method',
+        'type'=>'dropdown',
         'data'=>'safestr',
         'help'=>EST_PREF_TEMPLATE_LISTHLP,
         'inline'=>false,
@@ -1230,7 +1230,7 @@ class estate_listing_ui extends e_admin_ui{
       'template_view'=>array(
         'tab'=>1,
         'title'=>EST_PREF_TEMPLATE_VIEW,
-        'type'=>'method',
+        'type'=>'dropdown',
         'data'=>'safestr',
         'help'=>EST_PREF_TEMPLATE_VIEWHLP,
         'inline'=>false,
@@ -1239,7 +1239,18 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         'writeParms' => array(),
         ),
-      
+      'template_view_ord'=>array(
+        'tab'=>1,
+        'title'=>EST_PREF_TEMPLATE_VIEWORD,
+        'type'=>'method',
+        'data'=>'safestr',
+        'help'=>EST_PREF_TEMPLATE_VIEWORDHLP,
+        'inline'=>false,
+        'nolist'=>true,
+        'class' => 'left',
+        'thclass' => 'left',
+        'writeParms' => array(),
+        ),
       
       
       'slideshow_act'=>array(
@@ -1268,6 +1279,30 @@ class estate_listing_ui extends e_admin_ui{
         'writeParms' => array('size'=>'small','min'=>2,'max'=>10),
         ),
         
+      'template_menu'=>array(
+        'tab'=>2,
+        'title'=>EST_PREF_TEMPLATE_MENU,
+        'type'=>'dropdown',
+        'data'=>'safestr',
+        'help'=>EST_PREF_TEMPLATE_MENUHLP,
+        'inline'=>false,
+        'nolist'=>true,
+        'class' => 'left',
+        'thclass' => 'left',
+        'writeParms' => array(),
+        ),
+      'template_menu_ord'=>array(
+        'tab'=>2,
+        'title'=>EST_PREF_TEMPLATE_MENUORD,
+        'type'=>'method',
+        'data'=>'safestr',
+        'help'=>EST_PREF_TEMPLATE_MENUORDHLP,
+        'inline'=>false,
+        'nolist'=>true,
+        'class' => 'left',
+        'thclass' => 'left',
+        'writeParms' => array(),
+        ),
       
       
       'sched_agt_times'=>array(
@@ -2403,22 +2438,13 @@ class estate_listing_form_ui extends e_admin_form_ui{
   
   
   
-  public function template_list($curVal,$mode){
+  
+  public function template_menu_ord($curVal,$mode){
     switch($mode){
 			case 'read':
 				break;
 			case 'write': 
-        
-        $ret = '<select id="template-list" name="template_list" class="tbox form-control xlarge">';
-        $ret .= '<option value="default">Default</option>';
-        if(count($GLOBALS['ESTATE_TEMPLATE']['list']) > 0){
-          foreach($GLOBALS['ESTATE_TEMPLATE']['list'] as $k=>$v){
-            $ret .= '<option value="'.$k.'">'.$v['tempname'].'</option>';
-            }
-          }
-        else{$ret .= '<option value="default">Default</option>';}
-        $ret .= '</select>';
-        return $ret;
+        return '<div id="estMenuOrderCont"></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2426,21 +2452,13 @@ class estate_listing_form_ui extends e_admin_form_ui{
       }
     }
   
-  public function template_view($curVal,$mode){
+  
+  public function template_view_ord($curVal,$mode){
     switch($mode){
 			case 'read':
 				break;
 			case 'write': 
-        
-        $ret = '<select id="template-view" name="template_view" class="tbox form-control xlarge">';
-        if(count($GLOBALS['ESTATE_TEMPLATE']['view']) > 0){
-          foreach($GLOBALS['ESTATE_TEMPLATE']['view'] as $k=>$v){
-            $ret .= '<option value="'.$k.'">'.$v['tempname'].'</option>';
-            }
-          }
-        else{$ret .= '<option value="default">Default</option>';}
-        $ret .= '</select>';
-        return $ret;
+        return '<div id="estViewOrderCont"></div>';;
         break;
 			case 'filter':
 			case 'batch':
