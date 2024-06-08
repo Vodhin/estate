@@ -145,11 +145,22 @@
 		<pref name='slideshow_act'>1</pref>
 		<pref name='slideshow_delay'>5</pref>
 		<pref name='slideshow_time'>4</pref>
+		<pref name='spaces_dynamic'>1</pref>
 		<pref name='template_list'>default</pref>
 		<pref name='template_menu'>default</pref>
+		<pref name='template_menu_ord'><![CDATA[array(
+      'default'=>array(
+        'top'=>1,
+        'agent'=>1,
+        'events'=>1,
+        'saved'=>1,
+        'spaces'=>0
+        )
+      )]]>
+    </pref>
 		<pref name='template_view'>default</pref>
 		<pref name='template_view_ord'><![CDATA[array(
-      'default'=>array(
+      'estate'=>array(
         'slideshow'=>1,
         'summary'=>1,
         'spaces'=>1,
@@ -158,7 +169,8 @@
         'comminuty'=>1,
         'gallery'=>1
         )
-      )]]></pref>
+      )]]>
+    </pref>
 	</pluginPrefs>
 	<siteLinks>
 		<link name="Listings" url="{e_PLUGIN}estate/listings.php" sef='' lan="EST_PLUGNAME">Listings</link>

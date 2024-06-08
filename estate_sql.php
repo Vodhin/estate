@@ -256,7 +256,9 @@ CREATE TABLE `estate_properties` (
   `prop_bldguc` tinyint(1) unsigned NOT NULL,
   `prop_complxuc` smallint(1) unsigned NOT NULL,
   `prop_condit` varchar(55) NOT NULL,
+  `prop_flag` varchar(35) NOT NULL,
   `prop_views` int(8) unsigned NOT NULL default '0',
+  `prop_saves` int(8) unsigned NOT NULL default '0',
   PRIMARY KEY (`prop_idx`)
 ) ENGINE=InnoDB;
 

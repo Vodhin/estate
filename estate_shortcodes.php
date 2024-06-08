@@ -29,7 +29,7 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_prop_admlnk($parm){
-    return '[DEFUNCT]';//$AGENT['edit'];
+    return '';
     }
   
   function sc_prop_viewcount($parm){
@@ -141,25 +141,26 @@ class estate_shortcodes extends e_shortcode{
     if($CAPT){
       return '<div class="estCardTopTab">'.e107::getParser()->toHTML('<h5>'.$CAPT.'</h5>'.$TXT.'</div>');
       }
+    else if(trim($this->var['prop_flag']) !== ''){
+      return '<div class="estCardTopTab estCardTopFlag">'.e107::getParser()->toHTML('<h5>'.$this->var['prop_flag'].'</h5></div>');
+      }
     }
   
-  function sc_prop_openhouseli($parm){
-    return '';
-    //return e107::getParser()->toHTML(intval($this->var['prop_idx']) == 5 ? ' • OPEN HOUSE: Sunday February 26, 2023 10:30 am to 1:30 pm' : '');
-    }
   
   function sc_prop_features($parm){
-		$tp = e107::getParser();
     if($parm['as'] == 'ul'){
       $lia = explode(',',$this->var['prop_features']);
+      if(trim($this->var['prop_flag']) !== ''){array_push($lia,$this->var['prop_flag']);}
       if(count($lia) > 0){
         $ret = '<ul>';
-        foreach($lia as $k=>$v)$ret .= '<li>'.$tp->toHTML($v).'</li>';
+        foreach($lia as $k=>$v)$ret .= '<li>'.$v.'</li>';
         $ret .= '</ul>';
         }
       }
-    else{$ret = str_replace(","," • ",$tp->toHTML($this->var['prop_features']));}
-    return $ret;
+    else{
+      $ret = str_replace(","," • ",$this->var['prop_features']).(trim($this->var['prop_flag']) !== '' ? ' • '.$this->var['prop_flag'] : '');
+      }
+    return e107::getParser()->toHTML($ret);
     }
   
   function sc_prop_citystate($parm){
@@ -267,14 +268,18 @@ class estate_shortcodes extends e_shortcode{
   
   function spacesTxt($sv){
 		$tp = e107::getParser();
-    $text = '<ul>';
-    if($sv['xy']){
+    $text = '';
+    if(trim($sv['d']) !== ''){
+      $text .= '<p>'.$tp->toHTML($sv['d']).'</p>';
+      }
+    $text .= '<ul>';
+    if(trim($sv['xy']) !== ''){
       $text .= '<li>'.$tp->toHTML($sv['xy']).'</li>';
       }
     if(trim($sv['l']) !== ''){
       $text .= '<li>'.EST_LOCATION.': '.$tp->toHTML($sv['l']).'</li>';
       }
-    if($sv['f']){
+    if(count($sv['f']) > 0){
       foreach($sv['f'] as $fk=>$fv){
         if(trim($fv['n']) !== ''){
           $text .= '<li>'.$tp->toHTML($fv['n']);
@@ -284,10 +289,6 @@ class estate_shortcodes extends e_shortcode{
         }
       }
     $text .= '</ul>';
-            
-    if(trim($sv['d']) !== ''){
-      $text .= '<p>'.$tp->toHTML($sv['d']).'</p>';
-      }
     return $text;
     }
   
@@ -415,6 +416,63 @@ class estate_shortcodes extends e_shortcode{
           </div>';
     return $txt;
     }
+  
+  
+  
+  function sc_est_slideshow_top($parm){
+    $actv = e107::pref('estate','slideshow_act');
+    return '<div id="estSlideShow" class="'.($actv == 1 ? ' estSlideshow" title="'.EST_GEN_PLAYPAUSESLIDE.'"' : '"').'><div class="estSSPlayPause"></div></div>';
+    }
+  
+  
+  
+  function sc_view_spaces($parm){
+    $estpref = e107::pref('estate');
+    $layout = strpos(strtolower(THEME_LAYOUT),'full');
+    
+    if($parm['dynamic'] == 1){
+      $estpref['spaces_dynamic'] = 1;
+      $layout = 1;
+      }
+    
+    
+    
+    if($estpref['spaces_dynamic'] > 0 && $layout > -1){
+      $txt = '
+        <div id="estSpacesCont" class="estSpaceDynamic'.($estpref['slideshow_act'] == 1 ? ' estSlideshow' : '').' WD100">
+          <div id="estViewSpacePvwCont">';
+      $txt .= $this->sc_prop_spacepvw($parm);
+      $txt .= '
+          </div>
+          <div id="estViewSpaceBtnCont">
+            <div id="estViewSpaceBtns">';
+      $txt .= $this->sc_prop_viewspacebtns($parm);
+      $txt .= '
+            </div>
+          </div>
+        </div>';
+      return '<div class="WD100">'.e107::getRender()->tablerender(EST_GEN_SPACES,$txt,'dynamic-spaces',true).'</div>';
+      }
+    else{
+      $txt = '
+      <div id="estSpacesCont" class="'.($estpref['slideshow_act'] == 1 ? ' estSlideshow' : '').' WD100">
+          <div id="estViewSpaceBtnCont">';
+      $txt .= $this->sc_view_spacestable($parm);
+      $txt .= '
+          </div>
+      </div>';
+      return $txt;
+      }
+    }
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   function sc_prop_latlng($parm){}
@@ -558,11 +616,11 @@ class estate_shortcodes extends e_shortcode{
       
       if($XGO == 0){
         //PROP_EDITICONS
-        
         $ret['edit'] = '<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p><a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a><a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
       
         $ret['lstedit'] = '<button class="estCardTopBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
         
+        if(EST_USERPERM == 4){$ret['edit'] .= '<a id="estFEReorder" title="'.EST_GEN_REORDER.'"><i class="fa fa-navicon"></i></a>'; }
         }
       }
     elseif(intval($GLOBALS['EST_PREF']['public_act']) !== 0 && USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
@@ -667,12 +725,40 @@ class estate_shortcodes extends e_shortcode{
   
   
   
+  function sc_admin_reorder($parm){
+    return '
+    <div class="estReordCont" data-sect="'.$parm['ok'].'">
+      <div class="estReordHandle">
+        <i class="fa fa-navicon"></i>
+        <input type="checkbox" id="template-'.$parm['area'].'-ord['.$parm['templ'].']['.$parm['ok'].']" name="template_'.$parm['area'].'_ord['.$parm['templ'].']['.$parm['ok'].']" class="estTmplInpt" value="1"'.($parm['ov'] == 1 ? ' checked="checked"' :'').' title="'.EST_GEN_ENABLEDIS.' '.$parm['ok'].'" /><label for="template-'.$parm['area'].'-ord['.$parm['templ'].']['.$parm['ok'].']" title="'.EST_GEN_ENABLEDIS.' '.$parm['ok'].'">'.$parm['ok'].'</label>
+      </div>
+      <div class="estReordDiv'.($parm['ov'] == 1 ? '' : ' noDISP').'">';
+    }
+  
+  function sc_admin_reorder_menu($parm){
+  	$tp = e107::getParser();
+    
+    $EST_PREF = e107::pref('estate');
+    include(e_PLUGIN.'estate/templates/estate_template.php');
+    $area = strtolower($parm['area']);
+    $txt = '<div class="estReordMenu">';
+    $txt .= '<select id="template-'.$area.'" name="template_'.$area.'" class="tbox form-control estAdmTemplSel estTmplInpt" value="">';
+    foreach($ESTATE_TEMPLATE[$area] as $sk=>$sv){
+      $txtct = count($ESTATE_TEMPLATE[$area][$sk]['txt']);
+      $txt .= '<option value="'.$sk.'"'.($sk == $EST_PREF['template_'.$area] ? ' selected="selected"' : '').' data-ct="'.$txtct.'">'.$sk.''.($txtct > 1 ? ' ('.EST_GEN_REORDERABLE.')' : '').'</option>';
+      }
+    $txt .= '</select><input type="submit" name="estSave'.$area.'Layout" class="btn btn-primary estAdmBtnSave" value="'.EST_GEN_SAVE.'" data-area="'.$area.'"data-pref1="template_'.$area.'" data-pref2="template_'.$area.'_ord" data-template="'.$parm['tkey'].'" />';
+    $txt .= '
+    <div id="estTmplMenuMsg-'.$area.'-2" class="estTmplMenuMsg"'.(count($ESTATE_TEMPLATE[$area][$parm['tkey']]['txt']) > 1 ? '' : 'style="display:block;"').'>'.EST_PREF_TEMPLATE_NOORD.'</div>
+    <div id="estTmplMenuMsg-'.$area.'-1" class="estTmplMenuMsg">'.EST_PREF_CLICKSAVETEMPL.'</div>
+    </div>';
+    return $txt;
+    }
   
   
   function sc_prop_menu_head($parm){
     if(check_class(e107::pref('estate','listing_save'))){
-		  $tp = e107::getParser();
-      return '<a id="estLikeIcon" class="FR"><i class="fa fa-heart"></i></a>';
+      return '<a id="estLikeIcon-'.intval($this->var['prop_idx']).'" class="estLikeIcon FR" data-pid="'.intval($this->var['prop_idx']).'"><i class="fa-regular fa-heart"></i><i class="fa-solid fa-heart"></i></a>';
       }
     }
   

@@ -78,6 +78,15 @@ if(intval($EST_PREF['layout_list_map']) > 0 || intval($EST_PREF['map_active2']) 
 e107::js('estate','js/listing.js', 'jquery');
 
 
+if(EST_USERPERM == 4){
+  e107::js('estate','js/Sortable/Sortable.js', 'jquery');
+  
+  $TFORM1 = '<form name="estViewTemplateForm" method="POST" action="'.e_SELF.'?'.e_QUERY.'" >';
+  $TFORM2 = '</form>';
+  
+  }
+
+
 require_once('estate_defs.php');
 
 $PROPID = intval($qs[1]);
@@ -124,6 +133,8 @@ $MQRY = "SELECT #estate_properties.*, city_name, city_url, city_timezone, state_
     }
 
 
+
+
 if(!$estQdta = $sql->retrieve($query,true)){
   require_once(HEADERF);
   if($PROPID > 0){
@@ -142,7 +153,6 @@ $dberr = $sql->getLastErrorText();
 if($dberr){e107::getMessage()->addError($dberr);}
 
 include_once('ui/qry.php');
-
 
 if(count($EST_PROP) > 0){
   
@@ -168,7 +178,6 @@ if(count($EST_PROP) > 0){
         $sql->update("estate_properties","prop_views='".$PROPDTA[0]['prop_views']."' WHERE prop_idx='".$PROPID."' LIMIT 1");
         }
       
-      
       $PINS = est_map_pins();
       e107::js('inline','var estMapPins = '.$PINS.'; ', 'jquery',2);
       
@@ -184,31 +193,57 @@ if(count($EST_PROP) > 0){
       $sc->setVars($PROPDTA[0]);
       require_once(HEADERF);
       $tmpl = e107::getTemplate('estate');
-      $tkey = (trim($EST_PREF['template_view']) !=='' ? $EST_PREF['template_view'] : 'default');
       
-      if(is_array($tmpl['view'][$tkey]['txt'])){
-        if($tmpl['view'][$tkey]['ord'] && count($EST_PREF['template_view_ord'][$tkey]) > 0){
-          foreach($EST_PREF['template_view_ord'][$tkey] as $ok=>$ov){
-            if(isset($tmpl['view'][$tkey]['txt'][$ok]) && $ov == 1){
-              $estText .= $tp->parseTemplate($tmpl['view'][$tkey]['txt'][$ok], false, $sc);
+      $tkey = (trim($EST_PREF['template_view']) !== '' ? $EST_PREF['template_view'] : 'default');
+      $TEMPLATE = $tmpl['view'][$tkey];
+      $tmplct = count($TEMPLATE['txt']);
+      if(is_array($TEMPLATE['txt'])){
+        $PREFTMP = $EST_PREF['template_view_ord'][$tkey];
+        if($TEMPLATE['ord'] && count($PREFTMP) > 0){
+          if(EST_USERPERM == 4){
+            $estText .= $tp->parseTemplate('{ADMIN_REORDER_MENU:area=view&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
+            $NEWK = array();
+            $ALLK = $TEMPLATE['ord'];
+            foreach($PREFTMP as $sk=>$sv){$NEWK[$sk] = $TEMPLATE['txt'][$sk];}
+            foreach($ALLK as $nk=>$nv){if(!$NEWK[$nv]){$NEWK[$nv] = '';}}
+            unset($ALLK,$sk,$sv,$nk,$nv,$NEWK['dummy']);
+            foreach($NEWK as $ok=>$dta){
+              $estText .= $tp->parseTemplate('{ADMIN_REORDER:area=view&templ='.$tkey.'&ok='.$ok.'&ov='.intval($PREFTMP[$ok]).'}', false, $sc);
+              $estText .= $tp->parseTemplate($dta, false, $sc).'</div></div>';
+              }
+            unset($NEWK,$ok,$dta);
+            }
+          else{
+            foreach($PREFTMP as $ok=>$ov){
+              if(isset($TEMPLATE['txt'][$ok]) && $ov == 1){
+                $estText .= $tp->parseTemplate($TEMPLATE['txt'][$ok], false, $sc);
+                }
               }
             }
           }
         else{
-          ksort($tmpl['view'][$tkey]['txt']);
-          foreach($tmpl['view'][$tkey]['txt'] as $k=>$tmpv){
+          ksort($TEMPLATE['txt']);
+          if(EST_USERPERM == 4){
+            $estText .= $tp->parseTemplate('{ADMIN_REORDER_MENU:area=view&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
+            }
+          foreach($TEMPLATE['txt'] as $k=>$tmpv){
             $estText .= $tp->parseTemplate($tmpv, false, $sc);
             }
           }
         }
       else{
-        $estText = $tp->parseTemplate($tmpl['view'][$tkey]['txt'], false, $sc);
+        if(EST_USERPERM == 4){
+          $estText .= $tp->parseTemplate('{ADMIN_REORDER_MENU:area=view&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
+          }
+        $estText .= $tp->parseTemplate($TEMPLATE['txt'], false, $sc);
         }
       
       $ns->setStyle('main');
       $estText .= $tp->parseTemplate('<div id="estMiniSrc">{PROP_NEWICON}{PROP_EDITICONS:for=view}</div>', false, $sc);
-      $ns->tablerender('<span id="estMiniNav"></span>'.$estHead,'<div id="estateCont">'.$estText.'</div>','estate-view');
-      unset($estHead,$estText,$EST_PROP);
+      
+      
+      $ns->tablerender('<span id="estMiniNav"></span>'.$estHead,$TFORM1.'<div id="estateCont" data-pid="'.$PROPID.'">'.$estText.'</div>'.$TFORM2,'estate-view');
+      unset($estHead,$estText,$EST_PROP,$PREFTMP,$TEMPLATE);
       }
     }
   
@@ -220,9 +255,8 @@ if(count($EST_PROP) > 0){
     $tmpl = e107::getTemplate('estate');
     $tkey = (trim($EST_PREF['template_list']) !=='' ? $EST_PREF['template_list'] : 'default');
     
-    //$id loads {$plug_name}/templates/{$plug_name}_template.php and an array ${PLUG_NAME}_TEMPLATE
-    
     /** 
+    * e107_class.php
     * @param string $plug_name if null getCoreTemplate method will be called
     * @param string $id - file prefix, e.g. calendar for calendar_template.php, or 'true' or 'null' for same as plugin name.
     * @param string|null $key $YOURTEMPLATE_TEMPLATE[$key]
@@ -243,7 +277,9 @@ if(count($EST_PROP) > 0){
     else{
       $estText = $tp->parseTemplate($tmpl['list'][$tkey]['txt'], false, $sc);
       }
-      
+    
+    $estText .= $tp->parseTemplate('<div id="estMiniSrc">{PROP_NEWICON}</div>', false, $sc);
+    
     $ns->setStyle('main');
     $ns->tablerender('<span id="estMiniNav"></span>'.EST_GEN_LISTINGS,'<div id="estateCont">'.$estText.'</div>','estate-list');
     unset($estText,$EST_PROP);
@@ -253,7 +289,6 @@ if(count($EST_PROP) > 0){
 echo '
 <div id="estJSpth"'.$OACLASS.' data-pth="'.EST_PATHABS.'"></div>
 <div id="estMobTst"></div>';
-
 require_once(FOOTERF);
 exit;
 

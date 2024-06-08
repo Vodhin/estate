@@ -77,7 +77,45 @@ if(e107::isInstalled('estate')){
       }
     }
   
-  //
+  
+  
+  
+if(EST_USERPERM == 4){
+  if(isset($_POST['estSaveviewLayout'])){
+    $EST_PREF = e107::pref('estate');
+    $TMPLNAME = $_POST['template_view'];
+    if($TMPLNAME !== $EST_PREF['template_view']){
+		  $EST_PREF['template_view'] = $TMPLNAME;
+      e107::getConfig('estate')->setPref($EST_PREF)->save(true,false,false);
+      }
+    else{
+		  $EST_PREF['template_view_ord'][$TMPLNAME] = $_POST['template_view_ord'][$TMPLNAME];
+      e107::getConfig('estate')->setPref($EST_PREF)->save(true,false,false);
+      }
+    
+    unset($TMPLNAME);
+    e107::getMessage()->addInfo('View Template Updated');
+    }
+  
+  
+  if(isset($_POST['estSavemenuLayout'])){
+    $EST_PREF = e107::pref('estate');
+    $TMPLNAME = $_POST['template_menu'];
+    if($TMPLNAME !== $EST_PREF['template_menu']){
+		  $EST_PREF['template_menu'] = $TMPLNAME;
+      e107::getConfig('estate')->setPref($EST_PREF)->save(true,false,false);
+      }
+    else{
+		  $EST_PREF['template_menu_ord'][$TMPLNAME] = $_POST['template_menu_ord'][$TMPLNAME];
+      e107::getConfig('estate')->setPref($EST_PREF)->save(true,false,false);
+      }
+    unset($TMPLNAME);
+    e107::getMessage()->addInfo('Menu Template Updated');
+    }
+  }
+  
+  
+  
   if(check_class(e107::pref('estate','listing_save'))){
     }
   
