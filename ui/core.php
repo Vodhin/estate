@@ -1217,6 +1217,9 @@ class estateCore{
           </div>
         </div>';
         
+        foreach($GLOBALS['EST_PROPSTATUS'] as $sk=>$sv){
+          $STATOPTS .= ($STATOPTS ? "," : "").$sv['opt'];
+          }
         
         $text .= '
         <tr id="row-'.intval($k).'" '.$dtaStr.'>
@@ -1229,7 +1232,7 @@ class estateCore{
           </td>
           <td class="left noPAD">'.$SELLER.'</td>
           <td class="left">
-            <div class="estPropListStat"><a data-fld="prop_status">'.$GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'].'</a><div>
+            <div class="estPropListStat"><a class="estPropListILEdit" data-fld="prop_status" data-type="select" data-opts="'.$STATOPTS.'" data-key="i" data-pid="'.intval($v['prop_idx']).'" data-cval="'.$v['prop_status'].'">'.$GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'].'</a><div>
           </td>
           <td class="left">
             <div title="'.EST_PROP_LISTZONE.'">'.$v['prop_zname'].'</div>
@@ -1238,7 +1241,7 @@ class estateCore{
           <td class="right">
             <div title="'.EST_PROP_LISTYPE.'">'.$GLOBALS['EST_LISTTYPE1'][$v['prop_listype']].'</div>
             <div title="'.EST_PROP_ORIGPRICE.'"><i>'.$GLOBALS['EST_CURSYMB'][$v['prop_currency']].' '.$v['prop_origprice'].'</i></div>
-            <div class="estPropListStat" title="'.EST_PROP_LISTPRICE.'">'.$GLOBALS['EST_CURSYMB'][$v['prop_currency']].' <a data-fld="prop_listprice">'.$v['prop_listprice'].'</a></div>
+            <div class="estPropListStat" title="'.EST_PROP_LISTPRICE.'">'.$GLOBALS['EST_CURSYMB'][$v['prop_currency']].' <a class="estPropListILEdit" data-fld="prop_listprice" data-type="number" data-pid="'.intval($v['prop_idx']).'" data-cval="'.$v['prop_listprice'].'">'.$v['prop_listprice'].'</a></div>
           </td>
           <td class="center last">
             <div class="btn-group WSNWRP">
@@ -1250,7 +1253,7 @@ class estateCore{
         </tr>';
         }
       }
-    //
+    
     $RSTART = intval($DTA['FLTR']['LIMIT'][0]);
     $RLIMIT = intval($DTA['FLTR']['LIMIT'][1]);
     $RTRWCT = count($DTA['TR']);
@@ -1265,45 +1268,6 @@ class estateCore{
         <div>'.$DTA['REMOVED'].' Removed Results</div>
         </td>
       </tr>';
-    
-    /*
-        <div><h4>AGTIDS: ['.count($DTA['AGTIDS']).'] '.implode(',',$DTA['AGTIDS']).'</h4></div>
-        <p>'.$DTA['QRYZ'].'</p>
-        <p>'.$DTA['QRY'].'</p>
-    
-    */
-    
-    
-    /*
-    $text .= '
-      <tr>
-        <td colspan="'.$DTA['colsp'].'">
-          
-          <div>
-            <h4>QUERY</h4>
-            <div>'.$DTA['QRY'].'</div>
-          </div>
-          <div>
-            <h4>AGENTS ['.EST_USERPERM.']['.EST_AGENCYID.']</h4>';
-        foreach($DTA['AGENTS'] as $k=>$v){
-          $text .= '
-            <div>['.$v['seller_uid'].']['.$v['seller_aid'].']'.$v['seller_name'].' ('.$v['seller_count'].') '.$v['seller_agency']['name'].'</div>';
-          }
-
-    $text .= '
-          </div>
-          <div>
-            <h4>USERS</h4>';
-        foreach($DTA['USERS'] as $k=>$v){
-          $text .= '
-            <div>['.$v['seller_uid'].']['.$v['seller_aid'].']'.$v['seller_name'].' ('.$v['seller_count'].')</div>';
-          }
-
-    $text .= '
-          </div>
-        </td>
-      </tr>';
-    */
     return $text;
     }
   
@@ -3076,6 +3040,7 @@ class estateCore{
         
       case 4 :
         $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('text','prop_flag',$DTA);
         $text .= $this->estOAFormTR('text','prop_summary',$DTA);
         $text .= $this->estOAFormTR('textarea','prop_description',$DTA);
         $text .= $this->estOAFormTR('txtcntr','prop_features',$DTA);
@@ -3181,7 +3146,6 @@ class estateCore{
       
       //''=>array('labl'=>,'hlp'=>),
       
-      //'prop_leasefreq'=>array(),
       //'prop_currency'=>array(),
       
       
@@ -3192,6 +3156,7 @@ class estateCore{
       'prop_landfee'=>array('labl'=>EST_PROP_LANDLEASE,'cls'=>'FL estNoRightBord WD144px','hlp'=>EST_PROP_LANDLEASEHLP),
       //'prop_landfreq'=>array('labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
       
+      'prop_flag'=>array('labl'=>EST_PROP_FLAG,'plch'=>EST_PROP_FLAGPLCHLDR,'hlp'=>EST_PROP_FLAGHLP),
       'prop_summary'=>array('labl'=>LAN_SUMMARY,'hlp'=>EST_PROP_SUMMARYHLP),
       'prop_description'=>array('labl'=>LAN_DESCRIPTION,'hlp'=>EST_PROP_DESCRIPTIONHLP),
       'prop_modelname'=>array('labl'=>EST_GEN_MODELNAME,'hlp'=>EST_PROP_MODELNAMEHLP),

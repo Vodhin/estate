@@ -147,8 +147,8 @@ if(EST_USERPERM > 0){
     if(isset($ESTURSID)){$PDTA[$KYS[$KEY][3]] = 0;}
     
     if(intval($PDTA[$KYS[$KEY][3]]) == 1){
-      if(intval($_FILES['estAvatarUpload']['error']) !== 0){$PDTA[$KYS[$KEY][3]] = 0;}
-      if(trim($_FILES['estAvatarUpload']['name']) === '' && trim($PDTA[$KYS[$KEY][2]]) === ''){$PDTA[$KYS[$KEY][3]] = 0;}
+      //if(intval($_FILES['estAvatarUpload']['error']) !== 0){$PDTA[$KYS[$KEY][3]] = 0;}
+      //if(trim($_FILES['estAvatarUpload']['name']) === '' && trim($PDTA[$KYS[$KEY][2]]) === ''){$PDTA[$KYS[$KEY][3]] = 0;}
       }
     
     

@@ -92,6 +92,15 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'left',
         'thclass' => 'left',
         ),
+			'prop_saves' => array (
+        'tab'=>0,
+        'type' => 'hidden',
+        'data' => 'int',
+        'readParms' => array(),
+        'writeParms' => array(),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
       'prop_listaddr' => array (
         'tab'=>0,
         'type' => 'method',
@@ -690,6 +699,19 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         ),
         
+			'prop_flag' => array (
+        'tab'=>4,
+        'title' => EST_PROP_FLAG,
+        'type' => 'text',
+        'data' => 'safestr',
+        'width' => 'auto',
+        'help' => EST_PROP_FLAGHLP,
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array('size' => 'xlarge','placeholder'=>EST_PROP_FLAGPLCHLDR),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
 			'prop_summary' => array (
         'tab'=>4,
         'title' => LAN_SUMMARY,
@@ -1215,6 +1237,7 @@ class estate_listing_ui extends e_admin_ui{
         'help'=>EST_PREF_CONTACTTERMSHLP,
         ),
       
+      
       'template_list'=>array(
         'tab'=>1,
         'title'=>EST_PREF_TEMPLATE_LIST,
@@ -1278,7 +1301,8 @@ class estate_listing_ui extends e_admin_ui{
         'help'=>EST_PREF_SLIDESHOWDELAYHLP,
         'writeParms' => array('size'=>'small','min'=>2,'max'=>10),
         ),
-        
+      
+      
       'template_menu'=>array(
         'tab'=>2,
         'title'=>EST_PREF_TEMPLATE_MENU,
@@ -1511,7 +1535,6 @@ class estate_listing_ui extends e_admin_ui{
 		public function init() {
       $tp = e107::getParser();
       $mes = e107::getMessage();
-      //$mes->addSuccess('You did it!');
       
 			$this->fields['prop_country']['writeParms']['default'] = 'blank';
 			$this->fields['prop_country']['writeParms']['optArray'] = e_form::getCountry();
@@ -2444,7 +2467,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
 			case 'read':
 				break;
 			case 'write': 
-        return '<div id="estMenuOrderCont"></div>';
+        return '<div id="estmenuOrderCont"></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2458,7 +2481,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
 			case 'read':
 				break;
 			case 'write': 
-        return '<div id="estViewOrderCont"></div>';;
+        return '<div id="estviewOrderCont"></div>';;
         break;
 			case 'filter':
 			case 'batch':
