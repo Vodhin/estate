@@ -44,6 +44,7 @@ define("EST_NEW","New");
 define("EST_OPTION","Option");
 define("EST_OPTIONS","Options");
 define("EST_SAVE","Save");
+define("EST_SAVES","Saves");
 define("EST_SAVEANDNEW","Save & New");
 define("EST_SAVECLOSE","Save & Close");
 define("EST_SQFOOT","Sq Feet,Sqft,f2");
@@ -437,6 +438,10 @@ define("EST_PROP_COUNTRYHLP", "Sets filters for all remaining Address data and a
 define("EST_PROP_COUNTYHLP", "Sets filters for City options. Click the Edit button to Add or Edit  County options.");
 
 define("EST_PROP_DESCRIPTIONHLP", "Provide a full description of the property including information not covered in the interior/exterior sections");
+
+define("EST_PROP_FLAG","Listing Flag");
+define("EST_PROP_FLAGHLP","If a property is not Pending or Sold, this will appear as a flag or banner on the listings page");
+define("EST_PROP_FLAGPLCHLDR","Pool/Waterfront/Newly Renovated/etc.");
 
 define("EST_PROP_HRS","Viewing Hours");
 define("EST_PROP_HRSHLP","Displays when the Agent or Seller is available to show this property.");

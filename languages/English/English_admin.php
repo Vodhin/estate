@@ -158,6 +158,8 @@ define("EST_GEN_ANDISNOT","and is NOT");
 define("EST_GEN_ASSUSRCLASSES","Assign User Classes");
 define("EST_GEN_CANTDELZONE","Cannot Delete Zoning Category");
 define("EST_GEN_CLKCUSTOM","Click Custom Label");
+define("EST_GEN_CLKSAVEFOROPTS","Click Save to see the new options");
+
 define("EST_GEN_CLKHLDCUSTOM","Click & Hold for Custom Label");
 define("EST_GEN_COMPANYPLCH", "eg. Sundance Realty");
 define("EST_GEN_CREATEAGENT", "Create Agent Profile for");
@@ -189,6 +191,7 @@ define("EST_GEN_HIDEOTHERUSERS", "Hide Other Users");
 define("EST_GEN_IMPORTANT","IMPORTANT!");
 
 
+define("EST_GEN_LAYOUT", "Layout");
 define("EST_GEN_LISTYPES", "Listing Types");
 define("EST_GEN_LOGO", "Logo");
 define("EST_GEN_MAINADMIN", "Main Admin");
@@ -238,6 +241,7 @@ define("EST_GEN_REMAGENCY1", "Click OK to Remove this Agency's Profile. You will
 define("EST_GEN_REMAGENCYX", "You cannot remove this Agency - there are no other Agencies to which you can assign your Agents and Listings.");
 
 define("EST_GEN_REORDER","Re-order");
+define("EST_GEN_REORDERABLE","Re-orderable");
 define("EST_GEN_RESETDEF","Reset to Default");
 define("EST_GEN_SCHEDULING","Scheduling");
 
@@ -351,7 +355,7 @@ define("EST_PREF_ADMINONLY","Close ".EST_PLUGNAME." to public");
 define("EST_PREF_ADMINONLYHLP","If enabled, only Admins can view this plugin");
 
 
-
+define("EST_PREF_CLICKSAVETEMPL","Click Save to Change Template");
 define("EST_PREF_CONTACTCC","Allow CC Sender*");
 define("EST_PREF_CONTACTCCHLP","Users in this class can opt to have a copy of their email sent to their email address. MAY BE MISUSED, set with caution! REQUIRES your Site Prefs to allow Email Copy Sender.");
 define("EST_PREF_CONTACTFORM","Contact Form Access");
@@ -359,7 +363,7 @@ define("EST_PREF_CONTACTFORMHLP","Who can use the Estate Plugin's Contact Form")
 define("EST_PREF_CONTACTLIFE","Message Life");
 define("EST_PREF_CONTACTLIFEHLP","How long the system keeps a record of sent messages. Works with Message Maximum to prevent abuse of the contact system");
 define("EST_PREF_CONTACTMAX","Message Maximum");
-define("EST_PREF_CONTACTMAXHLP","Sets the Maximum number of messages a visitor can send during the Message Life duration. Applies to All Messages");
+define("EST_PREF_CONTACTMAXHLP","Sets the Maximum number of messages a visitor can send during the Message Life duration.");
 define("EST_PREF_CONTACTMODE","Contact Form Mode");
 define("EST_PREF_CONTACTMODE0","Agent & Non-Agent Listings - Hide e-mail");
 define("EST_PREF_CONTACTMODE1","Agent & Non-Agent Listings - Display e-mail");
@@ -449,20 +453,23 @@ define("EST_PREF_TEMPLATESDEF", array("Default List Template","Default View Temp
 define("EST_PREF_MENU", "Menu Options");
 
 
+define("EST_PREF_TEMPLATE_CUSTOM","Master Template");
+define("EST_PREF_TEMPLATE_CUSTOMHLP","You can replace the built-in Estate Template with any valid template file uploaded to the \"estate/templates/custom\" folder. You can also define your own template Elements within your site's Theme file");
+
 define("EST_PREF_TEMPLATE_LIST","List Page Template");
 define("EST_PREF_TEMPLATE_LISTHLP","Choose a template for the List Page");
 
 define("EST_PREF_TEMPLATE_MENU","Menu Template");
 define("EST_PREF_TEMPLATE_MENUHLP","Choose a template for the otpional Menu");
 define("EST_PREF_TEMPLATE_MENUORD","Menu Layout");
-define("EST_PREF_TEMPLATE_MENUORDHLP","Enable/Disable and reorder each section of the Menu layout. Available only if the Template selected supports re-ordering");
+define("EST_PREF_TEMPLATE_MENUORDHLP","Enable/Disable and reorder each section of the Menu layout. Available only if the Template selected supports re-ordering. You can also reorder the sections directly on the front end pages");
 
 define("EST_PREF_TEMPLATE_NOORD","Template does not support re-ordering");
 define("EST_PREF_TEMPLATE_VIEW","View Page Template");
 define("EST_PREF_TEMPLATE_VIEWHLP","Choose a template for the View Page");
 
 define("EST_PREF_TEMPLATE_VIEWORD","View Page Layout");
-define("EST_PREF_TEMPLATE_VIEWORDHLP","Enable/Disable and reorder each section of the View Page layout. Available only if the Template selected supports re-ordering");
+define("EST_PREF_TEMPLATE_VIEWORDHLP","Enable/Disable and reorder each section of the View Page layout. Available only if the Template selected supports re-ordering. You can also reorder the sections directly on the front end pages");
 
 
 
