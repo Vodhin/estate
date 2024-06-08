@@ -2335,19 +2335,50 @@ li.estPresetDataLI3:hover div.estDivX{
   margin-left:8px;
   background-color:inherit;
   }
-
-#estPropViewCt{
+#propViewCtDiv a{
   cursor:pointer;
   }
 
-#propViewCtCont{
+#estILEditDiv{
+  position: absolute;
+  left:-64px;
+  white-space:nowrap;
+  padding: 8px;
+  z-index: 20;
+  }
+
+#estILEditDiv input,
+#estILEditDiv select,
+#estILEditDiv button{
+  display:inline-block;
+  vertical-align:middle;
+  }
+
+#estILEditDiv input,
+#estILEditDiv select{
+  border-right:0px;
+  border-top-right-radius:0px;
+  border-bottom-right-radius:0px;
+  margin-right:0px;
+  }
+#estILEditDiv button{
+  border-left:0px;
+  border-top-left-radius:0px;
+  border-bottom-left-radius:0px;
+  margin-left:0px;
+  }
+
+.propViewCtCont{
   display:none;
   position:absolute;
   top:24px;
   right:4px;
   padding:8px 6px;
   background-color:inherit;
+  white-space:nowrap;
   }
+
+
 
 #upFile{
   display:none;
@@ -3063,9 +3094,9 @@ div.upldPvwBtn div.mediaPvwCapt:focus{
   }
 
 
-#estListOrderCont,
-#estMenuOrderCont,
-#estViewOrderCont{
+#estlistOrderCont,
+#estmenuOrderCont,
+#estviewOrderCont{
   display:block;
   position:relative;
   width:256px;
@@ -3075,7 +3106,6 @@ div.upldPvwBtn div.mediaPvwCapt:focus{
   display:none;
   position:relative;
   width:100%;
-  
   }
 .estTemplateSectCont div.btn{
   display:block !important;

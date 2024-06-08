@@ -25,10 +25,25 @@
 #estViewSpaceImgPvwSlider{
   display:block;
   position:relative; 
-  /*min-height: 96px;*/
+  color: #000000;
   border: 0.35em solid transparent;
   border-radius: 8px;
   }
+
+
+#estArrBordR{
+  display: block;
+  position: absolute;
+  top:10px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  transform: rotate(45deg);
+  vertical-align: middle;
+  }
+
+#estViewSpaceImgPvwSlider,
+#estArrBordR{background-color: #A8B8BD;}
 
 #estViewSpaceImgCont{
   display: block;
@@ -49,17 +64,6 @@
   }
 
 
-#estArrBordR{
-  display: block;
-  position: absolute;
-  top:10px;
-  right: -12px;
-  width: 24px;
-  height: 24px;
-  transform: rotate(45deg);
-  vertical-align: middle;
-  }
-
 .estViewSpTxt{
   width: 96%;
   margin: 0px 2%;
@@ -69,20 +73,12 @@
   }
 
 
-
-#estViewSpaceImgPvwSlider,
-#estArrBordR{background-color: #A8B8BD;}
-
 .estViewSpaceBtn{border-color:#A8B8BD;}
-
-
-
-
 
 
 div.estViewSpTxt ul{
   text-indent: 0px;
-  padding: 0px 0px 0px 22px;
+  padding: 0px 0px 0px 6px;
   margin: 0px 0px 8px 0px;
   }
 
@@ -92,12 +88,6 @@ div.estViewSpTxt ul{
   display:none;
   }
 
-
-
-
-div.estTableGroupShell{
-  
-  }
 
 div.estTableGroupWrapper{
   display: flex;
@@ -135,6 +125,7 @@ div.estTableGroupTile div.estViewSpTxt{
 div.estTableGroupTile div.estViewSpTxt li{
   width:96%;
   font-size:0.9em;
+  list-style-position: inside;
   text-transform:uppercase;
   white-space:nowrap;
   overflow:hidden;

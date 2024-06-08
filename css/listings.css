@@ -48,7 +48,7 @@
   display:none;
   }
 #estMiniNav{
-  display:block;
+  display:inline-block;
   position:relative;
   float:right;
   }
@@ -110,6 +110,22 @@
 
 
 
+.estLikeIcon{
+  font-size:1.15em;
+  border:0.10em solid transparent;
+  cursor:pointer;
+  }
+
+.estLikeIcon:hover{
+  text-decoration:none;
+  font-size:1.25em;
+  border:none;
+  }
+
+.estLikeIcon i:nth-child(1), .estLikeIcon svg:nth-child(1){display:block;}
+.estLikeIcon i:nth-child(2), .estLikeIcon svg:nth-child(2){display:none;}
+.estLikeIcon.actv i:nth-child(1), .estLikeIcon.actv svg:nth-child(1){display:none;}
+.estLikeIcon.actv i:nth-child(2), .estLikeIcon.actv svg:nth-child(2){display:block;}
 
 
 .estExpBtn{
@@ -145,7 +161,7 @@
   }
 
 /*
-#estViewBoxTopPlay:checked ~ #estViewBoxTop div.estSSPlayPause{
+#estViewBoxTopPlay:checked ~ ##estSlideShow div.estSSPlayPause{
   display:none;
   background-position: 3px 0px;
   }
@@ -184,29 +200,29 @@
   overflow: hidden;
   }
 
-#estViewBoxTop.estSlideshow{cursor:pointer;}
+#estSlideShow.estSlideshow{cursor:pointer;}
 
-#estViewBoxTop.estSSPaused{
+#estSlideShow.estSSPaused{
   animation-play-state: paused;
   }
 
-#estViewBoxTop div.estSSPlayPause{
+#estSlideShow div.estSSPlayPause{
   width:64px;
   height:64px;
   background-position: -66px 0px;
   background-size: 128px 64px;
   }
 
-#estViewBoxTop.estSSPaused div.estSSPlayPause{
+#estSlideShow.estSSPaused div.estSSPlayPause{
   display:block;
   }
 
 
-#estViewBoxSpacesCont div.estImgSlide.estSSPaused{
+#estSpacesCont div.estImgSlide.estSSPaused{
   animation-play-state: paused;
   }
 
-#estViewBoxSpacesCont div.estImgSlide.estSSPaused div.estSSPlayPause{
+#estSpacesCont div.estImgSlide.estSSPaused div.estSSPlayPause{
   display:block;
   }
 
@@ -430,6 +446,7 @@ h3.sumCapt{
   background-clip: content-box;
   background-origin: content-box;
   background-size: cover;
+  /*background-size: contain;*/
   background-position: center top;
   }
 
@@ -675,12 +692,78 @@ ul.estDet2Cont{
 
 
 
+.estNoOverFlow{
+  overflow:hidden;
+  overflow-x:hidden;
+  overflow-y:hidden;
+  }
 
+.estReordMenu{
+  display:none;
+  position:relative;
+  width:100%;
+  background-color: rgba(0, 0, 0, 0.0675);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 12px 0px 12px 0px;
+  text-align: left;
+  text-transform: capitalize;
+  }
+.estReordMenu select,
+.estReordMenu button{
+  display:inline-block;
+  position:relative;
+  width:unset;
+  max-width:256px;
+  vertical-align:middle;
+  }
+  
+.estReordMenu select{
+  min-width:192px;
+  margin:0px 0px 0px 12px;
+  }
+.estReordMenu .estAdmBtnSave{
+  margin:0px 12px 0px 0px;
+  float:right;
+  }
 
+.estTmplMenuMsg{
+  display:none;
+  position:relative;
+  width:100%;
+  clear:both;
+  font-size:8pt;
+  font-style:italic;
+  margin:0px 12px 0px 12px;
+  }
 
+.estReordDiv,
+.estReordCont{
+  width:100%;
+  }
 
-
-
+.estReordHandle{
+  display: none;
+  position: relative;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.0675);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 12px;
+  text-align: left;
+  text-transform: capitalize;
+  cursor: ns-resize;
+  }
+.estReordHandle i{
+  display: block;
+  position: relative;
+  float: right;
+  }
+.estReordHandle input[type="checkbox"]{
+  margin-right:8px;
+  }
+.estReordHandle label{
+  font-weight:normal;
+  cursor:pointer;
+  }
 
 
 /*LIST PAGE CSS*/
@@ -750,7 +833,6 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   font-size:1.5em;
   }
 
-
 .estCardTopTab{
   display: block;
   position: absolute !important;
@@ -779,6 +861,7 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   overflow:hidden;
   text-overflow:ellipsis;
   }
+
 .estCardTopTab p{
   display: block;
   position: relative;
@@ -791,7 +874,6 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   text-overflow:ellipsis;
   }
 
-
 .estCardTopName{
   width: calc(100% - 32px);
   margin-top: 0px;
@@ -800,8 +882,10 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   text-transform: uppercase;
   }
 
-
-
+.estCardTopFlag{
+  color:#FFFFFF;
+  background-color: #A80000;
+  }
 
 #estateCont div.estCardMain{
   display:block;
@@ -825,8 +909,6 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   background-position: center center;
   overflow: hidden;
   }
-
-
 
 .estCardTopR {
   display: block;
@@ -887,8 +969,6 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   line-height: 1.3em;
   }
 
-
-
 .estPriceDrop{
   display:inline-block;
   position:relative;
@@ -898,14 +978,12 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   /*opacity:0.85;*/
   }
 
-
 .estListSummary{
   display: block;
   position: relative;
   width: 100%;
   padding: 0px 6px 0px 6px;
   }
-
 
 
 .estMarkRed{
@@ -917,11 +995,6 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
 .estMarkGreen{
   filter: hue-rotate(266deg);
   }
-
-
-
-
-
 
 
 #estLayoutPrefECont{
@@ -1006,6 +1079,9 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   padding-right:0px !important;
   }
 
+.noDISP{
+  display:none !important;
+  }
 
 
 @media screen and (orientation:landscape){
@@ -1052,11 +1128,9 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
 @media only screen and (min-device-width:100px) and (max-device-width:480px){
   .dummy{}
   
-  .noMobile{display:none;}
+  .noMobile{display:none !important;}
   
-  #estMiniNav{
-    
-    }
+  #estMiniNav{}
   
   #estMobTst{
     display:block;
@@ -1064,20 +1138,17 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
     height:1px;
     }
   
-  #estViewBoxTop{
+  ##estSlideShow{
     display: block;
     height: 256px;
     }
   
-  #estViewBoxTop div.estSSPlayPause{
+  ##estSlideShow div.estSSPlayPause{
     width:48px;
     height:48px;
     background-position: -48px 0px;
     background-size: 96px 48px;
     }
-  
-  
-  
   
   #estMap{
     width: 100%;
@@ -1085,13 +1156,10 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
     margin:16px auto 0px auto;
     }
   
-  
-  
   #estPlugMenu1,
   .estSideMenu{
     display:none !important;
     }
-  
   
   #estGalCont img{
     display: block;
@@ -1101,23 +1169,20 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
     margin: 0px auto 16px auto;
     }
   
-  
-  
   #estateCont.estListTiles{
     display:flex;
     }
-  /*
-  #estateCont.estListTiles a {
-    display: block;
-    width:100%;
-    margin: 2px auto;
-    padding: 6px 4px;
-    }
-  */
-  
+    
   .estFLEX30,
   .estFLEX45{
     flex: 100%;
+    max-width: 100%;
+    }
+  
+  #estateCont div.estCard{
+    display: flex;
+    flex: 100%;
+    width: 100%;
     max-width: 100%;
     }
   
