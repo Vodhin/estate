@@ -808,8 +808,30 @@ if($DSPL == 'js'){
   $RES['userlevs'] = EST_USRLEVELS;
   $RES['prefs'] = e107::pref('estate');
   include_once(e_PLUGIN.'estate/templates/estate_template.php');
+  
+  $RES['prefs']['template_list'] = (isset($RES['prefs']['template_list']) ? $RES['prefs']['template_list'] : 'default');
+  $RES['prefs']['template_menu'] = (isset($RES['prefs']['template_menu']) ? $RES['prefs']['template_menu'] : 'default');
+  $RES['prefs']['template_view'] = (isset($RES['prefs']['template_view']) ? $RES['prefs']['template_view'] : 'default');
+  
   foreach($ESTATE_TEMPLATE as $sk=>$sv){foreach($sv as $tkey=>$tele){unset($ESTATE_TEMPLATE[$sk][$tkey]['txt']);}}
   $RES['prefs']['templates'] = $ESTATE_TEMPLATE;
+  
+  if(!isset($RES['prefs']['template-view-ord']['default'])){
+    //$RES['prefs']['template-view-ord']['default'] = $ESTATE_TEMPLATE['default']['ord'];
+    }
+  
+  /*
+  $ti = 0;
+  foreach (new DirectoryIterator('../../templates') as $file) {
+    if($file->isDot()) continue;
+    $fname = $file->getFilename();
+    if(strpos($fname, 'template') !== false){
+      $RES['prefs']['templateids'][$ti]['id'] = str_replace("_template.php", "",$fname);
+      $RES['prefs']['templateids'][$ti]['name'] = $fname;
+      $ti++;
+      }
+    }
+  */
   echo $tp->toJSON($RES);
   }
 else{echo $RES;}
@@ -1192,6 +1214,7 @@ function estJStext(){
     'categories'=>LAN_CATEGORIES,
     'changeimgsrc'=>EST_GEN_CHANGEIMGSRC,
     'clkcust'=>EST_GEN_CLKCUSTOM,
+    'clksave'=>EST_GEN_CLKSAVEFOROPTS,
     'create'=>EST_GEN_CREATE,
     'createagnt'=>EST_GEN_CREATEAGENT,
     'contact'=>EST_GEN_CONTACT,
@@ -1226,6 +1249,7 @@ function estJStext(){
     'image'=>EST_GEN_IMAGE,
     'infochanged'=>EST_GEN_INFOCHANGED,
     'item'=>EST_GEN_ITEM,
+    'layout'=>EST_GEN_LAYOUT,
     'listing'=>EST_GEN_LISTING,
     'listings'=>EST_GEN_LISTINGS,
     'listype'=>EST_PROP_LISTYPE,
@@ -1269,6 +1293,7 @@ function estJStext(){
     'resetmap'=>EST_PROP_RESETMAP,
     'required'=>LAN_REQUIRED,
     'save'=>EST_SAVE,
+    'saves'=>EST_SAVES,
     'save2'=>EST_SAVECLOSE,
     'savefirst'=>EST_GEN_SAVEFIRST,
     'section'=>EST_GEN_SECTION,

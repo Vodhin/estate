@@ -14,6 +14,7 @@ var JQDIV = '<div></div>';
 var JQSPAN = '<span></span>';
 var JQBTN = '<button></button>';
 var JQNPT = '<input />';
+var JQSEL = '<select></select>';
 var JQOPT = '<option></option>';
 var JQTABLE = '<table></table>';
 var JQCOLGRP = '<colgroup></colgroup>';
@@ -3965,7 +3966,7 @@ function estGetSubDivs(){
           var eSrcTbl = defs.tbls[ele.src.tbl];
           var eSrcIdx = ele.src.idx;
           if(eli == 'city_timezone' && eleVal == ''){eleVal = $('[name="prop_timezone"]').val();}
-          trs[tri].inpt[0] = $('<select></select>',{'name':eli,'value':eleVal,'class':'tbox form-control input-'+ele.cls+eleAddCls}).data({'hide':hideTarg,'xFnct':xFnct}).html(eleOpts).on({
+          trs[tri].inpt[0] = $(JQSEL,{'name':eli,'value':eleVal,'class':'tbox form-control input-'+ele.cls+eleAddCls}).data({'hide':hideTarg,'xFnct':xFnct}).html(eleOpts).on({
             change : function(){
               var vlu = this.value;
               var hideIt = $(this).data('hide');
@@ -4622,7 +4623,7 @@ function estGetSubDivs(){
     
     tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
     tabtr[tabx].tr[tri][3] = $(JQDIV,{'class':'estInptCont'}).appendTo(tabtr[tabx].tr[tri][2]);
-    space_grpid = $('<select></select>',{'name':'space_grpid','value':levDta.space_grpid,'class':'tbox form-control xlarge input-xlarge ILBLK oneBtn'}).on({
+    space_grpid = $(JQSEL,{'name':'space_grpid','value':levDta.space_grpid,'class':'tbox form-control xlarge input-xlarge ILBLK oneBtn'}).on({
        //change : function(){estSetSpaceGroup(this)} //group_lev
       }).appendTo(tabtr[tabx].tr[tri][3]);
       
@@ -4650,7 +4651,7 @@ function estGetSubDivs(){
     tabtr[tabx].tr[tri][1] = $(JQTD).html(xt.category).appendTo(tabtr[tabx].tr[tri][0]);
     tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
     tabtr[tabx].tr[tri][3] = $(JQDIV,{'class':'estInptCont'}).appendTo(tabtr[tabx].tr[tri][2]);
-    space_catid = $('<select></select>',{'name':'space_catid','value':levDta.space_catid,'class':'tbox form-control xlarge input-xlarge ILBLK oneBtn'}).on({
+    space_catid = $(JQSEL,{'name':'space_catid','value':levDta.space_catid,'class':'tbox form-control xlarge input-xlarge ILBLK oneBtn'}).on({
       change : function(){estBuildCategoryList(2);}
       }).appendTo(tabtr[tabx].tr[tri][3]);
     
@@ -8346,7 +8347,17 @@ function estGetSubDivs(){
     }
   
   
-        
+  
+  
+  function estSetSaveCt(mode){
+    var defs = $('body').data('defs');
+    var fld = $('input[name="prop_saves"]');
+    if(mode == 1){$(fld).val(Number($('#propSaveCtNumb').val()));}
+    var vCt = Number($(fld).val());
+    $('#estPropSaveCt').html(vCt+' '+(vCt == 1 ? defs.txt.save : defs.txt.saves));
+    if(mode == 0){$('#propSaveCtNumb').val(vCt);}
+    }
+  
   function estSetViewCt(mode){
     var defs = $('body').data('defs');
     var fld = $('input[name="prop_views"]');
@@ -8485,8 +8496,9 @@ function estGetSubDivs(){
           $('input[name="prop_dateupdated"]').closest('tr').hide();
           
           var viewCtDiv = $(JQDIV,{'id':'propViewCtDiv'}).prependTo('div.admin-main-content h4.caption');
-          var viewCtCont = $(JQDIV,{'id':'propViewCtCont'}).appendTo(viewCtDiv);
-          var viewCtNumb = $(JQNPT,{'type':'number','id':'propViewCtNumb','class':'tbox number e-spinner input-small form-control'}).on({
+          var viewCtCont = $(JQDIV,{'id':'propViewCtCont','class':'propViewCtCont'}).html(defs.txt.views+': ').appendTo(viewCtDiv);
+          
+          var viewCtNumb = $(JQNPT,{'type':'number','id':'propViewCtNumb','class':'tbox number e-spinner input-small form-control ILBLK VAM'}).on({
             change : function(){estSetViewCt(1);},
             blur : function(){$(this).parent().hide();}
             }).appendTo(viewCtCont);
@@ -8494,13 +8506,35 @@ function estGetSubDivs(){
             click : function(e){
               if($(viewCtCont).is(':visible')){$(viewCtCont).hide();}
               else{
+                $('.propViewCtCont').hide();
                 $(viewCtCont).show();
                 $(viewCtNumb).focus();
                 }
               }
             }).prependTo(viewCtDiv).promise().done(function(){
-              $(viewCtDiv).prepend('• ');
-              estSetViewCt(0);
+              
+              $(viewCtDiv).prepend(' • ');
+              
+              var saveCtCont = $(JQDIV,{'id':'propSaveCtCont','class':'propViewCtCont'}).html(defs.txt.saves+': ').appendTo(viewCtDiv);
+              var saveCtNumb = $(JQNPT,{'type':'number','id':'propSaveCtNumb','class':'tbox number e-spinner input-small form-control ILBLK VAM'}).on({
+                change : function(){estSetSaveCt(1);},
+                blur : function(){$(this).parent().hide();}
+                }).appendTo(saveCtCont);
+                
+              $('<a></a>',{'id':'estPropSaveCt'}).on({
+                click : function(e){
+                  if($(saveCtCont).is(':visible')){$(saveCtCont).hide();}
+                  else{
+                    $('.propViewCtCont').hide();
+                    $(saveCtCont).show();
+                    $(saveCtNumb).focus();
+                    }
+                  }
+                }).prependTo(viewCtDiv).promise().done(function(){
+                  $(viewCtDiv).prepend(' • ');
+                  estSetViewCt(0);
+                  estSetSaveCt(0);
+                  })
               })
           }
         
@@ -8836,75 +8870,124 @@ function estGetSubDivs(){
       }
     }
   
-  function estTemplates(){
+  
+  
+  
+  function estTemplateOrdCont(sect){
     var defs = $('body').data('defs');
+    if(typeof defs.prefs.templates == 'undefined'){
+      estAlertLog('No Templates!');
+      return;
+      }
+    if(typeof defs.prefs.templates[sect] == 'undefined'){
+      estAlertLog('No Templates For '+sect);
+      console.log('Templates: ',defs.prefs.templates);
+      return;
+      }
     
-    $('select[name="template_view"]').on({
-      change : function(){
-        $('.estTemplateSectCont').hide();
-        $('#estTemplateSect-'+this.value).show();
+    $.each(defs.prefs.templates[sect], function(tname,tdta){
+      console.log(sect,tname,tdta);
+      var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="template_'+sect+'"]');
+      var scont = $(JQDIV,{'id':'est'+sect+'TemplateSect-'+tname,'class':'estTemplateSectCont est'+sect+'TemplateSectCont'}).appendTo('#est'+sect+'OrderCont');
+      var tKey = 'template_'+sect;
+      
+      if(tname == defs.prefs[tKey]){
+        $(selectOpt).prop('selected','selected');
+        $(scont).show();
         }
-      }).empty().promise().done(function(){
-        $.each(defs.prefs.templates.view, function(tname,tdta){
-          console.log(tdta);
-          var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="template_view"]');
-          var scont = $(JQDIV,{'id':'estTemplateSect-'+tname,'class':'estTemplateSectCont'}).appendTo('#estViewOrderCont');
-          
-          if(tname == defs.prefs.template_view){
-            $(selectOpt).prop('selected','selected');
-            $(scont).show();
-            }
-          
-          if(typeof tdta.ord === 'undefined' || tdta.ord === null){
-            $(JQDIV,{'class':'TAL'}).html(defs.txt.templnoopt).appendTo(scont);
-            }
-          else{
-            $(selectOpt).data(tdta.ord);
-            var preford = Object.keys(tdta.ord);
-            if(typeof defs.prefs.template_view_ord[tname] !== 'undefined'){
-              preford = Object.keys(defs.prefs.template_view_ord[tname]);
-              }
-            
-          
-            var xi = preford.length;
-            $(tdta.ord).each(function(bi,bname){
-              var btn = $(JQDIV,{'class':'btn btn-default btn-sm TAL','title':defs.txt.reorder+' '+defs.txt.templvieword});
-              var cb = $(JQNPT,{'type':'checkbox','id':'template-view-ord['+tname+']['+bname+']','name':'template_view_ord['+tname+']['+bname+']','title':defs.txt.enabdisab+' '+bname}).val(1).appendTo(btn);
-              var lab = $('<label></label>',{'title':defs.txt.enabdisab+' '+bname}).prop('for','template-view-ord['+tname+']['+bname+']').html(bname).appendTo(btn);
-              
-              var bord = preford.indexOf(bname);
-              if(bord > -1){$(cb).prop('checked','checked');}
-              else{bord = xi; xi++;}
-              $(btn).data('ord',bord).appendTo(scont);
-              }).promise().done(function(){
-                var estViewOrderCont = document.getElementById('estTemplateSect-'+tname);
-                $(estViewOrderCont).children('div.btn').sort(function (a, b) {
-                  var cA = $(a).data('ord'); var cB = $(b).data('ord');
-                  return (cA > cB) ? 1 : (cA < cB) ? -1 : 0;
-                  }).appendTo(estViewOrderCont);
-                Sortable.create(estViewOrderCont,{
-                  draggable: 'div.btn',
-                  sort: true,
-                  animation: 450,
-                  ghostClass: 'sortTR-ghost',
-                  chosenClass: 'sortTR-chosen', 
-                  dragClass: 'sortTR-drag',
-                  onChoose: function(evt){},
-                  onEnd: function(evt){estTemplateReorder(evt.item);}
-                  });
-                });
-            }
-          });
-        });
-    
+      
+      if(typeof tdta.ord === 'undefined' || tdta.ord === null){
+        $(JQDIV,{'class':'TAL'}).html(defs.txt.templnoopt).appendTo(scont);
+        }
+      else{
+        $(selectOpt).data(tdta.ord);
+        var preford = Object.keys(tdta.ord);
         
-              
+        if(typeof defs.prefs['template_'+sect+'_ord'] == 'undefined' || defs.prefs['template_'+sect+'_ord'] == ''){
+          defs.prefs['template_'+sect+'_ord'] = 'default';
+          }
+        
+        console.log(defs.prefs['template_'+sect+'_ord'][tname]);
+        if(typeof defs.prefs['template_'+sect+'_ord'][tname] !== 'undefined' && defs.prefs['template_'+sect+'_ord'][tname] !== null){
+          preford = Object.keys(defs.prefs['template_'+sect+'_ord'][tname]);
+          }
+        
+        //this dummy is needed to save the Order Array if only the order has changed
+        var dmy = $(JQNPT,{'type':'checkbox','name':'template_'+sect+'_ord['+tname+'][dummy]'}).val(1).appendTo(scont).hide();
+        if(preford.indexOf('dummy') == -1){$(dmy).prop('checked','checked');}
+        
+        var xi = preford.length;
+        $(tdta.ord).each(function(bi,bname){
+          var btn = $(JQDIV,{'class':'btn btn-default btn-sm TAL','title':defs.txt.reorder+' '+defs.txt.layout});
+          var cb = $(JQNPT,{'type':'checkbox','id':'template-'+sect+'-ord['+tname+']['+bname+']','name':'template_'+sect+'_ord['+tname+']['+bname+']','title':defs.txt.enabdisab+' '+bname}).val(1).appendTo(btn);
+          var lab = $('<label></label>',{'title':defs.txt.enabdisab+' '+bname}).prop('for','template-'+sect+'-ord['+tname+']['+bname+']').html(bname).appendTo(btn);
           
-    
+          var bord = preford.indexOf(bname);
+          if(bord > -1){$(cb).prop('checked','checked');}
+          else{bord = xi; xi++;}
+          $(btn).data('ord',bord).appendTo(scont);
+          }).promise().done(function(){
+            var btnCont = document.getElementById('est'+sect+'TemplateSect-'+tname);
+            $(btnCont).children('div.btn').sort(function (a, b) {
+              var cA = $(a).data('ord'); var cB = $(b).data('ord');
+              return (cA > cB) ? 1 : (cA < cB) ? -1 : 0;
+              }).appendTo(btnCont);
+              
+            Sortable.create(btnCont,{
+              draggable: 'div.btn',
+              sort: true,
+              animation: 450,
+              ghostClass: 'sortTR-ghost',
+              chosenClass: 'sortTR-chosen', 
+              dragClass: 'sortTR-drag',
+              onChoose: function(evt){},
+              onEnd: function(evt){estTemplateReorder(evt.item);}
+              });
+            });
+        }
+      });
     }
   
   
   
+  
+  function estBindTemplateSel(){
+    var defs = $('body').data('defs');
+    console.log(defs.prefs.templates);
+    
+    $('select[name="template_list"]').closest('tr').addClass('estTmplTR');
+    $('select[name="template_list"]').prop('name','template_list').on({
+      change : function(){}
+      }).empty().promise().done(function(){
+        $.each(defs.prefs.templates.list, function(tname,tdta){
+          var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="template_list"]');
+          });
+        });
+    
+    $('#estviewOrderCont').closest('tr').addClass('estTmplTR');
+    $('select[name="template_view"]').closest('tr').addClass('estTmplTR');
+    $('select[name="template_view"]').prop('name','template_view').on({
+      change : function(){
+        $('.estviewTemplateSectCont').hide();
+        $('#estviewTemplateSect-'+this.value).show();
+        }
+      }).empty().promise().done(function(){
+        estTemplateOrdCont('view');
+        });
+    
+    $('#estmenuOrderCont').closest('tr').addClass('estTmplTR');
+    $('select[name="template_menu"]').closest('tr').addClass('estTmplTR');
+    $('select[name="template_menu"]').prop('name','template_menu').on({
+      change : function(){
+        $('.estmenuTemplateSectCont').hide();
+        $('#estmenuTemplateSect-'+this.value).show();
+        }
+      }).empty().promise().done(function(){
+        estTemplateOrdCont('menu');
+        });
+            
+        
+    }
   
   
   function estPrefs(){
@@ -8939,9 +9022,8 @@ function estGetSubDivs(){
           if(typeof ret.error !== 'undefined'){alert(ret.error);}
           else{
             $('body').data({'defs':ret,'propid':0}).promise().done(function(){
-            
               estSetHelpInFull();
-              estTemplates();
+              estBindTemplateSel();
               estBuildMap('pref');
               
             
@@ -9211,6 +9293,71 @@ function estGetSubDivs(){
     
     }
   
+  
+  
+  function estDoPropILEdit(ele,fld){
+    var dta = $(fld).data();
+    if(dta.type == 'select'){
+      var os = $(fld).find('option:selected');
+      var nVal = $(os).val();
+      var nTxt = $(os).text();
+      }
+    else{
+      var nVal = $(fld).val();
+      var nTxt = nVal;
+      }
+    
+    console.log(dta,nVal,nTxt);
+    $(ele).data('cval',nVal).html(nTxt);
+    $('#estILEditDiv').remove();
+    }
+  
+  
+  function estPrepPropILEdits(){
+    $('.estPropListILEdit').each(function(i,ele){
+      $(ele).on({
+        click : function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          var defs = $('body').data('defs');
+          var dta = $(ele).data();
+          var targ = $(ele).parent();
+          var pid = dta.pid;
+          console.log(dta);
+          
+          $('#estILEditDiv').remove().promise().done(function(){
+            var cont = $(JQDIV,{'id':'estILEditDiv','class':'popover fade in editable-container editable-popup'}).appendTo(targ).fadeIn(250);
+            if(dta.type == 'select'){
+              var fld = $(JQSEL,{'name':dta.fld,'id':dta.fld,'class':'tbox form-control'});
+              var opts = [dta.opts];
+              if(dta.opts.indexOf(',') > -1){opts = dta.opts.split(',');}
+              $(opts).each(function(i,opt){$(JQOPT).val(dta.key == 'i' ? i : opt).html(opt).appendTo(fld);});
+              }
+            else if(dta.type == 'number'){
+              var fld = $(JQNPT,{'type':'number','name':dta.fld,'id':dta.fld,'class':'tbox form-control'});
+              }
+            else{
+              var fld = $(JQNPT,{'type':'text','name':dta.fld,'id':dta.fld,'class':'tbox form-control'});
+              }
+            
+            $(fld).data(dta).appendTo(cont);
+            $(fld).val(dta.cval).change();
+            
+            var gobtn = $(JQBTN,{'id':'estILEditGo','class':'btn btn-primary'}).data(fld).html('<i class="fa fa-check"></i>').on({
+              click : function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                estDoPropILEdit(ele,fld);
+                }
+              }).appendTo(cont);
+            
+            });
+          }
+        });
+      });
+    }
+  
+  
   function estPrepPropListNewForm(){
     var defs = $('body').data('defs');
     $('select[name="prop_leasedur"]').data('pval',$('select[name="prop_leasedur"]').val());
@@ -9418,6 +9565,7 @@ function estGetSubDivs(){
                   if(tabNo < tabLen){$(navUL).find('li').eq(tabNo).find('a').click();}
                   if(tabLen < 2){$('#estEditHelp-1').html($('#estEditHelp-2').html());}
                   //if(Number(defs.user.perm) >= Number(defs.prefs.public_mod)){}
+                  estPrepPropILEdits();
                   estPrepPropListFilters();
                   estPrepPropListNewForm();
                   }
