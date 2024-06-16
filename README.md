@@ -3,6 +3,11 @@ A plugin for the e107 Content management System to manage Real Estate Agencies, 
 
 The _Estate_ plugin is not ready yet. I have a lot to do before it can be published. The Current repository should be mostly usable if anyone wants to try it out. A live production site using this plugin can be viewed here https://www.sandpiperhome.org
 
+
+DEVELOPMENT/REVISION HISTORY:
+
+16 June 2024: Initiaded built in Contact Form system where visitors can contact Agents/Sellers directly through the Listing View page. Sellers and Agents will recieve an email and PM (if enabled) of these communications. The Contact Form includes presets for 4 different types of communication (Request a Showing, Make An Offer, Sell My Property, and Other Question) and each of these presets fills out a standardized email template. Special Hidden form elements and JavaScript trap bots to reduce unwanted spam. 
+
 5 May 2024: Almost ready for a stable release! Still have to finish coding Community Information Forms and add some UI elements for Likes/Saves and Communication History.  
 
 REQUIREMENTS:
