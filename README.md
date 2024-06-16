@@ -4,8 +4,11 @@ A plugin for the e107 Content management System to manage Real Estate Agencies, 
 The _Estate_ plugin is not ready yet. I have a lot to do before it can be published. The Current repository should be mostly usable if anyone wants to try it out. A live production site using this plugin can be viewed here https://www.sandpiperhome.org
 
 
+
 MANUAL UPDATING ON YOUR WEBSITE DURING DEVELOPMENT:
+
 Download ALL files and replace all existing files on your website with current. Run your Check Database Validity on the Estate tables and fix any entries that are found. Then go to the Preference section of the Estate Plugin and Save your preferences.
+
  
 
 DEVELOPMENT/REVISION HISTORY:
