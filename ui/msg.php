@@ -1,23 +1,28 @@
 <?php
 if(!defined('e107_INIT')){
-	//$sec_img = e107::getSecureImg();
-  if(isset($_POST['sndMsg']) && isset($_POST['tdta'])){
+  if((isset($_POST['sndMsg']) || isset($_POST['sndLike']) || isset($_POST['msgRead'])) && isset($_POST['tdta'])){
     define('e_TOKEN_DISABLE',true);
     require_once('../../../class2.php');
     e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
-    
     $sql = e107::getDB();
     $tp = e107::getParser();
     $EST_PREF = e107::pref('estate');
     $RES = array();
     //$RES['sent']['raw'] = $_POST['tdta'];
+    }
+  else{exit;}
+  
+  if(isset($_POST['sndMsg'])){
+    //$sec_img = e107::getSecureImg();
+    if(!check_class($EST_PREF['contact_class'])){exit;}
+    
     $TOUID = intval($_POST['tdta']['msg_to_uid']);
     $ei = 0;
     
     if($TOUID == 0){$RES['error'][$ei] = EST_MSG_ERRNOUID; $ei++;}
     
     $MSG = est_msg_proc($_POST['tdta']);
-    //$RES['sent']['proc'] = $MSG;
+    $RES['sent']['proc'] = $MSG;
     if(intval($TOUID) !== intval($MSG['msg_to_uid'])){$RES['error'][$ei] = EST_MSG_ERRUIDNOMATCH; $ei++;}
     
     $MSG['msg_from_ip'] = USERIP;
@@ -38,7 +43,7 @@ if(!defined('e107_INIT')){
       }
     
     
-    if(!$AGENT && intval($MSG['msg_mode']) == 2){$RES['error'][$ei] = EST_MSG_ERRNOTAGENT; $ei++;}
+    if(!$AGENT && intval($MSG['msg_mode']) == 3){$RES['error'][$ei] = EST_MSG_ERRNOTAGENT; $ei++;}
     
     $sql->gen("SELECT user_id,user_name,user_loginname,user_login,user_email,user_lastvisit FROM #user WHERE user_id = '".$TOUID."'");
     $TOUSER = $sql->fetch();
@@ -186,7 +191,10 @@ if(!defined('e107_INIT')){
   		  
       
         if($MSG['msg_from_uid'] == 0){
-          // not a member, send as if an admin
+          // not a member, send as the seller
+          $MSG['msg_from_uid'] = intval($MSG['msg_to_uid']);
+          $MSG['msg_top'] = '('.EST_GEN_NONMEMBER.') '.$MSG['msg_top'];
+          /*
           if($AGENT){
             if($sql->gen("SELECT user_id,user_name, #estate_agents.* FROM #estate_agents LEFT JOIN #user ON user_id = agent_uid WHERE user_perms='0' AND agent_agcy='".intval($AGENT['agent_agcy'])."' AND NOT agent_uid='".$MSG['msg_to_uid']."' LIMIT 1")){
               $mgr = $sql->fetch();
@@ -199,7 +207,7 @@ if(!defined('e107_INIT')){
               }
             $RES['mgr'] = $mgr;
             }
-          
+          */
           if($MSG['msg_from_uid'] == 0){$MSG['msg_from_uid'] = 1;}
           }
         
@@ -221,10 +229,8 @@ if(!defined('e107_INIT')){
         }
       }
     
-    
     $RES['msg'] = $MSG;
-    $RES['pvw'][0] = estPrevMsgPvw($MSG);
-    $RES['pvw'][1] = estPrevMsgPvw($MSG,1);
+    $RES['pvw'] = estPrevMsg($MSG);
     
     $dberr = $sql->getLastErrorText();
     if($dberr){
@@ -233,15 +239,90 @@ if(!defined('e107_INIT')){
       }
     echo $tp->toJSON($RES);
     unset($RES,$TOUID,$MSG,$AGENT,$TOUSER,$EMAIL_TO_NAME,$EMAIL_TO_ADDR,$FROMUSER);
+    exit;
     }
+  
+  if(isset($_POST['msgRead'])){
+    $RES = array();
+    $RES['dta'] = $_POST['tdta']['dta'];
+    $IDX = intval($RES['dta']['idx']);
+    if($IDX > 0){
+      $PID = intval($RES['dta']['pid']);
+      if(intval($RES['dta']['del']) === $IDX){
+        if($sql->delete("estate_msg", "msg_idx='".$IDX."' LIMIT 1")){$RES['dta']['del'] = 1;}
+        else{$RES['dta']['del'] = 0;}
+        }
+      else{
+        $RES['dta']['del'] = intval(0);
+        if(intval($RES['dta']['read']) == 0){$RES['dta']['read'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));}
+        else{$RES['dta']['read'] = intval(0);}
+        if($sql->update("estate_msg","msg_read='".intval($RES['dta']['read'])."' WHERE msg_idx='".$IDX."' LIMIT 1")){$RES['dta']['up'] = 1;}
+        else{$RES['dta']['up'] = intval(0);}
+        }
+      }
+    //estPrevMsgPvw
+    echo $tp->toJSON($RES);
+    unset($RES);
+    exit;
+    }
+  
+  if(isset($_POST['sndLike'])){
+    $RES['like'] = 0;
+    if(!check_class($EST_PREF['listing_save'])){exit;}
+    
+    $PID = intval($_POST['tdta']['pid']);
+    if($PID > 0){
+      $EST_COOKIE = explode(",",$GLOBALS['EST_COOKIE_SAVED']);
+      
+      //$EST_COOK_OPTS['expires'] = time() + 60 * 60 * 24 * intval($EST_PREF['contact_life']); //from e_module.php
+      
+      $likedb = $sql->retrieve("SELECT * FROM #estate_likes WHERE like_pid='".$PID."' AND ".(USERID > 0 ? " like_by_uid='".USERID."'" : " like_by_ip='".USERIP."' AND NOT like_by_uid > '0'")."",true);
+      if(count($likedb) > 0){
+        foreach($likedb as $lk=>$lv){
+          $cookieVal = $PID.'-'.intval($lv['like_idx']);
+          if($sql->delete("estate_likes", "like_idx = '".intval($lv['like_idx'])."' LIMIT 1")){
+            $RES['rem'][$lk] = $lv['like_idx'];
+            $key = array_search($cookieVal,$EST_COOKIE);
+            unset($EST_COOKIE[$key]);
+            }
+          }
+        $RES['like'] = -1;
+        }
+      else{
+        $RES['like'] = $sql->insert("estate_likes","'0','".$PID."','".intval(USERID)."','".(intval(USERID) == 0 ? USERIP : 0)."'");
+        if($RES['like'] > 0){
+          $cookieVal = $PID.'-'.intval($RES['like']);
+          if(!in_array($cookieVal,$EST_COOKIE)){
+            array_push($EST_COOKIE,$cookieVal);
+            }
+          }
+        }
+      setcookie(EST_COOKIESAVE, implode(",",$EST_COOKIE), $EST_COOK_OPTS);
+      }
+    echo $tp->toJSON($RES);
+    unset($RES);
+    exit;
+    }
+  
   exit;
   }
+
+
+
+
+  
+
+
 
 
 	//$randnum = rand(1000, 9999);
 
 e107::css('url',e_PLUGIN.'estate/css/msg.css');
 e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
+e107::js('estate','js/msg.js', 'jquery');
+
+
+define("EST_MSGTYPES",array('',EST_MSG_SHOWINGREQUESTS,EST_MSG_OFFERS,EST_MSG_QUOTEREQ,EST_MSG_OTHERQUESTIONS));
 
 
 function est_msg_proc($DTA){
@@ -269,7 +350,7 @@ function est_msg_proc($DTA){
     'msg_to_uid'=>(intval($DTA['msg_to_uid']) > 0 ? intval($DTA['msg_to_uid']) : intval(0)),
     'msg_to_addr'=>$tp->toTEXT(trim($DTA['msg_to_addr']) ? $DTA['msg_to_addr'] : ''),
     'msg_to_name'=>$tp->toTEXT(trim($DTA['msg_to_name']) ? $DTA['msg_to_name'] : ''),
-    'msg_mode'=>(intval($DTA['msg_mode']) > 0 ? intval($DTA['msg_mode']) : intval(0)),
+    'msg_mode'=>(intval($DTA['msg_mode']) > 1 ? intval($DTA['msg_mode']) : 1),
     'msg_propidx'=>(intval($DTA['msg_propidx']) > 0 ? intval($DTA['msg_propidx']) : (intval($DTA['prop_idx']) > 0 ? intval($DTA['prop_idx']) : intval(0))),
     'msg_from_cc'=>(intval($DTA['msg_from_cc']) > 0 ? intval($DTA['msg_from_cc']) : intval(0)),
     'msg_from_uid'=>intval($DTA['msg_from_uid'] ? $DTA['msg_from_uid'] : USERID),
@@ -281,24 +362,58 @@ function est_msg_proc($DTA){
     'msg_text'=>$tp->toTEXT($DTA['msg_text']),
     );
   
-  
   return $MSG;
   }
 
 
 
-function estPrevMsgPvw($mv,$mde=0){
+function estPrevMsgPvw($mv,$mode=0){
   $tp = e107::getParser();
-  if($mde == 1){
-    return '
+  switch($mode){
+    case 2 :
+      //<i class=""></i>
+      //<i class="fa fa-solid fa-trash-arrow-up"></i>
+      
+      if(intval($mv['msg_read']) > 0){
+        $Btn2ttl = 'title="'.EST_MSG_MARKUNREAD.'" data-ttl="'.EST_MSG_MARKREAD.'"';
+        $BTN2Cls = 'fa fa-solid fa-square-check';
+        }
+      else{
+        $Btn2ttl = 'title="'.EST_MSG_MARKREAD.'" data-ttl="'.EST_MSG_MARKUNREAD.'"';
+        $BTN2Cls = 'fa fa-regular fa-square-check';
+        }
+      
+      return '
+          <div class="estMsgBtn" data-idx="'.intval($mv['msg_idx']).'" data-pid="'.intval($mv['msg_propidx']).'" data-mode="'.intval($mv['msg_mode']).'" data-read="'.intval($mv['msg_read']).'" data-del="0">
+            <div class="estMsgBtnBlock">
+              <button class="btn estViewMsg">'.$tp->toHTML($mv['msg_top']).'</button>
+              <button class="btn estMarkMsg" '.$Btn2ttl.'><i class="'.$BTN2Cls.'"></i></button>
+              <button class="btn estDelMsg" title="'.EST_MSG_DELETE.'" data-msg="'.EST_MSG_DELALERT.'"><i class="fa fa-regular fa-trash-can"></i></button>
+            </div>
+            <div class="estMsgP">
+              <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
+              <p>'.$tp->toHTML($mv['msg_text']).'</p>
+              <div class="estInBoxHead">
+                <div>'.EST_MSG_RECD.' '.$tp->toDate($mv['msg_sent'],'long').'</div>
+                <div>From '.$tp->toHTML($mv['msg_from_name']).' </div>
+                <div>Email '.$tp->toHTML($mv['msg_from_addr']).' </div>
+                <div>Phone '.$tp->toHTML($mv['msg_from_phone']).' </div>
+              </div>
+            </div>
+          </div>';
+      break;
+      
+    case 1 :
+      return '
       <div class="estMsgP" style="display:block;">
         <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
         <h5>'.$tp->toDate($mv['msg_sent'],'long').(intval($mv['msg_read']) > 0 ? ' <i>'.EST_MSG_RECD.' '.$tp->toDate($mv['msg_read'],'short').'</i>' : '').'</h5>
         <p>'.$tp->toHTML($mv['msg_text']).'</p>
       </div>';
-    }
-  else{
-    return '
+      break;
+    
+    default :
+      return '
       <div class="estMsgBtn">
         <button class="btn btn-default">'.$tp->toHTML($mv['msg_top']).'</button>
         <div class="estMsgP">
@@ -313,13 +428,145 @@ function estPrevMsgPvw($mv,$mde=0){
 
 
 
+function estGetPrevMsgs($PID=0,$QRY=0){
+  $sql = e107::getDB();
+  $tp = e107::getParser();
+  $EST_PREF = e107::pref('estate');
+  
+  $PREVMSG = array();
+  $AGO = mktime(0,0,0, date("m"), date("d") - intval($EST_PREF['contact_life']), date("Y"));
+  $MQRY = "SELECT #estate_msg.* FROM #estate_msg WHERE ".(USERID > 0 ? "msg_from_uid='".USERID."'" : "msg_from_ip='".USERIP."' AND NOT msg_from_uid > '0'")." AND msg_sent >= '".$AGO."'";
+  if(intval($EST_PREF['contact_maxto']) > 1){$MQRY .= " AND msg_read = '0'";}
+  if(intval($PID) > 0){
+    if(intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3){
+      $MQRY .= " AND msg_propidx='".$PID."'";
+      }
+    }
+  else{
+    if(intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3){
+      $MQRY .= " AND NOT msg_propidx > '0'";
+      }
+    }
+  $MQRY .= " ORDER BY msg_read ASC, msg_sent DESC"; // LIMIT ".intval($EST_PREF['contact_max']); 
+  $mi = 0;
+  $sql->gen($MQRY);
+  while($rows = $sql->fetch()){
+    $PREVMSG[$mi] = $rows;
+    $mi++;
+    }
+    
+  
+  
+  
+    
+  return $PREVMSG;
+  }
+
+
+
+
+
+function estMsgInbox(){
+  $sql = e107::getDB();
+  $ns = e107::getRender();
+  $tp = e107::getParser();
+  $EST_PREF = e107::pref('estate');
+  $MSGS = array();
+  $MQRY = "SELECT #estate_msg.* FROM #estate_msg WHERE msg_to_uid='".USERID."' ORDER BY msg_read ASC, msg_mode ASC, msg_sent DESC";
+  $sql->gen($MQRY);
+  while($rows = $sql->fetch()){
+    $MSGS[$rows['msg_mode']][$rows['msg_idx']] = $rows;
+    }
+  
+  if(EST_USERPERM > 0 || count($MSGS) > 0){
+    $NMSGC = 0;
+    $RMSG = array();
+    $txt = '<div id="estInBoxCont" data-jspth="'.EST_PATHABS.'">';
+    foreach(EST_MSGTYPES as $tk=>$tv){
+      $SMSGC = 0;
+      foreach($MSGS[$tk] as $mk=>$mv){
+        if(intval($mv['msg_read']) > 0){$RMSG[$mk] = $mv;}
+        else{
+          $MSGTXT .= estPrevMsgPvw($mv,2);
+          $NMSGC++; $SMSGC++;
+          }
+        }
+
+      $txt .= '
+      <div class="estInBoxSect estNewMsgs"'.($SMSGC > 0 ? '' : ' style="display:none;"').'>
+        <button class="btn btn-primary estSectBtn">'.EST_GEN_NEW.' '.$tp->toHTML($tv).' (<span>'.$SMSGC.'</span>)</button>
+        <div id="estInBoxBelt-'.$tk.'" class="estMsgBelt" data-tk="'.$tk.'" style="display:none;">'.$MSGTXT.'</div>
+      </div>';
+      unset($MSGTXT);
+      }
+    
+    
+    $txt .= '
+      <div class="estInBoxSect"'.(count($RMSG) > 0 ? '' : ' style="display:none;"').'>
+        <button class="btn btn-primary estSectBtn">'.EST_MSG_PREVMSG.' (<span>'.count($RMSG).'</span>)</button>
+        <div id="estInBoxBelt-read" class="estMsgBelt" data-tk="read" style="display:none;">';
+      if(count($RMSG) > 0){
+        foreach($RMSG as $mk=>$mv){
+          $txt .= estPrevMsgPvw($mv,2);
+          }
+        }
+      $txt .= '
+        </div>
+      </div>
+    </div>';
+    $capt = '<a id="estInBoxBtn">'.EST_MSG_INBOX.' (<span id="estMsgCtNew">'.intval($NMSGC).'</span> '.EST_GEN_NEW.')</a>';
+    unset($MSGS,$RMSG,$NMSGC,$SMSGC);
+    return $ns->tablerender($capt, $txt, 'estMessagesMenu1',true);
+    }
+  
+  }
+
+
+
+
+function estPrevMsg($MSG){
+  //$sql = e107::getDB();
+  $tp = e107::getParser();
+  $EST_PREF = e107::pref('estate');
+  
+  $PREVMSG = estGetPrevMsgs($MSG['msg_propidx']);
+  
+  $PMSGCT = count($PREVMSG);
+  $PREVDIV = '
+    <h4 id="estPrevMsgBtn" class="btn btn-primary"'.($PMSGCT > 0 ? '' : ' style="display:none;"').'>'.EST_MSG_PREVMSG.' ('.$PMSGCT.')</h4>';
+  
+  if($PMSGCT > 0){
+    $PREVDIV .= '
+    <div id="estMsgPrevBelt" class="estMsgBelt" style="display:none;">';
+    if($PMSGCT == 1){
+      $PREVDIV .= estPrevMsgPvw($PREVMSG[0],1);
+      }
+    else{
+      foreach($PREVMSG as $mk=>$mv){$PREVDIV .= estPrevMsgPvw($mv);}
+      }
+    $PREVDIV .= '
+    </div>';
+    }
+  
+  $PMSGWARN = '';
+  if($PMSGCT >= intval($EST_PREF['contact_max'])){
+    $PMSGWARN = '<div id="estMsgWarn">'.EST_MSG_REACHMAX1.' '.$tp->toHTML($MSG['msg_to_name']).' 
+    '.(intval($MSG['msg_propidx']) > 0 && (intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3) ? EST_MSG_REACHMAX2 : '').'
+    </div>';
+    }
+  
+  return array($PREVDIV,$PMSGWARN);
+  }
+
+
+
 
 function est_msg_form($DTA=null){
 	if(!$DTA['prop_seller']){
     return (ADMIN ? EST_GEN_UNK.' '.EST_GEN_SELLER : '');
     }
   
-  $sql = e107::getDB();
+  //$sql = e107::getDB();
   $tp = e107::getParser();
   $COPY_PREF = e107::pref('contact_emailcopy');
   
@@ -334,32 +581,39 @@ function est_msg_form($DTA=null){
   $MSG = est_msg_proc($DTA);
   extract($MSG);
   
+  
   $EST_MSG_MODES = array(
-    0=>EST_GEN_CONTACT.' '.$DTA['prop_seller'].' ('.EST_GEN_SELECTONE.')',
-    3=>EST_MSG_IWANTOTHER
+    0=>EST_GEN_CONTACT.' '.$DTA['prop_seller'].' ('.EST_GEN_SELECTONE.')'
     );
   
-  $EST_COOKIE = $_COOKIE['estate-'.USERID.'-msgs']; //.intval($MSG['msg_propidx'])]
   
-  $SUBTXT = EST_MSG_SUB1A;
-  $TXTTXT = EST_MSG_TXT1A;
+  //$EST_COOKIE = $_COOKIE['estate-'.USERID.'-msgs']; //.intval($MSG['msg_propidx'])]
+  
+  $SUBTXT1 = EST_MSG_SUB1A;
+  $SUBTXT2 = EST_MSG_SUB2A;
+  
+  $TXTTXT1 = EST_MSG_TXT1A;
+  $TXTTXT2 = EST_MSG_TXT2A;
   
   switch(intval($DTA['prop_status'])){
     case 4 :  //Pending
-      $EST_MSG_MODES[1] = EST_MSG_IWANTOFFER;
-      $SUBTXT = EST_MSG_SUB1B;
-      $TXTTXT = EST_MSG_TXT1B;
+      $EST_MSG_MODES[2] = EST_MSG_IWANTOFFERB;
+      $SUBTXT2 = EST_MSG_SUB2B;
+      $TXTTXT2 = EST_MSG_TXT2B;
       break;
     case 3 : 
       $EST_MSG_MODES[1] = EST_MSG_IWANTVIEW;
+      $EST_MSG_MODES[2] = EST_MSG_IWANTOFFERA;
       break;
        
     case 2 : 
       if(intval($DTA['prop_datelive']) > 0 && intval($DTA['prop_datelive']) <= $MSG['msg_sent']){
         $EST_MSG_MODES[1] = EST_MSG_IWANTVIEW;
+        $EST_MSG_MODES[2] = EST_MSG_IWANTOFFERA;
         }
       elseif(USERID > 0 && (intval($DTA['prop_dateprevw']) > 0 && intval($DTA['prop_dateprevw']) <= $MSG['msg_sent'])){
         $EST_MSG_MODES[1] = EST_MSG_IWANTVIEW;
+        $EST_MSG_MODES[2] = EST_MSG_IWANTOFFERA;
         }
       else{
         
@@ -370,72 +624,19 @@ function est_msg_form($DTA=null){
   
   
   
-  if(intval($DTA['agent_idx']) > 0){$EST_MSG_MODES[2] = EST_MSG_IWANTSELL;}
-  
-  
-  //e107::getDate()->convert_date($post_list[0]['post_datestamp'], "forum")
-  
-  
+  if(intval($DTA['agent_idx']) > 0){
+    $EST_MSG_MODES[3] = EST_MSG_IWANTSELL;
+    $EST_MSG_MODES[4] = EST_MSG_IWANTOTHER;
+    }
   
   ksort($EST_MSG_MODES);
+  $PREVDIV = estPrevMsg($MSG);
   
-  $PREVMSG = array();
-  $AGO = mktime(0,0,0, date("m"), date("d") - intval($EST_PREF['contact_life']), date("Y"));
-  
-  $MQRY = "SELECT #estate_msg.* FROM #estate_msg WHERE ".(USERID > 0 ? " msg_from_uid='".USERID."'" : " msg_from_ip='".USERIP."' AND NOT msg_from_uid > '0'")." AND msg_sent >= '".$AGO."'"; 
-  
-  if(intval($EST_PREF['contact_maxto']) > 1){$MQRY .= " AND msg_read = '0'";}
-  
-  if(intval($MSG['msg_propidx']) > 0){
-    if(intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3){
-      $MQRY .= " AND msg_propidx='".$MSG['msg_propidx']."'";
-      }
-    }
-  else{
-    if(intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3){
-      $MQRY .= " AND NOT msg_propidx > '0'";
-      }
-    }
-  
-  
-  $MQRY .= " ORDER BY msg_sent DESC LIMIT ".intval($EST_PREF['contact_max']);
-  
-  $mi = 0;
-  $sql->gen($MQRY);
-  while($rows = $sql->fetch()){
-    $PREVMSG[$mi] = $rows;
-    $mi++;
-    }
-  
-  $PMSGCT = count($PREVMSG);
-  $PREVDIV = '
-  <div id="estMsgPrevDiv" class="WD100">
-    <h4 id="estPrevMsgBtn" class="btn btn-primary"'.($PMSGCT > 0 ? '' : ' style="display:none;"').'>'.EST_MSG_PREVMSG.' ('.$PMSGCT.')</h4>';
-  
-  if($PMSGCT > 0){
-    $PREVDIV .= '
-    <div id="estMsgPrevBelt" style="display:none;">';
-    if($PMSGCT == 1){
-      $PREVDIV .= estPrevMsgPvw($PREVMSG[0],1);
-      }
-    else{
-      foreach($PREVMSG as $mk=>$mv){$PREVDIV .= estPrevMsgPvw($mv);}
-      }
-    $PREVDIV .= '
-    </div>';
-    }
-  $PREVDIV .= '
-  </div>';
-  
-  
-  //<div>['.$tp->toDate($AGO,'short').']<p>'.$MQRY.'</p></div>
   
   $ret = '
   <div id="estMsgFormDiv" class="WD100">';
-  if($PMSGCT >= intval($EST_PREF['contact_max'])){
-    $ret .= '<div id="estMsgWarn">'.EST_MSG_REACHMAX1.' '.$tp->toHTML($DTA['prop_seller']).' 
-    '.(intval($MSG['msg_propidx']) > 0 && (intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3) ? EST_MSG_REACHMAX2 : '').'
-    </div>';
+  if(trim($PREVDIV[1]) !== ''){
+    $ret .= $PREVDIV[1];
     }
   else{
     $ret .= '
@@ -453,17 +654,22 @@ function est_msg_form($DTA=null){
           <td>
             <select name="msg_mode" class="tbox form-control" value="'.$msg_mode.'">';
     foreach($EST_MSG_MODES as $k=>$v){
-      $ret .= '<option value="'.$k.'"'.($k == $msg_mode ? 'selected="selected"' : '').' >'.$tp->toHTML($v).'</option>';
+      
+      $ret .= '<option value="'.$k.'">'.$tp->toHTML($v).'</option>'; //'.($k == $msg_mode ? 'selected="selected"' : '').'
       }
 
   
     $ret .= '
             </select>
             <div id="estMsgDefs" style="display:none;">
-              <div id="estT1">'.$TXTTXT.' '.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'. '.EST_MSG_END.'</div>
-              <div id="estT2">'.EST_MSG_TXT2.'</div>
-              <div id="estS1">'.$SUBTXT.': '.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'</div>
-              <div id="estS2">'.EST_MSG_SUB2.'</div>
+              <div id="estS1">'.$SUBTXT1.': '.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'</div>
+              <div id="estS2">'.$SUBTXT2.': '.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'</div>
+              <div id="estS3">'.EST_MSG_SUB3.'</div>
+              
+              <div id="estT1">'.$TXTTXT1.' '.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'. '.EST_MSG_END.'</div>
+              <div id="estT2">'.$TXTTXT2.' '.(trim($DTA['prop_name']) !== '' ? $DTA['prop_name'] : EST_MSG_APROP).'. '.EST_MSG_END.'</div>
+              <div id="estT3">'.EST_MSG_TXT3.'</div>
+              
               <div id="estMsgFNG">'.EST_MSG_FNG.'</div>
               <div id="estEmS1">'.EST_MSG_SEND.'<div>'.$tp->toHTML($DTA['prop_seller']).'</div></div>
               <div id="estMsgRes">'.EST_MSG_RESULTS.'</div>
@@ -553,7 +759,7 @@ function est_msg_form($DTA=null){
   $ret .= '
   </div>';
   
-  $ret .= $PREVDIV;
+  $ret .= '<div id="estMsgPrevDiv" class="WD100">'.$PREVDIV[0].'</div>';
   
   unset($PREVDIV);
   return $ret;
