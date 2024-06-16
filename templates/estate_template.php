@@ -75,15 +75,15 @@ if(!isset($EST_LIST_CAP)){
   $EST_LIST_CAP = '
   <div class="estCardTop">
     {PROP_LIST_BANNER}
-    {PROP_EDITICONS:for=card}
+    <div class="estCardTopIcons">{PROP_LIKE_ICON}{PROP_EDITICONS:for=card}</div>
     <a href="{PROP_LIST_LINKVIEW}">
       <div class="estCardTopName">{PROP_NAME}</div>
       <div>{PROP_CITYSTATE}</div>
       <div>{PROP_BULLETS1}</div>
-      <div>{PROP_VIEWCOUNT}</div>
+      <div>{PROP_LIKESVIEWS}</div>
     </a>
   </div>';
-  // • 
+  // or  {PROP_LIKES} {PROP_VIEWCOUNT}
   }
   
 if(!isset($EST_LIST_TXT)){
@@ -110,7 +110,7 @@ if(!isset($EST_VIEW_MENU)){
         <div class="WD100 noPADTB">
           <h3 class="sumCapt">{PROP_STATUS}</h3>
           <div><span class="FR">{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
-          <div>{PROP_MODELNAME}</div>
+          <div>{PROP_LIKES:bullet=right}{PROP_MODELNAME}</div>
         </div>
         <div class="estFLEXCol WD100 noPADTB">{PROP_AGENTCARD:img=1}</div>
         <div class="WD100 noPADTB">{PROP_EVENTS}</div>';
@@ -153,7 +153,7 @@ if(!isset($EST_MENU_MAIN)){
   $EST_MENU_MAIN = '
         <div class="noPADTB">
           <h3 class="sumCapt">{PROP_STATUS}</h3>
-          <div><span class="FR">{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
+          <div><span class="FR">{PROP_LIKES:bullet=right}{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
           <div>{PROP_MODELNAME}</div>
         </div>';
   }
@@ -198,7 +198,7 @@ $ESTATE_TEMPLATE['view']['default']['txt']['slideshow'] = '{EST_SLIDESHOW_TOP}';
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] = '<div class="estFLEXCont flexRev">';
 // include Summary & Seller Info if Theme layout is 'full' and/or est_menu.php is not loaded
 if($EST_MENU1 == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
-  $CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_MENU_HEAD}', false, $sc);
+  $CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_LIKE_ICON}', false, $sc);
   $TXT = $tp->parseTemplate($EST_VIEW_MENU, false, $sc);
   $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '<div class="estSummaryMenu">'.$ns->tablerender($CAPT,$TXT,'summary-table',true).'</div>';
   unset($CAPT,$TXT);
@@ -233,7 +233,7 @@ $ESTATE_TEMPLATE['view']['dynamic']['txt']['slideshow'] = '{EST_SLIDESHOW_TOP}';
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] = '<div class="estFLEXCont flexRev">';
 // include Summary & Seller Info if Theme layout is 'full' and/or est_menu.php is not loaded
 if($EST_MENU1 == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
-  $CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_MENU_HEAD}', false, $sc);
+  $CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_LIKE_ICON}', false, $sc);
   $TXT = $tp->parseTemplate($EST_VIEW_MENU, false, $sc);
   $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= '<div class="estSummaryMenu">'.$ns->tablerender($CAPT,$TXT,'summary-table',true).'</div>';
   unset($CAPT,$TXT);
@@ -283,7 +283,7 @@ $ESTATE_TEMPLATE['list']['default']['txt'] .= '</div>';
 //MENU DEFAULT LAYOUT
 $ESTATE_TEMPLATE['menu']['default']['name'] = EST_PREF_TEMPLATESDEF[2];
 $ESTATE_TEMPLATE['menu']['default']['ord'] = array('top','agent','saved','events','spaces');
-$CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_MENU_HEAD}', false, $sc);
+$CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_LIKE_ICON}', false, $sc);
 $TXT = $tp->parseTemplate($EST_MENU_MAIN, false, $sc);
 $ESTATE_TEMPLATE['menu']['default']['txt']['top'] = $ns->tablerender($CAPT, $TXT, 'estSideMenuTitle',true);
 
@@ -307,13 +307,13 @@ if(trim($TXT) !== ''){
 
 //MENU BASIC LAYOUT
 $ESTATE_TEMPLATE['menu']['basic']['name'] = 'Basic';
-$CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_MENU_HEAD}', false, $sc);
+$CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_LIKE_ICON}', false, $sc);
 $TXT = "
 <div class='WD100'>
   <div class='noPADTB'>
     <h3 class='sumCapt'>{PROP_STATUS}</h3>
     <div><span class='FR'>{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
-    <div>{PROP_MODELNAME}</div>
+    <div>{PROP_MODELNAME}{PROP_LIKES}</div>
   </div>
 </div>
 <div class='WD100'><h4>{AGENT_ROLL}</h4>{PROP_AGENTCARD:img=1}</div>
