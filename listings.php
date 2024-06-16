@@ -143,16 +143,20 @@ if(!$estQdta = $sql->retrieve($query,true)){
   else{
     $ns->tablerender(EST_GEN_LISTINGS,'<div id="estateCont"><h3>'.EST_GEN_NOLISTINGS.'</h3><div>'.EST_GEN_CHECKLATER.'</div></div>','estate-invalid');
     }
-  unset($query,$PROPID,$MQRY,$WHERE,$EST_PROP);
+  unset($query,$PROPID,$MQRY,$WHERE);
   require_once(FOOTERF);
   exit;
   }
 
 
+
+include_once('ui/qry.php'); // <-- generates $EST_PROP clean array;
+
 $dberr = $sql->getLastErrorText();
 if($dberr){e107::getMessage()->addError($dberr);}
 
-include_once('ui/qry.php');
+
+//$EST_SAVED
 
 if(count($EST_PROP) > 0){
   
@@ -160,6 +164,50 @@ if(count($EST_PROP) > 0){
     //include_once('ui/preview.php');
     exit;
     }
+  
+  $EST_SAVED = array();
+  
+
+  
+  
+  
+  if(check_class($EST_PREF['contact_class'])){
+    
+    foreach($EST_PROP as $MPID=>$MDTA){
+      $PREVMSG = estGetPrevMsgs($MPID);
+      $EST_PROP[$MPID]['msgd'] = $PREVMSG;
+      }
+    }
+  
+  if(check_class($EST_PREF['listing_save'])){
+    if($likeDta = $sql->retrieve("SELECT * FROM #estate_likes".($PROPID > 0 ? " WHERE like_pid='".$PROPID."'" : "")."",true)){
+      $EST_COOKIE = explode(",",$GLOBALS['EST_COOKIE_SAVED']);
+      foreach($likeDta as $k=>$v){
+        $MPID = intval($v['like_pid']);
+        
+        if($EST_PROP[$MPID]){
+          $EST_PROP[$MPID]['likes'] = intval($EST_PROP[$MPID]['likes']) + 1;
+          $cookieVal = $MPID.'-'.intval($v['like_idx']);
+          //if((USERID > 0 && intval($v['like_by_uid']) == USERID) || $v['like_by_ip'] == USERIP){}
+          if(in_array($cookieVal,$EST_COOKIE)){
+            $EST_PROP[$MPID]['saved'] = 1;
+            $EST_SAVED[$MPID]['name'] = $EST_PROP[$MPID]['prop_name'];
+            $EST_SAVED[$MPID]['thm'] = $EST_PROP[$MPID]['img'][1]['t'];
+            
+            }
+          }
+        }
+      }
+    
+    
+    unset($likeMsg,$likeDta,$k,$v,$MPID);
+    }
+  
+  
+  
+  
+  
+  
   
   if($qs[0] == 'view'){
     
@@ -183,8 +231,8 @@ if(count($EST_PROP) > 0){
       
       $estHead = $tp->toHTML($PROPDTA[0]['prop_name']);
       define('e_PAGETITLE',$estHead);
+      define('PAGE_NAME', $estHead);
       
-      //define('PAGE_NAME', 'Members');
       //e107::meta($name, $content, $extended);
       //e107::meta('keywords','some words'); // example
       //e107::meta('apple-mobile-web-app-capable','yes'); // example
@@ -254,19 +302,6 @@ if(count($EST_PROP) > 0){
     require_once(HEADERF);
     $tmpl = e107::getTemplate('estate');
     $tkey = (trim($EST_PREF['template_list']) !=='' ? $EST_PREF['template_list'] : 'default');
-    
-    /** 
-    * e107_class.php
-    * @param string $plug_name if null getCoreTemplate method will be called
-    * @param string $id - file prefix, e.g. calendar for calendar_template.php, or 'true' or 'null' for same as plugin name.
-    * @param string|null $key $YOURTEMPLATE_TEMPLATE[$key]
-    * @param boolean $override see {@link getThemeInfo()}
-    * @param boolean $merge merge theme with plugin templates, default is false
-    * @param boolean $info retrieve template info only
-    * 
-    * function getTemplate($plug_name, $id = null, $key = null, $override = true, $merge = false, $info = false){}
-    **/
-    
     $sc = e107::getScBatch('estate',true);
     if(is_array($tmpl['list'][$tkey]['txt'])){
       ksort($tmpl['list'][$tkey]['txt']);
@@ -292,6 +327,20 @@ echo '
 require_once(FOOTERF);
 exit;
 
+
+
+/** 
+* e107_class.php
+* @param string $plug_name if null getCoreTemplate method will be called
+* @param string $id - file prefix, e.g. calendar for calendar_template.php, or 'true' or 'null' for same as plugin name.
+* @param string|null $key $YOURTEMPLATE_TEMPLATE[$key]
+* @param boolean $override see {@link getThemeInfo()}
+* @param boolean $merge merge theme with plugin templates, default is false
+* @param boolean $info retrieve template info only
+* 
+* function getTemplate($plug_name, $id = null, $key = null, $override = true, $merge = false, $info = false){}
+**/
+    
 
 
 

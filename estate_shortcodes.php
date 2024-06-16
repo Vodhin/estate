@@ -33,9 +33,27 @@ class estate_shortcodes extends e_shortcode{
     }
   
   function sc_prop_viewcount($parm){
-    return intval($this->var['prop_views']).' '.(intval($this->var['prop_views']) == 1 ? EST_GEN_VIEW : EST_GEN_VIEWS);
+    return intval($this->var['prop_views']).' '.(intval($this->var['prop_views']) == 1 ? EST_GEN_VIEW : EST_GEN_VIEWS);;
     }
   
+  function sc_prop_likes($parm){
+    if(intval($this->var['likes']) > 0){
+      $txt = '<span title="'.$this->var['likes'].' '.EST_GEN_SAVEINQ.'">'.$this->var['likes'].' '.EST_GEN_SAVES.'</span>';
+      if($parm['bullet'] = 'right'){return $txt.' • ';}
+      elseif($parm['bullet'] = 'left'){return ' • '.$txt;}
+      else{return $txt;}
+      }
+    }
+  
+  
+  function sc_prop_likesviews($parm){
+    $txt = intval($this->var['prop_views']).' '.(intval($this->var['prop_views']) == 1 ? EST_GEN_VIEW : EST_GEN_VIEWS);
+    if(intval($this->var['likes']) > 0){
+      $txt .= ' • <span title="'.$this->var['likes'].' '.EST_GEN_SAVEINQ.'">'.$this->var['likes'].' '.EST_GEN_SAVEINQ.'</span>';
+      }
+    return $txt;
+    }
+    
   function sc_prop_list_linkview($parm){
 		//return e107::getUrl()->create('estate/listings.php?view.'.intval($this->var['prop_idx']).'.0', $this->var);
     return EST_PTH_LISTINGS.'?view.'.intval($this->var['prop_idx']).'.0';
@@ -256,7 +274,7 @@ class estate_shortcodes extends e_shortcode{
     }
   
   function sc_prop_nplisting($parm){
-    $ret = '['.$this->var['prop_prevIdx'].']';
+    //$ret = '['.$this->var['prop_prevIdx'].']';
     
     return $ret;
     }
@@ -618,7 +636,7 @@ class estate_shortcodes extends e_shortcode{
         //PROP_EDITICONS
         $ret['edit'] = '<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p><a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a><a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
       
-        $ret['lstedit'] = '<button class="estCardTopBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
+        $ret['lstedit'] = '<button class="estCardTopBtn" data-eurl="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
         
         if(EST_USERPERM == 4){$ret['edit'] .= '<a id="estFEReorder" title="'.EST_GEN_REORDER.'"><i class="fa fa-navicon"></i></a>'; }
         }
@@ -626,7 +644,7 @@ class estate_shortcodes extends e_shortcode{
     elseif(intval($GLOBALS['EST_PREF']['public_act']) !== 0 && USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
       if(intval($this->var['prop_agent']) === 0 && intval($this->var['prop_uidcreate']) == USERID){
         $ret['edit'] = '<a class="FR" href="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'" title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a>';
-        $ret['lstedit'] = '<button class="estCardTopBtn" data-url="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
+        $ret['lstedit'] = '<button class="estCardTopBtn" data-eurl="'.EST_PTH_LISTINGS.'?edit.'.intval($this->var['prop_idx']).'"  title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></button>';
         
         }
       }
@@ -756,23 +774,32 @@ class estate_shortcodes extends e_shortcode{
     }
   
   
-  function sc_prop_menu_head($parm){
-    if(check_class(e107::pref('estate','listing_save'))){
-      return '<a id="estLikeIcon-'.intval($this->var['prop_idx']).'" class="estLikeIcon FR" data-pid="'.intval($this->var['prop_idx']).'"><i class="fa-regular fa-heart"></i><i class="fa-solid fa-heart"></i></a>';
+  function sc_prop_like_icon($parm){
+    $msgd = count($this->var['msgd']);
+    if($msgd > 0){
+      return '<button id="estMsgdIcon-'.intval($this->var['prop_idx']).'" class="estCardTopBtn"  title="You have made '.$msgd.' '.($msgd == 1 ? 'Inquiry' : 'Inquiries' ).' about tis property"><i class="fa fa-solid fa-envelope"></i></i></button>';
+      }
+    elseif(check_class(e107::pref('estate','listing_save'))){
+      $saves = count($this->var['saved']);
+      return '<button id="estLikeIcon-'.intval($this->var['prop_idx']).'" class="estCardTopBtn'.($saves > 0 ? ' actv' : '').'" data-lpid="'.intval($this->var['prop_idx']).'" title="'.intval($this->var['likes']).' '.EST_GEN_SAVEINQ.'"><i class="fa fa-regular fa-heart"></i><i class="fa fa-solid fa-heart"></i></button>';
       }
     }
-  
   
   
   function sc_prop_saved_list($parm){
-    if(check_class(e107::pref('estate','listing_save'))){
-  		$tp = e107::getParser();
-      $ret = '
-      <div id="estSavedModule" class="noPADTB">
-      </div>';
-      return $ret;
-      }
+		$tp = e107::getParser();
+    
+    $txt = '
+    <div id="estSavedModule" class="noPADTB">';
+    
+    $txt .= $GLOBALS['EST_COOKIE_SAVED'];
+    $txt .= '
+    </div>';
+    return $txt.'BLURF ';
+      
     }
+  
+  
   
   
   

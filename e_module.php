@@ -7,6 +7,23 @@ if(e107::isInstalled('estate')){
   define("EST_USRLEVELS",array("",EST_ULVAGENT,EST_ULVMANAGER,EST_ULVADMIN,EST_ULVMAINADMIN));
   
   
+  define("EST_PTH_ADMIN", e_PLUGIN."estate/admin_config.php");
+  define("EST_PTH_LISTINGS", e_PLUGIN."estate/listings.php");
+  define("EST_PTH_AVATAR", e_MEDIA."avatars/upload/");
+  define("EST_PTHABS_AVATAR", SITEURLBASE.e_MEDIA_ABS."avatars/upload/");
+  define("EST_PATHABS", SITEURLBASE.e_PLUGIN_ABS."estate/");
+  define("EST_PATHABS_MEDIA", EST_PATHABS."media/");
+  define("EST_PATHABS_IMAGES", EST_PATHABS."images/");
+  define("EST_PTHABS_AGENCY", EST_PATHABS_MEDIA."agency/");
+  define("EST_PTHABS_AGENT", EST_PATHABS_MEDIA."agent/");
+  define("EST_PTHABS_PROPTHM", EST_PATHABS_MEDIA."prop/thm/");
+  define("EST_PTHABS_PROPFULL", EST_PATHABS_MEDIA."prop/full/");
+  define("EST_PTHABS_PROPVID", EST_PATHABS_MEDIA."prop/vid/");
+  define("EST_PTHABS_SUBDTHM", EST_PATHABS_MEDIA."subdiv/thm/");
+  define("EST_PTHABS_SUBDFULL", EST_PATHABS_MEDIA."subdiv/full/");
+  define("EST_PTHABS_SUBDVID", EST_PATHABS_MEDIA."subdiv/vid/");
+
+  
   if(USERID > 0){
     $tp = e107::getParser();
     $sql = e107::getDB();
@@ -115,12 +132,29 @@ if(EST_USERPERM == 4){
   }
   
   
+  $EST_COOK_OPTS = array(
+    'expires' => time() + 60 * 60 * 24 * 180,
+    'path' => '/', 
+    'domain' => e_DOMAIN, // '.'.leading dot for compatibility or use subdomain
+    'secure' => true,     // or false
+    'httponly' => true,    // or false
+    'samesite' => 'Strict' // None || Lax  || Strict
+    );
   
   if(check_class(e107::pref('estate','listing_save'))){
+    define("EST_COOKIESAVE","estSaved-".USERID);
+    $EST_COOKIE_SAVED = $_COOKIE[EST_COOKIESAVE];
     }
   
-  if(check_class(e107::pref('estate','contact_class'))){
+  if(EST_USERPERM > 0 || check_class(e107::pref('estate','contact_class'))){
+    define("EST_COOKIEMSG","estMsg-".USERID);
+    $EST_COOKIE_MSG = $_COOKIE[EST_COOKIEMSG];
     require_once(e_PLUGIN.'estate/ui/msg.php');
     }
+  
+  if(defined(EST_COOKIESAVE) || defined(EST_COOKIEMSG)){
+    
+    }
+  
   }
 ?>

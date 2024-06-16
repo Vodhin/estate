@@ -27,6 +27,12 @@ $TEMPLATE = $tmpl['menu'][$tkey];
 
 if(EST_USERPERM == 4){echo '<form name="estMenuTemplateForm" method="POST" action="'.e_SELF.'?'.e_QUERY.'" >';}
 echo '<div id="estMenuCont" class="WD100">';
+
+if(defined("EST_COOKIEMSG")){
+  echo estMsgInbox();
+  }
+
+
 if(e_PAGE == 'listings.php'){
   if($qs[0] == 'view'){
     if(strpos(strtolower(THEME_LAYOUT),'full') !== false){return '';}
@@ -77,7 +83,6 @@ if(e_PAGE == 'listings.php'){
   else{
     echo $tp->parseTemplate($tmpl['menu']['default']['txt']['saved'], false, $sc);
     }
-  
   }
 else{
   echo $ns->tablerender('Estate Menu', 'not on the listings page', 'estSideMenu1',true);
