@@ -12,6 +12,29 @@
   margin: 4px 0px 4px 0px;
   }
 
+#estInBoxBtn{
+  cursor:pointer;
+  }
+#estInBoxCont{
+  display: block;
+  position: relative;
+  width: 100%;
+  }
+#estInBoxCont div.estInBoxSect{
+  display:block;
+  position: relative;
+  width: 100%;
+  
+  }
+#estInBoxCont button.estSectBtn{
+  width:100%;
+  margin: 2px 0px 6px 0px;
+  text-align:left;
+  cursor:pointer;
+  }
+
+
+#estInBoxCont h4,
 #estMsgPrevDiv h4{
   width:100%;
   margin: 0px;
@@ -19,26 +42,33 @@
   cursor:pointer;
   }
 
-#estMsgPrevBelt{
-  display: none;
+
+.estMsgBelt{
   position: relative;
   width: 100%;
+  margin: 0px 0px 16px 0px;
+  background-color:inherit;
+  }
+
+
+#estMsgPrevDiv div.estMsgBelt{
+  display: none;
   height:0px;
   max-height:256px;
   overflow-y:auto;
   }
 
-#estMsgPrevDiv div.estMsgBtn{
-  
-  }
-#estMsgPrevDiv div.estMsgBtn button{
+
+
+.estMsgBelt div.estMsgBtn button{
   width: 100%;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   }
-#estMsgPrevDiv div.estMsgP{
+
+.estMsgBelt div.estMsgP{
   display:none;
   position:relative;
   background-color: rgba(32, 32, 32, 0.125);
@@ -48,6 +78,58 @@
   margin: 4px auto 16px auto;
   }
 
+.estMsgBelt div.estMsgP div.estInBoxHead{
+  display:block;
+  position:relative;
+  width:96%;
+  border:1px solid rgba(0,0,0,0.25);
+  margin: 0px 0px  0px 0px;
+  padding: 12px 2% 12px 2%;
+  }
+
+
+.estMsgBtnBlock{
+  position:relative;
+  width:100%;
+  padding:0px;
+  margin: 0px;
+  white-space:nowrap;
+  overflow:hidden;
+  }
+
+
+.estMsgBtnBlock button:first-child{
+  display:inline-block !important;
+  position:relative;
+  width:calc(100% - 82px) !important;
+  margin:0px !important;
+  border-top-right-radius:0px;
+  border-bottom-right-radius:0px;
+  border-right:0px;
+  vertical-align:middle;
+  }
+
+
+.estMsgBtnBlock button:nth-child(2){
+  display:inline-block !important;
+  position:relative;
+  width:38px !important;
+  margin:0px !important;
+  border-radius:0px;
+  border-left:0px;
+  border-right:0px;
+  vertical-align:middle;
+  }
+.estMsgBtnBlock button:last-child{
+  display:inline-block !important;
+  position:relative;
+  width:38px !important;
+  margin:0px !important;
+  vertical-align:middle;
+  border-top-left-radius:0px;
+  border-bottom-left-radius:0px;
+  border-left:0px;
+  }
 
 
 #estMsgFormTabl{

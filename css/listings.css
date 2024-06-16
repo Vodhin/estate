@@ -1,5 +1,8 @@
 *{box-sizing: border-box;}
 
+.btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus{
+  outline:none;
+  }
 
 /*div.container{background-color: inherit;}*/
 
@@ -106,26 +109,6 @@
   }
 
 
-
-
-
-
-.estLikeIcon{
-  font-size:1.15em;
-  border:0.10em solid transparent;
-  cursor:pointer;
-  }
-
-.estLikeIcon:hover{
-  text-decoration:none;
-  font-size:1.25em;
-  border:none;
-  }
-
-.estLikeIcon i:nth-child(1), .estLikeIcon svg:nth-child(1){display:block;}
-.estLikeIcon i:nth-child(2), .estLikeIcon svg:nth-child(2){display:none;}
-.estLikeIcon.actv i:nth-child(1), .estLikeIcon.actv svg:nth-child(1){display:none;}
-.estLikeIcon.actv i:nth-child(2), .estLikeIcon.actv svg:nth-child(2){display:block;}
 
 
 .estExpBtn{
@@ -819,19 +802,44 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   text-overflow:ellipsis;
   }
 
+.estCardTop div.estCardTopIcons{
+  position: absolute !important;
+  right: 0px;
+  top:0px;
+  width: 32px;
+  background-color:inherit;
+  cursor:pointer;
+  z-index:10;
+  }
+
 .estCardTopBtn{
-  position: absolute;
-  right:4px;
-  top:4px;
-  min-width: 32px;
-  border:none;
+  position: relative;
+  float: right;
+  width: 32px;
+  font-size:1.25em;
+  border:0.10em solid transparent;
+  /*border:none;*/
   background-color: transparent;
   z-index: 3;
   }
 
-.estCardTopBtn i{
-  font-size:1.5em;
+
+.estCardTopBtn:hover{
+  text-decoration:none;
+  font-size:1.35em;
+  border:none;
   }
+
+.estCardTopBtn i:nth-child(1), .estCardTopBtn svg:nth-child(1){display:block;}
+.estCardTopBtn i:nth-child(2), .estCardTopBtn svg:nth-child(2){display:none;}
+.estCardTopBtn.actv{color:#CC0000;}
+.estCardTopBtn.actv i:nth-child(1), .estCardTopBtn.actv svg:nth-child(1){display:none;}
+.estCardTopBtn.actv i:nth-child(2), .estCardTopBtn.actv svg:nth-child(2){display:block;}
+
+
+
+
+
 
 .estCardTopTab{
   display: block;
