@@ -9,6 +9,7 @@ if(intval(EST_USERPERM) < 1){exit;}
 define('ADMIN_AREA', true);
 */
 e107::lan('estate',true,true);
+e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
 
 $EMQRY = array();
 if(e_QUERY && e_QUERY !== ''){$EMQRY = explode('||',e_QUERY);}
@@ -1140,12 +1141,11 @@ function estGetAllDta($PROPID){
   
   foreach($TBLS as $tbl=>$v){
     $ESTTBL[$tbl]['flds'] = $sql->db_FieldList($tbl);
-    
+    if(!$ESTTBL[$tbl]['dta']){$ESTTBL[$tbl]['dta'] = array();}
     if(count($ESTTBL[$tbl]['dta']) == 0){
       if($ESTTABDTA[$tbl]){$ESTTBL[$tbl]['dta'] = ($sql->count($tbl) > 0 ? $sql->retrieve($tbl, '*',$ESTTABDTA[$tbl],true) : array());}
       else{$ESTTBL[$tbl]['dta'] = ($sql->count($tbl) > 0 ? $sql->retrieve($tbl, '*','',true) : array());}
       }
-      
       
     
     $ESTTBL[$tbl]['form'] = estTablForm($TBLS[$tbl],$ESTTBL[$tbl]['flds']);
@@ -1304,7 +1304,7 @@ function estJStext(){
     'spacecatzero'=>EST_SPCAT_ZERO,
     'startcrop'=>EST_IMG_CROPSTART,
     'cropbtns'=>array(EST_IMG_MOVEL,EST_IMG_MOVER,EST_IMG_MOVEU,EST_IMG_MOVED,EST_IMG_ZOOMO,EST_IMG_ZOOMI,EST_IMG_ROTL,EST_IMG_ROTR,EST_IMG_FLIPH,EST_IMG_FLIPV,EST_IMG_RESETC,EST_IMG_CROP),
-    'subdiv'=>EST_PROP_SUBDIV,
+    'subdiv'=>EST_GEN_SUBDIVISION,
     'table'=>EST_PROP_MSG_TABLE,
     'templnoopt'=>EST_PREF_TEMPLATE_NOORD,
     'templvieword'=>EST_PREF_TEMPLATE_VIEWORD,
