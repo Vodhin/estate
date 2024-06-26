@@ -10,6 +10,8 @@
 +----------------------------------------------------------------------------+
 */
 
+if(!defined("LAN_PREFS")){define("LAN_PREFS","Preferences");}
+
 define("EST_PLUGNAME", "Estate Agency");
 define("EST_PLUGCONFIG1", "Configure Estate Agency");
 define("EST_PLUGDESCRIPT", "A plugin for managing Real Estate listings");
@@ -96,6 +98,7 @@ define("EST_GEN_APPLYFILTER","Apply Filter");
 define("EST_GEN_ASSIGN","Assign");
 define("EST_GEN_AUTO","Auto");
 define("EST_GEN_AVAILABLE","Available");
+define("EST_GEN_BADFILTER1","No reusults found. Try changing or clearing your Filters.");
 define("EST_GEN_BATH","Bath");
 define("EST_GEN_BATHROOMS","Bathrooms");
 define("EST_GEN_BATHTOT","Total Bathrooms");
@@ -170,6 +173,7 @@ define("EST_GEN_FORSALE","For Sale");
 define("EST_GEN_FORSALEAUCT","For Sale - Auction");
 define("EST_GEN_FORSALESHORT","For Sale - Short Sale");
 define("EST_GEN_FOUND","Found");
+define("EST_GEN_FROM","From");
 define("EST_GEN_FULL","Full");
 define("EST_GEN_FULLADDLIST","Full Add Listing");
 define("EST_GEN_FULLADDR", "Full Address");
@@ -217,9 +221,9 @@ define("EST_GEN_MANDATORY","Mandatory");
 define("EST_GEN_MAP","Map");
 define("EST_GEN_MEDIA","Media");
 define("EST_GEN_MEDIAERRORS1","There were Errors with some Media files");
-
 define("EST_GEN_MEETING","Meeting");
 define("EST_GEN_MEMBER","Member");
+define("EST_GEN_MESSAGE","Message");
 define("EST_GEN_MESSAGES","Messages");
 define("EST_GEN_MOBILE","Mobile");
 define("EST_GEN_MODELNAME","Model Name");
@@ -256,6 +260,7 @@ define("EST_GEN_OTHER","Other");
 define("EST_GEN_OTHERPROP1","You are editing a property created by");
 define("EST_GEN_OTHERPROP2","This property was created by");
 define("EST_GEN_OVERVIEW","Overview");
+define("EST_GEN_PHONE","Phone");
 define("EST_GEN_PENDING","Pending");
 define("EST_GEN_PERMISSIONS","Permissions");
 define("EST_GEN_PLAYPAUSESLIDE","Click to Play/Pause Slideshow");
@@ -320,6 +325,7 @@ define("EST_GEN_TYPE","Type");
 define("EST_GEN_UNITSBLDG","Units In Bldg");
 define("EST_GEN_UNITSCOMPLX","Units In Complex");
 define("EST_GEN_UNK","Unknown");
+define("EST_GEN_UNNAMEDPROPERTY","Unnamed Listing");
 define("EST_GEN_UPDATETHIS","Update this");
 define("EST_GEN_UPDATE","Update");
 define("EST_GEN_UPLOADING","Uploading");
