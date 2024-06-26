@@ -29,7 +29,7 @@ input[type="file"]{
   width: 100%;
   margin: 6px auto 6px auto;
   border:1px solid #ABABAB;
-  background-color:#F5F5F5;
+  background-color:inherit;
   background-origin: padding-box;
   }
   

@@ -19,13 +19,17 @@
   display: block;
   position: relative;
   width: 100%;
+  background-color: inherit;
   }
 #estInBoxCont div.estInBoxSect{
   display:block;
   position: relative;
   width: 100%;
-  
+  background-color: inherit;
   }
+
+
+
 #estInBoxCont button.estSectBtn{
   width:100%;
   margin: 2px 0px 6px 0px;
@@ -59,29 +63,48 @@
   }
 
 
-
+.estMsgBelt div.estMsgBtn{
+  margin-top:2px;
+  background-color: inherit;
+  }
 .estMsgBelt div.estMsgBtn button{
   width: 100%;
   text-align: left;
+  padding: 4px 16px 4px 4px;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   }
+
+.estMsgP h4 i,
+.estMsgP h4 svg,
+.estMsgBelt div.estMsgBtn button i,
+.estMsgBelt div.estMsgBtn button svg{
+  float:right;
+  }
+
+
 
 .estMsgBelt div.estMsgP{
   display:none;
   position:relative;
-  background-color: rgba(32, 32, 32, 0.125);
-  width: 98%;
+  width: 100%;
+  line-height: 1.25em;
+  text-align: left;
+  background-color: rgba(32, 32, 32, 0.0625);
+  /*background-color: inherit;*/
+  /*border-top: none;*/
+  /*border-right: 1px solid rgba(0, 0, 0, 0.125);*/
+  /*border-bottom: 1px solid rgba(0, 0, 0, 0.125);*/
+  /*border-left: 1px solid rgba(0, 0, 0, 0.125);*/
+  border-radius: 0px 0px 3px 3px;
   padding: 8px 2%;
-  border-radius: 3px;
-  margin: 4px auto 16px auto;
+  margin: 0px auto 16px auto;
   }
 
 .estMsgBelt div.estMsgP div.estInBoxHead{
   display:block;
   position:relative;
-  width:96%;
+  width:100%;
   border:1px solid rgba(0,0,0,0.25);
   margin: 0px 0px  0px 0px;
   padding: 12px 2% 12px 2%;
@@ -98,7 +121,7 @@
   }
 
 
-.estMsgBtnBlock button:first-child{
+.estMsgBtnBlock div:first-child{
   display:inline-block !important;
   position:relative;
   width:calc(100% - 82px) !important;
@@ -107,23 +130,28 @@
   border-bottom-right-radius:0px;
   border-right:0px;
   vertical-align:middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   }
 
 
-.estMsgBtnBlock button:nth-child(2){
+.estMsgBtnBlock div:nth-child(2){
   display:inline-block !important;
   position:relative;
   width:38px !important;
   margin:0px !important;
+  text-align: center !important;
   border-radius:0px;
   border-left:0px;
   border-right:0px;
   vertical-align:middle;
   }
-.estMsgBtnBlock button:last-child{
+.estMsgBtnBlock div:last-child{
   display:inline-block !important;
   position:relative;
   width:38px !important;
+  text-align: center !important;
   margin:0px !important;
   vertical-align:middle;
   border-top-left-radius:0px;
@@ -131,6 +159,11 @@
   border-left:0px;
   }
 
+.estMsgBtnAct{
+  border-bottom-left-radius:0px;
+  border-bottom-right-radius:0px;
+  margin-bottom:0px !important;
+  }
 
 #estMsgFormTabl{
   margin:0px;
@@ -176,6 +209,13 @@
 .estChkMsg{border:1px solid rgba(128,128,128,0.7);}
 .estMsgNG{border:1px solid #AA0000;}
 
+
+.estNoteTxt{
+  font-size:9pt;
+  font-style:italic;
+  text-align:left;
+  line-height:1.15em;
+  }
 
 @media screen and (orientation:landscape){
   .dummy{}

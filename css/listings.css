@@ -805,7 +805,7 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
 .estCardTop div.estCardTopIcons{
   position: absolute !important;
   right: 0px;
-  top:0px;
+  top:3px;
   width: 32px;
   background-color:inherit;
   cursor:pointer;
@@ -832,7 +832,7 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
 
 .estCardTopBtn i:nth-child(1), .estCardTopBtn svg:nth-child(1){display:block;}
 .estCardTopBtn i:nth-child(2), .estCardTopBtn svg:nth-child(2){display:none;}
-.estCardTopBtn.actv{color:#CC0000;}
+.estCardTopBtn.actv{color:#FF5B5B;}
 .estCardTopBtn.actv i:nth-child(1), .estCardTopBtn.actv svg:nth-child(1){display:none;}
 .estCardTopBtn.actv i:nth-child(2), .estCardTopBtn.actv svg:nth-child(2){display:block;}
 
@@ -918,19 +918,23 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   overflow: hidden;
   }
 
+
+
+
 .estCardTopR {
   display: block;
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: -10px;
+  right: 8px;
   color: #FFFFFF;
-  /* border-radius: 3px; */
+  border: 3px solid #E5E5E5;
   overflow: hidden;
   z-index: 1010;
   box-shadow: 1px 1px 2px #0000009C;
-  -webkit-box-shadow: -1px 1px 2px #0000009C;
+  -webkit-box-shadow: 1px 1px 2px #0000009C;
   -moz-box-shadow: 1px 1px 2px #0000009C;
   }
+
 
 
 .estCardTopRImg{
@@ -994,6 +998,32 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   }
 
 
+#estNavMenu{
+  display:block;
+  position:relative;
+  width:100%;
+  cursor:pointer;
+  }
+
+#estNavMenu.estNavMenu{
+  
+  }
+#estNavMenu.estNavMenu div.btnlst{
+  display:block;
+  width:100%;
+  background-color:rgba(0,0,0,0.125);
+  margin-top:6px;
+  text-align:center;
+  padding: 6px;
+  }
+
+#estNavMenu.estNavBar{
+  background-color:rgba(0,0,0,0.125);
+  text-align:left;
+  padding:6px 6px 6px 6px;
+  }
+
+
 .estMarkRed{
   filter: hue-rotate(152deg);
   }
@@ -1004,6 +1034,12 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   filter: hue-rotate(266deg);
   }
 
+.estNoteTxt{
+  font-size:9pt;
+  font-style:italic;
+  text-align:left;
+  line-height:1.15em;
+  }
 
 #estLayoutPrefECont{
   display:block;
@@ -1072,7 +1108,11 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
 .WD96{width:96%;}
 .WD48{width:48%;}
 .WD32{width: 32%;}
-
+.ILBLK{
+  display:inline-block !important;
+  position:relative !important;
+  vertical-align:middle !important;
+  }
 .noPAD{
   padding:0px 0px 0px 0px !important;
   }
