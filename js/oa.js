@@ -3461,7 +3461,8 @@ function lightOrDark(color){
     $fltrEle = $('select[name="'+rfld+'"');
     var cVal = $fltrEle.find('option:selected').val();
     
-      
+    console.log(rtbl.tbl);
+    
     var grpGrep2 = $.grep(defs.tbls[rtbl.tbl].dta, function (element, index) {return element[fele.map[1]] == newVal;});
     
     if(grpGrep2.length > 1){

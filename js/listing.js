@@ -64,23 +64,26 @@ function estGetCookDta(name){
   }
 
 
-function estSetLike(ele,mode=0){
+function estSetLike(ele,cok=0){
   var pid = Number($(ele).data('lpid'));
   var estJSpth = $(document).data('estJSpth');
-  console.log(ele,pid,estJSpth);
   $.ajax({
     url: estJSpth+'ui/msg.php',
     type:'post',
-    data:{'sndLike':'js','tdta':{'sndLike':1,'pid':pid}},
+    data:{'sndLike':'js','tdta':{'sndLike':1,'pid':pid,'cok':cok}},
     dataType:'json',
     cache:false,
     processData:true,
     success: function(ret, textStatus, jqXHR){
       console.log(ret);
-      if(typeof ret.error !== 'undefined'){alert(ret.error);}
-      else{
-        if(ret.like > 0){$(ele).addClass('actv');}
-        else{$(ele).removeClass('actv');}
+      if(typeof ret.error !== 'undefined'){alert(ret.error); return;}
+      if(ret.like > 0){$(ele).addClass('actv'); var nCt = 1;}
+      else{$(ele).removeClass('actv'); var nCt = -1;}
+      if(document.getElementById('estPropLikeCt-'+pid)){
+        nCt = Number($('#estPropLikeCt-'+pid).data('ct')) + nCt;
+        $('#estPropLikeCt-'+pid).data('ct',nCt).prop('title',nCt+' '+$('#estPropLikeCt-'+pid).data('t')).html(nCt);
+        if(nCt > 0){$('#estPropLikeCt-'+pid).parent().show();}
+        else{$('#estPropLikeCt-'+pid).parent().hide();}
         }
       },
     error: function(jqXHR, textStatus, errorThrown){
@@ -103,7 +106,7 @@ function estSetLike(ele,mode=0){
   
   function estLnkBar(){
     $('#estMiniNav').append($('#estMiniSrc').html()).promise().done(function(){
-      //$('#estMiniSrc').remove();
+      $('#estMiniSrc').remove();
       $('body').on({click : function(){$('#estMiniNav p').hide();}});
       $('#estMiniNav p').css({'top':$('#estMiniNav').outerHeight()+'px','background-color':$('body').css('background-color')});
       $('#estMiniNav a').on({
@@ -200,29 +203,6 @@ function estSetLike(ele,mode=0){
       }
     }
   
-  /*
-  function estExpandArr(){
-    $('.estExpBtn').each(function(i,ele){
-      $(ele).on({
-        click : function(e){
-          e.preventDefault();
-          e.stopPropagation();
-          var ebTarg = $('#'+$(e.target).data('targ'));
-          if($(e.target).hasClass('estEBopen')){
-            $(ebTarg).animate({'height':'0px'});
-            $(e.target).removeClass('estEBopen');
-            }
-          else{
-            $(ebTarg).show();
-            var eH = $(ebTarg).find('div:first-child').outerHeight(true);
-            $(ebTarg).animate({'height':eH+'px'});
-            $(e.target).addClass('estEBopen');
-            }
-          }
-        });
-      });
-    }
-  */
   
   function estBuildMap(){
     if(typeof estMapPins !== 'undefined' && document.getElementById('estMap')){
@@ -231,7 +211,12 @@ function estSetLike(ele,mode=0){
         return;
         }
       
-      var estJSpth = $(document).data('estJSpth');//$('#estJSpth').data('pth');
+      if(typeof L == 'undefined'){
+        $('#estMapCont').remove();
+        estAlertLog('MAP Javascript failed to load');
+        return;
+        }
+      var estJSpth = $(document).data('estJSpth');
     	var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     		minZoom: 4,
     		maxZoom: 17,
@@ -312,7 +297,11 @@ function estSetLike(ele,mode=0){
                   var group = new L.featureGroup(propPoints);
                   map.fitBounds(group.getBounds(), {padding: L.point(25, 25)});
                   }
-                else{map.setView([estMapPins.prop[0].lat, estMapPins.prop[0].lon], 13);}
+                else{
+                  if(typeof estMapPins.prop[0].lat !== null && typeof estMapPins.prop[0].lon !== null){
+                    map.setView([estMapPins.prop[0].lat, estMapPins.prop[0].lon], 13);
+                    }
+                  }
                 }
               });
           });
@@ -398,23 +387,14 @@ function estSetLike(ele,mode=0){
       });
     
     $('.estCardTopBtn').each(function(i,ele){
-      if(typeof $(this).data('eurl') !== 'undefined'){
-        $(ele).on({
-          click: function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            window.location.assign($(this).data('url'));
-            }
-          });
-        }
-      else if(typeof $(this).data('lpid') !== 'undefined'){
-        $(ele).on({
-          click : function(e){
-            e.preventDefault();
-            estSetLike($(this));
-            }
-          });
-        }
+      $(ele).on({
+        click: function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          if(typeof $(ele).data('eurl') !== 'undefined'){window.location.assign($(ele).data('eurl'));}
+          else if(typeof $(ele).data('lpid') !== 'undefined'){estSetLike($(ele));}
+          }
+        });
       });
     }
   
