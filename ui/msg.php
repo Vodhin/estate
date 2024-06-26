@@ -4,14 +4,15 @@ if(!defined('e107_INIT')){
     define('e_TOKEN_DISABLE',true);
     require_once('../../../class2.php');
     e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
+    require_once('../estate_defs.php');
     $sql = e107::getDB();
     $tp = e107::getParser();
     $EST_PREF = e107::pref('estate');
-    $RES = array();
     //$RES['sent']['raw'] = $_POST['tdta'];
     }
   else{exit;}
   
+  $RES = array();
   if(isset($_POST['sndMsg'])){
     //$sec_img = e107::getSecureImg();
     if(!check_class($EST_PREF['contact_class'])){exit;}
@@ -43,7 +44,10 @@ if(!defined('e107_INIT')){
       }
     
     
-    if(!$AGENT && intval($MSG['msg_mode']) == 3){$RES['error'][$ei] = EST_MSG_ERRNOTAGENT; $ei++;}
+    if(intval($MSG['msg_mode']) > 2){
+      if(!$AGENT){$RES['error'][$ei] = EST_MSG_ERRNOTAGENT; $ei++;}
+      else{$MSG['msg_propidx'] = intval(0);}
+      }
     
     $sql->gen("SELECT user_id,user_name,user_loginname,user_login,user_email,user_lastvisit FROM #user WHERE user_id = '".$TOUID."'");
     $TOUSER = $sql->fetch();
@@ -180,7 +184,6 @@ if(!defined('e107_INIT')){
   
   
     if(e107::isInstalled('pm')){
-      $PM_TO_UID = intval();
       if($MSG['msg_to_uid'] > 0){
         $pm_prefs = e107::getPlugPref('pm');
         //$pmClass = varset($pm_prefs['pm_class'], e_UC_NOBODY);
@@ -226,6 +229,7 @@ if(!defined('e107_INIT')){
         $pm['pm_read_del'] = intval(0);
         $pm['pm_size'] = strlen($MSG['msg_text']);
         $MSG['msg_pm'] = $sql->insert('private_msg', $pm);
+        $sql->update("estate_msg","msg_pm='".intval($MSG['msg_pm'])."' WHERE msg_idx='".$MSGID."' LIMIT 1");
         }
       }
     
@@ -242,14 +246,22 @@ if(!defined('e107_INIT')){
     exit;
     }
   
-  if(isset($_POST['msgRead'])){
+  elseif(isset($_POST['msgRead'])){
+    //pmid
     $RES = array();
     $RES['dta'] = $_POST['tdta']['dta'];
     $IDX = intval($RES['dta']['idx']);
     if($IDX > 0){
       $PID = intval($RES['dta']['pid']);
+      
+      if(e107::isInstalled('pm')){$PMID = intval($RES['dta']['pmid']);}
+      else{$PMID = intval(0);}
+      
       if(intval($RES['dta']['del']) === $IDX){
-        if($sql->delete("estate_msg", "msg_idx='".$IDX."' LIMIT 1")){$RES['dta']['del'] = 1;}
+        if($sql->delete("estate_msg", "msg_idx='".$IDX."' LIMIT 1")){
+          $RES['dta']['del'] = 1;
+          if($PMID > 0){$sql->delete("private_msg", "pm_id='".$PMID."' LIMIT 1");}
+          }
         else{$RES['dta']['del'] = 0;}
         }
       else{
@@ -258,6 +270,7 @@ if(!defined('e107_INIT')){
         else{$RES['dta']['read'] = intval(0);}
         if($sql->update("estate_msg","msg_read='".intval($RES['dta']['read'])."' WHERE msg_idx='".$IDX."' LIMIT 1")){$RES['dta']['up'] = 1;}
         else{$RES['dta']['up'] = intval(0);}
+        if($PMID > 0){$sql->update("private_msg","pm_read='".intval($RES['dta']['read'])."' WHERE pm_id='".$PMID."' LIMIT 1");}
         }
       }
     //estPrevMsgPvw
@@ -266,38 +279,24 @@ if(!defined('e107_INIT')){
     exit;
     }
   
-  if(isset($_POST['sndLike'])){
+  elseif(isset($_POST['sndLike'])){
     $RES['like'] = 0;
     if(!check_class($EST_PREF['listing_save'])){exit;}
-    
     $PID = intval($_POST['tdta']['pid']);
     if($PID > 0){
-      $EST_COOKIE = explode(",",$GLOBALS['EST_COOKIE_SAVED']);
-      
-      //$EST_COOK_OPTS['expires'] = time() + 60 * 60 * 24 * intval($EST_PREF['contact_life']); //from e_module.php
-      
-      $likedb = $sql->retrieve("SELECT * FROM #estate_likes WHERE like_pid='".$PID."' AND ".(USERID > 0 ? " like_by_uid='".USERID."'" : " like_by_ip='".USERIP."' AND NOT like_by_uid > '0'")."",true);
+      $likedb = $sql->retrieve("SELECT * FROM #estate_likes WHERE like_pid='".$PID."' AND  like_uid='".USERID."' AND like_ip='".USERIP."'",true);
       if(count($likedb) > 0){
         foreach($likedb as $lk=>$lv){
-          $cookieVal = $PID.'-'.intval($lv['like_idx']);
           if($sql->delete("estate_likes", "like_idx = '".intval($lv['like_idx'])."' LIMIT 1")){
             $RES['rem'][$lk] = $lv['like_idx'];
-            $key = array_search($cookieVal,$EST_COOKIE);
-            unset($EST_COOKIE[$key]);
             }
           }
         $RES['like'] = -1;
         }
       else{
-        $RES['like'] = $sql->insert("estate_likes","'0','".$PID."','".intval(USERID)."','".(intval(USERID) == 0 ? USERIP : 0)."'");
-        if($RES['like'] > 0){
-          $cookieVal = $PID.'-'.intval($RES['like']);
-          if(!in_array($cookieVal,$EST_COOKIE)){
-            array_push($EST_COOKIE,$cookieVal);
-            }
-          }
+        $RES['like'] = $sql->insert("estate_likes","'0','".$PID."','".intval(USERID)."','".USERIP."'");
+        
         }
-      setcookie(EST_COOKIESAVE, implode(",",$EST_COOKIE), $EST_COOK_OPTS);
       }
     echo $tp->toJSON($RES);
     unset($RES);
@@ -321,7 +320,6 @@ e107::css('url',e_PLUGIN.'estate/css/msg.css');
 e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
 e107::js('estate','js/msg.js', 'jquery');
 
-
 define("EST_MSGTYPES",array('',EST_MSG_SHOWINGREQUESTS,EST_MSG_OFFERS,EST_MSG_QUOTEREQ,EST_MSG_OTHERQUESTIONS));
 
 
@@ -342,6 +340,8 @@ function est_msg_proc($DTA){
     
     unset($udta);
     }
+  
+  
   
   $MSG = array(
     'msg_idx'=>(intval($DTA['msg_idx']) > 0 ? intval($DTA['msg_idx']) : intval(0)),
@@ -369,35 +369,40 @@ function est_msg_proc($DTA){
 
 function estPrevMsgPvw($mv,$mode=0){
   $tp = e107::getParser();
+  
+  if(intval($mv['msg_read']) > 0){
+    $Btn2ttl = 'title="'.EST_MSG_MARKUNREAD.'" data-ttl="'.EST_MSG_MARKREAD.'"';
+    $BTN2Cls = 'fa fa-arrow-up';
+    $BTNEnv = '<i class="fa fa-envelope-open"></i>';
+    }
+  else{
+    $Btn2ttl = 'title="'.EST_MSG_MARKREAD.'" data-ttl="'.EST_MSG_MARKUNREAD.'"';
+    $BTN2Cls = 'fa fa-check';
+    $BTNEnv = '<i class="fa fa-envelope"></i>';
+    }
+  
   switch($mode){
     case 2 :
       //<i class=""></i>
       //<i class="fa fa-solid fa-trash-arrow-up"></i>
       
-      if(intval($mv['msg_read']) > 0){
-        $Btn2ttl = 'title="'.EST_MSG_MARKUNREAD.'" data-ttl="'.EST_MSG_MARKREAD.'"';
-        $BTN2Cls = 'fa fa-solid fa-square-check';
-        }
-      else{
-        $Btn2ttl = 'title="'.EST_MSG_MARKREAD.'" data-ttl="'.EST_MSG_MARKUNREAD.'"';
-        $BTN2Cls = 'fa fa-regular fa-square-check';
-        }
       
       return '
-          <div class="estMsgBtn" data-idx="'.intval($mv['msg_idx']).'" data-pid="'.intval($mv['msg_propidx']).'" data-mode="'.intval($mv['msg_mode']).'" data-read="'.intval($mv['msg_read']).'" data-del="0">
-            <div class="estMsgBtnBlock">
-              <button class="btn estViewMsg">'.$tp->toHTML($mv['msg_top']).'</button>
-              <button class="btn estMarkMsg" '.$Btn2ttl.'><i class="'.$BTN2Cls.'"></i></button>
-              <button class="btn estDelMsg" title="'.EST_MSG_DELETE.'" data-msg="'.EST_MSG_DELALERT.'"><i class="fa fa-regular fa-trash-can"></i></button>
-            </div>
+          <div class="estMsgBtn" data-idx="'.intval($mv['msg_idx']).'" data-pid="'.intval($mv['msg_propidx']).'" data-mode="'.intval($mv['msg_mode']).'" data-read="'.intval($mv['msg_read']).'" data-pmid="'.intval($mv['msg_pm']).'" data-del="0">
+            <button class="btn dtn-default estMsgBtnBlock">
+              <div class="estViewMsg">'.$tp->toHTML($mv['msg_top']).'</div>
+              <div class="estMarkMsg" '.$Btn2ttl.'><i class="'.$BTN2Cls.'"></i></div>
+              <div class="estDelMsg" title="'.EST_MSG_DELETE.'" data-msg="'.EST_MSG_DELALERT.'"><i class="fa fa-trash-can"></i></div>
+            </button>
             <div class="estMsgP">
               <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
               <p>'.$tp->toHTML($mv['msg_text']).'</p>
               <div class="estInBoxHead">
-                <div>'.EST_MSG_RECD.' '.$tp->toDate($mv['msg_sent'],'long').'</div>
-                <div>From '.$tp->toHTML($mv['msg_from_name']).' </div>
-                <div>Email '.$tp->toHTML($mv['msg_from_addr']).' </div>
-                <div>Phone '.$tp->toHTML($mv['msg_from_phone']).' </div>
+                <div>'.EST_MSG_RECD.': '.$tp->toDate($mv['msg_sent'],'long').'</div>
+                <div>'.EST_GEN_FROM.': '.$tp->toHTML($mv['msg_from_name']).' '.(intval($mv['msg_from_uid']) == 0 ? '('.EST_GEN_NONMEMBER.')' : '').' </div>
+                <div>'.EST_GEN_EMAIL.': '.$tp->toHTML($mv['msg_from_addr']).' </div>
+                <div>'.EST_GEN_PHONE.': '.$tp->toHTML($mv['msg_from_phone']).' </div>
+                <div>'.EST_MSG_PRIVATEMSG.': '.(intval($mv['msg_from_uid']) == 0 ? EST_GEN_NOT.' '.EST_GEN_AVAILABLE : (intval($mv['msg_pm']) == 1 ? EST_MSG_PMSENT : EST_MSG_PMNOTSENT)).' </div>
               </div>
             </div>
           </div>';
@@ -406,7 +411,7 @@ function estPrevMsgPvw($mv,$mode=0){
     case 1 :
       return '
       <div class="estMsgP" style="display:block;">
-        <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
+        <h4>'.$BTNEnv.$tp->toHTML($mv['msg_top']).'</h4>
         <h5>'.$tp->toDate($mv['msg_sent'],'long').(intval($mv['msg_read']) > 0 ? ' <i>'.EST_MSG_RECD.' '.$tp->toDate($mv['msg_read'],'short').'</i>' : '').'</h5>
         <p>'.$tp->toHTML($mv['msg_text']).'</p>
       </div>';
@@ -415,7 +420,7 @@ function estPrevMsgPvw($mv,$mode=0){
     default :
       return '
       <div class="estMsgBtn">
-        <button class="btn btn-default">'.$tp->toHTML($mv['msg_top']).'</button>
+        <button class="btn btn-default estViewMsg">'.$BTNEnv.$tp->toHTML($mv['msg_top']).'</button>
         <div class="estMsgP">
         <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
         <h5>'.$tp->toDate($mv['msg_sent'],'long').(intval($mv['msg_read']) > 0 ? ' <i>'.EST_MSG_RECD.' '.$tp->toDate($mv['msg_read'],'short').'</i>' : '').'</h5>
@@ -436,10 +441,12 @@ function estGetPrevMsgs($PID=0,$QRY=0){
   $PREVMSG = array();
   $AGO = mktime(0,0,0, date("m"), date("d") - intval($EST_PREF['contact_life']), date("Y"));
   $MQRY = "SELECT #estate_msg.* FROM #estate_msg WHERE ".(USERID > 0 ? "msg_from_uid='".USERID."'" : "msg_from_ip='".USERIP."' AND NOT msg_from_uid > '0'")." AND msg_sent >= '".$AGO."'";
+  
   if(intval($EST_PREF['contact_maxto']) > 1){$MQRY .= " AND msg_read = '0'";}
+  
   if(intval($PID) > 0){
     if(intval($EST_PREF['contact_maxto']) == 1 || intval($EST_PREF['contact_maxto']) == 3){
-      $MQRY .= " AND msg_propidx='".$PID."'";
+      $MQRY .= " AND msg_propidx='".$PID."'"; // OR (msg_propidx='0' AND msg_mode > '2')
       }
     }
   else{
@@ -454,11 +461,6 @@ function estGetPrevMsgs($PID=0,$QRY=0){
     $PREVMSG[$mi] = $rows;
     $mi++;
     }
-    
-  
-  
-  
-    
   return $PREVMSG;
   }
 
@@ -481,7 +483,8 @@ function estMsgInbox(){
   if(EST_USERPERM > 0 || count($MSGS) > 0){
     $NMSGC = 0;
     $RMSG = array();
-    $txt = '<div id="estInBoxCont" data-jspth="'.EST_PATHABS.'">';
+    $txt = '
+    <div id="estInBoxCont" data-jspth="'.SITEURLBASE.e_PLUGIN_ABS.'estate/">';
     foreach(EST_MSGTYPES as $tk=>$tv){
       $SMSGC = 0;
       foreach($MSGS[$tk] as $mk=>$mv){
@@ -491,19 +494,18 @@ function estMsgInbox(){
           $NMSGC++; $SMSGC++;
           }
         }
-
       $txt .= '
       <div class="estInBoxSect estNewMsgs"'.($SMSGC > 0 ? '' : ' style="display:none;"').'>
         <button class="btn btn-primary estSectBtn">'.EST_GEN_NEW.' '.$tp->toHTML($tv).' (<span>'.$SMSGC.'</span>)</button>
+        
         <div id="estInBoxBelt-'.$tk.'" class="estMsgBelt" data-tk="'.$tk.'" style="display:none;">'.$MSGTXT.'</div>
       </div>';
       unset($MSGTXT);
       }
     
-    
     $txt .= '
       <div class="estInBoxSect"'.(count($RMSG) > 0 ? '' : ' style="display:none;"').'>
-        <button class="btn btn-primary estSectBtn">'.EST_MSG_PREVMSG.' (<span>'.count($RMSG).'</span>)</button>
+        <button class="btn btn-primary estSectBtn">'.EST_MSG_READ.' '.EST_GEN_MESSAGES.' (<span>'.count($RMSG).'</span>)</button>
         <div id="estInBoxBelt-read" class="estMsgBelt" data-tk="read" style="display:none;">';
       if(count($RMSG) > 0){
         foreach($RMSG as $mk=>$mv){
@@ -513,12 +515,17 @@ function estMsgInbox(){
       $txt .= '
         </div>
       </div>
+      <p id="estMsgPlsMrk" class="estNoteTxt" '.($NMSGC > 0 ? '' : ' style="display:none;"').'>'.EST_MSG_INBOXNOTE1.'</p>
     </div>';
-    $capt = '<a id="estInBoxBtn">'.EST_MSG_INBOX.' (<span id="estMsgCtNew">'.intval($NMSGC).'</span> '.EST_GEN_NEW.')</a>';
-    unset($MSGS,$RMSG,$NMSGC,$SMSGC);
-    return $ns->tablerender($capt, $txt, 'estMessagesMenu1',true);
+    
+    $capt = '<a id="estInBoxBtn">'.(EST_USERPERM > 0 ? EST_GEN_AGENT : EST_GEN_SELLER).' '.EST_MSG_INBOX.' (<span id="estMsgCtNew">'.intval($NMSGC).'</span> '.EST_GEN_NEW.')</a>';
+    
+    $retrn = $ns->tablerender($capt, $txt, 'estInboxMenu1',true);
+    
+    unset($MSGS,$RMSG,$NMSGC,$SMSGC,$capt,$txt);
+    
+    return $retrn;
     }
-  
   }
 
 
@@ -528,12 +535,27 @@ function estPrevMsg($MSG){
   //$sql = e107::getDB();
   $tp = e107::getParser();
   $EST_PREF = e107::pref('estate');
+  $MPID = intval($MSG['msg_propidx']);
+  $mctr = 0;
+  $mctu = 0;
   
-  $PREVMSG = estGetPrevMsgs($MSG['msg_propidx']);
-  
+  $PREVMSG = estGetPrevMsgs($MPID);
   $PMSGCT = count($PREVMSG);
+  
+  if($PMSGCT > 0){
+    foreach($PREVMSG as $mk=>$mv){
+      if($mv['msg_read'] > 0){$mctr++;}
+      else{$mctu++;}
+      
+      if($MPID > 0 && intval($mv['msg_propidx']) == $MPID){
+        
+        }
+      
+      }
+    }
+  
   $PREVDIV = '
-    <h4 id="estPrevMsgBtn" class="btn btn-primary"'.($PMSGCT > 0 ? '' : ' style="display:none;"').'>'.EST_MSG_PREVMSG.' ('.$PMSGCT.')</h4>';
+    <h4 id="estPrevMsgBtn" class="btn btn-primary"'.($PMSGCT > 0 ? '' : ' style="display:none;"').'>'.EST_MSG_PREVMSG.' ('.$mctr.' '.EST_MSG_READ.', '.$mctu.' '.EST_MSG_UNREAD.')</h4>';
   
   if($PMSGCT > 0){
     $PREVDIV .= '
@@ -677,7 +699,7 @@ function est_msg_form($DTA=null){
               <div id="estEmSent1">'.EST_MSG_EMSENT1.'</div>
               <div id="estEmSent4">'.EST_MSG_EMSENT4.'</div>
               <div id="estEmSent5">'.EST_MSG_EMSENT5.'</div>
-              <div id="estPmSent">'.EST_MSG_PMSENT.'</div>
+              <div id="estPmSent">'.EST_MSG_PMALSOSENT.'</div>
               <div id="estThks1">'.EST_MSG_THANKS1.'</div>
               <div id="estThks2">'.EST_MSG_THANKS2.'</div>
             </div>

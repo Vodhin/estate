@@ -194,7 +194,7 @@ class estate_agencies_ui extends e_admin_ui{
       $TBS[2]['caption'] = EST_GEN_ADDNEWUSER;
       $TBS[2]['text'] = '<form method="post" action="'.e_SELF.'?mode=estate_agencies&action=list" id="estNewUserPage" enctype="multipart/form-data" '.$dataStr.'>';
       $TBS[2]['text'] .= $estateCore->estAgentForm('anu');
-      $TBS[2]['text'] .= '<div class="buttons-bar center">'.$frm->admin_button('estProfileSubmit',(intval($formDta['user_id']) > 0 ? LAN_UPDATE : LAN_SAVE), 'submit').'</div></form>';
+      $TBS[2]['text'] .= '<div class="buttons-bar center">'.$frm->admin_button('estProfileSubmit',LAN_CREATE, 'submit').'</div></form>';
       }
     
     return $frm->tabs($TBS, array('active' => intval($this->getID()),'fade' => 0,'class' => 'estOATabs'));

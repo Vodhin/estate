@@ -59,24 +59,28 @@ if(EST_USERPERM > 0){
     
     if($KEY == 6 && intval($PDTA['agent_idx']) == 0){
       if($sql->count('estate_agents', "(*)", "WHERE `agent_name`='".$tp->toDB($PDTA['agent_name'])."'")){
-        $USRERR['error']['agent'] = EST_ERR_DUPEAGENT.'<p>'.EST_ERR_DUPEAGENT1.'</p>';
+        $msg->addWarning(EST_ERR_DUPEAGENT.'<p>'.EST_ERR_DUPEAGENT1.'</p>');
+        return;
         }
       }
 		
     if($KEY == 5 && intval($PDTA['agency_idx']) == 0){
       if($sql->count('estate_agencies', "(*)", "WHERE `agency_name`='".$tp->toDB($PDTA['agency_name'])."'")){
-        $USRERR['error']['agency'] = EST_ERR_DUPEAGENCY.'<p>'.EST_ERR_DUPEAGENCY1.'</p>';
+        $msg->addWarning(EST_ERR_DUPEAGENCY.'<p>'.EST_ERR_DUPEAGENCY1.'</p>');
+        return;
         }
       }
     
     if(isset($PDTA['estNewUserKey']) && intval($PDTA['estNewUserKey']) === 1){
       $ANU = intval(e107::pref('estate','addnewuser'));
+      $ESTNEWUSRPOST = -1;
       if($ANU > 1 && EST_USERPERM >= $ANU){
   		  require_once (e_HANDLER.'resize_handler.php');
         require_once(e_HANDLER.'user_handler.php');
-        $UserHandler = new UserHandler;
+        $UserHandler = new UserHandler; //vG'e?2Qi4:9K
         //$userMethods = e107::getUserSession();
         
+        $estNewUserId = intval(0);
         
         $USRPOST = array(
           'user_id'=>'0',
@@ -94,22 +98,26 @@ if(EST_USERPERM > 0){
         
         $USRDTA = array();
         $USRFLDS = $sql->db_FieldList('user');
-        foreach($USRFLDS as $k=>$v){$USRDTA[$v] = ($USRPOST[$v] ? $USRPOST[$v] : '');}
+        foreach($USRFLDS as $k=>$v){$USRDTA[$v] = (isset($USRPOST[$v]) ? $USRPOST[$v] : '');}
         unset($USRFLDS);
         
-        
-				if($sql->count('user', "(*)", "WHERE `user_name`='".$USRDTA['user_name']."' OR  `user_loginname`='".$USRDTA['user_loginname']."' OR  `user_login`='".$USRDTA['user_login']."' OR  `user_email`='".$USRDTA['user_email']."'")){
-          $USRERR['error']['user'] = EST_ERR_DUPEUSER.'<p>'.EST_ERR_DUPEUSER1.'</p>';
+        $exUser = $sql->count('user', "(*)", "WHERE `user_name`='".$USRDTA['user_name']."' OR  `user_loginname`='".$USRDTA['user_loginname']."' OR  `user_login`='".$USRDTA['user_login']."' OR  `user_email`='".$USRDTA['user_email']."'");
+				if($exUser > 0){
+          $msg->addWarning(EST_ERR_DUPEUSER.'<p>'.EST_ERR_DUPEUSER1.'</p>');
+          return;
           }
         
-        if(count($USRERR['error']) == 0){
-          $user_id = $sql->insert("user",$USRDTA);
-          $dberr = $sql->getLastErrorText();
-          if($dberr){$USRERR['error']['user'] .= '<p>'.$dberr.'</p>';}
+        $estNewUserId = $sql->insert("user",$USRDTA);
+        $dberr = $sql->getLastErrorText();
+        if($dberr){
+          $msg->addWarning('<p>'.$dberr.'</p>');
+          unset($dberr);
+          return;
           }
-        
-				if(count($USRERR['error']) == 0 && intval($user_id) > 0){
-          $PDTA['agent_uid'] = intval($user_id);
+          
+  				
+        if(intval($estNewUserId) > 0){
+          $PDTA['agent_uid'] = intval($estNewUserId);
           $ESTURSID = $PDTA['agent_uid'];
           $ESTNEWUSRPOST = $PDTA['agent_uid'];
           
@@ -117,20 +125,21 @@ if(EST_USERPERM > 0){
             $ESTNEWUSERIMG = true;
   				  $opts = array('overwrite' => TRUE, 'file_mask'=>'jpg,png,gif,jpeg', 'max_file_count' => 2);
             
-            if($uploaded = e107::getFile()->getUploaded(e_AVATAR_UPLOAD, 'prefix+ap_'.$tp->leadingZeros($user_id,7).'_', $opts)){
-              $PDTA['user_image'] = '-upload-'.$uploaded[0]['name'];
-              if($sql->update("user","user_image='".$tp->toDB($PDTA['user_image'])."' WHERE user_id='".intval($user_id)."' LIMIT 1")){
-                //$msg->addInfo("Saved Avatar: ".$PDTA['user_image']);
-                }
-              else{
-                $dberr = $sql->getLastErrorText();
-                $USRERR['warn']['user']['avatar'] = "Avatar NOT Saved: ".$PDTA['user_image'].'<p>'.$dberr.'</p>';
+            if($uploaded = e107::getFile()->getUploaded(e_AVATAR_UPLOAD, 'prefix+ap_'.$tp->leadingZeros($estNewUserId,7).'_', $opts)){
+              if(isset($uploaded[0]['error']) && isset($uploaded[0]['message'])){
+                //$msg->addDebug("Uploaded: ".print_a($uploaded,true));
+    						$msg->addWarning('<div>'.$uploaded[0]['error'].'<p>'.$uploaded[0]['message'].'</p></div>');
                 unset($dberr);
                 }
-              //$msg->addDebug("Uploaded: ".print_a($uploaded,true));
-              if(isset($uploaded[0]['error']) && isset($uploaded[0]['message'])){
-    						$USRERR['warn']['user']['avatar'] .= '<div>'.$uploaded[0]['error'].'<p>'.$uploaded[0]['message'].'</p></div>';
-    						}
+              else{
+                $PDTA['user_image'] = '-upload-'.$uploaded[0]['name'];
+                $sql->update("user","user_image='".$tp->toDB($PDTA['user_image'])."' WHERE user_id='".intval($estNewUserId)."' LIMIT 1");
+                $dberr = $sql->getLastErrorText();
+                if($dberr){
+                  $msg->addWarning('Avatar NOT Saved: '.$PDTA['user_image'].'<p>'.$dberr.'</p>');
+                  unset($dberr);
+                  }
+                }
               }
             }
           }
@@ -142,8 +151,6 @@ if(EST_USERPERM > 0){
       unset($USRFLDS);
       }
     
-    
-    
     if(isset($ESTURSID)){$PDTA[$KYS[$KEY][3]] = 0;}
     
     if(intval($PDTA[$KYS[$KEY][3]]) == 1){
@@ -151,13 +158,6 @@ if(EST_USERPERM > 0){
       //if(trim($_FILES['estAvatarUpload']['name']) === '' && trim($PDTA[$KYS[$KEY][2]]) === ''){$PDTA[$KYS[$KEY][3]] = 0;}
       }
     
-    
-    if(count($USRERR['error']) > 0){foreach($USRERR['error'] as $ek=>$ev){$msg->addError($ev);}}
-    if(count($USRERR['warn']) > 0){foreach($USRERR['warn'] as $ek=>$ev){$msg->addWarning($ev);}}
-    if(count($USRERR['error']) > 0 || count($USRERR['warn']) > 0){
-      $ESTNEWUSRPOST = -1;
-      return;
-      }
     
     
     $estateCore = new estateCore;

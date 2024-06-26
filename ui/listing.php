@@ -1535,15 +1535,16 @@ class estate_listing_ui extends e_admin_ui{
 		public function init() {
       $tp = e107::getParser();
       $mes = e107::getMessage();
+      $frm = e107::getForm(false, true);
       
 			$this->fields['prop_country']['writeParms']['default'] = 'blank';
-			$this->fields['prop_country']['writeParms']['optArray'] = e_form::getCountry();
+			$this->fields['prop_country']['writeParms']['optArray'] = $frm->getCountry();
 			$this->fields['prop_country']['writeParms']['default'] = 'blank';
       
-			$this->prefs['country']['writeParms']['optArray'] = e_form::getCountry();
+			$this->prefs['country']['writeParms']['optArray'] = $frm->getCountry();
       
       $data2 = array();
-      if(count($GLOBALS['EST_PROPSTATUS'])){foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$data2[$k] = $v['opt'];}}
+      if(isset($GLOBALS['EST_PROPSTATUS']) && count($GLOBALS['EST_PROPSTATUS'])){foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$data2[$k] = $v['opt'];}}
       $this->fields['prop_status']['writeParms']['optArray'] = $data2;
       
       //$this->fields['prop_datecreated']['writeParms']['value'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
@@ -1960,7 +1961,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
     switch($mode){
 			case 'read': // List Page
         $text = $frm->select_open("prop_listype",array('value'=>$curVal,'size'=>'large'));
-        if(count($GLOBALS['EST_LISTTYPE1']) > 0){
+        if(isset($GLOBALS['EST_LISTTYPE1']) && count($GLOBALS['EST_LISTTYPE1']) > 0){
           foreach($GLOBALS['EST_LISTTYPE1'] as $K=>$V){
             $text .= '<option value="'.$K.'"'.($K == $curVal ? ' selected="selected"' : '').'>'.$tp->toHTML($V).'</option>';
             }
@@ -1972,7 +1973,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
 
 			case 'write': // Edit Page
         $text = $frm->select_open("prop_listype",array('value'=>$curVal,'size'=>'xlarge'));
-        if(count($GLOBALS['EST_LISTTYPE1']) > 0){
+        if(isset($GLOBALS['EST_LISTTYPE1']) && count($GLOBALS['EST_LISTTYPE1']) > 0){
           foreach($GLOBALS['EST_LISTTYPE1'] as $K=>$V){
             $text .= '<option value="'.$K.'"'.($K == $curVal ? ' selected="selected"' : '').'>'.$tp->toHTML($V).'</option>';
             }
@@ -2117,9 +2118,9 @@ class estate_listing_form_ui extends e_admin_form_ui{
     switch($mode){
 			case 'write':
         //$dta = array('defevtlen'=>array('n'=>'sched_evt_lengths','v'=>$curVal,'h'=>array(EST_PREF_DEFHRSHINT0,EST_PREF_DEFHRSHINT1)));
-        if(!$curVal || count($curVal) == 0){
+        if(!is_array($curVal) || count($curVal) == 0){
           $curVal = array();
-          if(count($GLOBALS['EST_EVENTS']) > 0){foreach($GLOBALS['EST_EVENTS'] as $k=>$v){$curVal[$k] = $v['t'];}}
+          if(isset($GLOBALS['EST_EVENTS']) && count($GLOBALS['EST_EVENTS']) > 0){foreach($GLOBALS['EST_EVENTS'] as $k=>$v){$curVal[$k] = $v['t'];}}
           }
         
         $text = '
@@ -2137,7 +2138,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
           <tbody>';
         
         $text .= '<tbody>';
-        if(count($GLOBALS['EST_EVENTS']) > 0){
+        if(isset($GLOBALS['EST_EVENTS']) && count($GLOBALS['EST_EVENTS']) > 0){
           foreach($GLOBALS['EST_EVENTS'] as $k=>$v){
             $text .= '<tr>';
             $text .= '<td>'.$v['l'].'</td>';

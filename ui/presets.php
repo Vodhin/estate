@@ -14,7 +14,7 @@ if(isset($_POST['estPresetsSubmit'])){
   
   $cmsg = array();
   
-  if(count($_POST['listype_name'])){
+  if(isset($_POST['listype_name']) && count($_POST['listype_name'])){
     foreach($_POST['listype_name'] as $k=>$v){
       foreach($v as $lk=>$lv){
         if($lk > 0){
@@ -33,7 +33,7 @@ if(isset($_POST['estPresetsSubmit'])){
       }
     }
   
-  if(count($_POST['new_listype_name'])){
+  if(isset($_POST['new_listype_name']) && count($_POST['new_listype_name'])){
     foreach($_POST['new_listype_name'] as $k=>$v){  
       foreach($v as $lk=>$lv){
         if($sql->insert("estate_listypes","'0','".$k."','".$tp->toDB($_POST['new_listype_name'][$k][$lk])."'")){
@@ -43,15 +43,15 @@ if(isset($_POST['estPresetsSubmit'])){
       }
     }
   
-  if(count($cmsg)){
+  if(count($cmsg) > 0){
     foreach($cmsg as $k=>$v){
       $msg->addSuccess('<div>'.$zoning[$k].' '.EST_GEN_LISTYPES.':<ul>'.$cmsg[$k].'</ul></div>');
       }
     }
   unset($cmsg);
+  $cmsg = array();
   
-  
-  if(count($_POST['group_name'])){
+  if(isset($_POST['group_name']) && count($_POST['group_name'])){
     foreach($_POST['group_name'] as $k=>$v){
       foreach($v as $lk=>$lv){
         foreach($lv as $gk=>$gv){
@@ -72,7 +72,7 @@ if(isset($_POST['estPresetsSubmit'])){
       }
     }
   
-  if(count($_POST['new_group_name'])){
+  if(isset($_POST['new_group_name']) && count($_POST['new_group_name'])){
     foreach($_POST['new_group_name'] as $k=>$v){
       foreach($v as $lk=>$lv){
         foreach($lv as $gk=>$gv){
@@ -84,14 +84,14 @@ if(isset($_POST['estPresetsSubmit'])){
       }
     }
 
-  if(count($cmsg)){
+  if(count($cmsg) > 0){
     foreach($cmsg as $k=>$v){
       $msg->addSuccess('<div>'.$zoning[$k].' '.EST_GEN_GROUP.':<ul>'.$cmsg[$k].'</ul></div>');
       }
     }
   unset($cmsg);
 
-  if($_POST['featcat_name'] && count($_POST['featcat_name']) > 0){
+  if(isset($_POST['featcat_name']) && count($_POST['featcat_name']) > 0){
     foreach($_POST['featcat_name'] as $featcat_zone=>$zDta){
       foreach($zDta as $featcat_lev=>$lDta){
         foreach($lDta as $featcat_idx=>$featcat_Dta){
@@ -114,7 +114,7 @@ if(isset($_POST['estPresetsSubmit'])){
               }
             }
           
-          if(count($_POST['feature_name'][$featcat_zone][$featcat_lev][$featcat_idx]) > 0){
+          if(isset($_POST['feature_name'][$featcat_zone][$featcat_lev][$featcat_idx]) && count($_POST['feature_name'][$featcat_zone][$featcat_lev][$featcat_idx]) > 0){
             foreach($_POST['feature_name'][$featcat_zone][$featcat_lev][$featcat_idx] as $k=>$v){
               if($k > 0){
                 if(intval($_POST['feature_keep'][$featcat_zone][$featcat_lev][$featcat_idx][$k]) === 0 || trim($_POST['feature_name'][$featcat_zone][$featcat_lev][$featcat_idx][$k]) == ''){
@@ -132,7 +132,7 @@ if(isset($_POST['estPresetsSubmit'])){
             unset($_POST['feature_keep'][$featcat_zone][$featcat_lev][$featcat_idx],$_POST['feature_ele'][$featcat_zone][$featcat_lev][$featcat_idx],$_POST['feature_name'][$featcat_zone][$featcat_lev][$featcat_idx],$_POST['feature_opts'][$featcat_zone][$featcat_lev][$featcat_idx]);
             }
           
-          if(count($_POST['add_feature_name'][$featcat_zone][$featcat_lev][$featcat_idx]) > 0){
+          if(isset($_POST['add_feature_name'][$featcat_zone][$featcat_lev][$featcat_idx]) && count($_POST['add_feature_name'][$featcat_zone][$featcat_lev][$featcat_idx]) > 0){
             foreach($_POST['add_feature_name'][$featcat_zone][$featcat_lev][$featcat_idx] as $k=>$v){
               if(trim($_POST['add_feature_name'][$featcat_zone][$featcat_lev][$featcat_idx][$k]) !== ''){
                 $feature_idx = $sql->insert("estate_features","'0','".intval($_POST['add_feature_ele'][$featcat_zone][$featcat_lev][$featcat_idx][$k])."','".$featcat_idx."','".$tp->toDB($_POST['add_feature_name'][$featcat_zone][$featcat_lev][$featcat_idx][$k])."','".$tp->toDB($_POST['add_feature_opts'][$featcat_zone][$featcat_lev][$featcat_idx][$k])."'");
@@ -142,7 +142,7 @@ if(isset($_POST['estPresetsSubmit'])){
             unset($_POST['add_feature_ele'][$featcat_zone][$featcat_lev][$featcat_idx],$_POST['add_feature_name'][$featcat_zone][$featcat_lev][$featcat_idx],$_POST['add_feature_opts'][$featcat_zone][$featcat_lev][$featcat_idx]);
             }
           
-          if($cmsg || $FCATUDB){
+          if(isset($cmsg) || $FCATUDB){
             $msg->addSuccess($tp->toHTML('<div>'.$featcat_name.$FCATUDB.' <ul>'.$cmsg.'</ul></div>'));
             unset($cmsg,$FCATUDB);
             }
@@ -152,14 +152,14 @@ if(isset($_POST['estPresetsSubmit'])){
     }
   
   
-  if(count($_POST['new_featcat_name']) > 0){
+  if(isset($_POST['new_featcat_name']) && count($_POST['new_featcat_name']) > 0){
     foreach($_POST['new_featcat_name'] as $featcat_zone=>$zDta){
       foreach($zDta as $featcat_lev=>$lDta){
         foreach($lDta as $tempId=>$featcat_Dta){
           if(trim($_POST['new_featcat_name'][$featcat_zone][$featcat_lev][$tempId]) !== ''){
             $featcat_idx = $sql->insert("estate_featcats","'0','".$featcat_zone."','".$featcat_lev."','".$tp->toDB($_POST['new_featcat_name'][$featcat_zone][$featcat_lev][$tempId])."'");
             if($featcat_idx > 0){
-              if(count($_POST['new_feature_name'][$featcat_zone][$featcat_lev][$tempId]) > 0){
+              if(isset($_POST['new_feature_name'][$featcat_zone][$featcat_lev][$tempId]) && count($_POST['new_feature_name'][$featcat_zone][$featcat_lev][$tempId]) > 0){
                 foreach($_POST['new_feature_name'][$featcat_zone][$featcat_lev][$tempId] as $k=>$v){
                   if(trim($_POST['new_feature_name'][$featcat_zone][$featcat_lev][$tempId][$k]) !== ''){
                     if($sql->insert("estate_features","'0','".intval($_POST['new_feature_ele'][$featcat_zone][$featcat_lev][$tempId][$k])."','".$featcat_idx."','".$tp->toDB($_POST['new_feature_name'][$featcat_zone][$featcat_lev][$tempId][$k])."','".$tp->toDB($_POST['new_feature_opts'][$featcat_zone][$featcat_lev][$tempId][$k])."'")){

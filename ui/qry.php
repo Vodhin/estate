@@ -14,19 +14,9 @@ foreach($estQdta as $row){
     $EST_PROP[$prop_idx] = $row;
     $FPROPS .= ($FPROPS ? "," : "").$prop_idx;
     }
-  
-  //$EST_PROP[$row['prop_idx']]['prop_prevIdx'] = intval($PREIDX);
-  //$EST_PROP[$PREIDX]['prop_nextIdx'] = intval($PREIDX);
   }
 
 
-if($Z1 = $sql->retrieve("SELECT * FROM #estate_zoning",true)){
-  foreach($Z1 as $row){$EST_ZONING[$row['zoning_idx']] = $row['zoning_name'];}
-  }
-
-if($Z2 = $sql->retrieve("SELECT * FROM #estate_listypes",true)){
-  foreach($Z2 as $row){$EST_PROPTYPES[$row['listype_idx']] = $row['listype_name'];}
-  }
 
 if($data2 = $sql->retrieve("SELECT #estate_subdiv.* FROM #estate_subdiv ORDER BY subd_idx ASC",true)){
   foreach($data2 as $row){
@@ -59,9 +49,6 @@ if(count($EST_PROP) > 0){
   if($dataEvt = $sql->retrieve($EVTQRY,true)){
     foreach($dataEvt as $row){$EST_PROP[$row['event_propidx']]['evt'][$row['event_start']] = $row;}
     }
-  
-  
-  
   
   }
 
