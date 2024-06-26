@@ -147,8 +147,8 @@ CREATE TABLE `estate_grouplist` (
 CREATE TABLE `estate_likes` (
   `like_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `like_pid` int(11) unsigned NOT NULL default '0',
-  `like_by_uid` int(10) unsigned NOT NULL default '0',
-  `like_by_ip` varchar(55) NOT NULL default '',
+  `like_uid` int(10) unsigned NOT NULL default '0',
+  `like_ip` varchar(55) NOT NULL default '',
   PRIMARY KEY (`like_idx`)
 ) ENGINE=InnoDB;
 

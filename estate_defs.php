@@ -55,7 +55,23 @@ $EST_PROPSTATUS = array(
   );
 
 define("EST_IMGTYPES",array(".jpg",".jpeg",".gif",".png"));
+define("EST_PTH_ADMIN", e_PLUGIN."estate/admin_config.php");
+define("EST_PTH_LISTINGS", e_PLUGIN."estate/listings.php");
+define("EST_PTH_AVATAR", e_MEDIA."avatars/upload/");
+define("EST_PTHABS_AVATAR", SITEURLBASE.e_MEDIA_ABS."avatars/upload/");
+define("EST_PATHABS", SITEURLBASE.e_PLUGIN_ABS."estate/");
+define("EST_PATHABS_LISTINGS", EST_PATHABS."listings.php");
 
+define("EST_PATHABS_MEDIA", EST_PATHABS."media/");
+define("EST_PATHABS_IMAGES", EST_PATHABS."images/");
+define("EST_PTHABS_AGENCY", EST_PATHABS_MEDIA."agency/");
+define("EST_PTHABS_AGENT", EST_PATHABS_MEDIA."agent/");
+define("EST_PTHABS_PROPTHM", EST_PATHABS_MEDIA."prop/thm/");
+define("EST_PTHABS_PROPFULL", EST_PATHABS_MEDIA."prop/full/");
+define("EST_PTHABS_PROPVID", EST_PATHABS_MEDIA."prop/vid/");
+define("EST_PTHABS_SUBDTHM", EST_PATHABS_MEDIA."subdiv/thm/");
+define("EST_PTHABS_SUBDFULL", EST_PATHABS_MEDIA."subdiv/full/");
+define("EST_PTHABS_SUBDVID", EST_PATHABS_MEDIA."subdiv/vid/");
 
 function spgrpsort($a, $b){
   return strnatcmp($a['ord'], $b['ord']);

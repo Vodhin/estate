@@ -32,7 +32,7 @@
     <pref name='currency'>0</pref>
 		<pref name='helpinfull'>1</pref>
 		<pref name='firsttime'>2</pref>
-		<pref name='listing_save'>1</pref>
+		<pref name='listing_save'>0</pref>
 		<pref name='pref_addr_lookup'>New York, NY</pref>
 		<pref name='map_height'>320</pref>
 		<pref name='map_include_agency'>1</pref>

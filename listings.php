@@ -6,20 +6,6 @@ e107::lan('estate',true,true);
 $ns = e107::getRender();
 $tp = e107::getParser();
 
-
-/*
-$phpver = phpversion();
-$phpinf = explode('.',$phpver);
-if($phpinf[0] > 7 || $phpinf[0] < 5){
-  require_once(HEADERF);
-  $ns->tablerender('PHP Version Error', EST_PHPVERR1.' '.$phpver.' '.EST_PHPVERR2,'estate-phperror');
-  unset($phpver,$phpinf,$ns);
-  require_once(FOOTERF);
-  exit;
-  }
-
-*/
-
 $EST_PREF = e107::pref('estate');
 
 
@@ -56,38 +42,28 @@ if(e_QUERY){$qs = explode(".", e_QUERY);}
 else{$qs = array('list',0);}
 
 
-if(intval($EST_PREF['layout_list_map']) > 0 || intval($EST_PREF['map_active2']) > 0){
-  e107::css('url',e_PLUGIN.'estate/js/leaflet/leaflet.css');
-  e107::css('url',e_PLUGIN.'estate/js/Leaflet.markercluster/dist/MarkerCluster.css');
-  e107::css('url',e_PLUGIN.'estate/js/Leaflet.markercluster/dist/MarkerCluster.Default.css');
-  
-  if(intval($EST_PREF['map_jssrc']) == 1 || trim($EST_PREF['map_key']) == '' || trim($EST_PREF['map_url']) == ''){
-    e107::js('estate','js/leaflet/leaflet.js', 'jquery',2);
-    }
-  else{
-    if(trim($EST_PREF['map_key']) !== '' && trim($EST_PREF['map_url']) !== ''){
-      e107::js('url',$tp->toHTML($EST_PREF['map_url']).'" integrity="'.$tp->toHTML($EST_PREF['map_key']).'" crossorigin="', 'jquery',2);
-      }
-    else{
-      e107::js('estate','js/leaflet/leaflet.js', 'jquery',2);
-      }
-    }
-  e107::js('estate','js/Leaflet.markercluster/dist/leaflet.markercluster.js');
-  }
-
-e107::js('estate','js/listing.js', 'jquery');
 
 
 if(EST_USERPERM == 4){
   e107::js('estate','js/Sortable/Sortable.js', 'jquery');
-  
   $TFORM1 = '<form name="estViewTemplateForm" method="POST" action="'.e_SELF.'?'.e_QUERY.'" >';
   $TFORM2 = '</form>';
-  
   }
 
 
+e107::js('estate','js/listing.js', 'jquery');
 require_once('estate_defs.php');
+
+$EST_ZONING = array();
+$EST_PROPTYPES = array();
+if($Z1 = $sql->retrieve("SELECT * FROM #estate_zoning",true)){
+  foreach($Z1 as $row){$EST_ZONING[$row['zoning_idx']] = $row['zoning_name'];}
+  }
+if($Z2 = $sql->retrieve("SELECT * FROM #estate_listypes",true)){
+  foreach($Z2 as $row){$EST_PROPTYPES[$row['listype_idx']] = $row['listype_name'];}
+  }
+
+
 
 $PROPID = intval($qs[1]);
 if($qs[0] == 'edit' || $qs[0] == 'new'){
@@ -96,111 +72,130 @@ if($qs[0] == 'edit' || $qs[0] == 'new'){
   }
 
 
+if(isset($_POST['fltrs'])){
+  if(count($_POST['fltrs']) > 0){
+    foreach($_POST['fltrs'] as $fk=>$fv){
+      if(trim($fv) !== ''){$PSTFLTR .= " AND ".$fk."='".$tp->toDB($fv)."' ";}
+      }
+    }
+  }
 
-$order = "DESC";
-$orderBy = "prop_dateupdated";
-$from = 0;
-$records = 150;
+
+$orderBy = (isset($_POST['sort']) ? $_POST['sort'][0] : "prop_dateupdated");
+$order = (isset($_POST['sort']) ? $_POST['sort'][1] : "DESC");
+$from = (isset($_POST['from']) ? intval($_POST['from']) : 0);
+$records = (isset($_POST['to']) ? intval($_POST['to']) : 25);
 
 
 $WHERE = "";
-if(!ADMIN){$WHERE = "WHERE prop_status > 0 AND (prop_datepull > ".$STRTIMENOW." OR prop_datepull = 0) ";} //
+if(!ADMIN){
+  if(intval(USERID) > 0 && intval(EST_USERPERM) == 0){
+    if(intval($EST_PREF['public_act']) !== 0 && intval($EST_PREF['public_act']) !== 255 && check_class($EST_PREF['public_act'])){
+      $WHERE = "WHERE prop_uidcreate='".USERID."' ".($PROPID > 0 ? "" : " OR (prop_status > 0 AND (prop_datepull > ".$STRTIMENOW." OR prop_datepull = 0))")." ";
+      }
+    }
+  if($WHERE == ""){$WHERE = "WHERE prop_status > 0 AND (prop_datepull > ".$STRTIMENOW." OR prop_datepull = 0) ";}
+  }
 
 
-$MQRY = "SELECT #estate_properties.*, city_name, city_url, city_timezone, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_properties LEFT JOIN #estate_city ON city_idx = prop_city LEFT JOIN #estate_county ON cnty_idx = prop_county LEFT JOIN #estate_states ON state_idx = prop_state LEFT JOIN #estate_agents ON agent_idx = prop_agent LEFT JOIN #user ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid) LEFT JOIN #estate_agencies ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)";
+$MQRY = "SELECT #estate_properties.*, city_name, city_url, city_timezone, state_name, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_properties LEFT JOIN #estate_city ON city_idx = prop_city LEFT JOIN #estate_county ON cnty_idx = prop_county LEFT JOIN #estate_states ON state_idx = prop_state LEFT JOIN #estate_agents ON agent_idx = prop_agent LEFT JOIN #user ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid) LEFT JOIN #estate_agencies ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)";
   
   
-  if($qs[0] == 'agent'){
-    $AGENTID = intval($qs[1]);
-    $PROPID = 0;
-    $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_agent=" : " AND prop_agent=").$AGENTID." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
-    }
-  
-  elseif($qs[0] == 'listby'){
-    $AGENTID = intval($qs[1]);
-    $PROPID = 0;
-    $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_uidcreate=" : " AND prop_uidcreate=").$AGENTID." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
-    }
   
   
-  elseif($PROPID > 0){
-    $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_idx=" : " AND prop_idx=").$PROPID." LIMIT 1";
-    $NPQRY = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE NOT prop_idx=" : " AND NOT prop_idx=").$PROPID."
-    ORDER BY ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
-    }
-  else{
-    $query = $MQRY.$WHERE." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
-    }
+if($qs[0] == 'agent'){
+  $AGENTID = intval($qs[1]);
+  $PROPID = 0;
+  $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_agent=" : " AND prop_agent=").$AGENTID." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
+  }
+
+elseif($qs[0] == 'listby'){
+  $AGENTID = intval($qs[1]);
+  $PROPID = 0;
+  $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_uidcreate=" : " AND prop_uidcreate=").$AGENTID." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
+  }
 
 
+elseif($PROPID > 0){
+  $query = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE prop_idx=" : " AND prop_idx=").$PROPID." LIMIT 1";
+  //$NPQRY = $MQRY.$WHERE.(trim($WHERE) == "" ? "WHERE NOT prop_idx=" : " AND NOT prop_idx=").$PROPID." ORDER BY ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
+  }
+else{
+  $query = $MQRY.$WHERE.$PSTFLTR." ORDER BY prop_status ASC, ".$orderBy." ".$order." LIMIT ".intval($from).",".intval($records);
+  }
+
+
+$dberr = $sql->getLastErrorText();
+if($dberr){e107::getMessage()->addError($dberr);}
+unset($dberr);
 
 
 if(!$estQdta = $sql->retrieve($query,true)){
-  require_once(HEADERF);
   if($PROPID > 0){
-    $ns->tablerender(EST_GEN_PROPERTY.' '.EST_GEN_VIEW,'<div id="estateCont"><h3>'.EST_GEN_PROPERTY.' #'.$GLOBALS['PROPID'].' '.EST_GEN_NOTFOUND.'</h3><div>'.EST_ERR_HLP1a.' '.$GLOBALS['PROPID'].' '.EST_ERR_HLP1b.' <a href="'.e_SELF.'"><b>'.EST_GEN_VIEWLISTINGS.'</b></a></div></div>','estate-invalid');
+    define("EST_MENU_RENDERED",true);
+    require_once(HEADERF);
+    $ns->tablerender(EST_GEN_PROPERTY.' '.EST_GEN_VIEW,'<div id="estateCont"><h3>'.EST_GEN_PROPERTY.' #'.$PROPID.' '.EST_GEN_NOTFOUND.'</h3><div>'.EST_ERR_HLP1a.' '.$PROPID.' '.EST_ERR_HLP1b.' <a href="'.e_SELF.'"><b>'.EST_GEN_VIEWLISTINGS.'</b></a></div></div>','estate-invalid');
+    unset($query,$PROPID,$MQRY,$WHERE);
+    require_once(FOOTERF);
+    exit;
     }
   else{
-    $ns->tablerender(EST_GEN_LISTINGS,'<div id="estateCont"><h3>'.EST_GEN_NOLISTINGS.'</h3><div>'.EST_GEN_CHECKLATER.'</div></div>','estate-invalid');
+    e107::getMessage()->addInfo('<div id="estateCont"><h3 class="WD100">'.EST_GEN_NOLISTINGS.'</h3>'.(isset($PSTFLTR) ? EST_GEN_BADFILTER1.'['.$PSTFLTR.']' : EST_GEN_CHECKLATER).'</div>');
     }
-  unset($query,$PROPID,$MQRY,$WHERE);
-  require_once(FOOTERF);
-  exit;
   }
 
 
 
-include_once('ui/qry.php'); // <-- generates $EST_PROP clean array;
+include_once('ui/qry.php'); // <-- generates clean $EST_PROP array used here and oa.php
 
 $dberr = $sql->getLastErrorText();
 if($dberr){e107::getMessage()->addError($dberr);}
+unset($dberr);
 
 
 //$EST_SAVED
 
-if(count($EST_PROP) > 0){
+//if(count($EST_PROP) > 0){
+  
   
   if($qs[0] == 'pview'){
     //include_once('ui/preview.php');
     exit;
     }
   
-  $EST_SAVED = array();
-  
-
-  
-  
-  
+  //$EST_PROP[$MPID]['msgd'] = array();
   if(check_class($EST_PREF['contact_class'])){
-    
     foreach($EST_PROP as $MPID=>$MDTA){
-      $PREVMSG = estGetPrevMsgs($MPID);
-      $EST_PROP[$MPID]['msgd'] = $PREVMSG;
+      $EST_PROP[$MPID]['msgd'] = estGetPrevMsgs($MPID);
       }
     }
   
+  $EST_SAVED = array();
   if(check_class($EST_PREF['listing_save'])){
-    if($likeDta = $sql->retrieve("SELECT * FROM #estate_likes".($PROPID > 0 ? " WHERE like_pid='".$PROPID."'" : "")."",true)){
-      $EST_COOKIE = explode(",",$GLOBALS['EST_COOKIE_SAVED']);
-      foreach($likeDta as $k=>$v){
-        $MPID = intval($v['like_pid']);
-        
+    if($inqDta = $sql->retrieve("SELECT * FROM #estate_msg WHERE ".($PROPID > 0 ? "msg_propidx='".$PROPID."' AND " : "")." msg_mode < '3'",true)){
+      foreach($inqDta as $k=>$v){
+        $MPID = intval($v['msg_propidx']);
         if($EST_PROP[$MPID]){
           $EST_PROP[$MPID]['likes'] = intval($EST_PROP[$MPID]['likes']) + 1;
-          $cookieVal = $MPID.'-'.intval($v['like_idx']);
-          //if((USERID > 0 && intval($v['like_by_uid']) == USERID) || $v['like_by_ip'] == USERIP){}
-          if(in_array($cookieVal,$EST_COOKIE)){
-            $EST_PROP[$MPID]['saved'] = 1;
+          }
+        }
+      }
+    
+    if($likeDta = $sql->retrieve("SELECT * FROM #estate_likes".($PROPID > 0 ? " WHERE like_pid='".$PROPID."'" : "")."",true)){
+      foreach($likeDta as $k=>$v){
+        $MPID = intval($v['like_pid']);
+        if($EST_PROP[$MPID]){
+          $EST_PROP[$MPID]['likes'] = intval($EST_PROP[$MPID]['likes']) + 1;
+          if(intval($v['like_uid']) == USERID && $v['like_ip'] == USERIP){
+            $EST_PROP[$MPID]['saved'] = ' actv';
             $EST_SAVED[$MPID]['name'] = $EST_PROP[$MPID]['prop_name'];
             $EST_SAVED[$MPID]['thm'] = $EST_PROP[$MPID]['img'][1]['t'];
-            
             }
           }
         }
       }
     
-    
-    unset($likeMsg,$likeDta,$k,$v,$MPID);
+    unset($inqDta,$likeMsg,$likeDta,$k,$v,$MPID);
     }
   
   
@@ -229,7 +224,7 @@ if(count($EST_PROP) > 0){
       $PINS = est_map_pins();
       e107::js('inline','var estMapPins = '.$PINS.'; ', 'jquery',2);
       
-      $estHead = $tp->toHTML($PROPDTA[0]['prop_name']);
+      $estHead = $tp->toHTML(trim($PROPDTA[0]['prop_name']) !== '' ? $PROPDTA[0]['prop_name'] : EST_GEN_UNNAMEDPROPERTY);
       define('e_PAGETITLE',$estHead);
       define('PAGE_NAME', $estHead);
       
@@ -319,7 +314,7 @@ if(count($EST_PROP) > 0){
     $ns->tablerender('<span id="estMiniNav"></span>'.EST_GEN_LISTINGS,'<div id="estateCont">'.$estText.'</div>','estate-list');
     unset($estText,$EST_PROP);
     }
-  }
+  //}
   
 echo '
 <div id="estJSpth"'.$OACLASS.' data-pth="'.EST_PATHABS.'"></div>
@@ -349,7 +344,7 @@ exit;
 function estViewImgCSS($cssName,$gal,$actv,$stime,$sdelay){
   global $EST_PREF;
   $CSS = array();
-  $galCt = count($gal);
+  $galCt = ($gal ? count($gal) : 0);
   if($galCt == 0){
     $CSS[0] = '#estSlideShow{background-image: url("'.EST_PATHABS_IMAGES.'imgnotavail.png");}';
     $CSS[1] .= '
