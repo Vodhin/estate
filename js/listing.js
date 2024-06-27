@@ -66,11 +66,14 @@ function estGetCookDta(name){
 
 function estSetLike(ele,cok=0){
   var pid = Number($(ele).data('lpid'));
+  var aid = Number($(ele).data('laid'));
+  var tdta = {'sndLike':1,'pid':pid,'aid':aid,'cok':cok};
+  console.log(tdta);
   var estJSpth = $(document).data('estJSpth');
   $.ajax({
     url: estJSpth+'ui/msg.php',
     type:'post',
-    data:{'sndLike':'js','tdta':{'sndLike':1,'pid':pid,'cok':cok}},
+    data:{'sndLike':'js','tdta':tdta},
     dataType:'json',
     cache:false,
     processData:true,
