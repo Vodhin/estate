@@ -11,6 +11,16 @@ if(EST_USERPERM > 0){
   
   $msg = e107::getMessage();
   
+  
+    //$EXPR = mktime(0,0,0, date("m"), date("d"), date("Y"));
+    //$sql = e107::getDB();
+    //$sql->delete("estate_likes", "like_exp <= '".$EXPR."'");
+    //$sql->delete("estate_msg", "msg_exp <= '".$EXPR."'");
+    //unset($EXPR);
+    
+  
+  
+  
   if(isset($_POST['estAdminNewListing'])){
     $sql = e107::getDB();
 		$tp = e107::getParser();

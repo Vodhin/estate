@@ -176,6 +176,7 @@ if(!defined('e107_INIT')){
     $emsent = $mailer->sendEmails('default', $mailData, $recipients, $opts);
     $MSG['msg_email'] = ($emsent == true ? 1 : 0);
     
+    
     //	$thread_name = str_replace('&quot;', '"', $thread_name);// This not picked up by toText();
   
     
@@ -294,8 +295,9 @@ if(!defined('e107_INIT')){
         $RES['like'] = -1;
         }
       else{
-        $RES['like'] = $sql->insert("estate_likes","'0','".$PID."','".intval(USERID)."','".USERIP."'");
-        
+        $EXPR = mktime(0,0,0, date("m"), date("d") + (intval($EST_PREF['contact_life']) + 1), date("Y"));
+        $RES['like'] = $sql->insert("estate_likes","'0','".$PID."','".intval($_POST['tdta']['aid'])."','".intval(USERID)."','".USERIP."','".$EXPR."'");
+        unset($EXPR);
         }
       }
     echo $tp->toJSON($RES);
@@ -323,6 +325,8 @@ e107::js('estate','js/msg.js', 'jquery');
 define("EST_MSGTYPES",array('',EST_MSG_SHOWINGREQUESTS,EST_MSG_OFFERS,EST_MSG_QUOTEREQ,EST_MSG_OTHERQUESTIONS));
 
 
+
+
 function est_msg_proc($DTA){
   $tp = e107::getParser();
   //if(trim($DTA['msg_text']) == ''){$DTA['msg_text'] = EST_MSG_TXT1A;}
@@ -342,11 +346,11 @@ function est_msg_proc($DTA){
     }
   
   
-  
   $MSG = array(
     'msg_idx'=>(intval($DTA['msg_idx']) > 0 ? intval($DTA['msg_idx']) : intval(0)),
     'msg_sent'=>(intval($DTA['msg_sent']) > 0 ? intval($DTA['msg_sent']) : mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"))),
     'msg_read'=>(intval($DTA['msg_read']) > 0 ? intval($DTA['msg_read']) : intval(0)),
+    'msg_exp'=>(intval($DTA['msg_exp']) > 0 ? intval($DTA['msg_exp']) : mktime(0,0,0, date("m"), date("d") + (intval($EST_PREF['contact_life']) + 1), date("Y"))),
     'msg_to_uid'=>(intval($DTA['msg_to_uid']) > 0 ? intval($DTA['msg_to_uid']) : intval(0)),
     'msg_to_addr'=>$tp->toTEXT(trim($DTA['msg_to_addr']) ? $DTA['msg_to_addr'] : ''),
     'msg_to_name'=>$tp->toTEXT(trim($DTA['msg_to_name']) ? $DTA['msg_to_name'] : ''),
@@ -497,7 +501,6 @@ function estMsgInbox(){
       $txt .= '
       <div class="estInBoxSect estNewMsgs"'.($SMSGC > 0 ? '' : ' style="display:none;"').'>
         <button class="btn btn-primary estSectBtn">'.EST_GEN_NEW.' '.$tp->toHTML($tv).' (<span>'.$SMSGC.'</span>)</button>
-        
         <div id="estInBoxBelt-'.$tk.'" class="estMsgBelt" data-tk="'.$tk.'" style="display:none;">'.$MSGTXT.'</div>
       </div>';
       unset($MSGTXT);
@@ -594,12 +597,6 @@ function est_msg_form($DTA=null){
   
   $EST_PREF = e107::pref('estate');
   
-  /*
-    0=>array('unsaved_icon','Un Saved'),
-    1=>array('saved_icon','Saved '),
-  */
-  
-  
   $MSG = est_msg_proc($DTA);
   extract($MSG);
   
@@ -608,8 +605,6 @@ function est_msg_form($DTA=null){
     0=>EST_GEN_CONTACT.' '.$DTA['prop_seller'].' ('.EST_GEN_SELECTONE.')'
     );
   
-  
-  //$EST_COOKIE = $_COOKIE['estate-'.USERID.'-msgs']; //.intval($MSG['msg_propidx'])]
   
   $SUBTXT1 = EST_MSG_SUB1A;
   $SUBTXT2 = EST_MSG_SUB2A;
