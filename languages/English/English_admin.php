@@ -188,6 +188,7 @@ define("EST_GEN_GENERALOPTSHLP1", "Set general options for this plugin");
 define("EST_GEN_GROUP", "Group");
 define("EST_GEN_GROUPS", "Groups");
 define("EST_GEN_HIDEOTHERUSERS", "Hide Other Users");
+define("EST_GEN_HOWTO","Help & How To");
 define("EST_GEN_IMPORTANT","IMPORTANT!");
 
 
