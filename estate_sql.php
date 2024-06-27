@@ -147,8 +147,10 @@ CREATE TABLE `estate_grouplist` (
 CREATE TABLE `estate_likes` (
   `like_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `like_pid` int(11) unsigned NOT NULL default '0',
+  `like_aid` int(10) unsigned NOT NULL default '0',
   `like_uid` int(10) unsigned NOT NULL default '0',
   `like_ip` varchar(55) NOT NULL default '',
+  `like_exp` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY (`like_idx`)
 ) ENGINE=InnoDB;
 
@@ -180,6 +182,7 @@ CREATE TABLE `estate_msg` (
   `msg_idx` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `msg_sent` int(10) unsigned NOT NULL default '0',
   `msg_read` int(10) unsigned NOT NULL default '0',
+  `msg_exp` int(10) unsigned NOT NULL default '0',
   `msg_pm` int(10) unsigned NOT NULL default '0',
   `msg_email` tinyint(1) unsigned NOT NULL default '0',
   `msg_to_uid` int(10) unsigned NOT NULL default '0',

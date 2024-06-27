@@ -120,17 +120,32 @@ if(EST_USERPERM == 4){
   
   
   
+  
+  
+  
   if(check_class(e107::pref('estate','listing_save'))){
     //define("EST_COOKIESAVE",array('name'=>'estSaved-'.USERID,'opts'=>array('expires' => time() + 60 * 60 * 24 * 180,'path' => '/','domain' => e_DOMAIN,'secure' => true,'httponly' => true,'samesite' => 'Strict'));
     //$EST_COOKIE_SAVED = $_COOKIE[EST_COOKIESAVE['name']];
     }
   
-  
-  
-  if(EST_USERPERM > 0 || check_class(e107::pref('estate','contact_class'))){
-    require_once(e_PLUGIN.'estate/ui/msg.php');
+  if(EST_USERPERM >= e107::pref('estate','public_mod')){
+    $dbct = e107::getDb()->count("estate_properties","('prop_idx')","WHERE prop_status<'1' AND prop_agent='0'");
+    define("EST_NEW_PROPSUBMITTED",intval($dbct));
+    unset($dbct);
+    }
+  else{
+    define("EST_NEW_PROPSUBMITTED",-1);
     }
   
   
+  if(EST_USERPERM > 0 || check_class(e107::pref('estate','contact_class'))){
+    $dbct = e107::getDb()->count("estate_msg","('msg_idx')","WHERE msg_to_uid='".USERID."' AND msg_read='0'");
+    define("EST_MGS_NEWMSGS",intval($dbct));
+    require_once(e_PLUGIN.'estate/ui/msg.php');
+    unset($dbct);
+    }
+  else{
+    define("EST_MGS_NEWMSGS",-1);
+    }
   }
 ?>

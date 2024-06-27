@@ -860,7 +860,7 @@ class estate_shortcodes extends e_shortcode{
       }
     
     if(check_class(e107::pref('estate','listing_save'))){
-      return '<button id="estLikeIcon-'.intval($this->var['prop_idx']).'" class="estCardTopBtn'.$this->var['saved'].'" data-lpid="'.intval($this->var['prop_idx']).'" title="'.EST_GEN_SAVE.'"><i class="fa fa-regular fa-heart"></i><i class="fa fa-solid fa-heart"></i></button>';
+      return '<button id="estLikeIcon-'.intval($this->var['prop_idx']).'" class="estCardTopBtn'.$this->var['saved'].'" data-laid="'.intval($this->var['prop_agent']).'" data-lpid="'.intval($this->var['prop_idx']).'" title="'.EST_GEN_SAVE.'"><i class="fa fa-regular fa-heart"></i><i class="fa fa-solid fa-heart"></i></button>';
       }
     }
   

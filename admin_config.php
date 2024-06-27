@@ -29,6 +29,9 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
   e107::js('jquery', 5);
   e107::js('estate','js/Sortable/Sortable.js', 'jquery');
   
+  
+  
+  
   //<script src="" type="text/javascript"></script>
 	//<script src="https://ajax.googleapis.com/ajax/libs/scriptaculous/1.9.0/scriptaculous.js" type="text/javascript"></script>
   
