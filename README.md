@@ -13,6 +13,9 @@ Download ALL files and replace all existing files on your website with current. 
 
 DEVELOPMENT/REVISION HISTORY:
 
+27 June 2024: Added e_dashboard, added DB Fields, and expanded features. Required after update: DB Update & Scan Plugin Directories
+
+
 26 June 2024: Many refinements to the overall plugin, including PHP 8.2.2 compatibility (I still have more to check).
 
 
