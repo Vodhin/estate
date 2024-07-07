@@ -203,21 +203,29 @@ define("EST_GEN_NAMEADDRESS","Name & Address");
 define("EST_GEN_NEWAGENT", "New Agent Profile");
 define("EST_GEN_NEWCOMPANY", "New Company");
 define("EST_GEN_NEWUSERAGENT","New User/Agent");
+define("EST_GEN_NOAGENCYFOUND0","Agency Not Found");
+define("EST_GEN_NOAGENCYFOUND1","Was not found in the database. If you know that the Agency ID is correct, you may not have permissions to edit the data.");
+define("EST_GEN_NOCHANGEADMIN", "You cannot change a Main Admin");
 define("EST_GEN_NONADMINACCESS", "Non-Admin Access");
 define("EST_GEN_NONADMINLISTINGS", "Non-Admin Listings");
 define("EST_GEN_NONAGENTLISTINGS","Non-Agent Listings");
 define("EST_GEN_NONAGENTLISTINGHLP1","Set options for listings posted by non-agents");
 define("EST_GEN_NONAGENTAPPROVED","Auto Approve");
 define("EST_GEN_NONAGENTAPPROVEDHLP","Automatically Approve New Non-Agent Listing Submissions");
-define("EST_GEN_NONAGENTEXP","Expires After");
-define("EST_GEN_NONAGENTEXPHLP","Set how long Non-Agent Listings will remain visible");
+define("EST_GEN_NONAGENTEXP","Stale Listing Expiration");
+define("EST_GEN_NONAGENTEXPHLP","Set how long Inactive Non-Agent Listings will remain visible");
+
+
+define("EST_GEN_NONAGENTNOTIFY1","New Submission Notification");
+define("EST_GEN_NONAGENTNOTIFY1HLP","Choose who will receive email Notifications when new listings that require approval are submitted by Non-Agents.");
+
+
 define("EST_GEN_NONAGENTIMGCT","Max Images");
 define("EST_GEN_NONAGENTIMGCTHLP","Set the maximum number of images a Non-Agent can upload per listing (min: 3, max 18).");
 define("EST_GEN_NONAGENTMOD","Moderated By");
+define("EST_GEN_NONAGENTMODS","Moderators");
 define("EST_GEN_NONAGENTMODHLP","Choose who can Moderate Non-Agent Listings");
-define("EST_GEN_NOCHANGEADMIN", "You cannot change a Main Admin");
-define("EST_GEN_NOAGENCYFOUND0","Agency Not Found");
-define("EST_GEN_NOAGENCYFOUND1","Was not found in the database. If you know that the Agency ID is correct, you may not have permissions to edit the data.");
+
 define("EST_GEN_NONADMINUSERS", "Non-Admin Users");
 define("EST_GEN_NOTALLOWEDADDUSER","Your Access Level does not allow you to add a New User to this website though this plugin.");
 define("EST_GEN_DBNOCHANGES","No Changes were made to");
@@ -359,8 +367,9 @@ define("EST_PREF_ADMINONLYHLP","If enabled, only Admins can view this plugin");
 define("EST_PREF_CLICKSAVETEMPL","Click Save to Change Template");
 define("EST_PREF_CONTACTCC","Allow CC Sender*");
 define("EST_PREF_CONTACTCCHLP","Users in this class can opt to have a copy of their email sent to their email address. MAY BE MISUSED, set with caution! REQUIRES your Site Prefs to allow Email Copy Sender.");
-define("EST_PREF_CONTACTFORM","Contact Form Access");
-define("EST_PREF_CONTACTFORMHLP","Who can use the Estate Plugin's Contact Form");
+define("EST_PREF_CONTACTFORM","Contact Form");
+define("EST_PREF_CONTACTFORMACC","Contact Form Access");
+define("EST_PREF_CONTACTFORMACCHLP","Who can use the Estate Plugin's Contact Form");
 define("EST_PREF_CONTACTLIFE","Message Life");
 define("EST_PREF_CONTACTLIFEHLP","How long the system keeps a record of sent messages. Works with Message Maximum to prevent abuse of the contact system");
 define("EST_PREF_CONTACTMAX","Message Maximum");
@@ -372,7 +381,7 @@ define("EST_PREF_CONTACTMODE2","Only Agent Listings - Hide e-mail");
 define("EST_PREF_CONTACTMODE3","Only Agent Listings - Display e-mail");
 define("EST_PREF_CONTACTMODEHLP","Choose which Listings will include a Contact Form and if the Agent/Seller e-mail address is displayed. Listings that do not include a Contact Form will always display a contacte-mail address");
 define("EST_PREF_CONTACTNOTIFY","Agent/Seller Notifications");
-define("EST_PREF_CONTACTNOTIFYHLP","Notify the Agent/Seller via email when someone uses the Contact Form or Saves a Listing. Agents/Sellers can always review activity on this website");
+define("EST_PREF_CONTACTNOTIFYHLP","Notify the Agent/Seller via email when someone uses the Contact Form. Agents/Sellers can always review activity on this website");
 define("EST_PREF_CONTACTPHONEREQ","Require Phone Number");
 define("EST_PREF_CONTACTPHONEREQHLP","If enabled, the Sender will be required to include their phone number");
 define("EST_PREF_CONTACTMAXTO","Maximum Applies To");
@@ -517,7 +526,7 @@ define("EST_HLPMNU_COMMUNITY2","Choose a Subdivision to auto-load details about 
 define("EST_HLPMNU_COMMUNITY3","Click the Subdivision Edit button to Add/Edit this preset data along with other information about the Subdivision. The data in the Subdivision Sub-Form is saved seperately from the Property data and will not affect other Properties' Community data.");
 define("EST_HLPMNU_COMMUNITY4","That said, the Sub-Form also saves information for the Subdivision that is outside the scope of an individual Property, including common ammenities and its own photo gallery, which will be shown with all Properties in that Subdivision.");
 
-
+define("EST_HLPMNU_PREF_CONTACTFORM01","Settings for the built-in Contact Form that allows visitors to contact Sellers and Agents directly from a Listing's View Page.");
 
 define("EST_HLPMNU_DETAILS1","Add general details about the property, including Model Name (optional), Year Built, a brief Summary, and Detailed Description.");
 define("EST_HLPMNU_DETAILS2","Clicking on [i]Livable Space[/i] or [i]Roof Size[/i] fields reveals a button with an automatic value calculated from the square footage/meeter of all Spaces. Click this button to set the value in the field.");
