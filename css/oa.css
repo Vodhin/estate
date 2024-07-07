@@ -23,6 +23,21 @@ input[type="file"]{
   display:none !important;
   }
 
+
+#estEmlNote{
+  display: table-cell;
+  position: fixed;
+  top: 20vh;
+  left: 25vw;
+  width: 50vw;
+  color:#000000;
+  background-color:#FFFFFF;
+  text-align:center;
+  padding-top:10vh;
+  padding-bottom:10vh;
+  z-index: 100005;
+  }
+
 .estOABlock{
   display:block;
   position: relative;

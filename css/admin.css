@@ -181,6 +181,33 @@ tbody.estPropListTB tr > td:nth-child(2) p{
   display:inline-block;
   }
 
+#estPubNotifyCont{
+  max-height:384px;
+  overflow-x:hidden;
+  overflow-y:auto;
+  }
+
+.estPubNotifyCont{
+  display:block;
+  position: relative;
+  width:312px;
+  }
+
+.estPubNotifyCont div.estPubNotifySect{
+  
+  }
+
+.estPubNotifyCont div.estPubNotifySectBtn{
+  width:100%;
+  text-align:left;
+  }
+  
+.estPubNotifyCont div.estPubNotifySectBtn input[type="checkbox"]{
+  margin-right:8px;
+  }
+
+
+
 #estDBResCount{
   display:block;
   position: absolute;
