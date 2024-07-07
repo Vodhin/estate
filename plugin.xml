@@ -44,10 +44,11 @@
 		<pref name='pref_lon'>-74.00601520</pref>
 		<pref name='pref_zoom'>10</pref>
 		<pref name='public_act'>255</pref>
-		<pref name='public_apr'>0</pref>
+		<pref name='public_apr'>255</pref>
 		<pref name='public_exp'>31</pref>
 		<pref name='public_imgct'>12</pref>
 		<pref name='public_mod'>3</pref>
+		<pref name='public_notify'>1</pref>
 		<pref name='sched_agt_times'><![CDATA[array (
   0 => 
   array (

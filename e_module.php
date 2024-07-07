@@ -129,7 +129,7 @@ if(EST_USERPERM == 4){
     }
   
   if(EST_USERPERM >= e107::pref('estate','public_mod')){
-    $dbct = e107::getDb()->count("estate_properties","('prop_idx')","WHERE prop_status<'1' AND prop_agent='0'");
+    $dbct = e107::getDb()->count("estate_properties","('prop_idx')","WHERE prop_appr='0' AND prop_agent='0'");
     define("EST_NEW_PROPSUBMITTED",intval($dbct));
     unset($dbct);
     }

@@ -120,22 +120,6 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_est_leaflet_map($parm){
-    e107::css('url',e_PLUGIN.'estate/js/leaflet/leaflet.css');
-    e107::css('url',e_PLUGIN.'estate/js/Leaflet.markercluster/dist/MarkerCluster.css');
-    e107::css('url',e_PLUGIN.'estate/js/Leaflet.markercluster/dist/MarkerCluster.Default.css');
-    $EST_PREF = e107::pref('estate');
-    if(intval($EST_PREF['map_jssrc']) == 1 || trim($EST_PREF['map_key']) == '' || trim($EST_PREF['map_url']) == ''){
-      e107::js('estate','js/leaflet/leaflet.js', 'jquery',2);
-      }
-    else{
-      if(trim($EST_PREF['map_key']) !== '' && trim($EST_PREF['map_url']) !== ''){
-        e107::js('url',$tp->toHTML($EST_PREF['map_url']).'" integrity="'.$tp->toHTML($EST_PREF['map_key']).'" crossorigin="', 'jquery',2);
-        }
-      else{
-        e107::js('estate','js/leaflet/leaflet.js', 'jquery',2);
-        }
-      }
-    e107::js('estate','js/Leaflet.markercluster/dist/leaflet.markercluster.js');
     return '<div id="estMapCont"><div id="estMap" style="width: 100%;"></div></div>';
     }
   
@@ -191,26 +175,33 @@ class estate_shortcodes extends e_shortcode{
     }
   
   function sc_prop_list_banner($parm){
-    if(intval($this->var['prop_status']) == 4){
-      $CAPT = EST_GEN_PENDING;
+    if(intval($this->var['prop_appr']) < 1){
+      return '<div class="estCardTopTab btn-warning">'.e107::getParser()->toHTML('<h5>'.EST_GEN_WAITINGAPPROVAL.'</h5></div>');
       }
-    elseif(intval($this->var['prop_status']) == 5){
-      $CAPT = (intval($this->var['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);
-      }
-    
-    
-    if($this->var['evt']){
-      $i=0;
-      $STRDATETOM = mktime(23, 59, 59, date("m"), date("d")+1, date("Y"));
-      foreach($this->var['evt'] as $ok=>$ov){
-        if($i == 0){
-          $CAPT .= ($CAPT ? ' • ' : '').$ov['event_name'];
-          $TXT = '<p>'.(strtotime(date('m/d/Y',$ov['event_start'])) <= $GLOBALS['STRDATETODAY'] ? EST_GEN_TODAY : (strtotime(date('m/d/Y',$ov['event_start'])) <= $STRDATETOM ? EST_GEN_TOMORROW : date('D F j',$ov['event_start']))).($ov['event_start'] <= $GLOBALS['STRTIMENOW'] ? ': '.EST_GEN_NOW : ' '.date('g:i a',$ov['event_start'])).' - '.date('g:i a',$ov['event_end']).'</p>';
-          }
-        $i++;
+    else{
+      if(intval($this->var['prop_status']) == 4){
+        $CAPT = EST_GEN_PENDING;
         }
-      unset($i);
+      elseif(intval($this->var['prop_status']) == 5){
+        $CAPT = (intval($this->var['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);
+        }
+      
+      
+      if($this->var['evt']){
+        $i=0;
+        $STRDATETOM = mktime(23, 59, 59, date("m"), date("d")+1, date("Y"));
+        foreach($this->var['evt'] as $ok=>$ov){
+          if($i == 0){
+            $CAPT .= ($CAPT ? ' • ' : '').$ov['event_name'];
+            $TXT = '<p>'.(strtotime(date('m/d/Y',$ov['event_start'])) <= $GLOBALS['STRDATETODAY'] ? EST_GEN_TODAY : (strtotime(date('m/d/Y',$ov['event_start'])) <= $STRDATETOM ? EST_GEN_TOMORROW : date('D F j',$ov['event_start']))).($ov['event_start'] <= $GLOBALS['STRTIMENOW'] ? ': '.EST_GEN_NOW : ' '.date('g:i a',$ov['event_start'])).' - '.date('g:i a',$ov['event_end']).'</p>';
+            }
+          $i++;
+          }
+        unset($i);
+        }
       }
+      
+    
     
     if($CAPT){
       return '<div class="estCardTopTab">'.e107::getParser()->toHTML('<h5>'.$CAPT.'</h5>'.$TXT.'</div>');
@@ -664,14 +655,16 @@ class estate_shortcodes extends e_shortcode{
       $url2 = EST_PATHABS_LISTINGS.'?edit.'.intval($this->var['prop_idx']);
       
       $XGO = 0; // if > 0 then no edit
-      if(intval(USERID) !== 1){
+      if(EST_USERPERM < 4){
         $XRP = explode('.',$this->var['user_perms']);
         $XRC = explode(',',$this->var['user_class']);
-        
+        //
         if(intval($this->var['prop_idx']) > 0){
           if(in_array('0',$XRP) && intval($this->var['agent_uid']) > 0 && intval($this->var['agent_uid']) !== USERID){$XGO++;}
-          if(EST_USERPERM == 3 && in_array(ESTATE_ADMIN,$XRC) && intval($this->var['agent_uid']) > 0 && intval($this->var['agent_uid']) !==  USERID){$XGO++;}
-          if(EST_USERPERM == 2){
+          if(EST_USERPERM == 3 && USERID !== intval($this->var['agent_uid']) && in_array(ESTATE_ADMIN,$XRC) && intval($this->var['agent_uid']) > 0){$XGO++;}
+          
+          if(EST_USERPERM == 2 && USERID !== intval($this->var['agent_uid'])){
+            if(intval($this->var['agent_uid']) == 0 && EST_USERPERM < intval(e107::pref('estate','public_mod'))){$XGO++;}
             if(intval($this->var['agent_agcy']) > 0 && intval($this->var['agent_agcy']) !== intval(EST_AGENCYID)){$XGO++;}
             if(in_array(ESTATE_ADMIN,$XRC) || in_array(ESTATE_MANAGER,$XRC) && USERID !== intval($this->var['agent_uid'])){$XGO++;}
             if(intval($this->var['user_admin']) > 0){
@@ -688,7 +681,7 @@ class estate_shortcodes extends e_shortcode{
       
       
       
-      if($XGO == 0){
+      if($XGO == 0 || intval($this->var['prop_uidcreate']) == USERID){
         //PROP_EDITICONS
         $ret['edit'] = '<a title="'.EST_GEN_EDIT.'"><i class="fa fa-pencil-square-o"></i></a><p><a class="btn btn-primary noMobile" href="'.$url1.'" title="'.EST_GEN_FULLEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_FULLEDIT.'</a><a class="btn btn-primary" href="'.$url2.'.0" title="'.EST_GEN_QUICKEDIT.'"><i class="fa fa-pencil-square-o"></i> '.EST_GEN_QUICKEDIT.'</a></p>';
       

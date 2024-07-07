@@ -1,5 +1,4 @@
 <?php
-
 if(!defined('e107_INIT')){require_once(__DIR__ . '/../../class2.php');}
 
 e107::lan('estate',true,true);
@@ -8,12 +7,10 @@ $tp = e107::getParser();
 
 $EST_PREF = e107::pref('estate');
 
-
 e107::css('url',e_PLUGIN.'estate/css/listings.css');
 e107::css('url',e_PLUGIN.'estate/css/viewtop.css');
 e107::css('url',e_PLUGIN.'estate/css/spaces.css');
 
-//e107::css('url',e_PLUGIN.'estate/css/msg.css');
 
 
 $e107 = e107::getInstance();
@@ -41,6 +38,25 @@ if(intval($EST_PREF['adminonly']) == 1){
 if(e_QUERY){$qs = explode(".", e_QUERY);}
 else{$qs = array('list',0);}
 
+
+e107::css('url',e_PLUGIN.'estate/js/leaflet/leaflet.css');
+e107::css('url',e_PLUGIN.'estate/js/Leaflet.markercluster/dist/MarkerCluster.css');
+e107::css('url',e_PLUGIN.'estate/js/Leaflet.markercluster/dist/MarkerCluster.Default.css');
+
+if(intval($EST_PREF['map_jssrc']) == 1 || trim($EST_PREF['map_key']) == '' || trim($EST_PREF['map_url']) == ''){
+  e107::js('estate','js/leaflet/leaflet.js', 'jquery',2);
+  }
+else{
+  if(trim($EST_PREF['map_key']) !== '' && trim($EST_PREF['map_url']) !== ''){
+    e107::js('url',$tp->toHTML($EST_PREF['map_url']).'" integrity="'.$tp->toHTML($EST_PREF['map_key']).'" crossorigin="', 'jquery',2);
+    }
+  else{
+    e107::js('estate','js/leaflet/leaflet.js', 'jquery',2);
+    }
+  }
+
+    
+    e107::js('estate','js/Leaflet.markercluster/dist/leaflet.markercluster.js');
 
 
 
@@ -155,7 +171,7 @@ unset($dberr);
 
 //$EST_SAVED
 
-//if(count($EST_PROP) > 0){
+//if(is_array($EST_PROP) && count($EST_PROP) > 0){
   
   
   if($qs[0] == 'pview'){
@@ -199,14 +215,26 @@ unset($dberr);
     }
   
   
+  foreach($EST_PROP as $k=>$v){
+    if(intval($v['prop_appr']) < 1){
+      if(EST_USERPERM < intval($EST_PREF['public_mod']) && intval($v['prop_uidcreate']) !== USERID){
+        unset($EST_PROP[$k]);
+        }
+      }
+    }
+  unset($k,$v);
   
-  
-  
-  
+  if($PROPID == 0 && $qs[0] == 'view'){$qs[0] = 'list';}
+  if($PROPID > 0 && !isset($EST_PROP[$PROPID])){$qs[0] = 'list';}
   
   if($qs[0] == 'view'){
     
     if($PROPID > 0){
+      if($EST_PROP[$PROPID]['prop_appr'] == 0){
+        e107::getMessage()->addInfo(EST_PROP_APPROVE00);
+        }
+      
+
       if(intval($EST_PROP[$PROPID]['prop_status']) == 3 || intval($EST_PROP[$PROPID]['prop_status']) == 4){
         $ESTDTA = estGetSpaces($PROPID);
         }

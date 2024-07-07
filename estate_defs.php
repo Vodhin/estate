@@ -12,7 +12,7 @@ $EST_HOALAND = array(0=>array('',''),1=>array(EST_GEN_INCINHOAFEE,EST_GEN_INCLAN
 $EST_DIMUNITS = array(EST_SQFOOT,EST_SQMTR);
 $EST_DIM1UNITS = array(explode(",",EST_SQFOOT),explode(",",EST_SQMTR));
 $EST_DIM2UNITS = array(EST_GEN_ACRES,EST_GEN_SQRMI,$EST_DIM1UNITS[0][0],EST_GEN_SQRKM,$EST_DIM1UNITS[1][0]);
-//$EST_CONTKEYS = array(EST_GEN_MOBILE,EST_GEN_EMAIL,EST_GEN_OFFICE,EST_GEN_FAX,EST_GEN_WEBSITE,EST_GEN_LINKIN,EST_GEN_TWITER,EST_GEN_FACEBOOK);
+
 $EST_FOLDERS = array(0=>'prop',1=>'subdiv',2=>'agency',3=>'agency',4=>'agent');
 $EST_SUBFLDR = array(0=>array('full','vid'));
 $EST_CURSYMB = array('$','€','£','¥','฿','₡','¢','₴','₽','₱','CHF','Gs','kn','Kč','kr','MT','₪','Q','R','Rp','RM','₨','L','lei','Ft','₹','₺','₦','₭','₩','zł','₫','؋','៛','ƒ','лв','ден','₼','&nbsp;','');
@@ -304,10 +304,6 @@ function estGetSpaces($PROPID,$PSTAT=0){
   ON grouplist_groupidx = space_grpid
   WHERE space_propidx=".$PROPID."
   ORDER BY grouplist_ord ASC, space_ord ASC";
-  
-  /* #estate_group.*,
-  LEFT JOIN #estate_group
-  ON group_idx = space_grpid*/
   
   if($data3 = $sql->retrieve($query3,true)){
     foreach($data3 as $row){
