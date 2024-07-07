@@ -15,6 +15,8 @@ Download ALL files and replace all existing files on your website with current. 
 STILL NEEDED TO FINISH: 
 
 Community/Sub-division/Village data: need to build the forms for Features, Images, and Details 
+Integrate Private Messaging to Assigned Moderators for Non-Agent Listing submissions
+Optional Moderator Menu for showing new non-agent listing submissions that need approval
  
 
 
