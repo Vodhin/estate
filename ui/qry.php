@@ -7,6 +7,7 @@ $EST_PROPINTS = array('prop_idx','prop_status','prop_type','prop_zoning','prop_a
 foreach($estQdta as $row){
   foreach($row as $k=>$v){
     if(in_array($k,$EST_PROPINTS)){$row[$k] = intval($v);}
+    //prop_appr
     }
   
   if($prop_idx !== intval($row['prop_idx'])){
@@ -39,9 +40,7 @@ if(count($EST_PROP) > 0){
     $EVTQRY .= " IN($FPROPS)";
     if($data2 = $sql->retrieve("SELECT #estate_media.* FROM #estate_media WHERE media_propidx IN($FPROPS) AND media_galord ='1'",true)){
       $i = 0;
-      foreach($data2 as $row){
-        $EST_PROP[$row['media_propidx']]['img'][$row['media_galord']]['t'] = $row['media_thm'];
-        }
+      foreach($data2 as $row){$EST_PROP[$row['media_propidx']]['img'][$row['media_galord']]['t'] = $row['media_thm'];}
       }
     }
   else{$EVTQRY .= "='$PROPID'";}
@@ -49,7 +48,6 @@ if(count($EST_PROP) > 0){
   if($dataEvt = $sql->retrieve($EVTQRY,true)){
     foreach($dataEvt as $row){$EST_PROP[$row['event_propidx']]['evt'][$row['event_start']] = $row;}
     }
-  
   }
 
 unset($FPROPS,$EVTQRY,$MSGQRY,$data,$data2,$dataEvt,$dataMsg,$Z1,$Z2,$row);

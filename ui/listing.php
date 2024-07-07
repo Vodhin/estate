@@ -83,6 +83,16 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'left noPAD posREL',
         'thclass' => 'left',
         ),
+			'prop_appr' => array (
+        'tab'=>0,
+        'type' => 'method',
+        'data' => 'int',
+        'title'=>EST_GEN_LISTING.' '.EST_GEN_APPROVAL,
+        'readParms' => array(),
+        'writeParms' => array(),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
 			'prop_views' => array (
         'tab'=>0,
         'type' => 'hidden',
@@ -1087,7 +1097,7 @@ class estate_listing_ui extends e_admin_ui{
 
 
 
-		protected $preftabs = array(EST_GEN_GENERAL,EST_PREF_TEMPLATES,EST_PREF_MENU,EST_GEN_SCHEDULING,EST_GEN_MAP,EST_GEN_NONAGENTLISTINGS);
+		protected $preftabs = array(EST_GEN_GENERAL,EST_PREF_CONTACTFORM,EST_PREF_TEMPLATES,EST_PREF_MENU,EST_GEN_SCHEDULING,EST_GEN_MAP,EST_GEN_NONAGENTLISTINGS);
 		protected $prefs = array(
 			'adminonly'=>array(
         'tab'=>0,
@@ -1135,14 +1145,6 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' => array (), 
         'writeParms' => array('size'=>'large'),
         ),
-			
-      'contact_notify'=>array(
-        'tab'=>0,
-        'title'=>EST_PREF_CONTACTNOTIFY,
-        'type'=>'boolean',
-        'data'=>'int',
-        'help'=>EST_PREF_CONTACTNOTIFYHLP,
-        ),
         
 			'listing_save'=>array(
         'tab'=>0,
@@ -1153,17 +1155,25 @@ class estate_listing_ui extends e_admin_ui{
         ),
         
 			'contact_class' => array (
-        'tab'=>0,
-        'title' => EST_PREF_CONTACTFORM,
+        'tab'=>1,
+        'title' => EST_PREF_CONTACTFORMACC,
         'type'=>'userclass',
         'data' => 'str',
         'width' => 'auto',
-        'help' => EST_PREF_CONTACTFORMHLP,
+        'help' => EST_PREF_CONTACTFORMACCHLP,
         'readParms' => array (), 
         'writeParms' => array('size'=>'large'),
         ),
+			
+      'contact_notify'=>array(
+        'tab'=>1,
+        'title'=>EST_PREF_CONTACTNOTIFY,
+        'type'=>'boolean',
+        'data'=>'int',
+        'help'=>EST_PREF_CONTACTNOTIFYHLP,
+        ),
       'contact_mode'=>array(
-        'tab'=>0,
+        'tab'=>1,
         'title'=>EST_PREF_CONTACTMODE,
         'type'=>'dropdown',
         'data'=>'str',
@@ -1175,7 +1185,7 @@ class estate_listing_ui extends e_admin_ui{
           ),
         ),
       'contact_phone'=>array(
-        'tab'=>0,
+        'tab'=>1,
         'title'=>EST_PREF_CONTACTPHONEREQ,
         'type'=>'boolean',
         'data'=>'int',
@@ -1183,7 +1193,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
 			'contact_cc' => array (
-        'tab'=>0,
+        'tab'=>1,
         'title' => EST_PREF_CONTACTCC,
         'type'=>'userclass',
         'data' => 'str',
@@ -1194,7 +1204,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'contact_max'=>array(
-        'tab'=>0,
+        'tab'=>1,
         'title'=>EST_PREF_CONTACTMAX,
         'type'=>'dropdown',
         'data'=>'str',
@@ -1206,7 +1216,7 @@ class estate_listing_ui extends e_admin_ui{
           ),
         ),
       'contact_maxto'=>array(
-        'tab'=>0,
+        'tab'=>1,
         'title'=>EST_PREF_CONTACTMAXTO,
         'type'=>'dropdown',
         'data'=>'str',
@@ -1218,7 +1228,7 @@ class estate_listing_ui extends e_admin_ui{
           ),
         ),
       'contact_life'=>array(
-        'tab'=>0,
+        'tab'=>1,
         'title'=>EST_PREF_CONTACTLIFE,
         'type'=>'dropdown',
         'data'=>'str',
@@ -1230,7 +1240,7 @@ class estate_listing_ui extends e_admin_ui{
           ),
         ),
       'contact_terms'=>array(
-        'tab'=>0,
+        'tab'=>1,
         'title'=>EST_PREF_CONTACTTERMS.'<div id="prefSetDefTermsTarg"></div>',
         'type'=>'method',
         'data'=>'safestr',
@@ -1239,7 +1249,7 @@ class estate_listing_ui extends e_admin_ui{
       
       
       'template_list'=>array(
-        'tab'=>1,
+        'tab'=>2,
         'title'=>EST_PREF_TEMPLATE_LIST,
         'type'=>'dropdown',
         'data'=>'safestr',
@@ -1251,7 +1261,7 @@ class estate_listing_ui extends e_admin_ui{
         'writeParms' => array(),
         ),
       'template_view'=>array(
-        'tab'=>1,
+        'tab'=>2,
         'title'=>EST_PREF_TEMPLATE_VIEW,
         'type'=>'dropdown',
         'data'=>'safestr',
@@ -1263,7 +1273,7 @@ class estate_listing_ui extends e_admin_ui{
         'writeParms' => array(),
         ),
       'template_view_ord'=>array(
-        'tab'=>1,
+        'tab'=>2,
         'title'=>EST_PREF_TEMPLATE_VIEWORD,
         'type'=>'method',
         'data'=>'safestr',
@@ -1277,7 +1287,7 @@ class estate_listing_ui extends e_admin_ui{
       
       
       'slideshow_act'=>array(
-        'tab'=>1,
+        'tab'=>2,
         'title'=>EST_PREF_SLIDESHOWACT,
         'type'=>'boolean',
         'data'=>'int',
@@ -1285,7 +1295,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'slideshow_time'=>array(
-        'tab'=>1,
+        'tab'=>2,
         'title'=>EST_PREF_SLIDESHOWTIMING,
         'type'=>'number',
         'data'=>'int',
@@ -1294,7 +1304,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'slideshow_delay'=>array(
-        'tab'=>1,
+        'tab'=>2,
         'title'=>EST_PREF_SLIDESHOWDELAY,
         'type'=>'number',
         'data'=>'int',
@@ -1304,7 +1314,7 @@ class estate_listing_ui extends e_admin_ui{
       
       
       'template_menu'=>array(
-        'tab'=>2,
+        'tab'=>3,
         'title'=>EST_PREF_TEMPLATE_MENU,
         'type'=>'dropdown',
         'data'=>'safestr',
@@ -1316,7 +1326,7 @@ class estate_listing_ui extends e_admin_ui{
         'writeParms' => array(),
         ),
       'template_menu_ord'=>array(
-        'tab'=>2,
+        'tab'=>3,
         'title'=>EST_PREF_TEMPLATE_MENUORD,
         'type'=>'method',
         'data'=>'safestr',
@@ -1330,14 +1340,14 @@ class estate_listing_ui extends e_admin_ui{
       
       
       'sched_agt_times'=>array(
-        'tab'=>3,
+        'tab'=>4,
         'title'=>EST_PREF_DEFAGTHRS,
         'type'=>'method',
         'data'=>'array',
         'help'=>EST_PREF_DEFAGTHRSHLP,
         ),
       'sched_pub_times'=>array(
-        'tab'=>3,
+        'tab'=>4,
         'title'=>EST_PREF_DEFPUBHRS,
         'type'=>'method',
         'data'=>'array',
@@ -1345,7 +1355,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'sched_evt_lengths'=>array(
-        'tab'=>3,
+        'tab'=>4,
         'title'=>EST_PREF_DEFEVTLEN,
         'type'=>'method',
         'data'=>'array',
@@ -1354,7 +1364,7 @@ class estate_listing_ui extends e_admin_ui{
       
       
       'map_include_agency'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'title'=>EST_PREF_MAPAGENCY,
         'help'=>EST_PREF_MAPAGENCYHLP,
         'type'=>'dropdown',
@@ -1364,7 +1374,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'map_jssrc'=>array( 
-        'tab'=>4,
+        'tab'=>5,
         'title'=>EST_PREF_MAPMAP_JSSRC,
         'type'=>'dropdown',
         'data'=>'str',
@@ -1373,7 +1383,7 @@ class estate_listing_ui extends e_admin_ui{
         'writeParms' => array('size'=>'xlarge','optArray'=>array(0=>EST_PREF_MAPMAP_JSSRCOPT0,1=>EST_PREF_MAPMAP_JSSRCOPT1)),
         ),
       'map_url'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'title'=>EST_PREF_MAPURL,
         'type'=>'method',
         'data'=>'safestr',
@@ -1385,7 +1395,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'map_key'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'title'=>EST_PREF_MAPKEY,
         'type'=>'method',
         'data'=>'safestr',
@@ -1398,7 +1408,7 @@ class estate_listing_ui extends e_admin_ui{
       
       
       'pref_addr_lookup' => array (
-        'tab'=>4,
+        'tab'=>5,
         'type' => 'method',
         'data' => 'safestr',
         'width' => 'auto',
@@ -1410,7 +1420,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'pref_map'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'type'=>'method',
         'data'=>false,
         'inline'=>false,
@@ -1420,7 +1430,7 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'center',
         ),
 			'pref_lat'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'type'=>'hidden',
         'data'=>'safestr',
         'inline'=>false,
@@ -1430,7 +1440,7 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         ),
       'pref_lon'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'type'=>'hidden',
         'data'=>'safestr',
         'inline'=>false,
@@ -1440,7 +1450,7 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         ),
 			'pref_zoom'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'type'=>'hidden',
         'data'=>'int',
         'inline'=>false,
@@ -1451,7 +1461,7 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         ),
 			'map_width'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'type'=>'hidden',
         'data'=>'int',
         'inline'=>false,
@@ -1462,7 +1472,7 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         ),
 			'map_height'=>array(
-        'tab'=>4,
+        'tab'=>5,
         'type'=>'hidden',
         'data'=>'int',
         'inline'=>false,
@@ -1474,7 +1484,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
 			'public_act'=>array(
-        'tab'=>5,
+        'tab'=>6,
         'title'=>EST_GEN_NONAGENTLISTINGS,
         'type'=>'userclass',
         'data'=>'int',
@@ -1482,38 +1492,47 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' =>  array (),
         'writeParms' =>  array ('classlist'=>'member,nobody,no-excludes'),
         ),
-      'public_mod'=>array( 
-        'tab'=>5,
-        'title'=>EST_GEN_NONAGENTMOD,
-        'type'=>'dropdown',
-        'data'=>'str',
-        'width' => 'auto',
-        'help'=>EST_GEN_NONAGENTMODHLP,
-        'writeParms' => array('size'=>'xlarge','optArray'=>array(4=>EST_GEN_ESTATE.' '.EST_GEN_MAINADMIN.' '.EST_GEN_ONLY,3=>EST_GEN_ESTATE.' '.EST_GEN_ADMIN.' & '.EST_GEN_MAINADMIN,2=>EST_GEN_ESTATE.' '.EST_GEN_MANAGER.', '.EST_GEN_ADMIN.', & '.EST_GEN_MAINADMIN)),
-        ),
-			'public_apr'=>array(
-        'tab'=>5,
-        'title'=>EST_GEN_NONAGENTAPPROVED,
-        'type'=>'boolean',
-        'data'=>'int',
-        'help'=>EST_GEN_NONAGENTAPPROVEDHLP,
-        ),
-      'public_imgct'=>array(
-        'tab'=>5,
-        'title'=>EST_GEN_NONAGENTIMGCT,
-        'type'=>'number',
-        'data'=>'int',
-        'help'=>EST_GEN_NONAGENTIMGCTHLP,
-        'writeParms' => array('size'=>'small','min'=>3,'max'=>18),
-        ),
       'public_exp'=>array( 
-        'tab'=>5,
+        'tab'=>6,
         'title'=>EST_GEN_NONAGENTEXP,
         'type'=>'dropdown',
         'data'=>'str',
         'width' => 'auto',
         'help'=>EST_GEN_NONAGENTEXPHLP,
         'writeParms' => array('size'=>'xlarge','optArray'=>array(0=>EST_GEN_NONE,14=>'2 '.EST_GEN_WEEKS,30=>'1 '.EST_GEN_MONTH,61=>'2 '.EST_GEN_MONTHS,92=>'3 '.EST_GEN_MONTHS,183=>'6 '.EST_GEN_MONTHS)),
+        ),
+      'public_imgct'=>array(
+        'tab'=>6,
+        'title'=>EST_GEN_NONAGENTIMGCT,
+        'type'=>'number',
+        'data'=>'int',
+        'help'=>EST_GEN_NONAGENTIMGCTHLP,
+        'writeParms' => array('size'=>'small','min'=>3,'max'=>18),
+        ),
+			'public_apr'=>array(
+        'tab'=>6,
+        'title'=>EST_GEN_NONAGENTAPPROVED,
+        'type'=>'userclass',
+        'data'=>'int',
+        'help'=>EST_GEN_NONAGENTAPPROVEDHLP,
+        'readParms' =>  array (),
+        'writeParms' =>  array ('classlist'=>'member,nobody,no-excludes'),
+        ),
+      'public_mod'=>array( 
+        'tab'=>6,
+        'title'=>EST_GEN_NONAGENTMOD,
+        'type'=>'method',
+        'data'=>'str',
+        'width' => 'auto',
+        'help'=>EST_GEN_NONAGENTMODHLP,
+        'writeParms' => array('size'=>'xlarge'),
+        ),
+			'public_notify'=>array(
+        'tab'=>6,
+        'title'=>EST_GEN_NONAGENTNOTIFY1,
+        'type'=>'method',
+        'data'=>'safestr',
+        'help'=>EST_GEN_NONAGENTNOTIFY1HLP,
         ),
       );
     
@@ -1765,27 +1784,31 @@ class estate_listing_ui extends e_admin_ui{
           $text .= '
           <div id="estEditHelp-0" class="estEditHelpSect">
             <b id="estHlp-prefGen1">'.EST_GEN_GENERALOPTS.'</b>
-            <p id="estHlp-prefGen1">'.EST_GEN_GENERALOPTSHLP1.'</p>
+            <p>'.EST_GEN_GENERALOPTSHLP1.'</p>
           </div>
           <div id="estEditHelp-1" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">'.EST_PREF_TEMPLATES.'</b>
-            <p id="estHlp-prefGen1">'.EST_HLPMNU_PREF_TEMPLATES01.'</p>
+            <b>'.EST_PREF_CONTACTFORM.'</b>
+            <p>'.EST_HLPMNU_PREF_CONTACTFORM01.'</p>
           </div>
           <div id="estEditHelp-2" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">'.EST_PREF_MENU.'</b>
-            <p id="estHlp-prefGen1">'.EST_HLPMNU_PREF_MENU01.'</p>
+            <b>'.EST_PREF_TEMPLATES.'</b>
+            <p>'.EST_HLPMNU_PREF_TEMPLATES01.'</p>
           </div>
           <div id="estEditHelp-3" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">'.EST_GEN_SCHEDULEOPTS.'</b>
-            <p id="estHlp-prefGen1">'.EST_GEN_SCHEDULEOPTSHLP1.'</p>
+            <b>'.EST_PREF_MENU.'</b>
+            <p>'.EST_HLPMNU_PREF_MENU01.'</p>
           </div>
           <div id="estEditHelp-4" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">'.EST_GEN_MAPOPTS.'</b>
-            <p id="estHlp-prefGen1">'.EST_GEN_MAPOPTSHLP1.'</p>
+            <b>'.EST_GEN_SCHEDULEOPTS.'</b>
+            <p>'.EST_GEN_SCHEDULEOPTSHLP1.'</p>
           </div>
           <div id="estEditHelp-5" class="estEditHelpSect">
-            <b id="estHlp-prefGen1">'.EST_GEN_NONAGENTLISTINGS.'</b>
-            <p id="estHlp-prefGen1">'.EST_GEN_NONAGENTLISTINGHLP1.'</p>
+            <b>'.EST_GEN_MAPOPTS.'</b>
+            <p>'.EST_GEN_MAPOPTSHLP1.'</p>
+          </div>
+          <div id="estEditHelp-6" class="estEditHelpSect">
+            <b>'.EST_GEN_NONAGENTLISTINGS.'</b>
+            <p>'.EST_GEN_NONAGENTLISTINGHLP1.'</p>
           </div>';
           }
         else{
@@ -1843,6 +1866,22 @@ class estate_listing_ui extends e_admin_ui{
 
 
 class estate_listing_form_ui extends e_admin_form_ui{
+  
+  
+  
+  
+  public function public_mod($curVal,$mode){
+    $estateCore = new estateCore;
+    return $estateCore->estModList($curVal,'public_mod');
+    //template_view_ord
+    }
+  
+  public function public_notify($curVal,$mode){
+    $estateCore = new estateCore;
+    return $estateCore->estModList($curVal,'public_notify');
+    //template_view_ord
+    }
+  
   
   public function contact_terms($curVal,$mode){
     $tp = e107::getParser();
@@ -2003,6 +2042,29 @@ class estate_listing_form_ui extends e_admin_form_ui{
       }
     }
   
+  
+  public function prop_appr($curVal,$mode){
+		$tp = e107::getParser();
+    $EST_PREF = e107::pref('estate');
+    switch($mode){
+			case 'read': // List Page
+        return $curVal;
+				break;
+
+			case 'write': // Edit Page
+        $dta = $this->getController()->getModel()->getData();
+        if(intval($dta['prop_agent']) > 0){return EST_GEN_NOT.' '.EST_GEN_REQUIRED.'<input type="hidden" name="prop_appr" value="1" />';}
+        else if(EST_USERPERM >= intval($EST_PREF['public_mod'])){
+          return '<select name="prop_appr" value="'.intval($curVal).'">
+          <option value=""'.(intval($curVal) == 0 ? ' selected="selected"' : '').'>'.EST_GEN_NOT.' '.EST_GEN_APPROVED.'</option><option value=""'.(intval($curVal) == 1 ? ' selected="selected"' : '').'>'.EST_GEN_APPROVED.'</option></select>';
+          }
+        else{
+          if(EST_USERPERM > 0 || check_class($EST_PREF['public_apr'])){$curVal = 1;}      
+          return (intval($curVal) == 1 ? EST_GEN_APPROVED : EST_GEN_NOT.' '.EST_GEN_APPROVED).'<input type="hidden" name="prop_appr" value="'.$curVal.'" />';
+          }
+				break;
+      }
+    }
   
   public function prop_zip($curVal,$mode){
 		$tp = e107::getParser();
@@ -2482,7 +2544,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
 			case 'read':
 				break;
 			case 'write': 
-        return '<div id="estviewOrderCont"></div>';;
+        return '<div id="estviewOrderCont"></div>';
         break;
 			case 'filter':
 			case 'batch':

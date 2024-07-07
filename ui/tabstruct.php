@@ -429,7 +429,7 @@ function estTablStruct(){
         'str'=>'int',
         'labl'=>EST_GEN_HOAAPPR1,
         'cls'=>'large',
-        'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>array(EST_GEN_NOTREQUIURED,EST_GEN_REQUIURED))
+        'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>array(EST_GEN_NOTREQUIRED,EST_GEN_REQUIRED))
         )
       ),
     

@@ -1196,14 +1196,15 @@ class estateCore{
         $dtaStr = $this->estDataStr($v);
         
         $SELLER = '
-        <div class="estPropListAgentCont">
+        <div class="estPropListAgentCont" '.$dtaStr.'>
           <div>'.$tp->toHTML($v['seller_agency']).'</div>
           <div>
             <div style="background-image:url(\''.$v['seller_profimg'].'\')"></div>
             <p>';
+        //seller_agency
         if(intval($v['prop_agent']) > 0){
           $SELLER .= '
-                <a href="'.e_SELF.'?mode=estate_agencies&action=agent&id='.intval($v['agent_idx']).'" title="'.EST_GEN_EDIT.' '.EST_GEN_AGENT.'">'.$tp->toHTML($v['seller_name']).'</a>';
+                <a href="'.e_SELF.'?mode=estate_agencies&action=agent&id='.intval($v['seller_uid']).'.'.intval($v['prop_agent']).'" title="'.EST_GEN_EDIT.' '.EST_GEN_AGENT.'">'.$tp->toHTML($v['seller_name']).'</a>';
           }
         else{
           $SELLER .= $tp->toHTML($v['seller_name']);
@@ -1231,7 +1232,8 @@ class estateCore{
           </td>
           <td class="left noPAD">'.$SELLER.'</td>
           <td class="left">
-            <div class="estPropListStat"><a class="estPropListILEdit" data-fld="prop_status" data-type="select" data-opts="'.$STATOPTS.'" data-key="i" data-pid="'.intval($v['prop_idx']).'" data-cval="'.$v['prop_status'].'">'.$GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'].'</a><div>
+            <div class="estPropListStat"><a class="estPropListILEdit" data-fld="prop_status" data-type="select" data-opts="'.$STATOPTS.'" data-key="i" data-pid="'.intval($v['prop_idx']).'" data-cval="'.$v['prop_status'].'">'.$GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'].'</a></div>
+            <div class="estPropListStat"><a class="estPropListILEdit" data-fld="prop_appr" data-type="select" data-opts="'.EST_GEN_NOT.' '.EST_GEN_APPROVED.','.EST_GEN_APPROVED.'" data-key="i" data-pid="'.intval($v['prop_idx']).'" data-cval="'.intval($v['prop_appr']).'">'.(intval($v['prop_appr']) > 0 ? EST_GEN_APPROVED : EST_GEN_NOT.' '.EST_GEN_APPROVED).'</a></div>
           </td>
           <td class="left">
             <div title="'.EST_PROP_LISTZONE.'">'.$v['prop_zname'].'</div>
@@ -1284,9 +1286,14 @@ class estateCore{
     while($rows = $sql->fetch()){
       $uid = intval($rows['user_id']);
       
+      $AGTPERMS = explode(".",$rows['user_perms']);
       $AGTCLSES = explode(",",$rows['user_class']);
-      if(in_array(ESTATE_ADMIN,$AGTCLSES)){
-        $DTA['USERS'][$uid]['seller_role'] = EST_GEN_MAIN." ".EST_GEN_ADMIN;
+      if(in_array('0',$AGTPERMS)){
+        $DTA['USERS'][$uid]['seller_role'] = EST_GEN_MAIN." ".EST_GEN_WEBSITE." "." ".EST_GEN_ADMIN;
+        $DTA['USERS'][$uid]['seller_mgr'] = 4;
+        }
+      elseif(in_array(ESTATE_ADMIN,$AGTCLSES)){
+        $DTA['USERS'][$uid]['seller_role'] = EST_PLUGNAME." ".EST_GEN_ADMIN;
         $DTA['USERS'][$uid]['seller_mgr'] = 4;
         }
       elseif(in_array(ESTATE_MANAGER,$AGTCLSES)){
@@ -1421,7 +1428,7 @@ class estateCore{
       }
     unset($rows,$zid,$lid);
     
-    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_listype","prop_zoning","prop_type","prop_currency","prop_listprice","prop_origprice","prop_thmb","prop_views","city_name AS city","cnty_name AS county","state_name AS state","state_init AS ST","state_country AS nat");
+    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_listype","prop_zoning","prop_type","prop_currency","prop_listprice","prop_origprice","prop_thmb","prop_appr","prop_views","prop_saves","city_name AS city","cnty_name AS county","state_name AS state","state_init AS ST","state_country AS nat");
     
     
     $QRY = "
@@ -1436,7 +1443,9 @@ class estateCore{
     
     
     
-    if(intval($EST_PREF['public_act']) === 255 || EST_USERPERM < intval($EST_PREF['public_mod'])){$MODE = 0;}
+    if(intval($EST_PREF['public_act']) === 255 || EST_USERPERM < intval($EST_PREF['public_mod'])){
+      $MODE = 0;
+      }
         
     
     
@@ -1570,12 +1579,19 @@ class estateCore{
       $rows['prop_zname'] = $DTA['ZONES'][$rows['prop_zoning']]['name'];
       $rows['prop_ztype'] = $DTA['ZONES'][$rows['prop_zoning']]['types'][$rows['prop_type']];
       
+      // intval($EST_PREF['public_mod']) 
+      // intval($EST_PREF['public_apr'])
+      // estOAFormTable
+      
+      
+      
       if(intval($rows['prop_agent']) > 0 && $DTA['AGENTS'][$rows['prop_agent']]){
         $rows['seller_agency'] = $DTA['AGENTS'][$rows['prop_agent']]['seller_agency']['name'];
         $rows['seller_profimg'] = $DTA['AGENTS'][$rows['prop_agent']]['seller_profimg'];
         $rows['seller_name'] = $DTA['AGENTS'][$rows['prop_agent']]['seller_name'];
         $rows['seller_email'] = $DTA['AGENTS'][$rows['prop_agent']]['seller_email'];
         $rows['seller_role'] = $DTA['AGENTS'][$rows['prop_agent']]['seller_role'];
+        $rows['seller_uid'] = $DTA['AGENTS'][$rows['prop_agent']]['seller_uid'];
         $DTA['TR'][$rows['prop_idx']] = $rows;
         }
       elseif($DTA['USERS'][$rows['prop_uidcreate']]){
@@ -1584,6 +1600,7 @@ class estateCore{
         $rows['seller_name'] = $DTA['USERS'][$rows['prop_uidcreate']]['seller_name'];
         $rows['seller_email'] = $DTA['USERS'][$rows['prop_uidcreate']]['seller_email'];
         $rows['seller_role'] = $DTA['USERS'][$rows['prop_uidcreate']]['seller_role'];
+        $rows['seller_uid'] = $rows['prop_uidcreate'];
         $DTA['TR'][$rows['prop_idx']] = $rows;
         }
       else{
@@ -1597,6 +1614,102 @@ class estateCore{
     }
   
   
+  
+  
+  
+  
+  public function estModList($curVal,$fldname='public_notify'){
+    $EST_PREF = e107::pref('estate');
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    
+    $MODCLASSES = array(
+      4=>array(
+        'name'=>EST_GEN_ESTATE.' '.EST_GEN_MAINADMIN.' '.EST_GEN_ONLY,
+        'users'=>array()
+        ),
+      3=>array(
+        'name'=>EST_GEN_ESTATE.' '.EST_GEN_ADMIN.' & '.EST_GEN_MAINADMIN,
+        'users'=>array()
+        ),
+      2=>array(
+        'name'=>EST_GEN_ESTATE.' '.EST_GEN_MANAGER.', '.EST_GEN_ADMIN.', & '.EST_GEN_MAINADMIN,
+        'users'=>array()
+        ),
+      );
+    
+    
+    $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class, #estate_agents.* FROM #estate_agents LEFT JOIN #user ON user_id = agent_uid");
+     while($rows = $sql->fetch()){
+      
+      $AGTCLSES = explode(",",$rows['user_class']);
+      $UPERMS = explode('.',$rows['user_perms']);
+      $UDTA = array('id'=>$rows['user_id'],'name'=>$rows['agent_name'],'email'=>$rows['user_email']);
+      if(in_array('0',$UPERMS)){
+        array_push($MODCLASSES[4]['users'],$UDTA);
+        }
+      elseif(in_array(ESTATE_ADMIN,$AGTCLSES)){
+        array_push($MODCLASSES[3]['users'],$UDTA);
+        }
+      elseif(in_array(ESTATE_MANAGER,$AGTCLSES)){
+        array_push($MODCLASSES[2]['users'],$UDTA);
+        }
+      }
+    
+    //public_mod
+    
+    
+    
+    
+    if($fldname == 'public_mod'){
+      $txt = '<select id="public-mod" name="public_mod" class="form-control input-xlarge" value="'.$curVal.'" >';
+      foreach($MODCLASSES as $k=>$v){
+        $txt .= '<option value="'.$k.'"'.($k == $curVal ? ' selected="selected"' : '').'>'.$tp->toHTML($v['name']).'</option>';
+        }
+      $txt .= '</select>';
+      unset($MODCLASSES);
+      return $txt;
+      }
+    
+    
+    $curVal = (is_array($curVal) ? $curVal : explode(",",$curVal));
+    
+    /*
+    <input type="hidden" name="'.$fldname.'" value="'.$curVal.'"/>
+    <div class="estPubNotifyCont" data-fld="'.$fldname.'">
+      <div class="btn btn-sm btn-default estPubNotifySectBtn">
+        <input type="checkbox" id="estNoModNotify" value="0" '.(count($DTA) == 0 ? ' checked="checked"' : '').' title="" />'.$tp->toHTML(EST_GEN_NOBODY).'
+      </div>
+    </div>
+    
+    */
+    $txt = '
+    <div id="estPubNotifyCont" class="estPubNotifyCont">';
+    
+    
+    
+    foreach($MODCLASSES as $mk=>$mv){
+      if(count($mv['users']) > 0){
+        $txt .= '
+        <div class="estPubNotifySect" data-lev="'.$mk.'">';
+        foreach($mv['users'] as $uk=>$uv){
+          $uid = intval($uv['id']);
+          $txt .= '
+          <div class="btn btn-sm btn-default estPubNotifySectBtn" data-lev="'.$mk.'">
+            <input type="checkbox" id="estNAModId'.$mk.'-'.$uk.'-'.$uid.'" name="public_notify[]" value="'.$uid.'"'.(in_array($uid,$curVal) ? ' checked="checked" data-chk="1"' : 'data-chk="0"').' />'.$tp->toHTML($uv['name'].' ('.$uv['email'].')').'
+          </div>';
+          }
+        $txt .= '
+        </div>';
+        }
+      }
+    
+    
+    
+    $txt .= '</div>';
+    unset($MODCLASSES);
+    return $txt;
+    }
   
   
   
@@ -1644,7 +1757,7 @@ class estateCore{
       $TBS[0]['text'] = $this->estPropertyListTableSF(1,$DTA);
       }
     
-    $NDTA = array('e-token'=>e_TOKEN,'prop_listype'=>1,'prop_status'=>3,'prop_currency'=>intval($EST_PREF['currency']),'prop_leasedur'=>0,'prop_leasefreq'=>1,'prop_lat'=>$EST_PREF['pref_lat'],'prop_lon'=>$EST_PREF['pref_lon'],'seller_namex'=>EST_AGENTNAME);
+    $NDTA = array('e-token'=>e_TOKEN,'prop_listype'=>1,'prop_status'=>3,'prop_currency'=>intval($EST_PREF['currency']),'prop_leasedur'=>0,'prop_leasefreq'=>1,'prop_lat'=>$EST_PREF['pref_lat'],'prop_lon'=>$EST_PREF['pref_lon'],'seller_namex'=>EST_AGENTNAME,'prop_appr'=>USERID);
     
     $TBS[2]['caption'] = EST_GEN_NEW.' '.EST_GEN_LISTING;
     $TBS[2]['text'] = '<form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-form" autocomplete="off" data-h5-instanceid="0" novalidate="novalidate">';
@@ -1653,6 +1766,7 @@ class estateCore{
     $TBS[2]['text'] .= $this->estOAHidden('prop_leasefreq',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_lat',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_lon',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_appr',$NDTA);
     //estate_listypes
     
     $TBS[2]['text'] .= '
@@ -1682,6 +1796,8 @@ class estateCore{
         </tfoot>
       </table>
     </form>';
+    
+    
     
     $text .= e107::getForm(false,true)->tabs($TBS,array('active'=>0,'fade'=>0,'class'=>'estOATabs'));
     unset($NDTA);
@@ -3002,6 +3118,7 @@ class estateCore{
   
   public function estOAFormTable($SN,$DTA,$CG=2){
     $tp = e107::getParser();
+    $EST_PREF = e107::pref('estate');
     switch($SN){
       case 6 :
         $text = $this->estOAFormTableStart($SN);
@@ -3077,6 +3194,7 @@ class estateCore{
         
       case 0 :
         $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('prop_appr','prop_appr',$DTA);
         $text .= $this->estOAFormTR('text','prop_name',$DTA);//$ATTR,$SRC);
         $text .= $this->estOAFormTR('select','prop_status',$DTA);
         $text .= $this->estOAFormTR('select','prop_listype',$DTA);
@@ -3167,6 +3285,7 @@ class estateCore{
   
   public function estOAFormTR($TYPE,$FLD,$DTA,$options=null,$OPTARR=array()){
     $pref = e107::pref();//'estate'
+    $EST_PREF = e107::pref('estate');
     $tp = e107::getParser();
     $frm = e107::getForm(false, true);
     $sql = e107::getDB();
@@ -3258,8 +3377,35 @@ class estateCore{
       }
     
     
-    
     switch($TYPE){
+      
+      case 'prop_appr' :
+        
+        $styl = '';
+        
+        if(intval($DTA['prop_uidcreate']) !== USERID && EST_USERPERM >= intval($EST_PREF['public_mod'])){
+          $txt1 = '<select name="prop_appr" value="'.intval($FVALUE).'">';
+          $txt1 .= '<option value="0"'.(intval($FVALUE) == 0 ? ' selected="selected"' : '').'>'.EST_GEN_NOT.' '.EST_GEN_APPROVED.'</option>';
+          $txt1 .= '<option value="'.USERID.'"'.(intval($FVALUE) > 0 ? ' selected="selected"' : '').'>'.EST_GEN_APPROVED.'</option>';
+          $txt1 .= '</select><input type="hidden" id="estEmailNoSend" name="estEmailNoSend" value="1" />';
+          }
+        else{
+          if(EST_USERPERM > 0 || check_class($EST_PREF['public_apr'])){
+            $styl = ' style="display:none;"';
+            $txt1 = '<input type="hidden" id="estEmailNoSend" name="estEmailNoSend" value="1" />';
+            }
+          elseif(intval($FVALUE) > 0){
+            $txt1 = EST_GEN_APPROVED;
+            }
+          else{
+            $txt1 = EST_GEN_NOT.' '.EST_GEN_APPROVED;
+            if(isset($_POST['prop_appr'])){$txt1 .= '<input type="hidden" id="estEmailNoSend" name="estEmailNoSend" value="1" />';}
+            }
+          }
+        
+        return '<tr'.$styl.'><td class="VAM">'.$tp->toHTML(EST_GEN_LISTING.' '.EST_GEN_APPROVAL).'</td><td>'.$txt1.'</td></tr>';
+        break;
+        
       case 'nofld' :
         return '<tr><td class="VAM">'.$tp->toHTML($LABS['labl']).'</td><td><div style="margin:8px auto; font-weight:bold;">'.$tp->toHTML($FVALUE).'</div></td><td>';
         break;
@@ -3384,7 +3530,7 @@ class estateCore{
             <tr>
               <td colspan="'.$TBS[$SN]['cg'].'">
                 <div class="buttons-bar center">
-                  <input type="submit" name="estSubmit-'.$SN.'" class="btn btn-primary" value="'.($DTA['prop_idx'] > 0 ? EST_GEN_UPDATE : EST_GEN_SAVE).'" />
+                  <input type="submit" name="estSubmit-'.$SN.'" class="btn btn-primary estOASubmit" value="'.($DTA['prop_idx'] > 0 ? EST_GEN_UPDATE : EST_GEN_SAVE).'" />
                 </div>
               </td>
             </tr>
@@ -3426,8 +3572,6 @@ class estateCore{
       </div>
     </div>';
     }
-  
-  
   
   
   

@@ -705,7 +705,7 @@ function est_msg_form($DTA=null){
         <tr>
           <td>
             <fieldset><legend>'.EST_MSG_YOURNAME.':</legend>
-            <input type="text" name="msg_from_name" class="tbox form-control estChkMsg" data-len="6" value="'.$tp->toTEXT($msg_from_name).'" placeholder="'.EST_MSG_YOURNAME.' ('.EST_GEN_REQUIURED.')" />
+            <input type="text" name="msg_from_name" class="tbox form-control estChkMsg" data-len="6" value="'.$tp->toTEXT($msg_from_name).'" placeholder="'.EST_MSG_YOURNAME.' ('.EST_GEN_REQUIRED.')" />
             <input type="hidden" name="msg_idx" value="'.$msg_idx.'"/>
             <input type="hidden" name="msg_sent" value="'.$msg_sent.'"/>
             <input type="hidden" name="msg_read" value="'.$msg_read.'"/>
@@ -721,7 +721,7 @@ function est_msg_form($DTA=null){
         <tr>
           <td>
             <fieldset><legend>'.EST_MSG_YOUREMAIL.':</legend>
-            <input type="text" name="msg_from_addr" class="tbox form-control estChkMsg" data-req="@" data-len="6" value="'.$tp->toTEXT($msg_from_addr).'" placeholder="'.EST_MSG_YOUREMAIL.' ('.EST_GEN_REQUIURED.')" />';
+            <input type="text" name="msg_from_addr" class="tbox form-control estChkMsg" data-req="@" data-len="6" value="'.$tp->toTEXT($msg_from_addr).'" placeholder="'.EST_MSG_YOUREMAIL.' ('.EST_GEN_REQUIRED.')" />';
             
           if($COPY_PREF == 1 && check_class($EST_PREF['contact_cc'])){
             $ret .= '
@@ -736,7 +736,7 @@ function est_msg_form($DTA=null){
         <tr>
           <td>
             <fieldset><legend>'.EST_MSG_YOUREPHONE.':</legend>
-            <input type="text" name="msg_from_phone" '.($EST_PREF['contact_phone'] == 1 ? 'class="tbox form-control estChkMsg"  placeholder="'.EST_MSG_YOUREPHONE.' ('.EST_GEN_REQUIURED.')"': 'class="tbox form-control"  placeholder="'.EST_MSG_YOUREPHONE.'"').' data-len="8" value="'.$tp->toTEXT($msg_from_phone).'" />
+            <input type="text" name="msg_from_phone" '.($EST_PREF['contact_phone'] == 1 ? 'class="tbox form-control estChkMsg"  placeholder="'.EST_MSG_YOUREPHONE.' ('.EST_GEN_REQUIRED.')"': 'class="tbox form-control"  placeholder="'.EST_MSG_YOUREPHONE.'"').' data-len="8" value="'.$tp->toTEXT($msg_from_phone).'" />
             </fieldset>
           </td>
         </tr>
@@ -750,7 +750,7 @@ function est_msg_form($DTA=null){
         <tr>
           <td>
             <fieldset><legend>'.EST_MSG_YOURMSG.':</legend>
-            <textarea name="msg_text" class="tbox form-control estChkMsg" cols="40" rows="6" data-len="18" placeholder="'.EST_MSG_MSGTXTPL.' ('.EST_GEN_REQUIURED.')">'.$tp->toTEXT($DTA['msg_text']).'</textarea>
+            <textarea name="msg_text" class="tbox form-control estChkMsg" cols="40" rows="6" data-len="18" placeholder="'.EST_MSG_MSGTXTPL.' ('.EST_GEN_REQUIRED.')">'.$tp->toTEXT($DTA['msg_text']).'</textarea>
             </fieldset>
           </td>
         </tr>
