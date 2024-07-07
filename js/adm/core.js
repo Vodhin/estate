@@ -8886,7 +8886,7 @@ function estGetSubDivs(){
       }
     
     $.each(defs.prefs.templates[sect], function(tname,tdta){
-      console.log(sect,tname,tdta);
+      //console.log(sect,tname,tdta);
       var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="template_'+sect+'"]');
       var scont = $(JQDIV,{'id':'est'+sect+'TemplateSect-'+tname,'class':'estTemplateSectCont est'+sect+'TemplateSectCont'}).appendTo('#est'+sect+'OrderCont');
       var tKey = 'template_'+sect;
@@ -8907,7 +8907,7 @@ function estGetSubDivs(){
           defs.prefs['template_'+sect+'_ord'] = 'default';
           }
         
-        console.log(defs.prefs['template_'+sect+'_ord'][tname]);
+        //console.log(defs.prefs['template_'+sect+'_ord'][tname]);
         if(typeof defs.prefs['template_'+sect+'_ord'][tname] !== 'undefined' && defs.prefs['template_'+sect+'_ord'][tname] !== null){
           preford = Object.keys(defs.prefs['template_'+sect+'_ord'][tname]);
           }
@@ -8985,9 +8985,42 @@ function estGetSubDivs(){
       }).empty().promise().done(function(){
         estTemplateOrdCont('menu');
         });
-            
-        
     }
+  
+  
+  
+  function estBuildNANotify(key){
+    var chks = 0;
+    $('#estPubNotifyCont').find('div.estPubNotifySectBtn').each(function(i,btn){
+      var cbx = $(btn).find('input[type="checkbox"]');
+      if(!$(btn).hasClass('estEleBound')){
+        $(btn).addClass('estEleBound');
+        $(cbx).on({
+          click : function(e){
+            if($(cbx).is(':checked')){$(cbx).data('chk',1);}
+            else{$(cbx).data('chk',Number(0));}
+            }
+          });
+        }
+      
+      
+      if(Number($(btn).data('lev')) >= Number(key)){
+        $(btn).fadeIn(250);
+        if(Number($(cbx).data('chk')) == 1  && !$(cbx).is(':checked')){$(cbx).prop('checked','checked');}
+        if($(cbx).is(':checked')){chks++;}
+        }
+      else{
+        if($(cbx).is(':checked')){$(cbx).data('chk',1);}
+        else{$(cbx).data('chk',Number(0));}
+        $(cbx).prop('checked','').removeProp('checked');
+        $(btn).fadeOut(250);
+        }
+      }).promise().done(function(){
+        console.log('chks: '+chks);
+        });
+    }
+  
+  
   
   
   function estPrefs(){
@@ -9025,6 +9058,22 @@ function estGetSubDivs(){
               estSetHelpInFull();
               estBindTemplateSel();
               estBuildMap('pref');
+              
+              $('select[name="public_mod"]').on({
+                change : function(){estBuildNANotify(Number(this.value))}
+                }).change();
+              
+              
+              $('select[name="public_apr"]').on({
+                change : function(){
+                  if(this.value == 255){
+                    //$('select[name="public_notify"]').closest('tr').fadeIn();
+                    }
+                  else{
+                    //$('select[name="public_notify"]').closest('tr').fadeOut();
+                    }
+                  }
+                }).change();
               
             
               $('select[name="map_jssrc"]').on({
