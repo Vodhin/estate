@@ -3,7 +3,9 @@ A plugin for the e107 Content management System to manage Real Estate Agencies, 
 
 The _Estate_ plugin is ready fore BETA testing. The Current repository should be mostly usable if anyone wants to try it out. A live production site using this plugin can be viewed here https://www.sandpiperhome.org 
 
+
 IF YOU HAVE DOWNLOADED THE RELEASE ZIP FILE, PLEASE BE SURE TO CHANGE THE ROOT FOLDER TO "estate" before uploading to your website: Remove any v1.0.0-beta.1 or any other characters after "estate" 
+
 
 MANUAL UPDATING ON YOUR WEBSITE DURING DEVELOPMENT:
 
@@ -11,8 +13,10 @@ Download ALL files and replace all existing files on your website with current. 
 
 
 STILL NEEDED TO FINISH: 
+
 Community/Sub-division/Village data: need to build the forms for Features, Images, and Details 
  
+
 
 DEVELOPMENT/REVISION HISTORY:
 
