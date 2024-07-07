@@ -3461,7 +3461,6 @@ function lightOrDark(color){
     $fltrEle = $('select[name="'+rfld+'"');
     var cVal = $fltrEle.find('option:selected').val();
     
-    console.log(rtbl.tbl);
     
     var grpGrep2 = $.grep(defs.tbls[rtbl.tbl].dta, function (element, index) {return element[fele.map[1]] == newVal;});
     
@@ -3979,18 +3978,18 @@ function lightOrDark(color){
     var defs = $('body').data('defs');
     var propId = Number($('body').data('propid'));
     
+    if(typeof L == 'undefined'){
+      $('#est_prop_MapCont').remove();
+      estAlertLog(defs.txt.map+' '+defs.txt.javafail);
+      return;
+      }
+    
     var nTW = Math.floor($('#est_prop_MapCont').closest('table').width() * 0.60);
     $('#est_prop_MapCont').width(nTW);
-    console.log(nTW);
-    
-    
     var mapW = defs.prefs.map_width;
-    
     var mapH = defs.prefs.map_height;
-    
     var targCont = $('#est_prop_Map').parent();
     var flds = $(targCont).data();
-    
     var latFld = flds.latfld;
     var lonFld = flds.lonfld;
     var zoomFld = flds.zoomfld;
@@ -4002,6 +4001,7 @@ function lightOrDark(color){
     $(targCont).empty().promise().done(function(){
       $(JQDIV,{'id':'est_prop_Map','class':'estMap'}).css({'width':mapW+'px'}).appendTo(targCont).promise().done(function(){
         $('input[name="prop_addr_lookup"]').css({'width':+mapW - $('#est_prop_SrchBtn').outerWidth()+'px'});
+          
           var map = L.map('est_prop_Map').setView([lat, lon], zoom);
         	
           var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -4217,7 +4217,20 @@ function lightOrDark(color){
       $('#prop-country').change();
       }
     
-    
+    $('.estOASubmit').on({
+      click : function(e){
+        if(!document.getElementById('estEmailNoSend')){
+          var txt = $('body').data('defs').txt;
+          var bkcover = $(JQDIV,{'id':'estBlackout'}).on({
+            click : function(e){
+              e.stopPropagation();
+              $('#estBlackout').remove();
+              }
+            }).prependTo('body');
+          $(JQDIV,{'id':'estEmlNote'}).html(txt.sendingemails+' '+txt.tomods+'.<br /><br />'+txt.donotreload).appendTo(bkcover);
+          }
+        }
+      });
     
     $('.estGalCont').each(function(gi,gEle){
       var gContId = $(gEle).attr('id');

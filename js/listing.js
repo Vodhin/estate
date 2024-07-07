@@ -208,6 +208,7 @@ function estSetLike(ele,cok=0){
   
   
   function estBuildMap(){
+    var defs = $('body').data('defs');
     if(typeof estMapPins !== 'undefined' && document.getElementById('estMap')){
       if(estMapPins.agcy.length == 0 && estMapPins.prop.length == 0){
         $('#estMapCont').remove();
@@ -216,7 +217,7 @@ function estSetLike(ele,cok=0){
       
       if(typeof L == 'undefined'){
         $('#estMapCont').remove();
-        estAlertLog('MAP Javascript failed to load');
+        estAlertLog(defs.txt.map+' '+defs.txt.javafail);
         return;
         }
       var estJSpth = $(document).data('estJSpth');
