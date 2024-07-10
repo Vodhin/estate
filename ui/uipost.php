@@ -511,6 +511,13 @@ function estPropDelete($ID){
     $sql = e107::getDB();
     $tp = e107::getParser();
     
+    if($sql->delete("estate_likes", "like_pid='".$ID."'")){
+      $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_SAVES.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
+      }
+    if($sql->delete("estate_msg", "msg_propidx='".$ID."'")){
+      $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_MESSAGES.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
+      }
+    
     if($sql->delete("estate_spaces", "space_propidx='".$ID."'")){
       $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_SPACES.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
       }
