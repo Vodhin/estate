@@ -220,7 +220,7 @@ function estHelpTabs(){
             
             <table>
               <tr>
-                <td><img src="'.EST_PATHABS_IMAGES.'instr006.png" class="estInstImg" /></td>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr006.png" class="estInstImg" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR034.'</p>
                   <p>'.EST_INSTR034a.'</p>
@@ -229,7 +229,7 @@ function estHelpTabs(){
                 </td>
               </tr>
               <tr>
-                <td><img src="'.EST_PATHABS_IMAGES.'instr007.png" class="estInstImg" /></td>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr007.png" class="estInstImg" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR035.'</p>
                   <p>'.EST_INSTR035a.'</p>
@@ -237,19 +237,19 @@ function estHelpTabs(){
                 </td>
               </tr>
               <tr>
-                <td><img src="'.EST_PATHABS_IMAGES.'instr007a.png" class="estInstImg" /></td>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr007a.png" class="estInstImg" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR036.'</p>
                 </td>
               </tr>
               <tr>
-                <td><img src="'.EST_PATHABS_IMAGES.'instr008.png" class="estInstImg" /></td>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr008.png" class="estInstImg" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR038.'</p>
                 </td>
               </tr>
               <tr>
-                <td><img src="'.EST_PATHABS_IMAGES.'instr009.png" class="estInstImg" /></td>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr009.png" class="estInstImg" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR039.'</p>
                 </td>

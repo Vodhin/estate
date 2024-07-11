@@ -29,7 +29,7 @@ if(!class_exists("estate_setup")){
       $tp = e107::getParser();
       $msg = e107::getMessage();
       
-      
+      $MAINAGTID = 0;
       $FUSERS = array();
       $sql->gen("SELECT user_id,user_name,user_loginname,user_email,user_class,user_signature,user_image FROM #user WHERE user_admin='1' AND user_perms='0'");
       while($row = $sql->fetch()){array_push($FUSERS,$row);}
@@ -38,11 +38,12 @@ if(!class_exists("estate_setup")){
         foreach($FUSERS as $k=>$v){
           $NEWID = $sql->insert("estate_agents","'0','1','".$tp->toDB($v['user_name'])."','4','".intval($v['user_id'])."','','0','".$tp->toDB($v['user_signature'])."'");
           if($NEWID > 0){
-            $cmsg .= '<li>'.EST_INST_FISRTAGENT.' '.$tp->toHTML($v['user_name']);
+            if($k == 0){$MAINAGTID = $NEWID;}
+            $cmsg .= '<li>'.($k+1).' '.EST_INST_FISRTAGENT.' ID#'.$NEWID.' '.$tp->toHTML($v['user_name']);
             if($sql->insert("estate_contacts","'0','6','".intval($NEWID)."','".strtoupper($tp->toDB(EST_GEN_EMAIL))."','1','".$tp->toDB($v['user_email'])."'")){
               $cmsg .= ' ['.$tp->toHTML($v['user_email']).']';
               }
-            $cmsg .= '</li>';
+            $cmsg .= '('.$MAINAGTID.')</li>';
             }
           }
         if($cmsg){$msg->addSuccess('<div>'.EST_INST_INITSETUP.': '.EST_GEN_AGENT.' '.EST_GEN_PROFILES.'<ul>'.$cmsg.'</ul></div>');}
@@ -78,7 +79,15 @@ if(!class_exists("estate_setup")){
       if($sql->isEmpty('estate_properties')){
         $ret3 = e107::getXml(true)->e107Import(e_PLUGIN."estate/xml/sample_prop.xml");
         if(!empty($ret3['success'])){
-          $msg->addSuccess(EST_INST_SAMPLEPROP1);
+          
+          $propMSG = EST_INST_SAMPLEPROP1;
+          if(intval($MAINAGTID) > 0){
+            if($sql->update("estate_properties","prop_agent='".$MAINAGTID."', prop_agency='1' WHERE prop_idx='1' LIMIT 1")){
+              $propMSG .= ': '.EST_INST_FISRTAGENTASSIGN;
+              }
+            }
+          
+          $msg->addSuccess($propMSG);
           $msg->addInfo('<p>'.EST_INST_SAMPLIST.'</p>');
           
           $DESTDIR = e_PLUGIN."estate/media/prop/thm/";
@@ -172,6 +181,146 @@ if(!class_exists("estate_setup")){
       $msg = e107::getMessage();
       
       $msg->addWarning('<p>'.EST_UNINSTALL1.'<br />'.EST_UNINSTALL2.'</p><p>'.EST_UNINSTALL3.'</p>');
+      
+      $estFolders = array(
+        'agency'=>1,
+        'agent'=>1,
+        'prop'=>array('full','thm','vid'),
+        'subdiv'=>array('full','thm','vid'),
+        );
+      
+      $i=0;
+      $fdelmsg = array('err','ok');
+      $estPath = e_PLUGIN.'estate/media/';
+      foreach($estFolders as $fldr=>$fldv){
+        if(is_dir($estPath.$fldr)){
+          $fdelmsg['ok'][$i][0] = 'DIR "'.$estPath.$fldr.'":';
+          if(is_array($fldv)){
+            $si = 1;
+            foreach($fldv as $subk=>$subv){
+              if(is_dir($estPath.$fldr.'/'.$subv)){
+                $fdelmsg['ok'][$i][$si] = 'Sub-Folder "'.$estPath.$fldr.'/'.$subv.'": ';
+                if($DIR = opendir($estPath.$fldr.'/'.$subv)){
+                  $xi = 0;
+                  while(false !== (($FNAME = readdir($DIR)))){
+                    if($FNAME !=='.' && $FNAME !=='..' && strtolower($FNAME) !== 'index.html' && strtolower($FNAME) !== 'index.php'){
+                      $FTODEL = $estPath.$fldr.'/'.$subv.'/'.$FNAME;
+                      if(is_file($FTODEL)){
+                        if(@unlink($FTODEL)){$xli .= '<li>'.$FNAME.' - '.EST_GEN_DELETED.'</li>';}
+                        else{$fileErr .= '<li>'.$FNAME.' - '.EST_GEN_NOT.' '.EST_GEN_DELETED.'</li>';}
+                        $xi++;
+                        }
+                      else{
+                        $fileErr .= '<li>'.$FNAME.' - '.EST_GEN_NOT.' '.EST_GEN_FILE.'</li>';
+                        }
+                      }
+                    }
+                  $fdelmsg['ok'][$i][$si] .= ($xi > 0 ? '<a onclick="$(\'#estFileList-'.$i.'-'.$si.'\').show()" >View '.$xi.' '.($xi == 1 ? 'File' : 'Files').'</a><ul id="estFileList-'.$i.'-'.$si.'" style="display:none">'.$xli.'</ul>' : 'No Files');
+                  unset($xi,$xli);
+                  }
+                else{$fdelmsg['ok'][$i][$si] .= 'FAILED TO OPEN';}
+                }
+              else{
+                $fdelmsg['err'][$i][$si] = 'Sub-Folder "'.$estPath.$fldr.'/'.$subv.' NOT OK"';
+                }
+              $si++;
+              }
+            }
+          else{
+            $fdelmsg['ok'][$i][0] = 'DIR "'.$estPath.$fldr.'": ';
+            if($DIR = opendir($estPath.$fldr)){
+              $xi = 0;
+              while(false !== (($FNAME = readdir($DIR)))){
+                if($FNAME !=='.' && $FNAME !=='..' && strtolower($FNAME) !== 'index.html' && strtolower($FNAME) !== 'index.php'){
+                  $FTODEL = $estPath.$fldr.'/'.$FNAME;
+                  if(is_file($FTODEL)){
+                    if(@unlink($FTODEL)){$xli .= '<li>'.$FNAME.' - '.EST_GEN_DELETED.'</li>';}
+                    else{$fileErr .= '<li>'.$FNAME.' - '.EST_GEN_NOT.' '.EST_GEN_DELETED.'</li>';}
+                    }
+                  else{$fileErr .= '<li>'.$FNAME.' - '.EST_GEN_NOT.' '.EST_GEN_FILE.'</li>';}
+                  
+                  $xi++;
+                  }
+                }
+              $fdelmsg['ok'][$i][0] .= ($xi > 0 ? '<a onclick="$(\'#estFileList-'.$i.'\').show()" >View '.$xi.' '.($xi == 1 ? 'File' : 'Files').'</a><ul id="estFileList-'.$i.'" style="display:none">'.$xli.'</ul>' : 'No Files');
+              unset($xi,$xli);
+              }
+            else{$fdelmsg['ok'][$i][0] .= 'FAILED TO OPEN';}
+            }
+          }
+        else{$fdelmsg['err'][$i][0] = 'DIR "'.$estPath.$fldr.'" NOT OK';}
+        $i++;
+        }
+      
+      
+      if(isset($fileErr)){
+        $msg->addError('ERROR FINDING FILES TO DELETE:<ul>'.$fileErr.'</ul>');
+        }
+      
+      if(is_array($fdelmsg['err']) && count($fdelmsg['err']) > 0){
+        foreach($fdelmsg['err'] as $mk=>$mv){
+          $emsg .= '<li>';
+          if(is_array($mv)){
+            $emsg .= $mv[0].'<ul>';
+            unset($mv[0]);
+            foreach($mv as $smk=>$smv){
+              if(is_array($smv)){
+                $emsg .= $smv[0].'<ul>';
+                unset($smv[0]);
+                foreach($smv as $pmk=>$pmv){
+                  $emsg .= '<li>'.$pmv.'</li>';
+                  }
+                $emsg .= '</ul>';
+                }
+              else{
+                $emsg .= '<li>'.$smv.'</li>';
+                }
+              }
+            $emsg .= '</ul>';
+            }
+          else{
+            $emsg .= $mv;
+            }
+          $emsg .= '</li>';
+          }
+        $msg->addError('<div>Error Deleting Files<ul>'.$emsg.'</ul></div>');
+        unset($emsg);
+        }
+      
+      
+      if(is_array($fdelmsg['ok']) && count($fdelmsg['ok']) > 0){
+        foreach($fdelmsg['ok'] as $mk=>$mv){
+          $emsg .= '<li>';
+          if(is_array($mv)){
+            $emsg .= $mv[0].'<ul>';
+            unset($mv[0]);
+            foreach($mv as $smk=>$smv){
+              if(is_array($smv)){
+                $emsg .= $smv[0].'<ul>';
+                unset($smv[0]);
+                foreach($smv as $pmk=>$pmv){
+                  $emsg .= '<li>'.$pmv.'</li>';
+                  }
+                $emsg .= '</ul>';
+                }
+              else{
+                $emsg .= '<li>'.$smv.'</li>';
+                }
+              }
+            $emsg .= '</ul>';
+            }
+          else{
+            $emsg .= $mv;
+            }
+          $emsg .= '</li>';
+          }
+        $msg->addInfo('<div>Deleting Files:<ul>'.$emsg.'</ul></div>');
+        unset($emsg);
+        
+        
+        }
+      
+      
       
       $RUIDS = array();
       if($sql->gen('SELECT user_id,user_name,user_admin,user_perms FROM #user WHERE user_admin="1"')){

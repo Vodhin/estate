@@ -30,13 +30,6 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
   e107::js('estate','js/Sortable/Sortable.js', 'jquery');
   
   
-  
-  
-  //<script src="" type="text/javascript"></script>
-	//<script src="https://ajax.googleapis.com/ajax/libs/scriptaculous/1.9.0/scriptaculous.js" type="text/javascript"></script>
-  
-  //e107::js('estate','https://ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js');
-  //e107::js('estate','js/cropper/scriptaculous.js', 'jquery');
   e107::js('estate','js/cropperjs/dist/cropper.js', 'jquery');
   require_once(e_HANDLER.'form_handler.php');
   
@@ -110,20 +103,6 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
     require_once(e_ADMIN."footer.php");
     exit;
     }
-  
-  /*
-  $EST_ALLAGENTS = $estateCore->getAllAgents();
-  if(count($EST_ALLAGENTS) == 0 && empty($_POST['estFirsttimeDone'])){e107::getMessage()->addError(EST_ERR_NOUSERSINCLASS.'<br >'.EST_ERR_NOUSERSINCLASS1);}
-  
-  if(count($EST_ALLAGENTS) == 0 && ADMINPERMS === '0' && empty($_POST['estFirsttimeDone'])){
-    new estate_adminUser();
-    require_once(e_ADMIN."auth.php");
-    e107::getAdminUI()->runPage();
-    echo '<div id="estUIDdiv" data-euid="'.USERID.'"></div>';
-    require_once(e_ADMIN."footer.php");
-    exit;
-    }
-  */
   
   
   if(ADMINPERMS === '0'){new estate_adminMain();}
