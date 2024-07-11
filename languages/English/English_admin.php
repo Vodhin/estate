@@ -298,6 +298,7 @@ define("EST_INST_LOOKFORADMWPERMS","Looking for Admins with permissions for this
 
 define("EST_INST_FISRTAGENT","Added New Agent Profile for");
 define("EST_INST_FISRTAGENTFAIL","This plugin was unable to find any Main Admin User Profiles and was not able to create default Agent Profiles for anyone");
+define("EST_INST_FISRTAGENTASSIGN","First Agent Assigned to Sample Property");
 
 
 define("EST_INST_SETCLASS1","This plugin uses different access levels to prevent users from changing data that does not belong to them. Any user assigned to these special user classes must also be at least a regular Admin with privilages that include the Estate plugin. It is possible to make any user an Admin and then grant access only to this plugin to keep them out of other sensitive areas of your website. Here are what users with these access levels can do:");
