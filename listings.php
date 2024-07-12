@@ -270,7 +270,7 @@ unset($dberr);
       $tmplct = count($TEMPLATE['txt']);
       if(is_array($TEMPLATE['txt'])){
         $PREFTMP = $EST_PREF['template_view_ord'][$tkey];
-        if($TEMPLATE['ord'] && count($PREFTMP) > 0){
+        if(isset($PREFTMP) && count($PREFTMP) > 0 && $TEMPLATE['ord']){
           if(EST_USERPERM == 4){
             $estText .= $tp->parseTemplate('{ADMIN_REORDER_MENU:area=view&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
             $NEWK = array();
