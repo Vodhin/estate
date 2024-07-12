@@ -3238,7 +3238,9 @@ td table.estContTabl{
   line-height:1.15em;
   }
 
-
+#estMainHelpPage{
+  margin-bottom:32px;
+  }
 #estMainHelpPage div{
   padding: 8px 8px 8px 8px;
   }
