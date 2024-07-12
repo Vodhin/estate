@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<e107Plugin name="Estate Agency" lan="EST_PLUGNAME" version="1.5" date="2024-02-21" compatibility="2.3" installRequired="true" >
+<e107Plugin name="Estate Agency" lan="EST_PLUGNAME" version="1.5" date="2024-07-12" compatibility="2.3" installRequired="true" >
 	<author name="Vodhin" url="estate.vodhin.org" email="e107@vodhin.org" />
 	<description lan="EST_PLUGDESCRIPT">A plugin for managing Real Estate listings</description>
 	<keywords>
@@ -156,15 +156,24 @@
         )
       )]]>
     </pref>
-		<pref name='template_view'>default</pref>
+		<pref name='template_view'>dynamic</pref>
 		<pref name='template_view_ord'><![CDATA[array(
-      'estate'=>array(
+      'default'=>array(
         'slideshow'=>1,
         'summary'=>1,
         'spaces'=>1,
         'map'=>1,
-        'nearby'=>1,
+        'nearby'=>0,
         'comminuty'=>1,
+        'gallery'=>1
+        ),
+      'dynamic'=>array(
+        'slideshow'=>1,
+        'summary'=>1,
+        'spaces'=>1,
+        'map'=>1,
+        'comminuty'=>1,
+        'nearby'=>0,
         'gallery'=>1
         )
       )]]>
