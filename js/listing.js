@@ -332,51 +332,52 @@ function estSetLike(ele,cok=0){
       
       $(['#estateCont','#estMenuCont']).each(function(ci,cele){
         var dragCont = document.getElementById($(cele).prop('id'));
-        var saveBtn = $(cele).find('input[type="submit"]');
-        
-        $(cele).find('select.estAdmTemplSel').on({
-          change :function(){
-            var cDta = $(saveBtn).data();
-            var newTmpl = $(this).find('option:selected').val();
-            if($(this).find('option:selected').data('ct') > 1){$(cele).find('#estTmplMenuMsg-'+cDta.area+'-2').fadeOut(250);}
-            else{$(cele).find('#estTmplMenuMsg-'+cDta.area+'-2').fadeIn(250);}
-            
-            if(newTmpl !== cDta.template){
-              $(dragCont).find('.estReordCont').fadeOut(250);//.find('input[type="checkbox"]').prop('disabled',true);
-              $(cele).find('#estTmplMenuMsg-'+cDta.area+'-1').fadeIn(250);
-              }
-            else{
-              $(dragCont).find('.estReordCont').fadeIn(250);//.find('input[type="checkbox"]').prop('disabled',false).removeProp('disabled');
-              $(cele).find('#estTmplMenuMsg-'+cDta.area+'-1').fadeOut(250);
-              }
-            }
-          });
-        
-        var sects = [];
-        $(dragCont).find('.estReordCont').each(function(i,ele){
-          sects[i] = $(ele).data('sect');
-          if($(ele).find('div.estReordDiv').is(':empty')){$(ele).find('label').append(' (No Data)');}
-          $(ele).find('input[type="checkbox"]').data('sect',sects[i]).on({
-            click : function(){
-              if($(this).is(':checked')){$(ele).find('div.estReordDiv').removeClass('noDISP');}
-              else{$(ele).find('div.estReordDiv').addClass('noDISP');}
+        if(dragCont !== null){
+          var saveBtn = $(cele).find('input[type="submit"]');
+          $(cele).find('select.estAdmTemplSel').on({
+            change :function(){
+              var cDta = $(saveBtn).data();
+              var newTmpl = $(this).find('option:selected').val();
+              if($(this).find('option:selected').data('ct') > 1){$(cele).find('#estTmplMenuMsg-'+cDta.area+'-2').fadeOut(250);}
+              else{$(cele).find('#estTmplMenuMsg-'+cDta.area+'-2').fadeIn(250);}
+              
+              if(newTmpl !== cDta.template){
+                $(dragCont).find('.estReordCont').fadeOut(250);
+                $(cele).find('#estTmplMenuMsg-'+cDta.area+'-1').fadeIn(250);
+                }
+              else{
+                $(dragCont).find('.estReordCont').fadeIn(250);
+                $(cele).find('#estTmplMenuMsg-'+cDta.area+'-1').fadeOut(250);
+                }
               }
             });
-          }).promise().done(function(){
-            
-            Sortable.create(dragCont,{
-              draggable: 'div.estReordCont',
-              handle: 'div.estReordHandle',
-              sort: true,
-              animation: 450,
-              ghostClass: 'sortTR-ghost',
-              chosenClass: 'sortTR-chosen', 
-              dragClass: 'sortTR-drag',
-              onChoose: function(evt){},
-              onEnd: function(evt){},
-              onUnchoose: function(evt){},
+          
+          var sects = [];
+          $(dragCont).find('.estReordCont').each(function(i,ele){
+            sects[i] = $(ele).data('sect');
+            if($(ele).find('div.estReordDiv').is(':empty')){$(ele).find('label').append(' (No Data)');}
+            $(ele).find('input[type="checkbox"]').data('sect',sects[i]).on({
+              click : function(){
+                if($(this).is(':checked')){$(ele).find('div.estReordDiv').removeClass('noDISP');}
+                else{$(ele).find('div.estReordDiv').addClass('noDISP');}
+                }
               });
-            });
+            }).promise().done(function(){
+              
+              Sortable.create(dragCont,{
+                draggable: 'div.estReordCont',
+                handle: 'div.estReordHandle',
+                sort: true,
+                animation: 450,
+                ghostClass: 'sortTR-ghost',
+                chosenClass: 'sortTR-chosen', 
+                dragClass: 'sortTR-drag',
+                onChoose: function(evt){},
+                onEnd: function(evt){},
+                onUnchoose: function(evt){},
+                });
+              });
+          }
         });
       }
     }
