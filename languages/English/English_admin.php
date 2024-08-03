@@ -202,7 +202,12 @@ define("EST_GEN_MISSING","Missing");
 define("EST_GEN_NAMEADDRESS","Name & Address");
 define("EST_GEN_NEWAGENT", "New Agent Profile");
 define("EST_GEN_NEWCOMPANY", "New Company");
+define("EST_GEN_NEWMESSAGES", "New Messages");
 define("EST_GEN_NEWUSERAGENT","New User/Agent");
+define("EST_GEN_NOMESSAGES", "No Messages");
+define("EST_GEN_NOMESSAGESTXT1", "You have no new [x]");
+define("EST_GEN_NOMESSAGESTXT2", "You have no old [x]");
+
 define("EST_GEN_NOAGENCYFOUND0","Agency Not Found");
 define("EST_GEN_NOAGENCYFOUND1","Was not found in the database. If you know that the Agency ID is correct, you may not have permissions to edit the data.");
 define("EST_GEN_NOCHANGEADMIN", "You cannot change a Main Admin");
@@ -243,6 +248,7 @@ define("EST_GEN_PROFILEVISIB","Profile Visibility");
 
 
 
+define("EST_GEN_READMESSAGES", "Read Messages");
 define("EST_GEN_REMOVEAGT", "Remove Agent from all Agencies");
 define("EST_GEN_REMOVEAGTC1", "Click OK to Delete this Agent's Profile. This will remove the Agent from all of their Listings as well.");
 define("EST_GEN_REMOVEAGTLOC","Remove Agent From Assigned List");
@@ -551,6 +557,12 @@ define("EST_HLPMNU_GALLERY4","Drag & Drop Media from [b]Available Media[/b] to [
 define("EST_HLPMNU_GALLERY5","The [b]Media In Use[/b] section lists all media included in the Main Gallery");
 define("EST_HLPMNU_GALLERY6","Drag & Drop Media within the [b]Media In Use[/b] section to change their order in the Main Gallery, or drag to the [b]Available Media[/b] section to remove it from the Main Gallery. This order is automatically saved.");
 
+define("EST_HLPMNU_INBOX00","Your inbox is where you can find all messages that visitors have sent to you.");
+define("EST_HLPMNU_INBOX01","These Messages are \"One-Way\" and are not meat to be replied to through the Estate Plugin.");
+define("EST_HLPMNU_INBOX02","Contact the Sender via whatever method they have included and mark the message as Read once you make contact.");
+define("EST_HLPMNU_INBOX03","Messages marked as Read that are older than [x] days will be automatically deleted.");
+define("EST_HLPMNU_INBOX04","This Tab has Messages that have been marked as Read. Messages in this Tab that are older than [x] days will be automatically deleted.");
+define("EST_HLPMNU_INBOX05","You can mark any Read message as Unread to prevent Automatic Deletion.");
 
 define("EST_HLPMNU_INIT5","Create your first Agent Profile for yourself, even if you are not a participating Agent.");
 define("EST_HLPMNU_INIT6","All Agents are attached to an Agency.");

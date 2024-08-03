@@ -114,6 +114,7 @@ define("EST_GEN_AUTO","Auto");
 define("EST_GEN_AVAILABLE","Available");
 define("EST_GEN_BADFILTER1","No reusults found. Try changing or clearing your Filters.");
 define("EST_GEN_BATH","Bath");
+define("EST_GEN_BATHS","Baths");
 define("EST_GEN_BATHROOMS","Bathrooms");
 define("EST_GEN_BATHTOT","Total Bathrooms");
 define("EST_GEN_BATHFULL","Full Baths");
@@ -133,6 +134,7 @@ define("EST_GEN_CLEARFILTER","Clear Filter");
 define("EST_GEN_CLICKTHE","Click the");
 define("EST_GEN_CLIENT","Client");
 define("EST_GEN_CLOSING","Closing");
+define("EST_GEN_COMMUNITYPREVIEW", "Community Preview");
 define("EST_GEN_COMPANY", "Company");
 define("EST_GEN_COMPANIES", "Companies");
 define("EST_GEN_CONFIRMED","Confirmed");
@@ -150,6 +152,8 @@ define("EST_GEN_CUSTOM","Custom");
 define("EST_GEN_CURRENCY","Currency");
 define("EST_GEN_CURRENTLY","Currently");
 define("EST_GEN_DATA","Data");
+define("EST_GEN_DATE","Date");
+define("EST_GEN_DATESENT","Date Sent");
 define("EST_GEN_DAYS","Days");
 define("EST_GEN_DEFAULT","Default");
 define("EST_GEN_DELETE","Delete");
@@ -202,10 +206,14 @@ define("EST_GEN_HELP01", "Help");
 define("EST_GEN_HIDDEN", "Hidden");
 define("EST_GEN_HIDE", "Hide");
 define("EST_GEN_HOA","HOA");
+define("EST_GEN_HOADEF1","General HOA Information");
+define("EST_GEN_HOMEOWNASS","Home Owners Association");
 define("EST_GEN_HOAAPPR1","HOA Approval Required");
 define("EST_GEN_HOAAPPR2","Buyer must meet requirements set by the Home Owners Association.");
 define("EST_GEN_HOALAND","HOA Fees Include Land Lease");
+define("EST_GEN_HOAPLCH","Leave blank if same as Subdivision");
 define("EST_GEN_HOAREQ1","HOA Membership Required");
+define("EST_GEN_HOAREQ2","Voluntary HOA Membership");
 define("EST_GEN_INCINHOAFEE","Included in HOA Fees");
 define("EST_GEN_INCLANDLEASE","Includes Land Lease");
 define("EST_GEN_INFO","Information");
@@ -332,6 +340,8 @@ define("EST_GEN_SQRMI","Sq Miles");
 define("EST_GEN_STATUS","Status");
 define("EST_GEN_STORY","Story");
 define("EST_GEN_SUBDIVISION", "Subdivision");
+define("EST_GEN_SUBDIVTYPE", array("Neighbourhood","Village","Incorporated Village","Town","Township","Parish","Hamlet","Gated Community","Housing Estate"));
+define("EST_GEN_SUBDIVISIONNONE", "Select or Add New Subdivision Above");
 define("EST_GEN_SUBMITTLISTING", "Submit New Listing");
 define("EST_GEN_SUBMITTEDLIST", "Submitted Listings");
 define("EST_GEN_THUMBNAIL","Thumbnail");
@@ -598,7 +608,6 @@ define("EST_HLPMNU_INIT19","Use the Address Search function to retrieve a list o
 
 
 
-define("EST_PUB_HELP_TOP1","This page is for the general public to learn how the Estate Plugin works without accessing the Admin section of my Estate Demo website. The Tab sections below detail the various features of this plugin and are included in the Admin Area.");
 
 
 define("EST_INSTR000","Overview");
@@ -620,6 +629,9 @@ define("EST_INSTR003c","Agents can always create, edit, or delete their own list
 define("EST_INSTR004","Assigning Users As Agents");
 define("EST_INSTR004a","Only Estate Admins and Estate Managers can set your e107 website Users as Agents. When you grant acces to the Estate plugin to a Non-Admin user of your e107 website they will be automatically granted Admin Rights and ONLY for accessing this plugin.");
 define("EST_INSTR004b","Estate Admins have Menu button labeled Agents & Agencies which will list all Agencies and all Users. The Agencies Tab has a list of Agencies. Click the Edit button to make changes to that Agency and also see a list of Agents assigned to that Agency (See the Estate Managers section below). To add a new Agency, Click the + button at the top of the list.");
+
+define("EST_INSTR004b1","This is your list of Agencies/Locations. The Locations Filter Dropdown at the top lets you show only Agency Locations in a select area. Add a New Agency by clicking the + button at the top of the list.");
+define("EST_INSTR004b2","Each row includes a button to Show/Hide that Agency from the public (Include or Not Include with an Agent's Information Card), an Edit Button, and a Delete Button. Deleting an Agency Location will affect your Property Listings and Agents assigned to that Agency, and you should be asked to re-assign those Agents and listings before Deletion will happen.");
 
 define("EST_INSTR004c","The User List Tab lists all users of your e107 Website regardless of Admin status or Agency affiliation. This list is devided into 3 sections: Yourself, Admins, and Non-Admin users.");
 define("EST_INSTR004d","Note: Users who are an e107 Main Admin cannot have their settings changed via this form since they are automatically an Estate Admin.");
@@ -689,9 +701,48 @@ define("EST_INSTR035","The Features Tab has list of available features on the le
 define("EST_INSTR035a","You can Add a new Feature by clicking the New Feature button at the top of the Left column, and Edit any Feature by clicking the edit button next to that Feature's name. Features are saved independent of the listing, making them available to use for other listings. If you change the Feature Name on one listing, it will update for all other listings.");
 
 define("EST_INSTR035b","Click any Feature in the Left Column to add it to the Space: it will move to the Right Column. If the Fesature has additional predefined options, the button will include a drop-down list where you can select any that apply or none at all. ");
-define("EST_INSTR036","***");
 
-define("EST_INSTR037","");
-define("EST_INSTR038","");
+define("EST_INSTR036","Clicking the Edit icon next to a feature will allow you to change that feature.");
+define("EST_INSTR036a","This form lets you change the Name and add/remove Options*");
+define("EST_INSTR036b","Options are saved as a Comma Separated List, and appear in the Feature Select Form as a Dropdown list with check boxes to select those options as included for that Feature in the Listing.");
+define("EST_INSTR036c","*Changing the Name will propagate to all listings across the Estate plugin because the Features are saved in an indexed Database. The Options, however, are copied over to each listing as text. Changing or removing the Options will not affect existing listings.");
+
+define("EST_INSTR037","The Description Tab has a simple Text form where you can add some details about this Space. A couple of sentences should do.");
+define("EST_INSTR037a","Paragraphs and Line Breaks are preserved and BB Code can be added manually eg.");
+define("EST_INSTR037b","for bold text,");
+define("EST_INSTR037c","for italic text, and");
+define("EST_INSTR037d","for bold italic text");
+
+
+define("EST_INSTR038","Here is where you can add Pictures specific to this Space. Images here are also available to add to the Main Gallery of your listing.");
+define("EST_INSTR038a","Upload pictures by clicking the Upload Media button. You can upload multiple images in one go, and each will appear in the Thumbnail Tray as they load. Any changes to Thumbnails (Adding, Editing, Removing, or Recaptioning) are automatically saved.");
+define("EST_INSTR038b","NOTE: Uploaded Files are scanned by e107 and can fail to upload IF:");
+define("EST_INSTR038b1","The File is not a standard JPG or PNG file");
+define("EST_INSTR038b2","The File Size is too big (as set by your server settings)");
+define("EST_INSTR038b3","The file type/extension is not allowed by your e107 settings");
+define("EST_INSTR038b4","The file is corrupt in some way");
+define("EST_INSTR038c","Once loaded, you can Drag and Drop the thumbnails to change their order. Reordering does NOT affect the order of thumbnails in the Main Gallery for the Listing.");
+define("EST_INSTR038d","Each thumbnail has a Caption bar at the bottom used to Name the image. You can change the name to anything you like. By default they will be captioned after the Name of the Space and the Order they are in.");
+define("EST_INSTR038e","Hovering over a Thumbnail will show a Menu Bar with Icons to Crop, Replace, or Remove the image. Removing an Image from a Space will remove it from the Main Gallery, too.");
+
 define("EST_INSTR039","");
+
+define("EST_INSTRHEAD00","Instructions for the Estate Agency e107 Plugin");
+
+define("EST_INSTRHEAD01","This page is for the general public to learn how the Estate Plugin works without accessing the Admin section of this website. The Tab sections below detail the various features of this plugin and are included in the Admin Area.");
+define("EST_INSTRHEAD02","This plugin is in development and this section is incomplete. Many more features are in development that are not documented here yet. Please check back often to see what has changed.");
+
+define("EST_INSTRHEAD11a","Admins - Agencies Tab");
+define("EST_INSTRHEAD11b","Managers - Agency Tab");
+define("EST_INSTRHEAD12a","Admins - User List Tab");
+define("EST_INSTRHEAD12b","Managers - User List Tab");
+define("EST_INSTRHEAD13a","Admins - Add New User Tab");
+
+
+
+define("EST_INSTRHEAD61","The Spaces Form - Main Tab");
+define("EST_INSTRHEAD62","The Spaces Form - Features Tab");
+define("EST_INSTRHEAD63","The Spaces Form - Description Tab");
+define("EST_INSTRHEAD64","The Spaces Form - Media Tab");
+
 
