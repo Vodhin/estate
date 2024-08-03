@@ -414,6 +414,7 @@ function estSetLike(ele,cok=0){
     estCardTabs();
     estLnkBar();
     estPrepSectReorder();
+    $('.DTH256').on({click :function(){$(this).removeClass('DTH256')}});
     $('#estJSpth').remove();
     });
 
