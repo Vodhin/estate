@@ -234,11 +234,15 @@ unset($dberr);
         e107::getMessage()->addInfo(EST_PROP_APPROVE00);
         }
       
-
       if(intval($EST_PROP[$PROPID]['prop_status']) == 3 || intval($EST_PROP[$PROPID]['prop_status']) == 4){
-        $ESTDTA = estGetSpaces($PROPID);
+        $ESTDTA = estGetSpaces($EST_PROP[$PROPID]);
         }
-      else{$ESTDTA = estGetSpaces($PROPID,1);}
+      else{$ESTDTA = estGetSpaces($EST_PROP[$PROPID],1);}
+      
+      if(isset($ESTDTA[2])){
+        $EST_PROP[$PROPID]['subdiv'] = $ESTDTA[2];
+        }
+      
       
       $IDIV = estViewCSS($ESTDTA);
       $EST_SPACES = $ESTDTA[1];
@@ -248,6 +252,8 @@ unset($dberr);
         $PROPDTA[0]['prop_views'] = $PROPDTA[0]['prop_views'] + 1;
         $sql->update("estate_properties","prop_views='".$PROPDTA[0]['prop_views']."' WHERE prop_idx='".$PROPID."' LIMIT 1");
         }
+      
+      
       
       $PINS = est_map_pins();
       e107::js('inline','var estMapPins = '.$PINS.'; ', 'jquery',2);
@@ -346,7 +352,8 @@ unset($dberr);
   
 echo '
 <div id="estJSpth"'.$OACLASS.' data-pth="'.EST_PATHABS.'"></div>
-<div id="estMobTst"></div>';
+<div id="estMobTst"></div>
+<div style="display:none;">Estate Plugin by Vodhin</div>';
 require_once(FOOTERF);
 exit;
 
@@ -369,67 +376,10 @@ exit;
 
 
 
-function estViewImgCSS($cssName,$gal,$actv,$stime,$sdelay){
-  global $EST_PREF;
-  $CSS = array();
-  $galCt = ($gal ? count($gal) : 0);
-  if($galCt == 0){
-    $CSS[0] = '#estSlideShow{background-image: url("'.EST_PATHABS_IMAGES.'imgnotavail.png");}';
-    $CSS[1] .= '
-        <img src="'.EST_PATHABS_IMAGES.'imgnotavail.png" />';
-    }
-  else{
-    $sdelay = intval($sdelay);
-    $iStep = round(99 / $galCt, 2);
-    $CSS[0] = '';
-    $URLIST = 'url(\''.EST_PTHABS_PROPTHM.$gal[1]['t'].'\')';
-    
-    if(intval($actv) == 1 && $galCt > 1){
-      $aniName = str_replace('.','',str_replace('#','',$cssName));
-      $iPct = 0;
-      $fi = 0;
-      foreach($gal as $ik=>$idta){
-        $fi++;
-        if($fi > 1){$URLIST .= ',url(\''.EST_PTHABS_PROPTHM.$idta['t'].'\')';}
-        $CSS[1] .= '
-        <img src="'.EST_PTHABS_PROPTHM.$idta['t'].'" />';
-        $CSS[2][$ik] = $idta['t'];
-        $galCSS .= $iPct.'%'.($fi == 1 ? ', 100%' : '').' {background-image: url("'.EST_PTHABS_PROPTHM.$idta['t'].'");}
-    ';
-        $iPct = ($iStep + $iPct);
-        }
-      
-      if($sdelay == 0){
-        $sdelay = ($galCt > 7 ? ceil($galCt / 2) : 4);
-        }
-      
-      $galBaseCSS = '
-      animation: '.$aniName.' '.($galCt * intval($stime)).'s infinite;
-      animation-delay: '.$sdelay.'s;
-      visibility: visible !important;
-      -webkit-animation-duration: '.($galCt * intval($stime)).'s;
-      -webkit-animation-name: '.$aniName.';
-      -webkit-animation-iteration-count: infinite;
-      ';
-      
-      $CSS[0] .= '    @keyframes '.$aniName.'{
-      '.$galCSS.'}';
-        }
-    $CSS[0] .= '
-    '.$cssName.'{
-      background-image:'.$URLIST.';'.$galBaseCSS.'
-      }';
-    
-    }
-  return $CSS;
-  unset($galCSS,$galBaseCSS,$cssName,$aniName,$galBaseCSS);
-  }
-
 
 
 function estViewCSS($ESTDTA){
-  global $EST_PREF;
-  $CSSTOP = estViewImgCSS('#estSlideShow',$ESTDTA[0],$EST_PREF['slideshow_act'],$EST_PREF['slideshow_time'],$EST_PREF['slideshow_delay']);
+  $CSSTOP = estViewImgCSS('#estSlideShow',$ESTDTA[0]);
   if($CSSTOP[0]){
     $CSSTOP[0] = '
     
@@ -437,7 +387,8 @@ function estViewCSS($ESTDTA){
 '.$CSSTOP[0];
     e107::css('inline', $CSSTOP[0]);
     }
-    
+  
+  
   if($CSSTOP[1]){$IDIV = $CSSTOP[1];}
   if($CSSTOP[2]){
     $estPreJS = '
@@ -452,16 +403,29 @@ function estViewCSS($ESTDTA){
     e107::js('inline', $estPreJS);
     }
   
-  foreach($ESTDTA[1] as $k=>$v){
-    foreach($v['sp'] as $sok=>$sov){
-      foreach($sov as $sk=>$sv){
-        if($sv['m']){
-          $CSSTOP = estViewImgCSS('.SPACE'.$v['ord'].'x'.$sok.'x'.$sk.'img',$sv['m'],$GLOBALS['EST_PREF']['layout_view_spaces_ss'],4,0);
-          if($CSSTOP[0]){e107::css('inline', $CSSTOP[0]);}
+  
+  
+  if(isset($ESTDTA[2])){
+      $CSSTOP = estViewImgCSS('#estSubDivSlideShow',$ESTDTA[2]['media'],2);
+      if($CSSTOP[0]){e107::css('inline', $CSSTOP[0]);}
+      
+    }
+  
+  if(isset($ESTDTA[1])){
+    foreach($ESTDTA[1] as $k=>$v){
+      foreach($v['sp'] as $sok=>$sov){
+        foreach($sov as $sk=>$sv){
+          if($sv['m']){
+            $CSSTOP = estViewImgCSS('.SPACE'.$v['ord'].'x'.$sok.'x'.$sk.'img',$sv['m']);
+            if($CSSTOP[0]){e107::css('inline', $CSSTOP[0]);}
+            }
           }
         }
       }
     }
+  
+  
+  
   return $IDIV;
   }
 

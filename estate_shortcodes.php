@@ -535,7 +535,70 @@ class estate_shortcodes extends e_shortcode{
   
   
   
+  function sc_prop_community($parm){
+    if(!isset($this->var['subdiv'])){return '';}
+		$tp = e107::getParser();
+    
+    if($parm['get'] == 'capt'){return $tp->toHTML(EST_GEN_COMMUNITY.': '.$this->var['subdiv']['subd_name']);}
+    
+    extract($this->var['subdiv']);
+    
+    if(trim($subd_url) !== ""){
+      $SUBDWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_url,'url',array('ext'=>1)).'</h4>';
+      }
+    
+    if(trim($subd_hoaweb) !== ""){
+      $HOAWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_hoaweb,'url',array('ext'=>1)).'</h4>';
+      }
+    
+    if(isset($media) && count($media) > 0){
+      $SLIDESHOW = '<div id="estSubDivSlideShow" class="WD100"></div>';
+      }
+    
+    $txt = '
+    <div id="estSubDivCont">
+      <h3 class="WD100">'.$tp->toHTML($subd_name).'</h3>
+      '.$SLIDESHOW.'
+      <div id="estSubDivS1">
+        <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
+        '.$SUBDWEB.'
+        '.(trim($subd_description) !== '' ? '<div class="WD100 DTH256">'.$tp->toHTML($subd_description).'</div>' : '').'
+      </div>';
+    if($subd_hoaappr == 1 || $subd_hoareq == 1 || intval($subd_hoafee) > 0){
+      
+      $txt .= '
+      <div id="estSubDivS2">
+        '.$tp->toHTML(trim($subd_hoaname) !== '' ? '<h3>'.$subd_hoaname.' '.EST_GEN_HOMEOWNASS.'</h3>' : '<h4>'.EST_GEN_HOADEF1.'</h4>').'
+        '.($HOAWEB ? $HOAWEB : ($SUBDWEB ? $SUBDWEB : '')).'
+        <ul class="DTH256">
+          <li>'.($subd_hoareq == 1 ? EST_GEN_HOAREQ1 : EST_GEN_HOAREQ2).'</li>
+          <li>'.$subd_hoafee.' '.EST_HOAFREQ[$subd_hoafrq].'</li>
+          '.($subd_hoaappr == 1 ? '<li>'.EST_GEN_HOAAPPR2.'</li>' : '').'
+        </ul>
+      </div>';
+      }
+      
+      
+      $txt .= '
+      <div id="estSubDivS3">
+      </div>';
+      
+      $txt .= '
+    </div>';
   
+    //$EST_HOAREQD[$subd_hoareq]
+    //EST_HOAFREQ
+    unset($SLIDESHOW,$SUBDWEB,$HOAWEB);
+    return $txt;
+    }
+  
+  
+  function sc_prop_community_sect($parm){
+    if(!isset($this->var['subdiv'])){return '';}
+    $txt = $this->sc_prop_community($parm);
+    return '<div class="WD100">'.e107::getRender()->tablerender(EST_GEN_COMMUNITY, $txt, 'community-section',true).'</div>';
+    unset($capt, $txt);
+    }
   
   
   
@@ -568,8 +631,8 @@ class estate_shortcodes extends e_shortcode{
 		$tp = e107::getParser();
     
     $txt = '<div id="estSpacesMenu">Spaces Here</div>';
-    
-    return $txt;
+    if($txt == ''){return '';}
+    return e107::getRender()->tablerender(EST_GEN_SPACES, $txt, 'estSideMenuSpaces',true);
     }
   
   
@@ -919,6 +982,7 @@ class estate_shortcodes extends e_shortcode{
     $nf = new NumberFormatter('en_US', \NumberFormatter::CURRENCY);
     $nf->setTextAttribute(NumberFormatter::CURRENCY_CODE, 'USD');
     $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
+    //EST_CURSYMB
     
     $ListPrice = $nf->format($DTA['prop_listprice']).($DTA['prop_listype'] == 0 ? '/'.$GLOBALS['EST_LEASEFREQ'][$DTA['prop_leasefreq']] : '');
     $ListPrice .= $this->estPriceDrop($this->var,0);

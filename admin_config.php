@@ -26,6 +26,7 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
   e107::css('url',e_PLUGIN.'estate/js/leaflet/leaflet.css');
   e107::css('url',e_PLUGIN.'estate/js/cropperjs/dist/cropper.css');
   e107::js('estate','js/adm/core.js', 'jquery');
+  e107::js('estate','js/adm/shared.js', 'jquery');
   e107::js('jquery', 5);
   e107::js('estate','js/Sortable/Sortable.js', 'jquery');
   
@@ -126,6 +127,8 @@ else{
 
 require_once(e_ADMIN."auth.php");
 e107::getAdminUI()->runPage();
-echo '<div id="estUIDdiv" data-euid="'.USERID.'"></div>';
+echo '
+<div id="estUIDdiv" data-euid="'.USERID.'"></div>
+<div id="estJSpth" data-pth="'.EST_PATHABS.'"></div>';
 require_once(e_ADMIN."footer.php");
 exit;

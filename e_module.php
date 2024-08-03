@@ -26,6 +26,8 @@ if(e107::isInstalled('estate')){
       }
     }
   
+  if(!defined("EST_AGENTID")){define("EST_AGENTID",0);}
+  if(!defined("EST_AGENCYID")){define("EST_AGENCYID",0);}
   if(!defined("EST_SELLERUID")){define("EST_SELLERUID",intval(USERID));}
   //e107::getMessage()->addInfo('SELLERUID: '.EST_SELLERUID.' ');
   

@@ -20,7 +20,7 @@ class estate_dashboard // include plugin-folder in the name.
     $i = 0;
     $var[$i]['icon'] 	= '<i class="fas fa-envelope"></i>';
 		$var[$i]['title'] 	= EST_GEN_ESTATE.' '.EST_GEN_AGENT.' '.EST_MSG_INBOX;
-		$var[$i]['url']		= e_PLUGIN."estate/admin_config.php?messages";
+		$var[$i]['url']		= e_PLUGIN."estate/admin_config.php?mode=estate_agencies&action=inbox";
 		$var[$i]['total'] 	= EST_MGS_NEWMSGS;
     $i++;
     

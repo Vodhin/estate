@@ -17,8 +17,11 @@ $EST_FOLDERS = array(0=>'prop',1=>'subdiv',2=>'agency',3=>'agency',4=>'agent');
 $EST_SUBFLDR = array(0=>array('full','vid'));
 $EST_CURSYMB = array('$','€','£','¥','฿','₡','¢','₴','₽','₱','CHF','Gs','kn','Kč','kr','MT','₪','Q','R','Rp','RM','₨','L','lei','Ft','₹','₺','₦','₭','₩','zł','₫','؋','៛','ƒ','лв','ден','₼','&nbsp;','');
 
-define("EST_CURSYMB",$EST_CURSYMB);
+define("EST_HOAFREQ", $EST_HOAFREQ);
+define("EST_CURSYMB", $EST_CURSYMB);
 define("EST_CONTKEYS",array(EST_GEN_MOBILE,EST_GEN_EMAIL,EST_GEN_OFFICE,EST_GEN_FAX,EST_GEN_WEBSITE,EST_GEN_LINKIN,EST_GEN_TWITER,EST_GEN_FACEBOOK));
+
+define("EST_MSGTYPES",array('',EST_MSG_SHOWINGREQUESTS,EST_MSG_OFFERS,EST_MSG_QUOTEREQ,EST_MSG_OTHERQUESTIONS));
 
 $EST_LEASEDUR = array(EST_GEN_NOLEASE);
 for($i = 1; $i <= 6; $i++){array_push($EST_LEASEDUR,$i." ".EST_GEN_MONTH);}
@@ -124,25 +127,32 @@ function estHelpTabs(){
     //<b>'.EST_GEN_AGENT.' '.EST_GEN_LISTINGS.'</b>
     $TBS[1]['caption'] = EST_GEN_AGENTS;
     $TBS[1]['text'] = '
-          <div>
+          <div class="WD100">
             <h3>'.EST_INSTR004.'</h3>
             <p>'.EST_INSTR004a.'</p>
             <hr />
             <h3>'.EST_GEN_ESTADMINS.'</h3>
             <p>'.EST_INSTR004b.'</p>
+            <h4>'.EST_INSTRHEAD11a.'</h4>
             <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagencylist.png" /></p>
-            <p>'.EST_INSTR004c.' <i>'.EST_INSTR004d.'</i></p>
+            <p>'.EST_INSTR004b1.'</p>
+            <p>'.EST_INSTR004b2.'</p>
+            <h4>'.EST_INSTRHEAD12a.'</h4>
             <p><img src="'.EST_PATHABS_IMAGES.'instr_agtuserlist.png" /></p>
+            <p>'.EST_INSTR004c.' <i>'.EST_INSTR004d.'</i></p>
             <p>'.EST_INSTR004e.'</p>
             <p>'.EST_INSTR004f.'</p>
+            <h4>'.EST_INSTRHEAD13a.'</h4>
             <p><img src="'.EST_PATHABS_IMAGES.'instr_agtadduser.png" /></p>
             <p>'.EST_INSTR004g.'</p>
             <hr />
             <h3>'.EST_GEN_ESTMANAGERS.'</h3>
             <p>'.EST_INSTR004g.'</p>
+            <h4>'.EST_INSTRHEAD11b.'</h4>
             <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagency.png" /></p>
             <p>'.EST_INSTR004h.'</p>
             <p>'.EST_INSTR004i.'</p>
+            <h4>'.EST_INSTRHEAD12b.'</h4>
             <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagentlist.png" /></p>
             <p>'.EST_INSTR004j.'</p>
           </div>';
@@ -150,34 +160,34 @@ function estHelpTabs(){
     
     $TBS[2]['caption'] = EST_INSTR008;
     $TBS[2]['text'] = '
-          <div>
+          <div class="WD100">
             <h3>'.EST_INSTR008a.'</h3>
             <p>'.EST_INSTR008b.'</p>
             <p>'.EST_INSTR008c.'</p>
           </div>
-          <div>
+          <div class="WD100">
             <h3>'.EST_GEN_ESTADMINS.'</h3>
             <p><img src="'.EST_PATHABS_IMAGES.'instr000.png" /></p>
             <p>'.EST_INSTR008d.'</p>
           </div>
-          <div>
+          <div class="WD100">
             <h3>'.EST_GEN_ESTMANAGERS.'</h3>
             <p><img src="'.EST_PATHABS_IMAGES.'instr012a.png" /></p>
             <p>'.EST_INSTR008e.'</p>
           </div>
           
-          <div>
+          <div class="WD100">
             <h3>'.EST_GEN_ESTAGENTS.'</h3>
             <p><img src="'.EST_PATHABS_IMAGES.'instr013a.png" /></p>
             </p>'.EST_INSTR008f.'</p>
           </div>
           
-          <div>
+          <div class="WD100">
             <h3>'.EST_GEN_NONAGENTLISTINGS.'</h3>
             <p><img src="'.EST_PATHABS_IMAGES.'instr011b.png" /></p>
             <p>'.EST_INSTR008g.'</p>
           </div>
-          <div>
+          <div class="WD100">
             <h3>'.EST_GEN_NEW.' '.EST_GEN_LISTING.'</h3>
             <p><img src="'.EST_PATHABS_IMAGES.'instr013b.png" /></p>
             <p>'.EST_INSTR008h.'</p>
@@ -190,7 +200,7 @@ function estHelpTabs(){
     
     $TBS[4]['caption'] = EST_INSTR010;
     $TBS[4]['text'] = '
-          <div>
+          <div class="WD100">
             <h3>'.EST_INSTR010.'</h3>
             <p>'.EST_INSTR011.'</p>
             <img src="'.EST_PATHABS_IMAGES.'instr002.png" class="estInstImg" />
@@ -198,12 +208,12 @@ function estHelpTabs(){
             <img src="'.EST_PATHABS_IMAGES.'instr003.png" class="estInstImg" />
             <p>'.EST_INSTR013.'</p>
           </div>
-          <div>
+          <div class="WD100">
             <h3>'.EST_INSTR020.'</h3>
             <p>'.EST_INSTR021.'</p>
             <img src="'.EST_PATHABS_IMAGES.'instr004.png" class="estInstImg" />
           </div>
-          <div>
+          <div class="WD100">
             <p>'.EST_INSTR022.'</p>
           </div>';
     
@@ -213,45 +223,96 @@ function estHelpTabs(){
     $TBS[5]['text'] = '<div>
             <h3>'.EST_INSTR030.'</h3>
             <p>'.EST_INSTR031.'</p>
-            <img src="'.EST_PATHABS_IMAGES.'instr005.png" class="estInstImg" style="width:75%;" />
+            <div class="WD100 TAC">
+              <img src="'.EST_PATHABS_IMAGES.'instr005.png" class="estInstImg" style="width:96%; margin:16px auto;" />
+            </div>
             <p>'.EST_INSTR032.'</p>
             <p>'.EST_INSTR033.'</p>
             <p>'.EST_INSTR033a.'</p>
             
-            <table>
+            <table class="WD100">
               <tr>
-                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr006.png" class="estInstImg" /></td>
+                <td colspan="2">
+                  <h4>'.EST_INSTRHEAD61.'</h4>
+                </td>
+              </tr>
+              <tr>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr006.png" class="estInstImg" style="width:480px;" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR034.'</p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
                   <p>'.EST_INSTR034a.'</p>
                   <p>'.EST_INSTR034b.'</p>
                   <p>'.EST_INSTR034c.'</p>
                 </td>
               </tr>
               <tr>
-                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr007.png" class="estInstImg" /></td>
+                <td colspan="2">
+                  <h4>'.EST_INSTRHEAD62.'</h4>
+                </td>
+              </tr>
+              <tr>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr007.png" class="estInstImg" style="width:480px;" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR035.'</p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
                   <p>'.EST_INSTR035a.'</p>
                   <p>'.EST_INSTR035b.'</p>
                 </td>
               </tr>
               <tr>
-                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr007a.png" class="estInstImg" /></td>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr007a.png" class="estInstImg" style="width:480px;" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR036.'</p>
+                  <p>'.EST_INSTR036a.'</p>
                 </td>
               </tr>
               <tr>
-                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr008.png" class="estInstImg" /></td>
+                <td colspan="2">
+                  <p>'.EST_INSTR036b.'</p>
+                  <p>'.EST_INSTR036c.'</p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <h4>'.EST_INSTRHEAD63.'</h4>
+                </td>
+              </tr>
+              <tr>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr008.png" class="estInstImg" style="width:480px;" /></td>
+                <td class="VAT">
+                  <p>'.EST_INSTR037.'</p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <p>'.EST_INSTR037a.' "[b]Bold[/b]" '.EST_INSTR037b.' "[i]Italic[/i]" '.EST_INSTR037c.' "[b][i]Bold Italic[/i][/b]" '.EST_INSTR037d.' </p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <h4>'.EST_INSTRHEAD64.'</h4>
+                </td>
+              </tr>
+              <tr>
+                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr009.png" class="estInstImg" style="width:480px;" /></td>
                 <td class="VAT">
                   <p>'.EST_INSTR038.'</p>
                 </td>
               </tr>
               <tr>
-                <td class="VAT"><img src="'.EST_PATHABS_IMAGES.'instr009.png" class="estInstImg" /></td>
-                <td class="VAT">
-                  <p>'.EST_INSTR039.'</p>
+                <td colspan="2">
+                  <p>'.EST_INSTR038a.'</p>
+                  <p>'.EST_INSTR038b.'<ul><li>'.EST_INSTR038b1.'</li><li>'.EST_INSTR038b2.'</li><li>'.EST_INSTR038b3.'</li></ul></p>
+                  <p>'.EST_INSTR038c.'</p>
+                  <p>'.EST_INSTR038d.'</p>
+                  <p>'.EST_INSTR038e.'</p>
                 </td>
               </tr>
             </table>
@@ -260,10 +321,15 @@ function estHelpTabs(){
   return $TBS;
   }
 
-    
-function estGetSpaces($PROPID,$PSTAT=0){
+
+//
+
+function estGetSpaces($DTA,$PSTAT=0){
   $sql = e107::getDb();
   $RET = array();
+  $PROPID = intval($DTA['prop_idx']);
+  $SUBDIVID = intval($DTA['prop_subdiv']);
+  
   $MQRY = "SELECT #estate_media.* FROM #estate_media WHERE media_propidx=".$PROPID." ";
   if($PSTAT == 1){$MQRY .= "AND media_galord='1' LIMIT 1";}
   else{$MQRY .= "AND media_type='1' ORDER BY media_galord ASC";}
@@ -279,7 +345,8 @@ function estGetSpaces($PROPID,$PSTAT=0){
         'l'=>$row['media_levidx'],
         'n'=>$row['media_name'],
         'o'=>$row['media_levord'],
-        't'=>$row['media_thm']
+        't'=>$row['media_thm'],
+        'y'=>$row['media_type']
         );
       if(intval($row['media_galord']) > 0){
         $RET[0][$row['media_galord']] = $MEDIA;
@@ -320,8 +387,161 @@ function estGetSpaces($PROPID,$PSTAT=0){
         }
       }
     }
+  
+  if($SUBDIVID > 0){
+    $SUBDIVDTA = estGetSubDivDta($SUBDIVID);
+    if(isset($SUBDIVDTA)){$RET[2] = $SUBDIVDTA;}
+    }
+  
   return $RET;
-  unset($RET,$MEDIA,$SPMEDIA,$SPGRPS);
+  unset($RET,$MEDIA,$SPMEDIA,$SPGRPS,$SUBDIVDTA);
   }
 
+
+function estGetSubDivDta($subd_idx){
+  $sql = e107::getDb();
+  $tp = e107::getParser();
+  $RET = array();
+  if($dbRow1 = $sql->retrieve('estate_subdiv', '*', 'subd_idx="'.$subd_idx.'"',true)){
+    $RET = $dbRow1[0];
+    if($dbRow2 = $sql->retrieve('estate_media', '*', 'media_levidx="'.$subd_idx.'" AND media_lev="0"',true)){
+      foreach($dbRow2 as $k=>$v){
+        $RET['media'][$k] = array(
+          'a'=>$v['media_asp'],
+          'f'=>$v['media_full'],
+          'g'=>$v['media_galord'],
+          'i'=>$v['media_idx'],
+          'l'=>$v['media_levidx'],
+          'n'=>$v['media_name'],
+          'o'=>$v['media_levord'],
+          't'=>$v['media_thm'],
+          'y'=>$v['media_type']
+          );
+        }
+      }
+    }
+  return $RET;
+  }
+
+
+
+function estSubDivisionView($subd_idx){
+  //estGetSpaces
+  $sql = e107::getDb();
+  $tp = e107::getParser();
+  $dta = estGetSubDivDta($subd_idx);
+  extract($dta);
+  
+  if(isset($media) && count($media) > 0){
+    $CSSTOP = estViewImgCSS('#estSubDivSlideShow',$media,2);
+    if(isset($CSSTOP[0])){
+      $SLIDESHOW = '<style>'.$CSSTOP[0].'</style><div id="estSubDivSlideShow"></div>';
+      }
+    }
+  
+  if(trim($subd_url) !== ""){
+    $SUBDWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_url,'url',array('ext'=>1)).'</h4>';
+    }
+  
+  if(trim($subd_hoaweb) !== ""){
+    $HOAWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_hoaweb,'url',array('ext'=>1)).'</h4>';
+    }
+  
+  $txt = '
+  <div id="estSubDivCont" data-id="'.intval($subd_idx).'" data-city="'.intval($subd_city).'" data-hoareq="'.intval($subd_hoareq).'" data-hoafee="'.intval($subd_hoafee).'" data-hoafrq="'.intval($subd_hoafrq).'" data-hoaappr="'.intval($subd_hoaappr).'">
+    '.$SLIDESHOW.'
+    <div id="estSubDivS1">
+      <h3 class="WD100">'.$tp->toHTML($subd_name).'</h3>
+      <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
+      '.$SUBDWEB.'
+      '.(trim($subd_description) !== '' ? '<div class="WD100">'.$tp->toHTML($subd_description).'</div>' : '').'
+    </div>';
+  if($subd_hoaappr == 1 || $subd_hoareq == 1 || intval($subd_hoafee) > 0){
+    
+    $txt .= '
+    <div id="estSubDivS2">
+      '.$tp->toHTML(trim($subd_hoaname) !== '' ? '<h3>'.$subd_hoaname.' '.EST_GEN_HOMEOWNASS.'</h3>' : '<h4>'.EST_GEN_HOADEF1.'</h4>').'
+      '.($HOAWEB ? $HOAWEB : ($SUBDWEB ? $SUBDWEB : '')).'
+      <ul>
+        <li>'.($subd_hoareq == 1 ? EST_GEN_HOAREQ1 : EST_GEN_HOAREQ2).'</li>
+        <li>'.$subd_hoafee.' '.EST_HOAFREQ[$subd_hoafrq].'</li>
+        '.($subd_hoaappr == 1 ? '<li>'.EST_GEN_HOAAPPR2.'</li>' : '').'
+      </ul>
+    </div>';
+    }
+    
+    
+    $txt .= '
+    <div id="estSubDivS3">
+    </div>';
+    
+    $txt .= '
+  </div>';
+  
+  //$EST_HOAREQD[$subd_hoareq]
+  //EST_HOAFREQ
+  unset($SLIDESHOW,$SUBDWEB,$HOAWEB,$CSSTOP);
+  return $txt;
+  }
+
+
+function estViewImgCSS($cssName,$gal,$loc=1){
+  $EST_PREF = e107::pref('estate');
+  $actv = $EST_PREF['slideshow_act'];
+  $stime = intval($EST_PREF['slideshow_time']) * $loc;
+  $sdelay = $EST_PREF['slideshow_delay'];
+  $CSS = array();
+  $galCt = ($gal ? count($gal) : 0);
+  if($galCt == 0){
+    $CSS[0] = '#estSlideShow{background-image: url("'.EST_PATHABS_IMAGES.'imgnotavail.png");}';
+    $CSS[1] .= '
+        <img src="'.EST_PATHABS_IMAGES.'imgnotavail.png" />';
+    }
+  else{
+    $sdelay = intval($sdelay);
+    $iStep = round(99 / $galCt, 2);
+    $imgpth = ($loc == 2 ? EST_PTHABS_SUBDTHM : EST_PTHABS_PROPTHM);
+    $CSS[0] = '';
+    $URLIST = 'url(\''.$imgpth.$gal[1]['t'].'\')';
+    
+    if(intval($actv) == 1 && $galCt > 1){
+      $aniName = str_replace('.','',str_replace('#','',$cssName));
+      $iPct = 0;
+      $fi = 0;
+      foreach($gal as $ik=>$idta){
+        $fi++;
+        if($fi > 1){$URLIST .= ',url(\''.$imgpth.$idta['t'].'\')';}
+        $CSS[1] .= '
+        <img src="'.$imgpth.$idta['t'].'" />';
+        $CSS[2][$ik] = $idta['t'];
+        $galCSS .= $iPct.'%'.($fi == 1 ? ', 100%' : '').' {background-image: url("'.$imgpth.$idta['t'].'");}
+    ';
+        $iPct = ($iStep + $iPct);
+        }
+      
+      if($sdelay == 0){
+        $sdelay = ($galCt > 7 ? ceil($galCt / 2) : 4);
+        }
+      
+      $galBaseCSS = '
+      animation: '.$aniName.' '.($galCt * intval($stime)).'s infinite;
+      animation-delay: '.$sdelay.'s;
+      visibility: visible !important;
+      -webkit-animation-duration: '.($galCt * intval($stime)).'s;
+      -webkit-animation-name: '.$aniName.';
+      -webkit-animation-iteration-count: infinite;
+      ';
+      
+      $CSS[0] .= '    @keyframes '.$aniName.'{
+      '.$galCSS.'}';
+        }
+    $CSS[0] .= '
+    '.$cssName.'{
+      background-image:'.$URLIST.';'.$galBaseCSS.'
+      }';
+    
+    }
+  return $CSS;
+  unset($galCSS,$galBaseCSS,$cssName,$aniName,$galBaseCSS);
+  }
 ?>

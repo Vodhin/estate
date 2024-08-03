@@ -307,6 +307,7 @@ CREATE TABLE `estate_subdiv` (
   `subd_idx` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `subd_city` int(10) unsigned NOT NULL,
   `subd_name` varchar(100) NOT NULL,
+  `subd_type` tinyint(1) unsigned NOT NULL default '2',
   `subd_url` varchar(100) NOT NULL,
   `subd_hoaname` varchar(100) NOT NULL,
   `subd_hoaweb` varchar(100) NOT NULL,
@@ -314,8 +315,30 @@ CREATE TABLE `estate_subdiv` (
   `subd_hoafee` int(6) unsigned NOT NULL,
   `subd_hoafrq` tinyint(1) unsigned NOT NULL,
   `subd_hoaappr` tinyint(1) unsigned NOT NULL,
+  `subd_description` text NOT NULL,
   PRIMARY KEY (`subd_idx`)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE `estate_subdiv_spaces` (
+  `subspace_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `subspace_city` int(10) unsigned NOT NULL,
+  `subspace_subidx` int(10) unsigned NOT NULL,
+  `subspace_catid` int(11) unsigned NOT NULL,
+  `subspace_ord` tinyint(1) unsigned NOT NULL,
+  `subspace_name` varchar(55) NOT NULL,
+  `space_description` text NOT NULL,
+  PRIMARY KEY (`subspace_idx`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE `estate_subdivcats` (
+  `subdivcat_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `subdiv_zone` int(10) unsigned NOT NULL,
+  `subdivcat_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`subdivcat_idx`)
+) ENGINE=InnoDB;
+
 
 CREATE TABLE `estate_user` (
   `user_idx` int(10) unsigned NOT NULL AUTO_INCREMENT,
