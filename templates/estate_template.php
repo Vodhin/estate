@@ -56,7 +56,6 @@ if (!defined('e107_INIT')) { exit; }
 
 global $sc,$EST_PREF,$EST_PROP,$EST_SPACES,$IDIV;
 $ns = e107::getRender();
-$tp = e107::getParser();
 
 $estLoadSidebar = e107::getMenu()->isLoaded('estate_sidebar');
 $estLoadInbox = e107::getMenu()->isLoaded('estate_inbox');
@@ -102,42 +101,45 @@ if(!isset($EST_LIST_TXT)){
 //THEMEABLE VIEW TEMPLATES
 if(!isset($EST_VIEW_SUMMARY)){
   $EST_VIEW_SUMMARY = '
-      <h4>{PROP_NAME}</h4>
-      {PROP_FEATURES}
-      <p>{PROP_SUMMARY}</p>
-      <p>{PROP_DESCRIPTION}</p>';
+  <h4>{PROP_NAME}</h4>
+  {PROP_FEATURES}
+  <p>{PROP_SUMMARY}</p>
+  <p class="DTH256">{PROP_DESCRIPTION}</p>';
   }
 
 if(!isset($EST_VIEW_SUMMARY_SIDEBAR)){
   $EST_VIEW_SUMMARY_SIDEBAR = '
-        <div class="WD100 noPADTB">
-          <h3 class="sumCapt">{PROP_STATUS}</h3>
-          <div><span class="FR">{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
-          <div>{PROP_LIKES:bullet=right}{PROP_MODELNAME}</div>
-        </div>
-        <div class="estFLEXCol WD100 noPADTB">{PROP_AGENTCARD:img=1}</div>
-        <div class="WD100 noPADTB">{PROP_EVENTS}</div>';
-        //{PROP_EVENTS:as=ul}
+  <div class="WD100 noPADTB">
+    <h3 class="sumCapt">{PROP_STATUS}</h3>
+    <div><span class="FR">{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
+    <div>{PROP_LIKES:bullet=right}{PROP_MODELNAME}</div>
+  </div>
+  <div class="estFLEXCol WD100 noPADTB">{PROP_AGENTCARD:img=1}</div>
+  <div class="WD100 noPADTB">{PROP_EVENTS}</div>';
+  //{PROP_EVENTS:as=ul}
   }
 
 if(!isset($EST_VIEW_FEATURES)){
   $EST_VIEW_FEATURES = '
-        <div>
-          <div class="estInfoCard">
-            {PROP_POINTS}
-          </div>
-          <div class="estInfoCard">
-            {PROP_FEATURE_EXTENDED}
-          </div>
-        </div>';
+  <div>
+    <div class="estInfoCard">
+      {PROP_POINTS}
+    </div>
+    <div class="estInfoCard DTH256">
+      {PROP_FEATURE_EXTENDED}
+    </div>
+  </div>';
   }
+
+
+
 
 //NOT ready yet...
 if(!isset($EST_VIEW_NXPR)){
   $EST_VIEW_NXPR = '
-        <div class="WD100">
-            {PROP_NPLISTING}
-        </div>';
+  <div class="WD100">
+      {PROP_NPLISTING}
+  </div>';
   }
 
 
@@ -146,13 +148,26 @@ if(!isset($EST_VIEW_NXPR)){
 // THEMEABLE MENU TEMPLATE (may be called by View, too)
 if(!isset($EST_MENU_MAIN)){
   $EST_MENU_MAIN = '
-        <div class="noPADTB">
-          <h3 class="sumCapt">{PROP_STATUS}</h3>
-          <div><span class="FR">{PROP_LIKES:bullet=right}{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
-          <div>{PROP_MODELNAME}</div>
-        </div>';
+  <div class="noPADTB">
+    <h3 class="sumCapt">{PROP_STATUS}</h3>
+    <div><span class="FR">{PROP_LIKES:bullet=right}{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
+    <div>{PROP_MODELNAME}</div>
+  </div>';
   }
-  
+
+if(!isset($EST_MENU_BASIC)){
+  $EST_MENU_BASIC = '
+  <div class="WD100">
+    <div class="noPADTB">
+      <h3 class="sumCapt">{PROP_STATUS}</h3>
+      <div><span class="FR">{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
+      <div>{PROP_MODELNAME}{PROP_LIKES}</div>
+    </div>
+  </div>
+  <div class="WD100"><h4>{AGENT_ROLL}</h4>{PROP_AGENTCARD:img=1}</div>
+  <div class="WD100">{PROP_EVENTS}</div> 
+  <div class="WD100">{PROP_SAVED_LIST}</div>';
+  }
 
 
 
@@ -170,6 +185,7 @@ $ESTATE_TEMPLATE['view']['alternate1']['txt'] = "
 <div class='WD100'>$EST_VIEW_SUMMARY</div>
 <div class='WD100'>$EST_VIEW_FEATURES</div>
 <div class='WD100'>{VIEW_SPACES}</div>
+<div class='WD100'>{PROP_COMMUNITY}</div>
 <div class='WD100'>{EST_VIEW_GALLERY}</div>";
 
 
@@ -185,32 +201,23 @@ $ESTATE_TEMPLATE['view']['basic']['txt'] = "
 //VIEW DEFAULT with re-orderable sections and Tile Spaces layout
 $ESTATE_TEMPLATE['view']['default']['name'] = 'Default View Layout';
 $ESTATE_TEMPLATE['view']['default']['ord'] = array('slideshow','summary','spaces','map','comminuty','nearby','gallery');
-
-//SlideShow Section
 $ESTATE_TEMPLATE['view']['default']['txt']['slideshow'] = '{EST_SLIDESHOW_TOP}';
-
-// Summary Section
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] = '<div class="estFLEXCont flexRev">';
-// include Summary & Seller Info if Theme layout is 'full' and/or est_menu.php is not loaded
 if($estLoadSidebar == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
-  $CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_LIKE_ICON}', false, $sc);
-  $TXT = $tp->parseTemplate($EST_VIEW_SUMMARY_SIDEBAR, false, $sc);
-  $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '<div class="estSummaryMenu">'.$ns->tablerender($CAPT,$TXT,'summary-table',true).'</div>';
-  unset($CAPT,$TXT);
+  $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '<div class="estSummaryMenu">'.$ns->tablerender('{PROP_NAME}{PROP_LIKE_ICON}',$EST_VIEW_SUMMARY_SIDEBAR,'summary-table',true).'</div>';
   define("ESTAGENTRENDERED",1);
   }
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '<div class="estSummaryMain"><div class="WD100">';
-//$TXT = $tp->parseTemplate($EST_VIEW_SUMMARY.'<div><h4>'.EST_GEN_FEATURES.'</h4>'.$EST_VIEW_FEATURES.'</div>', false, $sc);
-//$ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$TXT,'overview-table',true);
-$TXT = $tp->parseTemplate($EST_VIEW_SUMMARY, false, $sc);
-$ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$TXT,'menu',true);
-$TXT = $tp->parseTemplate($EST_VIEW_FEATURES, false, $sc);
-$ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_FEATURES,$TXT,'menu',true);
+//$ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$EST_VIEW_SUMMARY,'overview-table',true);
+$ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$EST_VIEW_SUMMARY,'overview-sect',true);
+$ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_FEATURES,$EST_VIEW_FEATURES,'features-sect',true);
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '</div></div></div>';
 
-$ESTATE_TEMPLATE['view']['default']['txt']['spaces'] = $tp->parseTemplate('{VIEW_SPACES}', false, $sc);
+$ESTATE_TEMPLATE['view']['default']['txt']['spaces'] = '{VIEW_SPACES}';
 $ESTATE_TEMPLATE['view']['default']['txt']['map'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_MAP,'{EST_LEAFLET_MAP}','map-section',true).'</div>';
-$ESTATE_TEMPLATE['view']['default']['txt']['nearby'] = $tp->parseTemplate($EST_VIEW_NXPR, false, $sc);
+$ESTATE_TEMPLATE['view']['default']['txt']['comminuty'] = '{PROP_COMMUNITY_SECT}';
+
+$ESTATE_TEMPLATE['view']['default']['txt']['nearby'] = $EST_VIEW_NXPR;
 $ESTATE_TEMPLATE['view']['default']['txt']['gallery'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_IMAGE.' '.EST_GEN_GALLERY,'{EST_VIEW_GALLERY}','image-gallery',true).'</div>';
 
 
@@ -219,29 +226,20 @@ $ESTATE_TEMPLATE['view']['default']['txt']['gallery'] = '<div class="WD100">'.$n
 //VIEW DYNAMIC with re-orderable sections and Dynamic Spaces layout
 $ESTATE_TEMPLATE['view']['dynamic']['name'] = 'Default with Dynamic Spaces';
 $ESTATE_TEMPLATE['view']['dynamic']['ord'] = array('slideshow','summary','spaces','map','comminuty','nearby','gallery');
-
-//SlideShow Section
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['slideshow'] = '{EST_SLIDESHOW_TOP}';
-
-// Summary Section
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] = '<div class="estFLEXCont flexRev">';
-// include Summary & Seller Info if Theme layout is 'full' and/or est_menu.php is not loaded
 if($estLoadSidebar == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
-  $CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_LIKE_ICON}', false, $sc);
-  $TXT = $tp->parseTemplate($EST_VIEW_SUMMARY_SIDEBAR, false, $sc);
-  $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= '<div class="estSummaryMenu">'.$ns->tablerender($CAPT,$TXT,'summary-table',true).'</div>';
-  unset($CAPT,$TXT);
+  $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= '<div class="estSummaryMenu">'.$ns->tablerender('{PROP_NAME}{PROP_LIKE_ICON}',$EST_VIEW_SUMMARY_SIDEBAR,'summary-table',true).'</div>';
   define("ESTAGENTRENDERED",1);
   }
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= '<div class="estSummaryMain"><div class="WD100">';
-$TXT = $tp->parseTemplate($EST_VIEW_SUMMARY, false, $sc);
-$ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$TXT,'menu',true);
-$TXT = $tp->parseTemplate($EST_VIEW_FEATURES, false, $sc);
-$ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= $ns->tablerender(EST_GEN_FEATURES,$TXT,'menu',true);
+$ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$EST_VIEW_SUMMARY,'overview-sect',true);
+$ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= $ns->tablerender(EST_GEN_FEATURES,$EST_VIEW_FEATURES,'features-sect',true);
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= '</div></div></div>';
-$ESTATE_TEMPLATE['view']['dynamic']['txt']['spaces'] = $tp->parseTemplate('{VIEW_SPACES:dynamic=1}', false, $sc);
+$ESTATE_TEMPLATE['view']['dynamic']['txt']['spaces'] = '{VIEW_SPACES:dynamic=1}';
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['map'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_MAP,'{EST_LEAFLET_MAP}','map-section',true).'</div>';
-$ESTATE_TEMPLATE['view']['dynamic']['txt']['nearby'] = $tp->parseTemplate($EST_VIEW_NXPR, false, $sc);
+$ESTATE_TEMPLATE['view']['dynamic']['txt']['comminuty'] = '{PROP_COMMUNITY_SECT}';
+$ESTATE_TEMPLATE['view']['dynamic']['txt']['nearby'] = $EST_VIEW_NXPR;
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['gallery'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_IMAGE.' '.EST_GEN_GALLERY,'{EST_VIEW_GALLERY}','image-gallery',true).'</div>';
 
 
@@ -255,23 +253,17 @@ $ESTATE_TEMPLATE['list']['default']['name'] = 'Default List Layout';
 if($estLoadSidebar == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
   $ESTATE_TEMPLATE['list']['default']['txt'] = '';
   }
-$ESTATE_TEMPLATE['list']['default']['txt'] .= '{EST_LEAFLET_MAP}'; //{EST_NAV_MENU:for=list}
+$ESTATE_TEMPLATE['list']['default']['txt'] .= '{EST_LEAFLET_MAP}';
 $ESTATE_TEMPLATE['list']['default']['txt'] .= '<div class="estCardCont">';
 
 if($EST_PROP && count($EST_PROP) > 0){
   $slc = e107::getScBatch('estate',true);
   foreach($EST_PROP as $k=>$v){
     $slc->setVars($v);
-    $CAPT = $tp->parseTemplate($EST_LIST_CAP, false, $slc);
-    $TXT = $tp->parseTemplate($EST_LIST_TXT, false, $slc);
-    $ESTATE_TEMPLATE['list']['default']['txt'] .= '<div class="card estCard">'.$ns->tablerender($CAPT,$TXT,'list-card-'.$k,true).'</div>';
-    unset($CAPT,$TXT);
+    $ESTATE_TEMPLATE['list']['default']['txt'] .= '<div class="card estCard">'.$ns->tablerender($EST_LIST_CAP,$EST_LIST_TXT,'list-card-'.$k,true).'</div>';
     }
   }
-
 $ESTATE_TEMPLATE['list']['default']['txt'] .= '</div>';
-
-
 
 
 //MENU LAYOUTS
@@ -279,44 +271,18 @@ $ESTATE_TEMPLATE['list']['default']['txt'] .= '</div>';
 //MENU DEFAULT LAYOUT
 $ESTATE_TEMPLATE['menu']['default']['name'] = 'Default Sidebar Layout';
 $ESTATE_TEMPLATE['menu']['default']['ord'] = array('top','agent','saved','events','spaces');
-$CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_LIKE_ICON}', false, $sc);
-$TXT = $tp->parseTemplate($EST_MENU_MAIN, false, $sc);
-$ESTATE_TEMPLATE['menu']['default']['txt']['top'] = $ns->tablerender($CAPT, $TXT, 'estSideMenuTitle',true);
-
-$CAPT = $tp->parseTemplate('{AGENT_ROLL}', false, $sc);
-$TXT = $tp->parseTemplate('{PROP_AGENTCARD:img=1}', false, $sc);
-$ESTATE_TEMPLATE['menu']['default']['txt']['agent'] =  $ns->tablerender($CAPT, $TXT,'estSideMenuSeller',true);
-
-//$TXT = $tp->parseTemplate('{PROP_EVENTS:as=ul}', false, $sc);
-//$ESTATE_TEMPLATE['menu']['default']['txt']['events'] = $ns->tablerender(EST_GEN_EVENTS, $TXT, 'estSideMenuEvents',true);
-$ESTATE_TEMPLATE['menu']['default']['txt']['events'] = $tp->parseTemplate('{PROP_EVENTS}', false, $sc);
-
-$TXT = $tp->parseTemplate('{PROP_SAVED_LIST}', false, $sc);
-$ESTATE_TEMPLATE['menu']['default']['txt']['saved'] = $ns->tablerender(EST_GEN_SAVEDLISTINGS, $TXT, 'estSideMenuSaved',true);
-
-$TXT = $tp->parseTemplate('{SPACES_MENU}', false, $sc);
-if(trim($TXT) !== ''){
-  $ESTATE_TEMPLATE['menu']['default']['txt']['spaces'] = $ns->tablerender(EST_GEN_SPACES, $TXT, 'estSideMenuSpaces',true);
-  }
-
+$ESTATE_TEMPLATE['menu']['default']['txt']['top'] = $ns->tablerender('{PROP_NAME}{PROP_LIKE_ICON}', $EST_MENU_MAIN, 'estSideMenuTitle',true);
+$ESTATE_TEMPLATE['menu']['default']['txt']['agent'] =  $ns->tablerender('{AGENT_ROLL}', '{PROP_AGENTCARD:img=1}','estSideMenuSeller',true);
+$ESTATE_TEMPLATE['menu']['default']['txt']['events'] = '{PROP_EVENTS}';
+$ESTATE_TEMPLATE['menu']['default']['txt']['saved'] = $ns->tablerender(EST_GEN_SAVEDLISTINGS, '{PROP_SAVED_LIST}', 'estSideMenuSaved',true);
+$ESTATE_TEMPLATE['menu']['default']['txt']['spaces'] = '{SPACES_MENU}';
 
 
 //MENU BASIC LAYOUT
 $ESTATE_TEMPLATE['menu']['basic']['name'] = 'Basic';
-$CAPT = $tp->parseTemplate('{PROP_NAME}{PROP_LIKE_ICON}', false, $sc);
-$TXT = "
-<div class='WD100'>
-  <div class='noPADTB'>
-    <h3 class='sumCapt'>{PROP_STATUS}</h3>
-    <div><span class='FR'>{PROP_VIEWCOUNT}</span>{PROP_PRICE}</div>
-    <div>{PROP_MODELNAME}{PROP_LIKES}</div>
-  </div>
-</div>
-<div class='WD100'><h4>{AGENT_ROLL}</h4>{PROP_AGENTCARD:img=1}</div>
-<div class='WD100'>{PROP_EVENTS}</div> 
-<div class='WD100'>{PROP_SAVED_LIST}</div>"; //<h4>".EST_GEN_EVENTS."</h4><h4>".EST_GEN_SAVEDLISTINGS."</h4>
-$ESTATE_TEMPLATE['menu']['basic']['txt'] = $ns->tablerender($CAPT, $TXT, 'estSideMenuBasic',true);
+$ESTATE_TEMPLATE['menu']['basic']['txt'] = $ns->tablerender('{PROP_NAME}{PROP_LIKE_ICON}', $EST_MENU_BASIC, 'estSideMenuBasic',true);
+unset($TXT);
 
-unset($CAPT,$TXT);
-unset($EST_LIST_CAP,$EST_LIST_TXT);
 
+
+unset($EST_LIST_CAP,$EST_LIST_TXT,$EST_VIEW_SUMMARY,$EST_VIEW_SUMMARY_SIDEBAR,$EST_VIEW_FEATURES,$EST_VIEW_NXPR,$EST_MENU_MAIN,$EST_MENU_BASIC);
