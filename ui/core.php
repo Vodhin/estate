@@ -971,15 +971,6 @@ class estateCore{
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
   private function estPropListFilterLI($mode,$DTA){
     $tp = e107::getParser();
     if(!$DTA || (is_array($DTA) && count($DTA) == 0)){return;}
@@ -2759,50 +2750,146 @@ class estateCore{
     }
   
   
-  public function estAgentUserSelect($id=0){ //defunct?
-    /*
-    $sql = e107::getDB();
-    $frm = e107::getForm(false, true); 
-    $tp = e107::getParser();
-    
-    //$agent_uid = (intval($agent_uid) > 0 ? intval($agent_uid) : USERID);
-    
-    //$agents = $this->getAllAgents();
-    
-    $uperm = EST_USERPERM;
-    
-    $users = $this->estGetUsers();
-    if(count($users) > 0){
-      if($uperm > 1){
-        $text = $frm->select_open('agent_uid',array('value'=>intval($id),'size'=>'xxlarge'));
-        if($uperm > 2){
-          foreach($users as $uk=>$uv){
-            $text .= '
-            <option value="'.intval($uv['user_id']).'" data-altimg="'.$tp->toJS($uv['user_profimg']).'"';
-            if(intval($uv['user_id']) == intval($id)){$text .= ' selected="selected"';}
-            $text .= '>'.$tp->toHTML(trim($uv['user_login']) !== '' ? $uv['user_login'] : $uv['user_name']).' ('.$tp->toHTML($uv['user_email']).')';
-            $text .= '</option>';
-            }
-          }
-        elseif($uperm == 2){
-          $text .= '';
-          }
-        $text .= $frm->select_close();
-        }
-      elseif($uperm == 1){
-        $id = USERID;
-        $text .= $frm->hidden('agent_uid',intval($id));
-        $text .= $tp->toHTML(trim($users[$id]['user_login']) !== '' ? $users[$id]['user_login'] : $users[$id]['user_name']).' ('.$tp->toHTML($users[$id]['user_email']).')';
-        }
-      }
-    else{
-      $text = EST_ERR_NOUSERSINCLASS;
-      }
-    */
+  public function estAgentUserSelect($id=0){
+    //defunct?
     return "DEFUNCT FUNCTION?";
     }
   
   
+  
+  private function estMsgTR($mv){
+    $tp = e107::getParser();
+    if(intval($mv['msg_read']) > 0){
+      $Btn2ttl = 'title="'.EST_MSG_MARKUNREAD.'" data-ttl="'.EST_MSG_MARKREAD.'"';
+      $BTN2Cls = 'fa fa-arrow-up';
+      $BTNEnv = '<i class="fa fa-envelope-open"></i>';
+      }
+    else{
+      $Btn2ttl = 'title="'.EST_MSG_MARKREAD.'" data-ttl="'.EST_MSG_MARKUNREAD.'"';
+      $BTN2Cls = 'fa fa-check';
+      $BTNEnv = '<i class="fa fa-envelope"></i>';
+      }
+      
+    
+    return '
+      <tr class="estAdmMsgTr" data-idx="'.$mv['msg_idx'].'" data-pid="'.intval($mv['msg_propidx']).'" data-mode="'.intval($mv['msg_mode']).'" data-read="'.intval($mv['msg_read']).'" data-pmid="'.intval($mv['msg_pm']).'" data-del="0">
+        <td class="left VAM">'.$tp->toDate($mv['msg_sent'],'long').'</td>
+        <td class="left VAM">'.$tp->toHTML($mv['msg_from_name']).'</td>
+        <td class="left VAM">
+          <button class="btn btn-default estMsgBtnEmail" title="'.$tp->lanVars(EST_MSG_SENDEMAILTO, array('x'=>$mv['msg_from_name']),false).'" data-email="'.$tp->toEmail($mv['msg_from_addr']).'">'.$tp->toHTML($mv['msg_from_addr']).'</button>
+        </td>
+        <td class="left VAM estAdmMsgTr">
+          <div class="estAdmMsgDiv" data-addcls="popover fade top in editable-container editable-popup estMsgAdmBlk">
+            <div class="estMsgBtn" data-idx="'.intval($mv['msg_idx']).'" data-pid="'.intval($mv['msg_propidx']).'" data-mode="'.intval($mv['msg_mode']).'" data-read="'.intval($mv['msg_read']).'" data-pmid="'.intval($mv['msg_pm']).'" data-del="0">
+              <button class="btn btn-default estMsgBtnBlock">
+                <div class="estViewMsg TAL">'.$tp->toHTML($mv['msg_top']).'</div>
+                <div class="estMarkMsg" '.$Btn2ttl.'><i class="'.$BTN2Cls.'"></i></div>
+                <div class="estDelMsg" title="'.EST_MSG_DELETE.'" data-msg="'.EST_MSG_DELALERT.'"><i class="fa fa-trash-can"></i></div>
+              </button>
+              <div class="estMsgP">
+                <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
+                <p>'.$tp->toHTML($mv['msg_text']).'</p>
+                <div class="estInBoxHead">
+                  <div>'.EST_MSG_RECD.': '.$tp->toDate($mv['msg_sent'],'long').'</div>
+                  <div>'.EST_GEN_FROM.': '.$tp->toHTML($mv['msg_from_name']).' '.(intval($mv['msg_from_uid']) == 0 ? '('.EST_GEN_NONMEMBER.')' : '').' </div>
+                  <div>'.EST_GEN_EMAIL.': '.$tp->toHTML($mv['msg_from_addr']).' </div>
+                  <div>'.EST_GEN_PHONE.': '.$tp->toHTML($mv['msg_from_phone']).' </div>
+                  <div>'.EST_MSG_PRIVATEMSG.': '.(intval($mv['msg_from_uid']) == 0 ? EST_GEN_NOT.' '.EST_GEN_AVAILABLE : (intval($mv['msg_pm']) == 1 ? EST_MSG_PMSENT : EST_MSG_PMNOTSENT)).' </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>';
+    unset($Btn2ttl,$BTN2Cls,$BTNEnv,$mv);
+    }
+  
+  
+  
+  
+  
+  
+  public function estAgentInbox(){
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    //$EST_PREF = e107::pref('estate');
+    $sql->gen("SELECT #estate_msg.* FROM #estate_msg WHERE msg_to_uid='".USERID."' ORDER BY msg_read ASC, msg_mode ASC, msg_sent DESC");
+    
+    $MSGS = array();
+    $ix = array();
+    while($rows = $sql->fetch()){
+      $key = intval($rows['msg_mode']);
+      $iu = (intval($rows['msg_read']) > 0 ? 2 : 1);
+      $MSGS[$key][$iu][$ix[$key][$iu]] = $rows;
+      $ix[$key][$iu]++;
+      }
+    
+    $MSGTYPES = EST_MSGTYPES;
+    //array_shift($MSGTYPES);
+    $MSGTYPES = array_slice($MSGTYPES, 1, NULL, true);
+    
+    $TBS = array();
+    $i = 0;
+    foreach($MSGTYPES as $k=>$tabtxt){
+      //$k = $ck + 1;
+      $mct = 0;
+      
+      $TBS[$i]['text'] = '
+        <table id="estMsgTbl-new-'.$k.'" class="table adminlist table-striped estCustomTable1 WD100" style="margin-bottom:16px;">
+          <colgroup></colgroup>
+          <colgroup></colgroup>
+          <colgroup></colgroup>
+          <colgroup class="WD50"></colgroup>
+          <thead>
+            <tr>
+              <th>'.EST_GEN_NEWMESSAGES.'</th>
+              <th>'.EST_MSG_SENTBY.'</th>
+              <th>'.EST_MSG_FROMEMAIL.'</th>
+              <th>'.EST_MSG_SUBJECT.'</th>
+            </tr>
+          </thead>
+          <tbody id="estMsgTB-new-'.$k.'">';
+      
+      //$tp->lanVars(EST_GEN_NOMESSAGESTXT1, array('x'=>$cv),false)
+      
+      if(isset($MSGS[$k][1])){
+        $mct = count($MSGS[$k][1]);
+        foreach($MSGS[$k][1] as $mk=>$mv){$TBS[$i]['text'] .= $this->estMsgTR($mv);}
+        }
+      
+      $TBS[$i]['text'] .= '
+          </tbody>
+        </table>
+        <table id="estMsgTbl-read-'.$k.'" class="table adminlist table-striped estCustomTable1 WD100">
+          <colgroup></colgroup>
+          <colgroup></colgroup>
+          <colgroup></colgroup>
+          <colgroup class="WD50"></colgroup>
+          <thead>
+            <tr>
+              <th>'.EST_GEN_READMESSAGES.'</th>
+              <th>'.EST_MSG_SENTBY.'</th>
+              <th>'.EST_MSG_FROMEMAIL.'</th>
+              <th>'.EST_MSG_SUBJECT.'</th>
+            </tr>
+          </thead>
+          <tbody id="estMsgTB-read-'.$k.'">';
+      
+      if(isset($MSGS[$k][2])){
+        foreach($MSGS[$k][2] as $mk=>$mv){$TBS[$i]['text'] .= $this->estMsgTR($mv);}
+        }
+        
+      $TBS[$i]['text'] .= '
+          </tbody>
+        </table>';
+      
+      $TBS[$i]['caption'] = $tabtxt.' [<span class="estAdmMsgTabCts" data-targ="estMsgTB-new-'.$k.'">'.$mct.'</span>]';
+      unset($mct);
+      $i++;
+      }
+    
+    return $TBS;
+    }
   
   
   
@@ -3141,6 +3228,8 @@ class estateCore{
         $text .= $this->estOAFormTR('text','prop_flag',$DTA);
         $text .= $this->estOAFormTR('text','prop_summary',$DTA);
         $text .= $this->estOAFormTR('textarea','prop_description',$DTA);
+        $text .= $this->estOAFormTR('number','prop_bedtot',$DTA);
+        $text .= $this->estOAFormTR('number','prop_bathtot',$DTA);
         $text .= $this->estOAFormTR('txtcntr','prop_features',$DTA);
         $text .= $this->estOAFormTR('text','prop_modelname',$DTA);
         $text .= $this->estOAFormTR('text','prop_condit',$DTA);
@@ -3156,13 +3245,23 @@ class estateCore{
         break;
         
       case 3 :
-        return '
+        /*
+            <table class="estOATable1" style="width:100%">
+              <colgroup></colgroup>
+              <colgroup></colgroup>
+              <tbody>';
+        $text .= '
+              </tbody>
+            </table>
+        */
+        $text = '
         <div class="estOABlock">
           <h3><div>'.$tp->toHTML(EST_GEN_SPACES).'</div></h3>
           <div class="estOATabCont">
             <div id="estSpaceGrpDiv" class="estSpaceGrpDiv"></div>
           </div>
         </div>';
+        return $text;
         break;
         
       case 2 :
@@ -3171,12 +3270,12 @@ class estateCore{
         $text .= $this->estOAFormTR('text','prop_hoafee',$DTA);
         $text .= $this->estOAFormTR('switch','prop_hoaland',$DTA);
         $text .= $this->estOAFormTR('text','prop_landfee',$DTA);
-        
-        
+        //$text .= $this->estOAFormTR('div','estCommunityPreviewCont',$DTA);
         $text .= $this->estOAFormTableEnd($SN,$DTA);
         $text .= $this->estOAHidden('prop_hoareq',$DTA);
         $text .= $this->estOAHidden('prop_hoafrq',$DTA);
         $text .= $this->estOAHidden('prop_hoaappr',$DTA);
+        $text .= '<div class="WD100"><h4>'.EST_GEN_COMMUNITYPREVIEW.'</h4></div><div id="estCommunityPreviewCont"></div>';
         break;
         
       case 1 :
@@ -3234,7 +3333,6 @@ class estateCore{
       'prop_mlsno'=>array('labl'=>EST_PROP_MLSNO,'hlp'=>EST_PROP_MLSNOHLP),
       'prop_parcelid'=>array('labl'=>EST_PROP_PARCELID,'hlp'=>EST_PROP_PARCELIDHLP),
       'prop_lotid'=>array('labl'=>EST_PROP_LOTID,'hlp'=>EST_PROP_LOTIDHLP),
-      
       'prop_addr1'=>array('labl'=>EST_PROP_ADDR1,'cs'=>2,'cls'=>'estPropAddr','plch'=>EST_PLCH96),
       'prop_addr2'=>array('labl'=>EST_PROP_ADDR2,'cs'=>2,'cls'=>'estPropAddr','plch'=>EST_PLCH96A),
       'prop_country'=>array('labl'=>EST_PROP_COUNTRY,'cs'=>2,'cls'=>'estPropAddr WD45','hlp'=>EST_PROP_COUNTRYHLP),
@@ -3242,19 +3340,12 @@ class estateCore{
       'prop_county'=>array('labl'=>EST_PROP_COUNTY,'cs'=>2,'cls'=>'estPropAddr WD45','hlp'=>EST_PROP_COUNTYHLP),
       'prop_city'=>array('labl'=>EST_PROP_CITY,'cs'=>2,'cls'=>'estPropAddr WD45','hlp'=>EST_PROP_CITYHLP),
       'prop_zip'=>array('labl'=>EST_PROP_POSTCODE,'cs'=>2,'cls'=>'estPropAddr WD144px','hlp'=>EST_PROP_POSTCODEHLP),
-      
-      //''=>array('labl'=>,'hlp'=>),
-      
-      //'prop_currency'=>array(),
-      
-      
       'prop_timezone'=>array('labl'=>EST_GEN_TIMEZONE,'hlp'=>EST_PROP_TIMEZONEHLP),
       'prop_subdiv'=>array('labl'=>EST_GEN_SUBDIVISION,'cls'=>'WD45','hlp'=>EST_PROP_SUBDIVHLP),
       'prop_hoafee'=>array('labl'=>EST_PROP_HOAFEES,'cls'=>'FL estNoRightBord WD144px','hlp'=>EST_PROP_HOAFEESHLP),
       'prop_hoaland'=>array('labl'=>EST_PROP_HOALAND,'hlp'=>EST_PROP_HOALANDHLP),
       'prop_landfee'=>array('labl'=>EST_PROP_LANDLEASE,'cls'=>'FL estNoRightBord WD144px','hlp'=>EST_PROP_LANDLEASEHLP),
       //'prop_landfreq'=>array('labl'=>EST_PROP_HOAFRQ,'hlp'=>EST_PROP_HOAFRQHLP),
-      
       'prop_flag'=>array('labl'=>EST_PROP_FLAG,'plch'=>EST_PROP_FLAGPLCHLDR,'hlp'=>EST_PROP_FLAGHLP),
       'prop_summary'=>array('labl'=>LAN_SUMMARY,'hlp'=>EST_PROP_SUMMARYHLP),
       'prop_description'=>array('labl'=>LAN_DESCRIPTION,'hlp'=>EST_PROP_DESCRIPTIONHLP),
@@ -3267,17 +3358,13 @@ class estateCore{
       'prop_intsize'=>array('labl'=>EST_PROP_INTSIZE,'cls'=>'WD144px FL','hlp'=>EST_PROP_INTSIZEHLP),
       'prop_roofsize'=>array('labl'=>EST_PROP_ROOFSIZE,'cls'=>'WD144px FL','hlp'=>EST_PROP_ROOFSIZEHLP),
       'prop_landsize'=>array('labl'=>EST_PROP_LANDSIZE,'cls'=>'WD144px FL','hlp'=>EST_PROP_LANDSIZEHLP),
-      'prop_bedmain'=>array('labl'=>EST_GEN_BEDROOMS,'cls'=>'WD144px'),
-      'prop_bedtot'=>array('labl'=>EST_GEN_BEDROOMS,'cls'=>'WD144px'),
-      'prop_bathtot'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
-      'prop_bathfull'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
-      'prop_bathhalf'=>array('labl'=>EST_GEN_BATHROOMS,'cls'=>'WD144px'),
       'prop_hours'=>array('labl'=>EST_PROP_HRS,'hlp'=>EST_PROP_HRSHLP),
       'prop_datetease'=>array('labl'=>EST_PROP_DATETEASE,'hlp'=>EST_PROP_DATETEASEHLP),
       'prop_dateprevw'=>array('labl'=>EST_PROP_DATEPREVW,'hlp'=>EST_PROP_DATEPREVWHLP),
       'prop_datelive'=>array('labl'=>EST_PROP_DATELIVE,'hlp'=>EST_PROP_DATELIVEHLP),
       'prop_datepull'=>array('labl'=>EST_PROP_DATEPULL,'hlp'=>EST_PROP_DATEPULLHLP),
       'estEventsCont'=>array('cs'=>2),
+      'estCommunityPreviewCont'=>array('labl'=>EST_GEN_COMMUNITYPREVIEW,'td1c'=>'VAT'),
       );
     return $TXT[$FLD];
     }
@@ -3295,12 +3382,13 @@ class estateCore{
     $INTS = array('prop_listype','prop_state','prop_county','prop_city','prop_subdiv','prop_status','prop_zoom','prop_yearbuilt','prop_dimu1','prop_intsize','prop_roofsize','prop_dimu2','prop_zoning','prop_type','prop_listprice','prop_origprice','prop_leasefreq','prop_leasedur','prop_currency','prop_hoafee','prop_hoaland','prop_hoaappr','prop_hoareq','prop_hoafrq','prop_bathtot','prop_bathmain','prop_bathhalf','prop_bathfull','prop_bedtot','prop_bedmain','prop_floorct','prop_floorno','prop_bldguc','prop_complxuc');
     
     $LABS = $this->estOALabels($FLD);
+    $CLS1 = (isset($LABS['td1c']) ? ' class="'.$LABS['td1c'].'"' : '');
     
     if($LABS['hlp']){
       $INFICO = $frm->help($LABS['hlp']);//$tp->toHTML()
       }
     
-    $text = '<tr><td>'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
+    $text = '<tr><td'.$CLS1.'>'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
     
     if(in_array($FLD,$SERL)){$FVALUE = e107::unserialize($DTA[$FLD]);}
     elseif(in_array($FLD,$INTS)){$FVALUE = intval($DTA[$FLD]);}
@@ -3310,6 +3398,33 @@ class estateCore{
     
     
     switch($FLD){
+      case 'prop_bedtot' :
+        $options = array('size'=>'small','min'=>'0','step'=>'1');
+        return '
+        <tr>
+          <td>'.EST_GEN_BEDROOMS.'</td>
+          <td>
+            <div class="ILMINI">'.EST_GEN_TOTAL.$frm->number('prop_bedtot', intval($DTA['prop_bedtot']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_MAINLEV.$frm->number('prop_bedmain', intval($DTA['prop_bedmain']), 0, $options).'</div>
+          </td>
+        </tr>';
+        break;
+      
+      case 'prop_bathtot' :
+        $options = array('size'=>'small','min'=>'0','step'=>'1');
+        return '
+        <tr>
+          <td>'.EST_GEN_BATHROOMS.'</td>
+          <td>
+            <div class="ILMINI">'.EST_GEN_FULL.$frm->number('prop_bathfull', intval($DTA['prop_bathfull']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_HALF.$frm->number('prop_bathhalf', intval($DTA['prop_bathhalf']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_TOTAL.$frm->number('prop_bathtot', intval($DTA['prop_bathtot']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_MAINLEV.$frm->number('prop_bathmain', intval($DTA['prop_bathmain']), 0, $options).'</div>
+          </td>
+        </tr>';
+        break;
+      
+      
       case 'prop_status' :
         foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$OPTARR[$k] = $v['opt'];}
         break;
@@ -3458,7 +3573,7 @@ class estateCore{
       
       case 'select' :
         if($LABS['wrap']){$text .= '<div class="estInptCont">';}
-        $text .= $frm->select($FLD,$OPTARR,$tp->toFORM($FVALUE),$options);
+        $text .= $frm->select($FLD,$OPTARR,$FVALUE,$options);
         if($LABS['wrap']){$text .= '</div>';}
         break;
       

@@ -4,12 +4,8 @@ if(!ADMIN){exit;}
 if(!getperms('P')){exit;}
 
 
-
-
-
 class estate_adminMain extends e_admin_dispatcher{
 	protected $menuTitle = EST_PLUGNAME;
-  //public $hlpactn = $this->getAction();
 	
   protected $modes = array(
 		'estate_properties'	=> array(
@@ -38,13 +34,10 @@ class estate_adminMain extends e_admin_dispatcher{
 		  )
 	);
 	
-  
-  //'<i class=\"fa fa-envelope\">'.EST_MGS_NEWMSGS.'</i> '.
-  //'estate_agencies/inbox' => array('caption'=> EST_GEN_AGENT.' '.EST_MSG_INBOX.': '.EST_MGS_NEWMSGS, 'perm' => 'P'),
-  
   protected $adminMenu = array(
-    'estate_properties/list' => array('caption'=> EST_AMENU_PROPLIST.(EST_NEW_PROPSUBMITTED > 0 ? ' ('.EST_NEW_PROPSUBMITTED.')' : ''), 'perm' => 'P'),
-    'estate_agencies/profile' => array('caption'=> EST_MYAGENTPROFILE.' ('.EST_MGS_NEWMSGS.')', 'perm' => 'P','icon'=>'<i class=\"fa fa-envelope\"></i>'),
+    'estate_properties/list' => array('caption'=> EST_AMENU_PROPLIST, 'perm' => 'P'),
+    'estate_agencies/inbox' => array('caption'=> EST_GEN_AGENT.' '.EST_MSG_INBOX, 'perm' => 'P'),
+    'estate_agencies/profile' => array('caption'=> EST_MYAGENTPROFILE.' ', 'perm' => 'P','icon'=>'<i class=\"fa fa-envelope\"></i>'),
     'estate_agencies/list' => array('caption'=> EST_GEN_AGENTSAGENCIES, 'perm' => 'P'),
     'estate_presets/presets' => array('caption'=> EST_GEN_DATAPRESETS, 'perm' => 'P'),
     'estate_properties/prefs' => array('caption'=> LAN_PREFS, 'perm' => 'P'),
@@ -58,6 +51,13 @@ class estate_adminMain extends e_admin_dispatcher{
 		'estate_agencies/agent'	=> 'estate_agencies/list',
 		'estate_agencies/create'	=> 'estate_agencies/list'
     );
+  
+  public function init(){
+    if(EST_NEW_PROPSUBMITTED > -1){
+      $this->adminMenu['estate_properties/list']['badge'] = array('value' => EST_NEW_PROPSUBMITTED, 'type'=>'info');
+      }
+    $this->adminMenu['estate_agencies/inbox']['badge'] = array('value' => EST_MGS_NEWMSGS, 'type'=>'info');
+    }
   }
 
 
@@ -97,9 +97,9 @@ class estate_adminManager extends e_admin_dispatcher{
 	);
 	
   
-  
   protected $adminMenu = array(
-    'estate_properties/list' => array('caption'=> EST_AMENU_PROPLIST.(EST_NEW_PROPSUBMITTED > 0 ? ' ('.EST_NEW_PROPSUBMITTED.')' : ''), 'perm' => 'P'),
+    'estate_properties/list' => array('caption'=> EST_AMENU_PROPLIST, 'perm' => 'P'),
+    'estate_agencies/inbox' => array('caption'=> EST_GEN_AGENT.' '.EST_MSG_INBOX, 'perm' => 'P'),
     'estate_agencies/profile' => array('caption'=> EST_MYAGENTPROFILE, 'perm' => 'P'),
     'estate_agencies/edit' => array('caption'=> EST_GEN_AGENCY.' '.EST_GEN_PROFILE, 'perm' => 'P'),
     'estate_presets/presets' => array('caption'=> EST_GEN_DATAPRESETS, 'perm' => 'P'),
@@ -112,6 +112,13 @@ class estate_adminManager extends e_admin_dispatcher{
 		'estate_agencies/agent'	=> 'estate_agencies/edit',
 		'estate_agencies/create'	=> 'estate_agencies/edit'
     );
+  
+  public function init(){
+    if(EST_NEW_PROPSUBMITTED > -1){
+      $this->adminMenu['estate_properties/list']['badge'] = array('value' => EST_NEW_PROPSUBMITTED, 'type'=>'info');
+      }
+    $this->adminMenu['estate_agencies/inbox']['badge'] = array('value' => EST_MGS_NEWMSGS, 'type'=>'info');
+    }
   }
 
 
@@ -143,17 +150,21 @@ class estate_adminAgent extends e_admin_dispatcher{
 		  )
 	);
 	
-  
   protected $adminMenu = array(
     'estate_properties/list' => array('caption'=> EST_AMENU_PROPLIST.(EST_NEW_PROPSUBMITTED > 0 ? ' ('.EST_NEW_PROPSUBMITTED.')' : ''), 'perm' => 'P'),
+    'estate_agencies/inbox' => array('caption'=> EST_GEN_AGENT.' '.EST_MSG_INBOX, 'perm' => 'P'),
     'estate_agencies/profile' => array('caption'=> EST_MYAGENTPROFILE, 'perm' => 'P'),
     'estate_instruct/help' => array('caption'=> EST_GEN_HOWTO, 'perm' => 'P')
     );
-  
-	protected $adminMenuAliases = array(
+	
+  protected $adminMenuAliases = array(
 		'estate_properties/edit'	=> 'estate_properties/list',
 		'estate_properties/create'	=> 'estate_properties/list'
     );
+  
+  public function init(){
+    $this->adminMenu['estate_agencies/inbox']['badge'] = array('value' => EST_MGS_NEWMSGS, 'type'=>'info');
+    }
   }
 
 
@@ -174,9 +185,8 @@ class estate_adminUser extends e_admin_dispatcher{
 			'ui' 			=> '',
 			'uipath' 		=> null
 		  )
-	);
+    );
 	
-  
   protected $adminMenu = array(
     'estate_agencies/users' => array('caption'=> 'User List*', 'perm' => 'P'),
     'estate_instruct/help' => array('caption'=> EST_GEN_HOWTO, 'perm' => 'P')

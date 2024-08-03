@@ -267,8 +267,15 @@ function estInitUpl($file,$LOC,$DBIDX,$MDB=null){
             $FULLFILEDIR = "media/subdiv/full";
             $VIDFILEDIR = "media/subdiv/vid";
             //$subd_idx = intval($_POST['subd_idx']);
-            //$media_lev == 0;
-            //$media_propidx = 0;
+            $media_lev = 0;
+            $media_propidx = 0;
+            break;
+          case 0 :
+            $THMBFILEDIR = "media/subdiv/thm";
+            $FULLFILEDIR = "media/subdiv/full";
+            $VIDFILEDIR = "media/subdiv/vid";
+            $media_lev = 0;
+            $media_propidx = 0;
             break;
           }
         

@@ -623,6 +623,18 @@ class estate_listing_ui extends e_admin_ui{
         'batch' => false,
         ),
       
+			'prop_comminuty' => array (
+        'tab'=>2,
+        'title'=>EST_GEN_COMMUNITYPREVIEW,
+        'type' => 'method',
+        'data' => false,
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array(), // 'nolabel'=>1
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
       
 			'prop_spaces' => array (
         'tab'=>3,
@@ -636,78 +648,6 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         ),
       
-      'prop_bedmain' => array (
-        'tab'=>3,
-        'title' => EST_GEN_BEDROOMS,
-        'type' => 'method',
-        'data' => 'int',
-        'width' => 'auto',
-        'nolist'=>true,
-        'readParms' => array(),
-        'writeParms' => array('size' => 'small'),
-        'class' => 'left',
-        'thclass' => 'left',
-        ),
-      'prop_bedtot' => array (
-        'tab'=>3,
-        'title' => EST_GEN_BEDROOMS,
-        'type' => 'method',
-        'data' => 'int',
-        'width' => 'auto',
-        'nolist'=>true,
-        'readParms' => array(),
-        'writeParms' => array('size' => 'small'),
-        'class' => 'left',
-        'thclass' => 'left',
-        ),
-			'prop_bathtot' => array (
-        'tab'=>3,
-        'title' => EST_GEN_BATHROOMS,
-        'type' => 'method',
-        'data' => 'int',
-        'width' => 'auto',
-        'nolist'=>true,
-        'readParms' => array(),
-        'writeParms' => array('size' => 'small'),
-        'class' => 'left',
-        'thclass' => 'left',
-        ),
-			'prop_bathfull' => array (
-        'tab'=>3,
-        'title' => EST_GEN_BATHROOMS,
-        'type' => 'method',
-        'data' => 'int',
-        'width' => 'auto',
-        'nolist'=>true,
-        'readParms' => array(),
-        'writeParms' => array('size' => 'small'),
-        'class' => 'left',
-        'thclass' => 'left',
-        ),
-			'prop_bathhalf' => array (
-        'tab'=>3,
-        'title' => EST_GEN_BATHROOMS,
-        'type' => 'method',
-        'data' => 'int',
-        'width' => 'auto',
-        'nolist'=>true,
-        'readParms' => array(),
-        'writeParms' => array('size' => 'small'),
-        'class' => 'left',
-        'thclass' => 'left',
-        ),
-			'prop_bathmain' => array (
-        'tab'=>3,
-        'title' => EST_GEN_BATHROOMS,
-        'type' => 'method',
-        'data' => 'int',
-        'width' => 'auto',
-        'nolist'=>true,
-        'readParms' => array(),
-        'writeParms' => array('size' => 'small'),
-        'class' => 'left',
-        'thclass' => 'left',
-        ),
         
 			'prop_flag' => array (
         'tab'=>4,
@@ -722,7 +662,8 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'left',
         'thclass' => 'left',
         ),
-			'prop_summary' => array (
+      
+      'prop_summary' => array (
         'tab'=>4,
         'title' => LAN_SUMMARY,
         'type' => 'text',
@@ -745,6 +686,79 @@ class estate_listing_ui extends e_admin_ui{
         'help' => EST_PROP_DESCRIPTIONHLP,
         'readParms' => array(),
         'writeParms' => array('size' => 'xxlarge','counter'=>0,''=>'','placeholder'=>EST_PROP_DESCRIPTIONPLCHLDR),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
+			
+      'prop_bedmain' => array (
+        'tab'=>4,
+        'title' => EST_GEN_BEDROOMS,
+        'type' => 'method',
+        'data' => 'int',
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array('size' => 'small'),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
+      'prop_bedtot' => array (
+        'tab'=>4,
+        'title' => EST_GEN_BEDROOMS,
+        'type' => 'method',
+        'data' => 'int',
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array('size' => 'small'),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
+			'prop_bathtot' => array (
+        'tab'=>4,
+        'title' => EST_GEN_BATHROOMS,
+        'type' => 'method',
+        'data' => 'int',
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array('size' => 'small'),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
+			'prop_bathfull' => array (
+        'tab'=>4,
+        'title' => EST_GEN_BATHROOMS,
+        'type' => 'method',
+        'data' => 'int',
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array('size' => 'small'),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
+			'prop_bathhalf' => array (
+        'tab'=>4,
+        'title' => EST_GEN_BATHROOMS,
+        'type' => 'method',
+        'data' => 'int',
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array('size' => 'small'),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
+			'prop_bathmain' => array (
+        'tab'=>4,
+        'title' => EST_GEN_BATHROOMS,
+        'type' => 'method',
+        'data' => 'int',
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array('size' => 'small'),
         'class' => 'left',
         'thclass' => 'left',
         ),
@@ -2488,20 +2502,27 @@ class estate_listing_form_ui extends e_admin_form_ui{
 				break;
       }
     }
-    
+  
+  
+  public function prop_comminuty($curVal,$mode){
+    switch($mode){
+			case 'write':
+        return '<div id="estCommunityPreviewCont" class="WD100"></div>';
+        break;
+			case 'read': 
+			case 'filter':
+			case 'batch':
+				break;
+      }
+    }
   
   public function prop_spaces($curVal,$mode){
-    $DIMU = explode(',',$GLOBALS['EST_DIMUNITS'][0]);
-    $tp = e107::getParser();
     switch($mode){
 			case 'read': // List Page
         return $curVal;
 				break;
 
 			case 'write': // Edit Page
-        $sql = e107::getDB();
-        $frm = e107::getForm();
-        $LEVDTA = array('dimu'=>$DIMU,'lev'=>1);
         return '<div id="estSpaceGrpDiv" class="estSpaceGrpDiv"></div>';
         break;
 			case 'filter':

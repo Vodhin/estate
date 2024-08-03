@@ -169,7 +169,7 @@ function estTablStruct(){
         'str'=>'int',
         'cls'=>'xlarge',
         'hlpm'=>'estHlp-addr2',
-        'chng'=>array('estGetSubDivs'),
+        'chng'=>array('estResetSubDivs'),
         'src'=>array('tbl'=>'estate_city','idx'=>'city_idx','map'=>array('city_idx','city_name'),'req'=>array('prop_county','city_county',EST_PROP_MSG_CNTY)),
         'fltrs'=>array(
           'prop_zip'=>array('map'=>array('city_idx','city_idx',',','city_zip')),
@@ -193,6 +193,7 @@ function estTablStruct(){
         'hlpm'=>'estHlp-comm2',
         'str'=>'int',
         'cls'=>'xlarge',
+        'chng'=>array('estGetSubDivs'),
         'src'=>array('tbl'=>'estate_subdiv','idx'=>'subd_idx','map'=>array('subd_idx','subd_name'),'req'=>array('prop_city','subd_city',EST_PROP_MSG_CITY))
         ),
       
@@ -309,7 +310,7 @@ function estTablStruct(){
         'str'=>'int',
         'cls'=>'xlarge oneBtn',
         'labl'=>LAN_CATEGORY,
-        'src'=>array('tbl'=>'estate_featcats','idx'=>'featcat_idx','map'=>array('featcat_idx','featcat_name')),
+        'src'=>array('tbl'=>'estate_featcats','idx'=>'featcat_idx','map'=>array('featcat_idx','featcat_name'),'grep'=>array('featcat_lev')),
         ),
       'feature_name'=>array('type'=>'text','cls'=>'xlarge','chks'=>array('noblank'),'plch'=>EST_GEN_FEATURE.' '.LAN_NAME),
       'feature_opts'=>array(
@@ -403,13 +404,30 @@ function estTablStruct(){
         'src'=>array('tbl'=>'estate_city','idx'=>'city_idx','map'=>array('cnty_idx','cnty_name'))
         ),
       'subd_name'=>array('type'=>'text','tab'=>0,'cls'=>'xlarge','chks'=>array('noblank')),
+      'subd_type'=>array(
+        'type'=>'select',
+        'tab'=>0,
+        'labl'=>EST_GEN_TYPE,
+        'str'=>'int',
+        'cls'=>'xlarge',
+        'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>EST_GEN_SUBDIVTYPE)
+        ),
       'subd_url'=>array('type'=>'text','tab'=>0,'cls'=>'xlarge','labl'=>LAN_WEBSITE,'plch'=>'www.somesite.com'),
-      'subd_hoaname'=>array('type'=>'text','tab'=>1,'cls'=>'xlarge','labl'=>EST_PROP_HOANAME),
-      'subd_hoaweb'=>array('type'=>'text','tab'=>1,'cls'=>'xlarge','labl'=>EST_PROP_HOAWEB,'plch'=>'www.somesite.com'),
-      'subd_hoafee'=>array('type'=>'number','tab'=>1,'cls'=>'large','str'=>'int','labl'=>EST_PROP_HOAFEE,'attr'=>array('min'=>0)),
+      'subd_description'=>array(
+        'type'=>'textarea',
+        'tab'=>1,
+        'cls'=>'xxlarge WD100',
+        'cspan'=>2,
+        'labl'=>'no-lab',
+        'plch'=>EST_GEN_ADDITIONAL.' '.EST_GEN_INFO,
+        'rows'=>16
+        ),
+      'subd_hoaname'=>array('type'=>'text','tab'=>2,'cls'=>'xlarge','labl'=>EST_PROP_HOANAME,'plch'=>EST_GEN_HOAPLCH),
+      'subd_hoaweb'=>array('type'=>'text','tab'=>2,'cls'=>'xlarge','labl'=>EST_PROP_HOAWEB,'plch'=>'www.somesite.com'),
+      'subd_hoafee'=>array('type'=>'number','tab'=>2,'cls'=>'large','str'=>'int','labl'=>EST_PROP_HOAFEE,'attr'=>array('min'=>0)),
       'subd_hoafrq'=>array(
         'type'=>'select',
-        'tab'=>1,
+        'tab'=>2,
         'str'=>'int',
         'labl'=>EST_PROP_HOAFRQ,
         'cls'=>'large',
@@ -417,7 +435,7 @@ function estTablStruct(){
         ),
       'subd_hoareq'=>array(
         'type'=>'select',
-        'tab'=>1,
+        'tab'=>2,
         'str'=>'int',
         'labl'=>EST_PROP_HOAREQ,
         'cls'=>'large',
@@ -425,12 +443,12 @@ function estTablStruct(){
         ),
       'subd_hoaappr'=>array(
         'type'=>'select',
-        'tab'=>1,
+        'tab'=>2,
         'str'=>'int',
         'labl'=>EST_GEN_HOAAPPR1,
         'cls'=>'large',
         'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>array(EST_GEN_NOTREQUIRED,EST_GEN_REQUIRED))
-        )
+        ),
       ),
     
     'estate_listypes'=>array(

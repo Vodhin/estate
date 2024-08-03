@@ -179,6 +179,16 @@ class estate_agencies_ui extends e_admin_ui{
   
   
   
+  
+  public function inboxPage(){
+    $frm = e107::getForm(false, true);
+    $tp = e107::getParser();
+    $estateCore = new estateCore;
+    $TBS = $estateCore->estAgentInbox();
+    return '<div id="estAdmMsgBoxes">'.$frm->tabs($TBS, array('active' => intval($this->getID()),'fade' => 0,'class' => 'estOATabs')).'</div>';
+    }
+  
+  
   public function listPage(){
     $frm = e107::getForm(false, true);
     $estateCore = new estateCore;
@@ -324,7 +334,7 @@ class estate_agencies_ui extends e_admin_ui{
     $actn = $this->getAction();
     $id = $this->getId();
     
-    if(EST_USERPERM == 1 && $actn !== 'profile'){
+    if(EST_USERPERM == 1 && $actn !== 'profile' && $actn == 'inbox'){
       e107::redirect(e_SELF."?mode=estate_agencies&action=profile");
       }
     elseif(EST_USERPERM == 2){
@@ -335,6 +345,7 @@ class estate_agencies_ui extends e_admin_ui{
             }
           }
         elseif($actn == 'agent'){}
+        elseif($actn == 'inbox'){}
         else{
           e107::redirect(e_SELF."?mode=estate_agencies&action=profile");
           }
@@ -402,7 +413,7 @@ class estate_agencies_ui extends e_admin_ui{
     
 		$caption = '<span id="estHelpSpan" class="'.($GLOBALS['EST_PREF']['helpinfull'] == 1 ? 'estHlpFull' : 'estHelpSAuto').'">'.LAN_HELP.'</span>';
 		$text = '<div id="estHelpBlock" class="'.($GLOBALS['EST_PREF']['helpinfull'] == 1 ? '' : 'estHelpBAuto').'">';
-
+    
     if($hlpactn == 'edit' || $hlpactn == 'create'){
       $OWNAGT = intval(e107::pref('estate','public_act'));
       $text .= '
@@ -441,7 +452,7 @@ class estate_agencies_ui extends e_admin_ui{
         <p><b>'.EST_GEN_AGENCY.' '.EST_GEN_LISTINGS.':</b><br />'.EST_HLPMNU_AGCY10.'</p>
       </div>';
       }
-    if($hlpactn == 'agent' || $hlpactn == 'profile'){
+    elseif($hlpactn == 'agent' || $hlpactn == 'profile'){
       $estateCore = new estateCore;
       $AID = explode('.',$this->getID());
       $USRID = intval($AID[0]);
@@ -479,6 +490,20 @@ class estate_agencies_ui extends e_admin_ui{
         <p>'.EST_HLPMNU_AGENTPROF08.'</p>
         <p>'.EST_HLPMNU_AGENTPROF09.'</p>
         <p>'.EST_HLPMNU_AGENTPROF10.'</p>
+      </div>';
+      }
+    elseif($hlpactn == 'inbox'){
+      $vars = array('x'=>e107::pref('estate','contact_life'));
+      $text .= '
+      <div id="estEditHelp-0" class="estEditHelpSect">
+        <p>'.EST_HLPMNU_INBOX00.'</p>
+        <p>'.EST_HLPMNU_INBOX01.'</p>
+        <p>'.EST_HLPMNU_INBOX02.'</p>
+        <p>'.$tp->lanVars(EST_HLPMNU_INBOX03, $vars,true).'</p>
+      </div>
+      <div id="estEditHelp-1" class="estEditHelpSect">
+        <p>'.$tp->lanVars(EST_HLPMNU_INBOX04, $vars,true).'</p>
+        <p>'.EST_HLPMNU_INBOX05.'</p>
       </div>';
       }
     else{

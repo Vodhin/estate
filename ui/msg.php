@@ -322,7 +322,6 @@ e107::css('url',e_PLUGIN.'estate/css/msg.css');
 e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.php');
 e107::js('estate','js/msg.js', 'jquery');
 
-define("EST_MSGTYPES",array('',EST_MSG_SHOWINGREQUESTS,EST_MSG_OFFERS,EST_MSG_QUOTEREQ,EST_MSG_OTHERQUESTIONS));
 
 
 
@@ -393,7 +392,7 @@ function estPrevMsgPvw($mv,$mode=0){
       
       return '
           <div class="estMsgBtn" data-idx="'.intval($mv['msg_idx']).'" data-pid="'.intval($mv['msg_propidx']).'" data-mode="'.intval($mv['msg_mode']).'" data-read="'.intval($mv['msg_read']).'" data-pmid="'.intval($mv['msg_pm']).'" data-del="0">
-            <button class="btn dtn-default estMsgBtnBlock">
+            <button class="btn btn-default estMsgBtnBlock">
               <div class="estViewMsg">'.$tp->toHTML($mv['msg_top']).'</div>
               <div class="estMarkMsg" '.$Btn2ttl.'><i class="'.$BTN2Cls.'"></i></div>
               <div class="estDelMsg" title="'.EST_MSG_DELETE.'" data-msg="'.EST_MSG_DELALERT.'"><i class="fa fa-trash-can"></i></div>
@@ -742,8 +741,8 @@ function est_msg_form($DTA=null){
         </tr>
         <tr id="msgTopTR">
           <td>
-            <fieldset><legend>'.EST_MSG_SUBJECT.':</legend>
-            <input type="text" name="msg_top" class="tbox form-control estChkMsg" value="'.$msg_top.'" data-len="6" placeholder="'.EST_MSG_SUBJECT.'"/>
+            <fieldset><legend>'.EST_MSG_SUBJECT.' ('.EST_GEN_REQUIRED.'):</legend>
+            <input type="text" name="msg_top" class="tbox form-control estChkMsg" value="'.$msg_top.'" data-len="6" placeholder="'.EST_MSG_SUBJECT.' ('.EST_GEN_REQUIRED.')"/>
             </fieldset>
           </td>
         </tr>

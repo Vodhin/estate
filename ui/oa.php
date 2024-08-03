@@ -137,7 +137,7 @@ if(intval($DTA['prop']['prop_idx']) > 0){
     }
   //If no Errors, Load Prop Subdata
   if(!$err){
-    $ESTDTA = estGetSpaces($DTA['prop']['prop_idx']);
+    $ESTDTA = estGetSpaces($DTA['prop']);
     $MEDIA = $ESTDTA[0];
     $SPACES = $ESTDTA[1];
     //estate_featurelist
@@ -335,6 +335,7 @@ e107::css('url',e_PLUGIN.'estate/css/admin.css');
 e107::css('url',e_PLUGIN.'estate/css/oa.css');
 e107::css('url',e_PLUGIN.'estate/js/cropperjs/dist/cropper.css');
 e107::js('estate','js/Sortable/Sortable.js', 'jquery');
+e107::js('estate','js/adm/shared.js', 'jquery');
 e107::js('estate','js/oa.js', 'jquery');
 
 require_once(e_HANDLER."form_handler.php");
