@@ -55,7 +55,6 @@ $sql = e107::getDB();
 $tp = e107::getParser();
 $ns = e107::getRender();
 
-$estateCore = new estateCore;
 
 $PROPIDREQ = array('estate_grouplist','estate_spaces'); //,'estate_featurelist'
 
@@ -108,7 +107,7 @@ else if($FETCH == 4){ //upload file
     $desttarg = intval($_POST['desttarg']);
     
     $RES['desttarg'] = $desttarg;
-    
+    $RES['post'] = $_POST;
     
     $THMBFILEDIR = "../../media/prop/thm";
     $FULLFILEDIR = "../../media/prop/full";
@@ -141,24 +140,18 @@ else if($FETCH == 4){ //upload file
         $media_full = "";
         break;
       
-      case 4 :
-        break;
-      
-      case 3 :
-        break;
-      
-      case 2 :
-        break;
       
       case 1 :
         $THMBFILEDIR = "../../media/subdiv/thm";
         $FULLFILEDIR = "../../media/subdiv/full";
         $VIDFILEDIR = "../../media/subdiv/vid";
-        $subd_idx = intval($_POST['subd_idx']);
-        $media_lev == 0;
+        $media_levidx = (isset($_POST['subd_idx']) ? intval($_POST['subd_idx']) : intval($_POST['media_levidx']));
+        $media_lev = 0;
         $media_propidx = 0;
         break;
       
+      case 0 :
+        break;
       default :
         
         break;
@@ -200,7 +193,7 @@ else if($FETCH == 4){ //upload file
         }
       else{
         
-        if($desttarg > 3){
+        if($desttarg > 4){
           if(isset($GENFILENAME)){$UP_NAME = $GENFILENAME.".".$UP_EXT;}
           else{
             if($desttarg == 6){$UP_NAME = "agent-".$agent_idx.".".$UP_EXT;}
@@ -218,8 +211,8 @@ else if($FETCH == 4){ //upload file
           
         
         if($UP_TYPE =='image/jpeg' || $UP_TYPE =='image/png' || $UP_TYPE =='image/gif'){
-          if($desttarg == 0){
-            $media_type = 1;
+          $media_type = 1;
+          if($desttarg < 3){
             $OLDFULLFILE = $FULLFILEDIR."/".$UP_NAME;
             if(file_exists($OLDFULLFILE) && is_file($OLDFULLFILE)){
               if(@unlink($OLDFULLFILE)){$RES['upl'][$filek]['removed'] = EST_UPL_FILEFULLREM.": ".$OLDFULLFILE;}
@@ -256,7 +249,7 @@ else if($FETCH == 4){ //upload file
             if($ROTATE !== 0 || $AW > $MAXSZ || $AH > $MAXSZ){
               if($AW > $MAXSZ || $AH > $MAXSZ){
                 $RESIZE = true;
-                if($desttarg == 0 || $desttarg == 1){$newmedia_full = $UP_NAME;}
+                if($desttarg < 4){$newmedia_full = $UP_NAME;}
                 if($AW > $AH){$RW = $MAXSZ; $RH = round(($AH / $AW) * $MAXSZ);}
                 else{$RW = round(($AW / $AH) * $MAXSZ); $RH = $MAXSZ;}
                 }
@@ -282,7 +275,7 @@ else if($FETCH == 4){ //upload file
                 
                 if($ROTATE !== 0){$SRCIMG = imagerotate($SRCIMG,$ROTATE,0);}
                 
-                $DESTIMG = imagecreatetruecolor($RW,$RH);
+                $DESTIMG = imagecreatetruecolor($RW,$RH); //
                 imagecopyresampled($DESTIMG,$SRCIMG,0,0,0,0,$RW,$RH,$AW,$AH);
                 //imagecopyresampled($DESTIMG,$SRCIMG,$DST_X,$DST_Y,$SRC_X,$SRC_Y,$DST_WIDTH,$DST_HEIGHT,$SRC_WIDTH,$SRC_HEIGHT);
                 
@@ -293,7 +286,7 @@ else if($FETCH == 4){ //upload file
                   case 3 : imagepng($DESTIMG,$UP_DEST,1); break;
                   }
                 
-                if($desttarg == 0 || $desttarg == 1){
+                if($desttarg < 4){
                   if($RESIZE == true){
                     $UP_DEST2 = realpath($FULLFILEDIR)."/".$UP_NAME;
                     $DESTIMG2 = imagecreatetruecolor($AW,$AH);
@@ -720,12 +713,20 @@ else if($FETCH == 61){
 
 
 else if($FETCH == 76){
-  $PROPID = intval($_GET['propid']);
   $RES = array();
+  $PROPID = intval($_GET['propid']);
   $i=0;
   $sql->gen("SELECT * FROM #estate_media WHERE media_propidx=".$PROPID." AND media_galord > '0' ORDER BY media_galord ASC"); 
   while($rows = $sql->fetch()){$RES[$i] = $rows; $i++;}
   echo $tp->toJSON($RES);
+  exit;
+  }
+
+
+else if($FETCH == 81){
+  $subd_idx = intval($_GET['subd_idx']);
+  if($subd_idx == 0){echo EST_GEN_SUBDIVISIONNONE;}
+  else{echo estSubDivisionView($subd_idx);}
   exit;
   }
 
@@ -856,7 +857,7 @@ else{echo $RES;}
 
 function estTablForm($TBL,$FLDS){
   $RES = array();
-  $DTACHK = array('attr','chks','chng','cls','fltrs','fnct','hint','hlpm','html','inf','labl','par','plch','rows','src','str','tab','type'); //,'fetch'
+  $DTACHK = array('attr','chks','chng','cls','cspan','fltrs','fnct','hint','hlpm','html','inf','labl','par','plch','rows','src','str','tab','type'); //,'fetch'
   foreach($FLDS as $sk=>$sv){
     $RES[$sv]['ord'] = $sk;
     if($TBL[$sv]){
@@ -877,9 +878,8 @@ function estDirList(){
     'avatar'=>EST_PTHABS_AVATAR,
     'agency'=>EST_PTHABS_AGENCY,
     'agent'=>EST_PTHABS_AGENT,
-    'prop'=>array('full'=>EST_PTHABS_PROPFULL,'thm'=>EST_PTHABS_PROPTHM),
-    'full'=>EST_PTHABS_PROPFULL,
-    'thm'=>EST_PTHABS_PROPTHM
+    'prop'=>array('full'=>EST_PTHABS_PROPFULL,'thm'=>EST_PTHABS_PROPTHM,'vid'=>EST_PTHABS_PROPVID),
+    'subdiv'=>array('full'=>EST_PTHABS_SUBDFULL,'thm'=>EST_PTHABS_SUBDTHM,'vid'=>EST_PTHABS_SUBDVID)
     );
   }
 
@@ -1117,11 +1117,13 @@ function estGetAllDta($PROPID){
   //$STATEID = intval($ESTTBL['estate_properties']['dta'][0]['prop_state']);
   //$COUNTYID = intval($ESTTBL['estate_properties']['dta'][0]['prop_county']);
   //$CITYID = intval($ESTTBL['estate_properties']['dta'][0]['prop_city']);
+  $SUBDID = intval($ESTTBL['estate_properties']['dta'][0]['prop_subdiv']);
+  
   
   $ESTTABDTA = array(
     'estate_grouplist'=>'grouplist_propidx="'.$PROPID.'"',
     'estate_featurelist'=>'featurelist_propidx="'.$PROPID.'"',
-    'estate_media'=>'media_propidx="'.$PROPID.'"',
+    'estate_media'=>'media_propidx="'.$PROPID.'" OR (media_propidx="0" AND media_levidx="'.$SUBDID.'")',
     'estate_spaces'=>'space_propidx="'.$PROPID.'"',
     'estate_events'=>'event_idx>"0" ORDER BY event_start ASC' //event_propidx event_agt
     );
@@ -1205,6 +1207,7 @@ function estJStext(){
     'areyousure'=>LAN_JSCONFIRM,
     'assign'=>EST_GEN_ASSIGN,
     'bath'=>EST_GEN_BATH,
+    'baths'=>EST_GEN_BATHS,
     'bed'=>EST_GEN_BED,
     'auto'=>EST_GEN_AUTO,
     'cancel'=>LAN_CANCEL,
@@ -1220,6 +1223,7 @@ function estJStext(){
     'contact'=>EST_GEN_CONTACT,
     'contacts'=>EST_GEN_CONTACTS,
     'crop'=>EST_GEN_CROP,
+    'cropbtns'=>array(EST_IMG_MOVEL,EST_IMG_MOVER,EST_IMG_MOVEU,EST_IMG_MOVED,EST_IMG_ZOOMO,EST_IMG_ZOOMI,EST_IMG_ROTL,EST_IMG_ROTR,EST_IMG_FLIPH,EST_IMG_FLIPV,EST_IMG_RESETC,EST_IMG_CROP),
     'custom'=>EST_GEN_CUSTOM,
     'data'=>EST_GEN_DATA,
     'datasource'=>EST_GEN_DATASOURCE,
@@ -1245,7 +1249,10 @@ function estJStext(){
     'filesize'=>EST_GEN_FILE.' '.EST_GEN_SIZE,
     'first'=>EST_GEN_FIRST,
     'form'=>EST_GEN_FORM,
+    'fracts'=>array('¼','½','¾'),
+    'full'=>EST_GEN_FULL,
     'group1'=>EST_GEN_GROUP,
+    'half'=>EST_GEN_HALF,
     'hoaappr1'=>EST_GEN_HOAAPPR1,
     'image'=>EST_GEN_IMAGE,
     'infochanged'=>EST_GEN_INFOCHANGED,
@@ -1307,7 +1314,6 @@ function estJStext(){
     'spaces'=>EST_GEN_SPACES,
     'spacecatzero'=>EST_SPCAT_ZERO,
     'startcrop'=>EST_IMG_CROPSTART,
-    'cropbtns'=>array(EST_IMG_MOVEL,EST_IMG_MOVER,EST_IMG_MOVEU,EST_IMG_MOVED,EST_IMG_ZOOMO,EST_IMG_ZOOMI,EST_IMG_ROTL,EST_IMG_ROTR,EST_IMG_FLIPH,EST_IMG_FLIPV,EST_IMG_RESETC,EST_IMG_CROP),
     'subdiv'=>EST_GEN_SUBDIVISION,
     'table'=>EST_PROP_MSG_TABLE,
     'templnoopt'=>EST_PREF_TEMPLATE_NOORD,
@@ -1354,9 +1360,9 @@ function estJSkeys(){
     'popform'=>array(
       'estate_subdiv'=>array(
         'tabs'=>array(
-          0=>array('li'=>EST_GEN_HOA),
-          1=>array('li'=>EST_GEN_SCHOOLS),
-          2=>array('li'=>EST_GEN_RECREATION),
+          0=>array('li'=>EST_GEN_DETAILS),
+          1=>array('li'=>EST_GEN_HOA),
+          2=>array('li'=>EST_GEN_FEATURES),
           3=>array('li'=>EST_GEN_GALLERY)
           )
         )
@@ -1364,7 +1370,7 @@ function estJSkeys(){
     );
   }
 
-
+//'subdivtypes'=>EST_GEN_SUBDIVTYPE
 
 
 class filsys{
