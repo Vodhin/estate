@@ -150,6 +150,53 @@
   }
 */
 
+
+
+#estSubDivCont{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: stretch;
+  }
+
+#estSubDivSlideShow{
+  display: inline-block;
+  position:relative;
+  width: 49%;
+  height: calc(100vw * 0.30);
+  min-height: 320px;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center center;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  }
+
+#estSubDivS1{
+  width:49%;
+  flex: 49%;
+  margin: 1em 1em;
+  }
+
+#estSubDivS2{
+  width:49%;
+  flex: 49%;
+  margin: 1em 1em;
+  }
+
+#estSubDivS3{
+  width:49%;
+  flex: 49%;
+  margin: 1em 1em;
+  }
+
+
+
+
 .estSSPlayPause{
   display:none;
   position:absolute;
@@ -172,7 +219,8 @@
   display: block;
   position:relative;
   width: 100%;
-  height: 384px;
+  /*height: 384px;*/
+  height: calc(100vw * 0.30);
   background-repeat: no-repeat;
   background-clip: content-box;
   background-origin: content-box;
@@ -183,20 +231,27 @@
   overflow: hidden;
   }
 
-#estSlideShow.estSlideshow{cursor:pointer;}
 
-#estSlideShow.estSSPaused{
+#estSlideShow.estSlideshow,
+#estSubDivSlideShow.estSlideshow{
+  cursor:pointer;
+  }
+
+#estSlideShow.estSSPaused,
+#estSubDivSlideShow.estSSPaused{
   animation-play-state: paused;
   }
 
-#estSlideShow div.estSSPlayPause{
+#estSlideShow div.estSSPlayPause,
+#estSubDivSlideShow div.estSSPlayPause{
   width:64px;
   height:64px;
   background-position: -66px 0px;
   background-size: 128px 64px;
   }
 
-#estSlideShow.estSSPaused div.estSSPlayPause{
+#estSlideShow.estSSPaused div.estSSPlayPause,
+#estSubDivSlideShow.estSSPaused div.estSSPlayPause{
   display:block;
   }
 
@@ -761,13 +816,13 @@ ul.estDet2Cont{
   align-items: stretch;
   }
 
-
 #estateCont div.estCard{
   display: flex;
   flex: 33%;
   /*flex-direction: column;*/
   position: relative;
   width: fit-content;
+  max-width:48%;
   margin: 1em 0.125% 1em 0.125%;
   padding: 0px 1% 0px 1%;
   vertical-align: top;
@@ -1082,18 +1137,18 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   }
 
 .WSNWRP{
-  white-space:nowrap;
+  white-space:nowrap !important;
   overflow:hidden;
   text-overflow:ellipsis;
   }
 
-.FWB{font-weight:bold;}
+.FWB{font-weight:bold !important;}
 .TAL{text-align:left !important;}
 .TAC{text-align:center !important;}
 .TAR{text-align:right !important;}
-.VAB{vertical-align:bottom;}
-.VAM{vertical-align:middle;}
-.VAT{vertical-align:top;}
+.VAB{vertical-align:bottom !important;}
+.VAM{vertical-align:middle !important;}
+.VAT{vertical-align:top !important;}
 
 .FS95EM{font-size:0.95em;}
 .FS9EM{font-size:0.9em;}
@@ -1104,10 +1159,39 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
 
 .FSITAL{font-style:italic;}
 
-.WD100{width:100%;}
-.WD96{width:96%;}
-.WD48{width:48%;}
-.WD32{width: 32%;}
+.WD100{width:100% !important;}
+.WD96{width:96% !important;}
+.WD48{width:48% !important;}
+.WD32{width: 32% !important;}
+
+
+.DTH256{
+  display: block;
+  position: relative;
+  max-height:256px;
+  overflow:hidden;
+  overflow-wrap:break-word;
+  padding-bottom:1em;
+  }
+.DTH256:after{
+  content: "";
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255, 1) 90%);
+  width: 100%;
+  height: 3em;
+  }
+
+.DTH256:hover{
+  max-height:unset;
+  }
+.DTH256:hover:after{
+  height: 0px;
+  }
+
 .ILBLK{
   display:inline-block !important;
   position:relative !important;
@@ -1186,12 +1270,14 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
     height:1px;
     }
   
-  ##estSlideShow{
+  #estSlideShow,
+  #estSubDivSlideShow{
     display: block;
     height: 256px;
     }
   
-  ##estSlideShow div.estSSPlayPause{
+  #estSlideShow div.estSSPlayPause,
+  #estSubDivSlideShow div.estSSPlayPause{
     width:48px;
     height:48px;
     background-position: -48px 0px;
@@ -1233,10 +1319,11 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
     width: 100%;
     max-width: 100%;
     }
-  
+
   #estateCont div.estCard{
     display:block;
     width: 100%;
+    max-width:unset;
     }
   
   div.estCard div:first-child{
@@ -1249,6 +1336,15 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
     /*margin-bottom: 12px;*/
     }
   
+  
+  .MOBH256{
+    max-height:256px;
+    overflow-y:auto;
+    }
+  .MOBH312{
+    max-height:312px;
+    overflow-y:auto;
+    }
   
   .estCardMain{
     display:block;

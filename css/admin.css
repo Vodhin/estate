@@ -55,6 +55,7 @@ label{cursor:pointer;}
 .MLFT3{margin-left:3px !important;}
 .WD100{width:100% !important;}
 .WD95{width:95% !important;}
+.WD50{width:50% !important;}
 .WD32px{width:32px !important;}
 .VAM{vertical-align:middle !important;}
 
@@ -3214,6 +3215,56 @@ button.estUserAgentEdit div span{
 
 .estUserAgencySel{
   
+  }
+
+
+
+
+#estSubDivSlideShow{
+  display: block;
+  position:relative;
+  width: 512px;
+  min-height: 320px;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  background-origin: content-box;
+  background-size: cover;
+  background-position: center center;
+  border: 0.35em solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  }
+
+
+
+.estAdmMsgDiv{
+  display:block;
+  position:relative;
+  width:100%;
+  min-height:32px;
+  background-color:rgba(0,0,0,0.15);
+  }
+
+.estAdmMsgDiv div.estMsgP{
+  display:none;
+  margin:2px 1em 1em 1em;
+  }
+
+.estMsgBtnEmail{
+  width:100%
+  text-align:left;
+  }
+
+.estMsgAdmBlk{
+  display:none;
+  position:fixed;
+  left:25vw;
+  top:15vh;
+  width:50Vw;
+  height:70vh;
+  overflow-x:hidden;
+  overflow-y:auto;
+  z-index:12015;
   }
 
 

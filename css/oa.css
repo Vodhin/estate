@@ -22,6 +22,23 @@ td{
 input[type="file"]{
   display:none !important;
   }
+input[type="number"]{
+  text-align:center;
+  }
+
+.input-small{
+  width:96px !important;
+  }
+
+#estCommunityPreviewCont{
+  display:block;
+  position:relative;
+  width:100%;
+  min-height:64px;
+  border:1px solid rgba(0,0,0,0.25);
+  padding:1em;
+  }
+
 
 
 #estEmlNote{
