@@ -179,10 +179,16 @@ unset($dberr);
     exit;
     }
   
-  //$EST_PROP[$MPID]['msgd'] = array();
   if(check_class($EST_PREF['contact_class'])){
     foreach($EST_PROP as $MPID=>$MDTA){
-      $EST_PROP[$MPID]['msgd'] = estGetPrevMsgs($MPID);
+      if(intval($MDTA['prop_appr']) < 1){
+        if(EST_USERPERM < intval($EST_PREF['public_mod']) && intval($v['prop_uidcreate']) !== USERID){
+          unset($EST_PROP[$MPID]);
+          }
+        }
+      else{
+        $EST_PROP[$MPID]['msgd'] = estGetPrevMsgs($MPID);
+        }
       }
     }
   
@@ -191,7 +197,7 @@ unset($dberr);
     if($inqDta = $sql->retrieve("SELECT * FROM #estate_msg WHERE ".($PROPID > 0 ? "msg_propidx='".$PROPID."' AND " : "")." msg_mode < '3'",true)){
       foreach($inqDta as $k=>$v){
         $MPID = intval($v['msg_propidx']);
-        if($EST_PROP[$MPID]){
+        if(isset($EST_PROP[$MPID])){
           $EST_PROP[$MPID]['likes'] = intval($EST_PROP[$MPID]['likes']) + 1;
           }
         }
@@ -200,7 +206,7 @@ unset($dberr);
     if($likeDta = $sql->retrieve("SELECT * FROM #estate_likes".($PROPID > 0 ? " WHERE like_pid='".$PROPID."'" : "")."",true)){
       foreach($likeDta as $k=>$v){
         $MPID = intval($v['like_pid']);
-        if($EST_PROP[$MPID]){
+        if(isset($EST_PROP[$MPID])){
           $EST_PROP[$MPID]['likes'] = intval($EST_PROP[$MPID]['likes']) + 1;
           if(intval($v['like_uid']) == USERID && $v['like_ip'] == USERIP){
             $EST_PROP[$MPID]['saved'] = ' actv';
@@ -215,14 +221,6 @@ unset($dberr);
     }
   
   
-  foreach($EST_PROP as $k=>$v){
-    if(intval($v['prop_appr']) < 1){
-      if(EST_USERPERM < intval($EST_PREF['public_mod']) && intval($v['prop_uidcreate']) !== USERID){
-        unset($EST_PROP[$k]);
-        }
-      }
-    }
-  unset($k,$v);
   
   if($PROPID == 0 && $qs[0] == 'view'){$qs[0] = 'list';}
   if($PROPID > 0 && !isset($EST_PROP[$PROPID])){$qs[0] = 'list';}
@@ -330,7 +328,7 @@ unset($dberr);
     
     require_once(HEADERF);
     $tmpl = e107::getTemplate('estate');
-    $tkey = (trim($EST_PREF['template_list']) !=='' ? $EST_PREF['template_list'] : 'default');
+    $tkey = (trim($EST_PREF['template_list']) !== '' ? $EST_PREF['template_list'] : 'default');
     $sc = e107::getScBatch('estate',true);
     if(is_array($tmpl['list'][$tkey]['txt'])){
       ksort($tmpl['list'][$tkey]['txt']);
@@ -474,7 +472,7 @@ function est_map_pins(){
       else{
         $i = 0;
         foreach($GLOBALS['EST_PROP'] as $k=>$v){
-          if(intval($v['prop_status']) > 1 && intval($v['prop_status']) < 5 && trim($v['prop_lat']) !== '' && trim($v['prop_lon']) !== ''){
+          //if(intval($v['prop_status']) > 1 && intval($v['prop_status']) < 5 && trim($v['prop_lat']) !== '' && trim($v['prop_lon']) !== ''){
             $ARR1['prop'][$i] = array(
               'drop'=>est_PinsPriceDrop($v,1),
               'feat'=>explode(',',$v['prop_features']),
@@ -491,7 +489,7 @@ function est_map_pins(){
               'zoom'=>$v['prop_zoom']
               );
             $i++;
-            }
+            //}
           }
         }
       }
