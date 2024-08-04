@@ -3042,7 +3042,7 @@ function estMediaEditBtns(mode,mediaThm){
               }
             }
           }).appendTo(mediaEditBox);
-        $(JQSPAN,{'class':'fa fa-crop-alt'}).appendTo(editBtn); //pencil-square-o
+        $(JQSPAN,{'class':'fa fa-crop'}).appendTo(editBtn); //pencil-square-o
         
         var uplBtn = $(JQBTN,{'class':'btn btn-default btn-sm estNoLRBord','title':defs.txt.mediareplace+' '+mediaTitle}).on({
           click : function(e){
