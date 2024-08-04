@@ -1,4 +1,5 @@
-# estate
+# Vodhin's Real Estate Plugin for e107
+
 A plugin for the e107 Content management System to manage Real Estate Agencies, Agents, and Listings. This plugin started as a way for an individual Real Estate agent to easily list their properties for sale and has evolved into one that can handle multiple agents and agencies. 
 
 The _Estate_ plugin is ready fore BETA testing. The Current repository should be mostly usable if anyone wants to try it out. 
@@ -13,21 +14,21 @@ PLEASE BE SURE THE ROOT FOLDER IS "estate" once it has uploaded to your e107 web
 
 **MANUAL UPDATING ON YOUR WEBSITE DURING DEVELOPMENT:**
 
-Download ALL files and replace all existing files on your website with current. Run your Check Database Validity on the Estate tables and fix any entries that are found. Then go to the Preference section of the Estate Plugin and Save your preferences.
+Download ALL files and replace all existing files on your website with current. Run Database >> Scan Plugin Directories and Run Database >> Check Database Validity for the Estate Plugin tables and fix any entries that are found. Then go to the Preference section of the Estate Plugin and Save your preferences.
 
 
 **STILL NEEDED TO FINISH:** 
 
-Community/Sub-division/Village data: need to build the forms for Features, Images, and Details 
+Community/Sub-division/Village data: need to build the forms for Features, Images, and Details - Partially complete in current vervion
 
-
-Optional Moderator Menu for showing new non-agent listing submissions that need approval
+Optional Moderator Menu for showing new non-agent listing submissions that need approval - Partially complete in current version
 
  
 
 
 # DEVELOPMENT/REVISION HISTORY:
 
+4 August 2024: Fixed List View of listing.php and Crop Icon not rendering. Changed Files: "listings.php" "css/listings.css" "js/adm/shared.js" "templates/estate_template.php"
 
 3 August 2024: Major Update includes new Admin/Agent Inbox and a lot of other improvements. More to come. 
 
