@@ -256,11 +256,16 @@ if($estLoadSidebar == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
 $ESTATE_TEMPLATE['list']['default']['txt'] .= '{EST_LEAFLET_MAP}';
 $ESTATE_TEMPLATE['list']['default']['txt'] .= '<div class="estCardCont">';
 
+
 if($EST_PROP && count($EST_PROP) > 0){
+  $tp = e107::getParser();
   $slc = e107::getScBatch('estate',true);
   foreach($EST_PROP as $k=>$v){
     $slc->setVars($v);
-    $ESTATE_TEMPLATE['list']['default']['txt'] .= '<div class="card estCard">'.$ns->tablerender($EST_LIST_CAP,$EST_LIST_TXT,'list-card-'.$k,true).'</div>';
+    $capt = $tp->parseTemplate($EST_LIST_CAP, false, $slc);
+    $text = $tp->parseTemplate($EST_LIST_TXT, false, $slc);
+    $ESTATE_TEMPLATE['list']['default']['txt'] .= '<div class="card estCard">'.$ns->tablerender($capt,$text,'list-card-'.$k,true).'</div>';
+    unset($capt,$text);
     }
   }
 $ESTATE_TEMPLATE['list']['default']['txt'] .= '</div>';
