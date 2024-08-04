@@ -146,8 +146,10 @@
     var estJSpth = $(document).data('estJSpth');
     var tr = $(btn).closest('tr.estAdmMsgTr');
     var bloc = $(btn).closest('div.estMsgBtn');
-    console.log(tr);
+    
+    $('.estMsgP').hide();
     if(tr.length > 0){
+      $('div.estAdmMsgDiv').removeClass('popover fade top in editable-container editable-popup estMsgAdmBlk');
       var dta = $(tr).data();
       $(tr).addClass('estFlipIt');
       }
@@ -223,29 +225,6 @@
   
   function estBindViewBtns(){
     console.log('estBindViewBtns');
-    /*
-    $('button.estViewMsg').each(function(i,btn){
-      if(!$(btn).hasClass('estEleBound')){
-        var cont = $(btn).parent().parent();
-        $(cont).addClass('estEleBound');
-        console.log(cont);
-        var targ = $(btn).parent().parent().find('div.estMsgP');
-        $(btn).addClass('estEleBound').on({
-          click :function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            if($(targ).is(':visible')){
-              $(targ).hide();
-              }
-            else{
-              $('.estMsgP').hide();
-              $(targ).show();
-              }
-            }
-          });
-        }
-      });
-    */
     $('.estDelMsg').each(function(i,btn){
       if(!$(btn).hasClass('estEleBound')){
         $(btn).addClass('estEleBound').on({
@@ -293,11 +272,22 @@
                 e.stopPropagation();
                 $('.estMsgBtnBlock').removeClass('estMsgBtnAct');
                 var targ = $(btn).parent().parent().find('div.estMsgP');
-                if($(targ).is(':visible')){$(targ).hide();}
+                
+                var btnPar = $(btn).closest('div.estAdmMsgDiv');
+                console.log(btnPar);
+                if(btnPar.length > 0){
+                  }
+                
+                if($(targ).is(':visible')){
+                  $(targ).hide();
+                  $('div.estAdmMsgDiv').removeClass('popover fade top in editable-container editable-popup estMsgAdmBlk');
+                  }
                 else{
+                  $('div.estAdmMsgDiv').removeClass('popover fade top in editable-container editable-popup estMsgAdmBlk');
                   $('.estMsgP').hide();
-                  $(targ).show();
                   $(btn).parent().addClass('estMsgBtnAct');
+                  $(btn).closest('div.estAdmMsgDiv').addClass('popover fade top in editable-container editable-popup estMsgAdmBlk');
+                  $(targ).show();
                   }
                 }
               });
