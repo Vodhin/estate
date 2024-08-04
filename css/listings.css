@@ -687,6 +687,8 @@ ul.estDet2Cont{
   display: block;
   position: relative;
   width: 100%;
+  max-height: 34px;
+  overflow: hidden;
   margin: 0px 0px 3px 0px;
   text-align: left;
   font-size: 9px;
