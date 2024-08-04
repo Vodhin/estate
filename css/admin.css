@@ -3250,22 +3250,31 @@ button.estUserAgentEdit div span{
   margin:2px 1em 1em 1em;
   }
 
+.estAdmMsgDiv div.estMsgP h4{
+  display:none;
+  }
+
+.estAdmMsgDiv div.estMsgP p{
+  margin:1em 1em 1em 1em;
+  }
+
 .estMsgBtnEmail{
   width:100%
   text-align:left;
   }
 
 .estMsgAdmBlk{
-  display:none;
-  position:fixed;
-  left:25vw;
-  top:15vh;
-  width:50Vw;
-  height:70vh;
+  display:block !important;
+  position:fixed !important;
+  left:25vw !important;
+  top:15vh !important;
+  width:50Vw !important;
+  height:70vh !important;
   overflow-x:hidden;
   overflow-y:auto;
   z-index:12015;
   }
+
 
 
 td table.estContTabl{
