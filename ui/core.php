@@ -2825,13 +2825,11 @@ class estateCore{
       }
     
     $MSGTYPES = EST_MSGTYPES;
-    //array_shift($MSGTYPES);
     $MSGTYPES = array_slice($MSGTYPES, 1, NULL, true);
     
     $TBS = array();
     $i = 0;
     foreach($MSGTYPES as $k=>$tabtxt){
-      //$k = $ck + 1;
       $mct = 0;
       
       $TBS[$i]['text'] = '
