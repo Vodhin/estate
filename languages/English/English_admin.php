@@ -185,8 +185,6 @@ define("EST_GEN_FRONTENDACCESS","Front End Access");
 define("EST_GEN_FORM","Form");
 define("EST_GEN_GENERALOPTS", "General Options");
 define("EST_GEN_GENERALOPTSHLP1", "Set general options for this plugin");
-define("EST_GEN_GROUP", "Group");
-define("EST_GEN_GROUPS", "Groups");
 define("EST_GEN_HIDEOTHERUSERS", "Hide Other Users");
 define("EST_GEN_HOWTO","Help & How To");
 define("EST_GEN_IMPORTANT","IMPORTANT!");
@@ -202,6 +200,8 @@ define("EST_GEN_MISSING","Missing");
 define("EST_GEN_NAMEADDRESS","Name & Address");
 define("EST_GEN_NEWAGENT", "New Agent Profile");
 define("EST_GEN_NEWCOMPANY", "New Company");
+define("EST_GEN_NEWFEATURE","New Feature");
+define("EST_GEN_NEWGROUP","New Group");
 define("EST_GEN_NEWMESSAGES", "New Messages");
 define("EST_GEN_NEWUSERAGENT","New User/Agent");
 define("EST_GEN_NOMESSAGES", "No Messages");
@@ -492,11 +492,13 @@ define("EST_PREF_TEMPLATE_VIEWORDHLP","Enable/Disable and reorder each section o
 
 
 
-define("EST_HLP_FEATURES0","A categorized list of pre-defined features used for your listings");
-define("EST_HLP_FEATURES1","The top level is the category (bedroom, batroom, etc) each having a subset of features associated with that category.");
-define("EST_HLP_FEATURES2","Each Feature can have a list of Additional Options (eg. Refrigerator > Top Freezer, Bottom Freezer, Side by Side, Ice Maker, In door Water, etc). Click the Toggle next to the Feature to enable Options.");
-define("EST_HLP_LISTTYPE0","Changing a Listing Type WILL affect existing Listings.");
-define("EST_HLP_SPACESGRP0","Changing a Group Name WILL affect existing Listings.");
+define("EST_HLP_FEATURES0","A multi-level, Categorized list of pre-defined Features you can add to your listings.");
+define("EST_HLP_FEATURES1","The TOP LEVEL is a Category used to define a Space, Room, or Amenity (Bedroom, Bathroom, Security, etc) and contains a sub-list of Features common to that Catagory.");
+define("EST_HLP_FEATURES2","Each Feature can have its own list of additional, default Options that you can include where needed. Click the Toggle next to a Feature to enable its Options.");
+define("EST_HLP_FEATURES3","Changing a Category or Feature Name WILL affect existing listings, but changing their Options will not.");
+define("EST_HLP_LISTTYPE0","These are used to filter other options in your listings. Changing a Listing Type WILL affect existing Listings.");
+define("EST_HLP_SPACESGRP0","Groups are used to combine Spaces/Rooms into separate lists on the View Page.");
+define("EST_HLP_SPACESGRP1","Changing a Group Name WILL affect existing Listings.");
 
 
 define("EST_TT_ADMPERMIS1","Grant access to the Estate Plugin Admin Area");
