@@ -12,6 +12,7 @@ Download ALL files and replace all existing files on your website with current. 
  
 
 DEVELOPMENT/REVISION HISTORY:
+25 August: Major changes to database and user interface to improve Community Information for listings (information shared between properties in same neighborhood), more to develop for this feature. Minor bug fixes.
 
 7 July 2024: Added Moderator functions for Non-Agent Listing Submissions. Prefs allow Admin to choose to Auto Approve or Moderator Approve Member submissions. Agent Listings do not require Approval. If a Non-Agent submits a new listing or updates an already approved listing and Moderator Approve is selected, an email notifying the Moderators is sent. Admins can select individual Estate Managers, Estate Admins, and Website Admins as Moderators to contact. 
 
