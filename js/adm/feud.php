@@ -114,7 +114,7 @@ else if($FETCH == 4){ //upload file
     $VIDFILEDIR = "../../media/prop/vid";
     
     $media_idx = intval($_POST['media_idx']);
-    $media_lev = intval($_POST['media_lev']); // 0=subdiv, 1=property, 2=spaces
+    $media_lev = intval($_POST['media_lev']); // 0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space
     $media_propidx = ($media_lev == 0 ? 0 : intval($_POST['media_propidx'])); //0 prevents batch delete of media used for other properties
     $media_levidx = intval($_POST['media_levidx']);
     $media_levord = intval($_POST['media_levord']);
@@ -506,8 +506,10 @@ else if($FETCH == 35){
 
 else if($FETCH == 50){
   $RES = array();
-  $media_propidx = intval($_POST['media_propidx']);
+  $media_propidx = intval($_POST['mediadta']['media_propidx']);
   $desttarg = intval($_POST['desttarg']);
+  
+  $FILENAME = $tp->toHTML($_POST['mediadta']['media_thm']);
   
   switch($desttarg){
     case 6 : 
@@ -519,17 +521,21 @@ else if($FETCH == 50){
       $DIRR = "../../media/agency"; 
       break;
     case 1 : 
+      //$sql = e107::getDB();
       $DIRF = EST_PTHABS_SUBDTHM;
       $DIRR = "../../media/subdiv/thm"; 
       break;
     default : 
+      //$sql = e107::getDB();
+      
       $DIRF = EST_PTHABS_PROPTHM;
       $DIRR = "../../media/prop/thm";
+      
+      //$UP_NAME = intval($media_propidx)."-".intval($media_lev)."-".intval($media_levidx)."-".intval($media_idx).".".$UP_EXT;
       break;
     }
   //EST_PTHABS_PROPTHM
   //realpath($THMBFILEDIR)
-  $FILENAME = $tp->toHTML($_POST['media_thm']);
   $FTOGET = $DIRR."/".$FILENAME;
   
   $RES['desttarg'] = $desttarg;
@@ -725,8 +731,7 @@ else if($FETCH == 76){
 
 else if($FETCH == 81){
   $subd_idx = intval($_GET['subd_idx']);
-  if($subd_idx == 0){echo EST_GEN_SUBDIVISIONNONE;}
-  else{echo estSubDivisionView($subd_idx);}
+  echo estSubDivisionView($subd_idx,1);
   exit;
   }
 
@@ -1119,11 +1124,11 @@ function estGetAllDta($PROPID){
   //$CITYID = intval($ESTTBL['estate_properties']['dta'][0]['prop_city']);
   $SUBDID = intval($ESTTBL['estate_properties']['dta'][0]['prop_subdiv']);
   
-  
+   //media_lev = 0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space
   $ESTTABDTA = array(
     'estate_grouplist'=>'grouplist_propidx="'.$PROPID.'"',
     'estate_featurelist'=>'featurelist_propidx="'.$PROPID.'"',
-    'estate_media'=>'media_propidx="'.$PROPID.'" OR (media_propidx="0" AND media_levidx="'.$SUBDID.'")',
+    'estate_media'=>'media_propidx="'.$PROPID.'" OR (media_propidx="0" AND media_lev="0" AND media_levidx="'.$SUBDID.'")',
     'estate_spaces'=>'space_propidx="'.$PROPID.'"',
     'estate_events'=>'event_idx>"0" ORDER BY event_start ASC' //event_propidx event_agt
     );
@@ -1356,6 +1361,7 @@ function estJSkeys(){
     'hoafrq'=>$GLOBALS['EST_HOAFREQ'],
     'hoareq'=>$GLOBALS['EST_HOAREQD'],
     'leasefrq'=>$GLOBALS['EST_LEASEFREQ'],
+    'levmap'=>EST_LEVMAP,
     'plugid'=>EST_PLUGID,
     'popform'=>array(
       'estate_subdiv'=>array(
