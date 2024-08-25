@@ -125,7 +125,11 @@
   cursor:pointer;
   }
 
-
+.estSTlnk{
+  cursor:pointer;
+  padding-left: 2px; 
+  padding-right: 2px; 
+  }
 
 
 .estExpBtn.estEBopen{transform: rotate(180deg);}
@@ -465,6 +469,7 @@ h3.sumCapt{
   justify-content: flex-start;
   align-content: flex-start;
   align-items: flex-start;
+  text-align:left;
   }
 
 .estSecretImg{
@@ -1080,6 +1085,22 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   padding:6px 6px 6px 6px;
   }
 
+.estGetFullImg{
+  border:4px solid transparent;
+  cursor:pointer;
+  }
+.estGetFullImg:hover{
+  border:7px solid rgba(207,207,207,0.40);
+  }
+
+.estDisclaimer{
+  font-size:0.85em;
+  font-style:italic;
+  }
+.estDisclaimer p{
+  
+  }
+
 
 .estMarkRed{
   filter: hue-rotate(152deg);
@@ -1158,6 +1179,8 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
 .FS8EM{font-size:0.8em;}
 .FS75EM{font-size:0.75em;}
 .FS7EM{font-size:0.7em;}
+.FS65EM{font-size:0.65em;}
+.FS6EM{font-size:0.6em;}
 
 .FSITAL{font-style:italic;}
 

@@ -1041,6 +1041,7 @@ select optgroup.optFilter.inact::before{
 
 .estPopCont div.estPopBoxTab,
 #estPopCont div.estPopBoxTab{
+  width:100%;
   max-height:72vh;
   overflow-x:hidden;
   overflow-y:auto;
@@ -1048,6 +1049,7 @@ select optgroup.optFilter.inact::before{
 
 
 .estPopTbl{
+  width:100%;
   background-color:transparent;
   }
 
@@ -1821,6 +1823,17 @@ div.estFeatInUse div button:nth-child(4) span{
   padding:0px;
   white-space: nowrap;
   overflow:visible;
+  }
+.estBelt .estPropThumb{
+  display: inline-block;
+  margin: 4px 2px;
+  }
+
+.estBelt .estPropThumb.actv{
+  border: 4px solid #2BD981;
+  }
+.estBelt .estPropThumb:hover{
+  border: 4px solid #00AB9B;
   }
 
 #estGalleryUsed{

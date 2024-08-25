@@ -35,8 +35,8 @@ input[type="number"]{
   position:relative;
   width:100%;
   min-height:64px;
-  border:1px solid rgba(0,0,0,0.25);
-  padding:1em;
+  /*border:1px solid rgba(0,0,0,0.25);*/
+  /*padding:1em;*/
   }
 
 
