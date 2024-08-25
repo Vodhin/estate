@@ -121,12 +121,17 @@ if(!isset($EST_VIEW_SUMMARY_SIDEBAR)){
 
 if(!isset($EST_VIEW_FEATURES)){
   $EST_VIEW_FEATURES = '
-  <div>
-    <div class="estInfoCard">
+  <div class="estFLEXCont">
+    <div class="estInfoCard estFLEX45">
       {PROP_POINTS}
     </div>
-    <div class="estInfoCard DTH256">
+    <div class="estInfoCard DTH256 estFLEX45">
       {PROP_FEATURE_EXTENDED}
+    </div>
+  </div>
+  <div>
+    <div class="estInfoCard">
+    {PROP_HOA}
     </div>
   </div>';
   }
