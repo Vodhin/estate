@@ -56,7 +56,7 @@ else{
   }
 
     
-    e107::js('estate','js/Leaflet.markercluster/dist/leaflet.markercluster.js');
+e107::js('estate','js/Leaflet.markercluster/dist/leaflet.markercluster.js');
 
 
 
@@ -242,6 +242,7 @@ unset($dberr);
         }
       
       
+      
       $IDIV = estViewCSS($ESTDTA);
       $EST_SPACES = $ESTDTA[1];
       $PROPDTA[0] = $EST_PROP[$PROPID];
@@ -251,23 +252,62 @@ unset($dberr);
         $sql->update("estate_properties","prop_views='".$PROPDTA[0]['prop_views']."' WHERE prop_idx='".$PROPID."' LIMIT 1");
         }
       
-      
+      if(trim($PROPDTA[0]['prop_name']) == ''){
+        if(trim($PROPDTA[0]['prop_addr1']) == ''){$PROPDTA[0]['prop_name'] = $PROPDTA[0]['prop_addr1'];}
+        else{$PROPDTA[0]['prop_name'] = EST_GEN_UNNAMEDPROPERTY;}
+        }
       
       $PINS = est_map_pins();
       e107::js('inline','var estMapPins = '.$PINS.'; ', 'jquery',2);
       
-      $estHead = $tp->toHTML(trim($PROPDTA[0]['prop_name']) !== '' ? $PROPDTA[0]['prop_name'] : EST_GEN_UNNAMEDPROPERTY);
-      define('e_PAGETITLE',$estHead);
-      define('PAGE_NAME', $estHead);
+      $estHead = $tp->toHTML($PROPDTA[0]['prop_name'].'<div class="FS6EM">'.$PROPDTA[0]['city_name'].', '.$PROPDTA[0]['state_name'].'</div>');
+      $estPT = $tp->toHTML($PROPDTA[0]['prop_name'].' | '.$PROPDTA[0]['city_name'].' | '.$PROPDTA[0]['state_name']);
+      define('e_PAGETITLE',$estPT);
+      define('PAGE_NAME', $estPT);
       
-      //e107::meta($name, $content, $extended);
-      //e107::meta('keywords','some words'); // example
-      //e107::meta('apple-mobile-web-app-capable','yes'); // example
+      estGetMeta($PROPDTA,$ESTDTA,1);
+      
+      e107::meta('apple-mobile-web-app-capable','yes'); // example
       
       $sc = e107::getScBatch('estate',true);
       $sc->setVars($PROPDTA[0]);
+      
       require_once(HEADERF);
       $tmpl = e107::getTemplate('estate');
+      
+      /*
+      //pref['xurl']['facebook']
+      echo '
+      <div id="fb-root"></div>';
+      echo '
+      <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v20.0&appId=1024154842269829" nonce="FOKrbAYI"></script>';
+      echo '
+  <div class="fb-like" 
+       data-href="'.$PROPDTA[0]['prop_link'].'" 
+       data-width=""
+       data-layout="standard" 
+       data-action="like" 
+       data-size="small"  
+       data-share="true">
+  </div>
+  ';
+      
+      echo "
+        <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId            : '1024154842269829',
+            xfbml            : true,
+            version          : 'v20.0'
+          });
+          FB.ui({
+            method: 'share',
+            href: 'https://developers.facebook.com/docs/'
+          }, function(response){});
+            };
+      </script>";
+      //echo '<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>';
+      */
       
       $tkey = (trim($EST_PREF['template_view']) !== '' ? $EST_PREF['template_view'] : 'default');
       $TEMPLATE = $tmpl['view'][$tkey];
@@ -314,12 +354,19 @@ unset($dberr);
         }
       
       $ns->setStyle('main');
-      $estText .= $tp->parseTemplate('<div id="estMiniSrc">{PROP_NEWICON}{PROP_EDITICONS:for=view}</div>', false, $sc);
-      
+      $estText .= $tp->parseTemplate('<div>{PROP_HOADISCLAIMERS}</div>', false, $sc);
+      $estText .= $tp->parseTemplate('<div id="estMiniSrc">{SOCIAL_LINKS}{PROP_NEWICON}{PROP_EDITICONS:for=view}</div>', false, $sc);
       
       $ns->tablerender('<span id="estMiniNav"></span>'.$estHead,$TFORM1.'<div id="estateCont" data-pid="'.$PROPID.'">'.$estText.'</div>'.$TFORM2,'estate-view');
-      unset($estHead,$estText,$EST_PROP,$PREFTMP,$TEMPLATE);
+      
+      
+      unset($estHead,$estPT,$estText,$EST_PROP,$PREFTMP,$TEMPLATE);
       }
+    
+    if(USERID == 1){
+      //echo propArrayTest($PROPDTA[0]);
+      }
+    
     }
   
   else{
@@ -371,7 +418,85 @@ exit;
     
 
 
+function estGetMeta($PROPDTA,$ESTDTA,$MODE=0){
+	$tp = e107::getParser();
+  $RES = array();
+  if($MODE == 1){ //view page
+    //$PROPDTA[0]['prop_status']
+    $type = $GLOBALS['EST_LISTTYPE1'][$PROPDTA[0]['prop_listype']];
+    $zone = $GLOBALS['EST_ZONING'][$PROPDTA[0]['prop_zoning']];
+    $propname = $tp->toHTML($type.': '.$PROPDTA[0]['prop_name'].' ('.$zone.')');
+    $propsumm = $tp->toHTML(''.strtoupper($PROPDTA[0]['city_name'].', '.$PROPDTA[0]['state_name']).' '.$PROPDTA[0]['prop_summary']);
+    $propdesc2 = $tp->toHTML($PROPDTA[0]['prop_description']);
+    $kwarr = array(
+      $zone,
+      $type,
+      strtoupper($PROPDTA[0]['prop_country']),
+      $PROPDTA[0]['cnty_name'],
+      $PROPDTA[0]['state_name'],
+      $PROPDTA[0]['city_name'],
+      $PROPDTA[0]['prop_zip'],
+      $PROPDTA[0]['prop_addr1'].(trim($PROPDTA[0]['prop_addr2']) !== '' ? ','.$PROPDTA[0]['prop_addr2'] : ''),
+      $PROPDTA[0]['agent_name'],
+      $PROPDTA[0]['agency_name'],
+      );
+    
+    if(intval($PROPDTA[0]['prop_bedtot']) > 0){array_push($kwarr,$PROPDTA[0]['prop_bedtot'].' '.EST_GEN_BED);}
+    if(intval($PROPDTA[0]['prop_bathtot']) > 0){array_push($kwarr,$PROPDTA[0]['prop_bathtot'].' '.EST_GEN_BATH);}
+    if(trim($PROPDTA[0]['prop_flag']) !== ''){array_push($kwarr,$PROPDTA[0]['prop_flag']);}
+    
+    //<!-- For Google -->
+    e107::meta('description',$propsumm.' '.$propdesc2);
+    e107::meta('keywords',$tp->toHTML(implode(",",$kwarr)));
+    //<meta name="author" content="" />
+    //<meta name="copyright" content="" />
+    //<meta name="application-name" content="" />
+    
+    //<!-- For Facebook -->
+    e107::meta('fb:app_id','1024154842269829');
+    e107::meta('og:locale','en_us');
+    e107::meta('og:title',$propname);
+    e107::meta('og:type','website');
+    e107::meta('og:url',$PROPDTA[0]['prop_link']);
+    e107::meta('og:description',$propsumm.' '.$propdesc2);
+    
+    
+  
 
+  if(isset($ESTDTA[0])){
+    e107::meta('og:image',EST_PTHABS_PROPTHM.$ESTDTA[0][1]['t']);
+    e107::meta('twitter:image',EST_PTHABS_PROPTHM.$ESTDTA[0][1]['t']);
+    //foreach($ESTDTA[0] as $mk=>$mv){
+      //e107::meta('og:image',EST_PTHABS_PROPTHM.$mv['t']);
+      //e107::meta('twitter:image',EST_PTHABS_PROPTHM.$mv['t']);
+      //}
+    }
+  
+    
+    /*
+    <meta property="og:image" content="https://example.com/rock.jpg" />
+    <meta property="og:image:width" content="300" />
+    <meta property="og:image:height" content="300" />
+    <meta property="og:image" content="https://example.com/rock2.jpg" />
+    <meta property="og:image" content="https://example.com/rock3.jpg" />
+    <meta property="og:image:height" content="1000" />
+    */
+    
+    //<!-- For Twitter -->
+    e107::meta('twitter:card',$propsumm);
+    e107::meta('twitter:title',$propname);
+    e107::meta('twitter:description',$propsumm.' '.$propdesc2);
+    
+    
+    //e107::meta($name, $content, $extended);
+    unset($type,$zone,$propname,$propsumm,$propdesc2);
+    }
+  else{
+    
+    }
+  
+  return $RES;
+  }
 
 
 
@@ -404,9 +529,9 @@ function estViewCSS($ESTDTA){
   
   
   if(isset($ESTDTA[2])){
-      $CSSTOP = estViewImgCSS('#estSubDivSlideShow',$ESTDTA[2]['media'],2);
-      if($CSSTOP[0]){e107::css('inline', $CSSTOP[0]);}
-      
+    $CSSTOP = estViewImgCSS('#estSubDivSlideShow',$ESTDTA[2]['media'],2);
+    if($CSSTOP[0]){e107::css('inline', $CSSTOP[0]);}
+    if($CSSTOP[1]){$IDIV .= $CSSTOP[1];}
     }
   
   if(isset($ESTDTA[1])){
@@ -414,6 +539,8 @@ function estViewCSS($ESTDTA){
       foreach($v['sp'] as $sok=>$sov){
         foreach($sov as $sk=>$sv){
           if($sv['m']){
+            //e107::meta('og:image',EST_PTHABS_PROPTHM.$sv['t']);
+            //e107::meta('twitter:image',EST_PTHABS_PROPTHM.$sv['t']);
             $CSSTOP = estViewImgCSS('.SPACE'.$v['ord'].'x'.$sok.'x'.$sk.'img',$sv['m']);
             if($CSSTOP[0]){e107::css('inline', $CSSTOP[0]);}
             }
@@ -421,9 +548,6 @@ function estViewCSS($ESTDTA){
         }
       }
     }
-  
-  
-  
   return $IDIV;
   }
 

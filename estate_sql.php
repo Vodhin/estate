@@ -281,6 +281,8 @@ CREATE TABLE `estate_properties` (
 CREATE TABLE `estate_spaces` (
   `space_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `space_propidx` int(11) unsigned NOT NULL,
+  `space_lev` tinyint(1) unsigned NOT NULL default '1',
+  `space_levidx` int(11) unsigned NOT NULL,
   `space_grpid` int(11) unsigned NOT NULL,
   `space_catid` int(11) unsigned NOT NULL,
   `space_ord` tinyint(1) unsigned NOT NULL,
@@ -327,14 +329,14 @@ CREATE TABLE `estate_subdiv_spaces` (
   `subspace_catid` int(11) unsigned NOT NULL,
   `subspace_ord` tinyint(1) unsigned NOT NULL,
   `subspace_name` varchar(55) NOT NULL,
-  `space_description` text NOT NULL,
+  `subspace_description` text NOT NULL,
   PRIMARY KEY (`subspace_idx`)
 ) ENGINE=InnoDB;
 
 
 CREATE TABLE `estate_subdivcats` (
   `subdivcat_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `subdiv_zone` int(10) unsigned NOT NULL,
+  `subdivcat_zone` int(10) unsigned NOT NULL,
   `subdivcat_name` varchar(50) NOT NULL,
   PRIMARY KEY (`subdivcat_idx`)
 ) ENGINE=InnoDB;

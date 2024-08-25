@@ -30,6 +30,7 @@
 		<pref name='contact_terms'></pref>
 		<pref name='country'>us</pref>
     <pref name='currency'>0</pref>
+		<pref name='dbfix'>1</pref>
 		<pref name='helpinfull'>1</pref>
 		<pref name='firsttime'>2</pref>
 		<pref name='listing_save'>0</pref>

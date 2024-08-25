@@ -20,7 +20,7 @@ $EST_CURSYMB = array('$','€','£','¥','฿','₡','¢','₴','₽','₱','CHF
 define("EST_HOAFREQ", $EST_HOAFREQ);
 define("EST_CURSYMB", $EST_CURSYMB);
 define("EST_CONTKEYS",array(EST_GEN_MOBILE,EST_GEN_EMAIL,EST_GEN_OFFICE,EST_GEN_FAX,EST_GEN_WEBSITE,EST_GEN_LINKIN,EST_GEN_TWITER,EST_GEN_FACEBOOK));
-
+define("EST_LEVMAP",array(0=>array('estate_subdiv','subd_idx'),1=>array('estate_properties','prop_idx'),2=>array('estate_spaces','space_idx'),3=>array('estate_city','city_idx'),4=>array('estate_subdiv_spaces','subspace_idx')));
 define("EST_MSGTYPES",array('',EST_MSG_SHOWINGREQUESTS,EST_MSG_OFFERS,EST_MSG_QUOTEREQ,EST_MSG_OTHERQUESTIONS));
 
 $EST_LEASEDUR = array(EST_GEN_NOLEASE);
@@ -322,7 +322,19 @@ function estHelpTabs(){
   }
 
 
-//
+function estMediaArr($row){
+  return array(
+        'a'=>$row['media_asp'],
+        'f'=>$row['media_full'],
+        'g'=>$row['media_galord'],
+        'i'=>$row['media_idx'],
+        'l'=>$row['media_levidx'],
+        'o'=>$row['media_levord'],
+        'n'=>$row['media_name'],
+        't'=>$row['media_thm'],
+        'y'=>$row['media_type']
+        );
+  }
 
 function estGetSpaces($DTA,$PSTAT=0){
   $sql = e107::getDb();
@@ -335,23 +347,11 @@ function estGetSpaces($DTA,$PSTAT=0){
   else{$MQRY .= "AND media_type='1' ORDER BY media_galord ASC";}
   
   if($data2 = $sql->retrieve($MQRY,true)){
-    $i = 0;
     foreach($data2 as $row){
-      //if(intval($row['media_type']) == 1){}
-      $MEDIA = array(
-        'a'=>$row['media_asp'],
-        'f'=>$row['media_full'],
-        'i'=>$row['media_idx'],
-        'l'=>$row['media_levidx'],
-        'n'=>$row['media_name'],
-        'o'=>$row['media_levord'],
-        't'=>$row['media_thm'],
-        'y'=>$row['media_type']
-        );
       if(intval($row['media_galord']) > 0){
-        $RET[0][$row['media_galord']] = $MEDIA;
+        $RET[0][$row['media_galord']] = estMediaArr($row);
         }
-      $SPMEDIA[$row['media_levidx']][$row['media_levord']] = $MEDIA;
+      $SPMEDIA[$row['media_levidx']][$row['media_levord']] = estMediaArr($row);
       }
     }
   
@@ -398,45 +398,122 @@ function estGetSpaces($DTA,$PSTAT=0){
   }
 
 
+
+function estGetMediaRows($media_levidx,$media_lev){
+  $sql = e107::getDb();
+  $RET = array();
+  // media_lev =  0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space  
+  if($dbRow = $sql->retrieve('estate_media', '*', 'media_levidx="'.intval($media_levidx).'" AND media_lev="'.intval($media_lev).'"',true)){
+    foreach($dbRow as $k=>$v){
+      $RET['media'][$k] = estMediaArr($v);
+      }
+    }
+  unset($dbRow,$k,$v);
+  return $RET;
+  }
+
+
+function estGetCitySpaces($city_idx){
+  $sql = e107::getDb();
+  $tp = e107::getParser();
+  $RET = array();
+  if($dbRow1 = $sql->retrieve('estate_subdiv_spaces', '*', 'subspace_city="'.$city_idx.'" AND subspace_subidx="0"',true)){
+    foreach($dbRow1 as $k=>$v){
+      $v['media'] = estGetMediaRows($v['subspace_idx'],3);
+      $RET[$v['subspace_idx']] = $v;
+      }
+    }
+  
+  unset($dbRow1,$k,$v);
+  return $RET;
+  }
+
 function estGetSubDivDta($subd_idx){
   $sql = e107::getDb();
   $tp = e107::getParser();
   $RET = array();
+  $media = estGetMediaRows($subd_idx,0); 
   if($dbRow1 = $sql->retrieve('estate_subdiv', '*', 'subd_idx="'.$subd_idx.'"',true)){
-    $RET = $dbRow1[0];
-    if($dbRow2 = $sql->retrieve('estate_media', '*', 'media_levidx="'.$subd_idx.'" AND media_lev="0"',true)){
-      foreach($dbRow2 as $k=>$v){
-        $RET['media'][$k] = array(
-          'a'=>$v['media_asp'],
-          'f'=>$v['media_full'],
-          'g'=>$v['media_galord'],
-          'i'=>$v['media_idx'],
-          'l'=>$v['media_levidx'],
-          'n'=>$v['media_name'],
-          'o'=>$v['media_levord'],
-          't'=>$v['media_thm'],
-          'y'=>$v['media_type']
-          );
+    $RET = array_merge($dbRow1[0],$media);
+    $RET['spaces'] = array('city'=>array(),'subd'=>array());
+    if($dbRow3 = $sql->retrieve('estate_subdiv_spaces', '*', 'subspace_subidx="'.$subd_idx.'"',true)){
+        foreach($dbRow3 as $k=>$v){
+          $v['media'] = estGetMediaRows($v['subspace_idx'],4);
+          $RET['spaces']['subd'][$v['subspace_idx']] = $v;
         }
       }
     }
+  
+  unset($dbRow1,$dbRow2,$dbRow3,$k,$v);
   return $RET;
   }
 
 
 
-function estSubDivisionView($subd_idx){
+function propArrayTest($PROPDTA){
+  foreach($PROPDTA as $k=>$v){
+    $more .= '<div>['.$k.'] ';
+    if(is_array($v)){
+      $more .= '<ul>';
+      foreach($v as $sk=>$sv){
+        if(is_array($sv)){
+          $more .= '['.$sk.']<ul>';
+          foreach($sv as $tk=>$tv){
+            if(is_array($tv)){
+              $more .= '['.$tk.']<ul>';
+              foreach($tv as $uk=>$uv){
+                $more .= '<li>['.$uk.'] '.$uv.'</li>';
+                }
+              $more .= '</ul>';
+              }
+            else{$more .= '<li>['.$tk.'] '.$tv.'</li>';}
+            }
+          $more .= '</ul>';
+          }
+        else{$more .= '<li>['.$sk.'] '.$sv.'</li>';}
+        
+        }
+      $more .= '</ul>';
+      }
+    else{
+      $more .= $v;
+      }
+    $more .= '</div>';
+    }
+  
+  return '<div>'.$more.'</div>';
+  unset($more);
+  }
+
+
+
+function estSubDivisionView($subd_idx,$mode=0){
   //estGetSpaces
   $sql = e107::getDb();
   $tp = e107::getParser();
-  $dta = estGetSubDivDta($subd_idx);
-  extract($dta);
   
-  if(isset($media) && count($media) > 0){
-    $CSSTOP = estViewImgCSS('#estSubDivSlideShow',$media,2);
-    if(isset($CSSTOP[0])){
-      $SLIDESHOW = '<style>'.$CSSTOP[0].'</style><div id="estSubDivSlideShow"></div>';
+  if($mode == 1){
+    if($subd_idx == 0){
+      return '<div id="estSubDivCont" data-id="0" data-city="0" data-hoareq="0" data-hoafee="0" data-hoafrq="0" data-hoaappr="0">'.EST_GEN_SUBDIVISIONNONE.'</div>';
       }
+    $dta = estGetSubDivDta($subd_idx);
+    extract($dta);
+    if(isset($media) && count($media) > 0){
+      $CSSTOP = estViewImgCSS('#estSubDivSlideShow',$media,2);
+      if(isset($CSSTOP[0])){
+        $SLIDESHOW = '<style>'.$CSSTOP[0].'</style><div id="estSubDivSlideShow"></div>';
+        }
+      }
+    }
+  else{
+    if(is_array($subd_idx)){
+      $dta = $subd_idx;
+      extract($dta);
+      if(isset($media) && count($media) > 0){
+        $SLIDESHOW = '<div id="estSubDivSlideShow" class="WD100"></div>';
+        }
+      }
+      
     }
   
   if(trim($subd_url) !== ""){
@@ -447,28 +524,44 @@ function estSubDivisionView($subd_idx){
     $HOAWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_hoaweb,'url',array('ext'=>1)).'</h4>';
     }
   
-  $txt = '
-  <div id="estSubDivCont" data-id="'.intval($subd_idx).'" data-city="'.intval($subd_city).'" data-hoareq="'.intval($subd_hoareq).'" data-hoafee="'.intval($subd_hoafee).'" data-hoafrq="'.intval($subd_hoafrq).'" data-hoaappr="'.intval($subd_hoaappr).'">
-    '.$SLIDESHOW.'
-    <div id="estSubDivS1">
+  if($mode == 1){
+    $txt = '
+    <div id="estSubDivCont" data-id="'.intval($subd_idx).'" data-city="'.intval($subd_city).'" data-hoareq="'.intval($subd_hoareq).'" data-hoafee="'.intval($subd_hoafee).'" data-hoafrq="'.intval($subd_hoafrq).'" data-hoaappr="'.intval($subd_hoaappr).'">
+      '.$SLIDESHOW.'
+      <div id="estSubDivS1">
+        <h3 class="WD100">'.$tp->toHTML($subd_name).'</h3>
+        <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
+        '.$SUBDWEB.'
+        '.(trim($subd_description) !== '' ? '<div class="WD100">'.$tp->toHTML($subd_description).'</div>' : '').'
+      </div>';
+      }
+  
+  else{
+    $txt = '
+    <div id="estSubDivCont">
       <h3 class="WD100">'.$tp->toHTML($subd_name).'</h3>
-      <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
-      '.$SUBDWEB.'
-      '.(trim($subd_description) !== '' ? '<div class="WD100">'.$tp->toHTML($subd_description).'</div>' : '').'
-    </div>';
-  if($subd_hoaappr == 1 || $subd_hoareq == 1 || intval($subd_hoafee) > 0){
-    
-    $txt .= '
-    <div id="estSubDivS2">
-      '.$tp->toHTML(trim($subd_hoaname) !== '' ? '<h3>'.$subd_hoaname.' '.EST_GEN_HOMEOWNASS.'</h3>' : '<h4>'.EST_GEN_HOADEF1.'</h4>').'
-      '.($HOAWEB ? $HOAWEB : ($SUBDWEB ? $SUBDWEB : '')).'
-      <ul>
-        <li>'.($subd_hoareq == 1 ? EST_GEN_HOAREQ1 : EST_GEN_HOAREQ2).'</li>
-        <li>'.$subd_hoafee.' '.EST_HOAFREQ[$subd_hoafrq].'</li>
-        '.($subd_hoaappr == 1 ? '<li>'.EST_GEN_HOAAPPR2.'</li>' : '').'
-      </ul>
-    </div>';
+      '.$SLIDESHOW.'
+      <div id="estSubDivS1">
+        <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
+        '.$SUBDWEB.'
+        '.(trim($subd_description) !== '' ? '<div class="WD100 DTH256">'.$tp->toHTML($subd_description,true).'</div>' : '').'
+      </div>';
     }
+  
+  
+  if($subd_hoaappr == 1 || $subd_hoareq == 1 || intval($subd_hoafee) > 0){
+      $txt .= '
+      <div id="estSubDivS2">
+        <h4>'.$tp->toHTML(trim($subd_hoaname) !== '' ? $subd_hoaname : $subd_name).' '.EST_GEN_HOMEOWNASS.'</h4>
+        '.($HOAWEB ? $HOAWEB : ($SUBDWEB ? $SUBDWEB : '')).'
+        <h4>'.EST_GEN_HOADEF1.'</h4>
+        <ul class="DTH256">
+          <li>'.($subd_hoareq == 1 ? EST_GEN_HOAREQ1 : EST_GEN_HOAREQ2).'</li>
+          '.($subd_hoafee > 0 ? '<li>'.EST_PROP_HOAFEES.': '.$subd_hoafee.'  '.($subd_hoafrq > 0 ? EST_HOAFREQ[$subd_hoafrq] : '').'<a class="estSTlnk" href="#hoaDisclaimers">²</a></li>' : '').'
+          '.($subd_hoaappr == 1 ? '<li>'.EST_GEN_HOAAPPR2.'<a class="estSTlnk" href="#hoaDisclaimers">³</a></li>' : '').'
+        </ul>
+      </div>';
+      }
     
     
     $txt .= '
@@ -491,9 +584,9 @@ function estViewImgCSS($cssName,$gal,$loc=1){
   $stime = intval($EST_PREF['slideshow_time']) * $loc;
   $sdelay = $EST_PREF['slideshow_delay'];
   $CSS = array();
-  $galCt = ($gal ? count($gal) : 0);
+  $galCt = (is_array($gal) ? count($gal) : 0);
   if($galCt == 0){
-    $CSS[0] = '#estSlideShow{background-image: url("'.EST_PATHABS_IMAGES.'imgnotavail.png");}';
+    $CSS[0] = '      '.$cssName.'{background-image: url("'.EST_PATHABS_IMAGES.'imgnotavail.png");}';
     $CSS[1] .= '
         <img src="'.EST_PATHABS_IMAGES.'imgnotavail.png" />';
     }
@@ -501,8 +594,11 @@ function estViewImgCSS($cssName,$gal,$loc=1){
     $sdelay = intval($sdelay);
     $iStep = round(99 / $galCt, 2);
     $imgpth = ($loc == 2 ? EST_PTHABS_SUBDTHM : EST_PTHABS_PROPTHM);
+    $imgpthfull = ($loc == 2 ? EST_PTHABS_SUBDFULL : EST_PTHABS_PROPFULL);
+    $g1 = (!isset($gal[1]) && isset($gal[0]) ? 0 : 1);
     $CSS[0] = '';
-    $URLIST = 'url(\''.$imgpth.$gal[1]['t'].'\')';
+    $URLIST = 'url(\''.$imgpth.$gal[$g1]['t'].'\')';
+    
     
     if(intval($actv) == 1 && $galCt > 1){
       $aniName = str_replace('.','',str_replace('#','',$cssName));
@@ -510,9 +606,9 @@ function estViewImgCSS($cssName,$gal,$loc=1){
       $fi = 0;
       foreach($gal as $ik=>$idta){
         $fi++;
-        if($fi > 1){$URLIST .= ',url(\''.$imgpth.$idta['t'].'\')';}
+        if($fi > $g1){$URLIST .= ',url(\''.$imgpth.$idta['t'].'\')';}
         $CSS[1] .= '
-        <img src="'.$imgpth.$idta['t'].'" />';
+        <img src="'.$imgpth.$idta['t'].'"'.(trim($idta['f']) !== '' ? ' data-full="'.$imgpthfull.$idta['f'].'"' : '').' />';
         $CSS[2][$ik] = $idta['t'];
         $galCSS .= $iPct.'%'.($fi == 1 ? ', 100%' : '').' {background-image: url("'.$imgpth.$idta['t'].'");}
     ';
@@ -535,6 +631,10 @@ function estViewImgCSS($cssName,$gal,$loc=1){
       $CSS[0] .= '    @keyframes '.$aniName.'{
       '.$galCSS.'}';
         }
+    elseif($galCt == 1){
+      $CSS[1] .= '
+        <img src="'.$imgpth.$gal[$g1]['t'].'"'.(trim($gal[$g1]['f']) !== '' ? ' class="estGetFullImg" data-full="'.$imgpthfull.$gal[$g1]['f'].'"' : '').' />';
+      }
     $CSS[0] .= '
     '.$cssName.'{
       background-image:'.$URLIST.';'.$galBaseCSS.'

@@ -532,7 +532,32 @@ class estate_shortcodes extends e_shortcode{
   
   
   
+  function sc_prop_hoa($parm){
+		$tp = e107::getParser();
+    
+    if($this->var['prop_hoaappr'] == 1 || $this->var['prop_hoareq'] == 1 || intval($this->var['prop_hoafee']) > 0){
+      $txt = '
+      <h2>'.EST_GEN_HOADEF2.'<a class="estSTlnk" href="#hoaDisclaimers">¹</a></h2>
+      <ul class="DTH256">
+        '.($this->var['prop_hoareq'] == 1 ? '<li>'.EST_GEN_HOAREQ1.'</li>' : EST_GEN_HOAREQ2).'
+        '.($this->var['prop_hoafee'] > 0 ? '<li>'.EST_PROP_HOAFEES.': '.$this->var['prop_hoafee'].'  '.($this->var['prop_hoafrq'] > 0 ? EST_HOAFREQ[$this->var['prop_hoafrq']] : '').'<a class="estSTlnk" href="#hoaDisclaimers">²</a></li>' : '').'
+        '.($this->var['prop_hoaappr'] == 1 ? '<li>'.EST_GEN_HOAAPPR2.'<a class="estSTlnk" href="#hoaDisclaimers">³</a></li>' : '').'
+      </ul>';
+      }
+    return $txt;
+    }
   
+  function sc_prop_hoadisclaimers($parm){
+		$tp = e107::getParser();
+    if($this->var['prop_hoaappr'] == 1 || $this->var['prop_hoareq'] == 1 || intval($this->var['prop_hoafee']) > 0 || $this->var['subd_hoaappr'] == 1 || $this->var['subd_hoareq'] == 1 || intval($this->var['subd_hoafee']) > 0){
+    return '
+      <div id="hoaDisclaimers" class="estDisclaimer">
+        <p>¹'.EST_PROP_HOADISCLAIMER.'</p>
+        '.($this->var['prop_hoafee'] > 0  || intval($this->var['subd_hoafee']) > 0 ? '<p>²'.EST_PROP_HOADISCLAIMER1.' '.EST_PROP_HOADISCLAIMER0.' '.EST_PROP_HOADISCLAIMER2.'</p>' : '').'
+        '.($this->var['prop_hoaappr'] == 1 || $this->var['subd_hoaappr'] == 1 ? '<p>³'.EST_PROP_HOADISCLAIMER3.' '.EST_PROP_HOADISCLAIMER0.'</p>' : '').'
+      </div>';
+      }
+    }
   
   
   function sc_prop_community($parm){
@@ -541,55 +566,7 @@ class estate_shortcodes extends e_shortcode{
     
     if($parm['get'] == 'capt'){return $tp->toHTML(EST_GEN_COMMUNITY.': '.$this->var['subdiv']['subd_name']);}
     
-    extract($this->var['subdiv']);
-    
-    if(trim($subd_url) !== ""){
-      $SUBDWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_url,'url',array('ext'=>1)).'</h4>';
-      }
-    
-    if(trim($subd_hoaweb) !== ""){
-      $HOAWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_hoaweb,'url',array('ext'=>1)).'</h4>';
-      }
-    
-    if(isset($media) && count($media) > 0){
-      $SLIDESHOW = '<div id="estSubDivSlideShow" class="WD100"></div>';
-      }
-    
-    $txt = '
-    <div id="estSubDivCont">
-      <h3 class="WD100">'.$tp->toHTML($subd_name).'</h3>
-      '.$SLIDESHOW.'
-      <div id="estSubDivS1">
-        <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
-        '.$SUBDWEB.'
-        '.(trim($subd_description) !== '' ? '<div class="WD100 DTH256">'.$tp->toHTML($subd_description).'</div>' : '').'
-      </div>';
-    if($subd_hoaappr == 1 || $subd_hoareq == 1 || intval($subd_hoafee) > 0){
-      
-      $txt .= '
-      <div id="estSubDivS2">
-        '.$tp->toHTML(trim($subd_hoaname) !== '' ? '<h3>'.$subd_hoaname.' '.EST_GEN_HOMEOWNASS.'</h3>' : '<h4>'.EST_GEN_HOADEF1.'</h4>').'
-        '.($HOAWEB ? $HOAWEB : ($SUBDWEB ? $SUBDWEB : '')).'
-        <ul class="DTH256">
-          <li>'.($subd_hoareq == 1 ? EST_GEN_HOAREQ1 : EST_GEN_HOAREQ2).'</li>
-          <li>'.$subd_hoafee.' '.EST_HOAFREQ[$subd_hoafrq].'</li>
-          '.($subd_hoaappr == 1 ? '<li>'.EST_GEN_HOAAPPR2.'</li>' : '').'
-        </ul>
-      </div>';
-      }
-      
-      
-      $txt .= '
-      <div id="estSubDivS3">
-      </div>';
-      
-      $txt .= '
-    </div>';
-  
-    //$EST_HOAREQD[$subd_hoareq]
-    //EST_HOAFREQ
-    unset($SLIDESHOW,$SUBDWEB,$HOAWEB);
-    return $txt;
+    return estSubDivisionView($this->var['subdiv'],0);
     }
   
   
@@ -605,6 +582,12 @@ class estate_shortcodes extends e_shortcode{
   
   function sc_prop_latlng($parm){}
   
+  function sc_social_links($parm){
+    // id="estFBshareBtn"
+    $res = '<div class="fb-share-button btn ILBLK" data-href="'.$this->var['prop_link'].'" data-layout="button_count" data-size="large"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u='.$this->var['prop_link'].'&src=sdkpreparse" class="fb-xfbml-parse-ignore"><i class="fa fa-facebook" aria-hidden="true"></i></a></div>';
+    //PROP_NEWICON
+    return $res;
+    }
   
   
   function sc_linkme($parm){
@@ -915,9 +898,12 @@ class estate_shortcodes extends e_shortcode{
       if($MSGICON){return $MSGICON;}
       }
     
+    $lbtns = '';
+    
     if(check_class(e107::pref('estate','listing_save'))){
-      return '<button id="estLikeIcon-'.intval($this->var['prop_idx']).'" class="estCardTopBtn'.$this->var['saved'].'" data-laid="'.intval($this->var['prop_agent']).'" data-lpid="'.intval($this->var['prop_idx']).'" title="'.EST_GEN_SAVE.'"><i class="fa fa-regular fa-heart"></i><i class="fa fa-solid fa-heart"></i></button>';
+      $lbtns .= '<button id="estLikeIcon-'.intval($this->var['prop_idx']).'" class="estCardTopBtn'.$this->var['saved'].'" data-laid="'.intval($this->var['prop_agent']).'" data-lpid="'.intval($this->var['prop_idx']).'" title="'.EST_GEN_SAVE.'"><i class="fa fa-regular fa-heart"></i><i class="fa fa-solid fa-heart"></i></button>';
       }
+    return $lbtns;
     }
   
   
@@ -1044,5 +1030,5 @@ class estate_shortcodes extends e_shortcode{
     return $dtaStr;
     }
   
-    
+  // †¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ⁰
 }

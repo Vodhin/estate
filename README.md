@@ -1,42 +1,19 @@
-# Vodhin's Real Estate Plugin for e107
-
+# estate
 A plugin for the e107 Content management System to manage Real Estate Agencies, Agents, and Listings. This plugin started as a way for an individual Real Estate agent to easily list their properties for sale and has evolved into one that can handle multiple agents and agencies. 
 
-The _Estate_ plugin is ready fore BETA testing. The Current repository should be mostly usable if anyone wants to try it out. 
-
-Take a look at https://estate.vodhin.org/demo.php for pictures showing some of the user interfaces. 
-
-A live production site using this plugin can be viewed here https://www.sandpiperhome.org 
+The _Estate_ plugin is not ready yet. I have a lot to do before it can be published. The Current repository should be mostly usable if anyone wants to try it out. A live production site using this plugin can be viewed here https://www.sandpiperhome.org
 
 
-PLEASE BE SURE THE ROOT FOLDER IS "estate" once it has uploaded to your e107 website: Remove any v1.0.0-beta.1 or any other characters that might be after "estate" 
 
+MANUAL UPDATING ON YOUR WEBSITE DURING DEVELOPMENT:
 
-**MANUAL UPDATING ON YOUR WEBSITE DURING DEVELOPMENT:**
-
-Download ALL files and replace all existing files on your website with current. Run Database >> Scan Plugin Directories and Run Database >> Check Database Validity for the Estate Plugin tables and fix any entries that are found. Then go to the Preference section of the Estate Plugin and Save your preferences.
-
-
-**STILL NEEDED TO FINISH:** 
-
-Community/Sub-division/Village data: need to build the forms for Features, Images, and Details - Partially complete in current vervion
-
-Optional Moderator Menu for showing new non-agent listing submissions that need approval - Partially complete in current version
+Download ALL files and replace all existing files on your website with current. Run your Check Database Validity on the Estate tables and fix any entries that are found. Then go to the Preference section of the Estate Plugin and Save your preferences.
 
  
 
-
-# DEVELOPMENT/REVISION HISTORY:
-
-4 August 2024: Fixed List View of listing.php and Crop Icon not rendering. Changed Files: "listings.php" "css/listings.css" "js/adm/shared.js" "templates/estate_template.php"
-
-3 August 2024: Major Update includes new Admin/Agent Inbox and a lot of other improvements. More to come. 
-
-12 July 2024: Official Public Release (v1.0.1) - Should be a stable version, though I still have some areas to finish.
-
+DEVELOPMENT/REVISION HISTORY:
 
 7 July 2024: Added Moderator functions for Non-Agent Listing Submissions. Prefs allow Admin to choose to Auto Approve or Moderator Approve Member submissions. Agent Listings do not require Approval. If a Non-Agent submits a new listing or updates an already approved listing and Moderator Approve is selected, an email notifying the Moderators is sent. Admins can select individual Estate Managers, Estate Admins, and Website Admins as Moderators to contact. 
-
 
 27 June 2024: Added e_dashboard, added DB Fields, and expanded features. Required after update: DB Update & Scan Plugin Directories
 
@@ -50,15 +27,14 @@ Optional Moderator Menu for showing new non-agent listing submissions that need 
 
 5 May 2024: Almost ready for a stable release! Still have to finish coding Community Information Forms and add some UI elements for Likes/Saves and Communication History.  
 
+REQUIREMENTS:
 
-# REQUIREMENTS:
+e107 v2.3.3 or later
 
-e107 Content Management System, v2.3.3 or later
-
-Tested with PHP v7.4.33 & v8.2.0 - later Versions of PHP may cause problems
+Tested with PHP 7.4.33, later Versions of PHP may cause problems (I'm working on that)
 
 
-# FEATURES
+FEATURES
 
 Assign Users as Agents, Agency Managers, or Agency Admins.
 
