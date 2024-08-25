@@ -12,6 +12,7 @@ foreach($estQdta as $row){
   
   if($prop_idx !== intval($row['prop_idx'])){
     $prop_idx = intval($row['prop_idx']);
+    $row['prop_link'] = urlencode(e_SELF.'?view.'.$prop_idx.'.0');
     $EST_PROP[$prop_idx] = $row;
     $FPROPS .= ($FPROPS ? "," : "").$prop_idx;
     }

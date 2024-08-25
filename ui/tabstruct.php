@@ -193,7 +193,7 @@ function estTablStruct(){
         'hlpm'=>'estHlp-comm2',
         'str'=>'int',
         'cls'=>'xlarge',
-        'chng'=>array('estGetSubDivs'),
+        //'chng'=>array('estGetSubDivs'),
         'src'=>array('tbl'=>'estate_subdiv','idx'=>'subd_idx','map'=>array('subd_idx','subd_name'),'req'=>array('prop_city','subd_city',EST_PROP_MSG_CITY))
         ),
       
@@ -208,6 +208,8 @@ function estTablStruct(){
     'estate_spaces'=>array(
       'space_idx'=>array('type'=>'idx','str'=>'int'),
       'space_propidx'=>array('type'=>'hidden','str'=>'int','par'=>array('estate_properties','prop_idx')),
+      'space_lev'=>array('type'=>'hidden','str'=>'int'),
+      'space_levidx'=>array('type'=>'hidden','str'=>'int'),
       'space_grpid'=>array(
         'type'=>'eselect',
         'str'=>'int',
@@ -450,6 +452,27 @@ function estTablStruct(){
         'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>array(EST_GEN_NOTREQUIRED,EST_GEN_REQUIRED))
         ),
       ),
+    
+    
+    
+    'estate_subdiv_spaces'=>array(
+      'subspace_idx'=>array('type'=>'idx','str'=>'int'),
+      'subspace_city'=>array('type'=>'hidden','str'=>'int','par'=>array('estate_properties','prop_idx')),
+      'subspace_subidx'=>array('type'=>'hidden','str'=>'int'),
+      'subspace_catid'=>array(
+        'type'=>'eselect',
+        'str'=>'int',
+        'cls'=>'xlarge',
+        'labl'=>LAN_CATEGORY,
+        'src'=>array('tbl'=>'estate_featcats','idx'=>'featcat_idx','perm'=>array(1,2,3),'map'=>array('featcat_idx','featcat_name','req'=>array('estate_subdivcats','subdiv_zone',EST_PROP_MSG_ZONE1))), //,'fltr'=>array()
+        'fltrs'=>array('grp'=>array('tbl'=>'estate_features','idx'=>'feature_idx','map'=>array('featcat_idx','featcat_name')))
+        ),
+      'subspace_ord'=>array('type'=>'hidden','str'=>'int'),
+      'subspace_name'=>array('type'=>'text','cls'=>'xlarge','chks'=>array('noblank')),
+      'subspace_description'=>array('type'=>'textarea','cls'=>'xxlarge'),
+      ),
+    
+    
     
     'estate_listypes'=>array(
       'listype_idx'=>array('type'=>'idx'),

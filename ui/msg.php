@@ -395,7 +395,7 @@ function estPrevMsgPvw($mv,$mode=0){
             <button class="btn btn-default estMsgBtnBlock">
               <div class="estViewMsg">'.$tp->toHTML($mv['msg_top']).'</div>
               <div class="estMarkMsg" '.$Btn2ttl.'><i class="'.$BTN2Cls.'"></i></div>
-              <div class="estDelMsg" title="'.EST_MSG_DELETE.'" data-msg="'.EST_MSG_DELALERT.'"><i class="fa fa-trash-can"></i></div>
+              <div class="estDelMsg" title="'.EST_MSG_DELETE.'" data-msg="'.EST_MSG_DELALERT.'"><i class="fa fa-trash"></i></div>
             </button>
             <div class="estMsgP">
               <h4>'.$tp->toHTML($mv['msg_top']).'</h4>
