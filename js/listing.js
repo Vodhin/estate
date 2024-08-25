@@ -128,6 +128,14 @@ function estSetLike(ele,cok=0){
   
   
   function estDynamicSlideShow(){
+    
+    $('.estGetFullImg').on({
+      click :function(){
+        var url = $(this).data('full');
+        alert(url);
+        }
+      });
+    
     if($('#estSlideShow').hasClass('estSlideshow')){
       $('#estSlideShow').on({
         click : function(e){
@@ -402,7 +410,6 @@ function estSetLike(ele,cok=0){
         });
       });
     }
-  
   
   
 
