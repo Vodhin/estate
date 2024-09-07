@@ -340,6 +340,7 @@ function estGetSpaces($DTA,$PSTAT=0){
   $sql = e107::getDb();
   $RET = array();
   $PROPID = intval($DTA['prop_idx']);
+  $CITYID = intval($DTA['prop_city']);
   $SUBDIVID = intval($DTA['prop_subdiv']);
   
   $MQRY = "SELECT #estate_media.* FROM #estate_media WHERE media_propidx=".$PROPID." ";
@@ -389,7 +390,7 @@ function estGetSpaces($DTA,$PSTAT=0){
     }
   
   if($SUBDIVID > 0){
-    $SUBDIVDTA = estGetSubDivDta($SUBDIVID);
+    $SUBDIVDTA = estGetSubDivDta($SUBDIVID,$CITYID);
     if(isset($SUBDIVDTA)){$RET[2] = $SUBDIVDTA;}
     }
   
@@ -427,27 +428,6 @@ function estGetCitySpaces($city_idx){
   unset($dbRow1,$k,$v);
   return $RET;
   }
-
-function estGetSubDivDta($subd_idx){
-  $sql = e107::getDb();
-  $tp = e107::getParser();
-  $RET = array();
-  $media = estGetMediaRows($subd_idx,0); 
-  if($dbRow1 = $sql->retrieve('estate_subdiv', '*', 'subd_idx="'.$subd_idx.'"',true)){
-    $RET = array_merge($dbRow1[0],$media);
-    $RET['spaces'] = array('city'=>array(),'subd'=>array());
-    if($dbRow3 = $sql->retrieve('estate_subdiv_spaces', '*', 'subspace_subidx="'.$subd_idx.'"',true)){
-        foreach($dbRow3 as $k=>$v){
-          $v['media'] = estGetMediaRows($v['subspace_idx'],4);
-          $RET['spaces']['subd'][$v['subspace_idx']] = $v;
-        }
-      }
-    }
-  
-  unset($dbRow1,$dbRow2,$dbRow3,$k,$v);
-  return $RET;
-  }
-
 
 
 function propArrayTest($PROPDTA){
@@ -487,6 +467,37 @@ function propArrayTest($PROPDTA){
 
 
 
+function estGetSubDivDta($subd_idx,$subd_city=0){
+  $sql = e107::getDb();
+  $tp = e107::getParser();
+  $RET = array();
+  $media = estGetMediaRows($subd_idx,0);
+  if($dbRow1 = $sql->retrieve('estate_subdiv', '*', 'subd_idx="'.$subd_idx.'"',true)){
+    $RET = array_merge($dbRow1[0],$media);
+    }
+  else{
+    $RET = array('subd_idx'=>0,'subd_city'=>0,'subd_name'=>'','subd_type'=>2,'subd_url'=>'','subd_hoaname'=>'','subd_hoaweb'=>'','subd_hoareq'=>0,'subd_hoafee'=>0,'subd_hoafrq'=>0,'subd_hoaappr'=>0,'subd_hoaland'=>0,'subd_landfee'=>0,'subd_landfreq'=>0,'subd_description'=>'');
+    }
+  
+  $RET['spaces'] = array('city'=>array(),'subd'=>array());
+  if($dbRow3 = $sql->retrieve('estate_subdiv_spaces', '*', 'subspace_subidx="'.$subd_idx.'"'.(intval($subd_city) > 0 ? ' OR subspace_city="'.$subd_city.'"' : ''),true)){
+    foreach($dbRow3 as $k=>$v){
+      $v['media'] = estGetMediaRows($v['subspace_idx'],4);
+      if(intval($v['subspace_subidx']) > 0){
+        $RET['spaces']['subd'][$v['subspace_idx']] = $v;
+        }
+      else{
+        $RET['spaces']['city'][$v['subspace_city']] = $v;
+        }
+      }
+    }
+  
+  
+  unset($dbRow1,$dbRow2,$dbRow3,$k,$v);
+  return $RET;
+  }
+
+
 function estSubDivisionView($subd_idx,$mode=0){
   //estGetSpaces
   $sql = e107::getDb();
@@ -496,6 +507,7 @@ function estSubDivisionView($subd_idx,$mode=0){
     if($subd_idx == 0){
       return '<div id="estSubDivCont" data-id="0" data-city="0" data-hoareq="0" data-hoafee="0" data-hoafrq="0" data-hoaappr="0">'.EST_GEN_SUBDIVISIONNONE.'</div>';
       }
+    
     $dta = estGetSubDivDta($subd_idx);
     extract($dta);
     if(isset($media) && count($media) > 0){
@@ -529,17 +541,17 @@ function estSubDivisionView($subd_idx,$mode=0){
     <div id="estSubDivCont" data-id="'.intval($subd_idx).'" data-city="'.intval($subd_city).'" data-hoareq="'.intval($subd_hoareq).'" data-hoafee="'.intval($subd_hoafee).'" data-hoafrq="'.intval($subd_hoafrq).'" data-hoaappr="'.intval($subd_hoaappr).'">
       '.$SLIDESHOW.'
       <div id="estSubDivS1">
-        <h3 class="WD100">'.$tp->toHTML($subd_name).'</h3>
+        <h3 class="WD100">'.$tp->toHTML($subd_name,true).'</h3>
         <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
         '.$SUBDWEB.'
-        '.(trim($subd_description) !== '' ? '<div class="WD100">'.$tp->toHTML($subd_description).'</div>' : '').'
+        '.(trim($subd_description) !== '' ? '<div class="WD100">'.$tp->toHTML($subd_description,true).'</div>' : '').'
       </div>';
       }
   
   else{
     $txt = '
     <div id="estSubDivCont">
-      <h3 class="WD100">'.$tp->toHTML($subd_name).'</h3>
+      <h3 class="WD100">'.$tp->toHTML($subd_name,true).'</h3>
       '.$SLIDESHOW.'
       <div id="estSubDivS1">
         <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
@@ -552,7 +564,7 @@ function estSubDivisionView($subd_idx,$mode=0){
   if($subd_hoaappr == 1 || $subd_hoareq == 1 || intval($subd_hoafee) > 0){
       $txt .= '
       <div id="estSubDivS2">
-        <h4>'.$tp->toHTML(trim($subd_hoaname) !== '' ? $subd_hoaname : $subd_name).' '.EST_GEN_HOMEOWNASS.'</h4>
+        <h4>'.$tp->toHTML((trim($subd_hoaname) !== '' ? $subd_hoaname : $subd_name),true).' '.EST_GEN_HOMEOWNASS.'</h4>
         '.($HOAWEB ? $HOAWEB : ($SUBDWEB ? $SUBDWEB : '')).'
         <h4>'.EST_GEN_HOADEF1.'</h4>
         <ul class="DTH256">

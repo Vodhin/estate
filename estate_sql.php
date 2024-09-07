@@ -7,6 +7,7 @@
  * GNU General Public License (http://www.gnu.org/licenses/gpl.txt)
  *
  * Estate SQL
+ * `subdivcat_lev` tinyint(1) unsigned NOT NULL,
  *
 */
 header("location:../../index.php");
@@ -317,6 +318,9 @@ CREATE TABLE `estate_subdiv` (
   `subd_hoafee` int(6) unsigned NOT NULL,
   `subd_hoafrq` tinyint(1) unsigned NOT NULL,
   `subd_hoaappr` tinyint(1) unsigned NOT NULL,
+  `subd_hoaland` tinyint(1) unsigned NOT NULL,
+  `subd_landfee` decimal(10,2) unsigned NOT NULL,
+  `subd_landfreq` tinyint(1) unsigned NOT NULL,
   `subd_description` text NOT NULL,
   PRIMARY KEY (`subd_idx`)
 ) ENGINE=InnoDB;
