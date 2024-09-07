@@ -730,8 +730,17 @@ else if($FETCH == 76){
 
 
 else if($FETCH == 81){
-  $subd_idx = intval($_GET['subd_idx']);
-  echo estSubDivisionView($subd_idx,1);
+  $RES = estGetSubDivDta(intval($_GET['subd_idx']),intval($_GET['subd_city']));
+  echo e107::getParser()->toJSON($RES);
+  /*
+  if(EST_USERPERM > 0){
+    echo $estateCore->estCommunitySpacesForm($subd_idx,$subd_city);
+    }
+  else{
+    echo '<div class="WD100">'.EST_GEN_NOTAVAIL3.'</div>';
+    }
+  //echo estSubDivisionView($subd_idx,1);
+  */
   exit;
   }
 
@@ -1259,6 +1268,11 @@ function estJStext(){
     'group1'=>EST_GEN_GROUP,
     'half'=>EST_GEN_HALF,
     'hoaappr1'=>EST_GEN_HOAAPPR1,
+    'hoaupdta0'=>EST_PROP_HOAUPDTA0,
+    'hoaupdta1'=>EST_PROP_HOAUPDTA1,
+    'hoaupdta2'=>EST_PROP_HOAUPDTA2,
+    'hoaupdta3'=>EST_PROP_HOAUPDTA3,
+    'hoaupdta4'=>EST_PROP_HOAUPDTA4,
     'image'=>EST_GEN_IMAGE,
     'infochanged'=>EST_GEN_INFOCHANGED,
     'item'=>EST_GEN_ITEM,

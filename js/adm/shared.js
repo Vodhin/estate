@@ -195,6 +195,8 @@ function estSetFormEles(mainTbl,cForm,cSave){
   var bgColor = $('body').css('background-color');
   var lightordark =''; 
   if(typeof bgColor !== 'undefined'){lightordark = ' '+lightOrDark(bgColor);}
+  
+  
   $('div.estInptCont').addClass(lightordark);
   
   $.each(defs.tbls[mainTbl].form,function(fld,fldta){
@@ -368,105 +370,48 @@ function estSetFormEles(mainTbl,cForm,cSave){
       }
     }).change();
   
-  $('#estSpaceGrpDiv').on({
+  $('.estSpaceGrpDiv').on({
     click : function(){
       $('.estThmMgrCont').remove();
       }
     });
         
         
-    $('.estPropAddr').on({
-      change : function(){estSetPropAddress();},
-      keyup : function(){estSetPropAddress();},
-      blur : function(){estSetPropAddress();}
-      });
+  $('.estPropAddr').on({
+    change : function(){estSetPropAddress();},
+    keyup : function(){estSetPropAddress();},
+    blur : function(){estSetPropAddress();}
+    });
   
   }
 
 
 
 
-function estLoadSubDiv(mode){
-  console.log('estLoadSubDiv: '+Number(mode));
+
+
+
+function estSetSubDivEdtBtn(){
   var defs = $('body').data('defs');
-  
-  var sDta = $('#estSubDivCont').data();
-  console.log(sDta);
-  
-  var HOAFreqBtn = $('#estPropHOAFreqBtn');
-  var HOAReqBtn = $('#estPropHOAReqBtn');
-  var inptHoaLand = $('input[name="prop_hoaland"]');
-  var inptHoaAppr = $('input[name="prop_hoaappr"]');
-  var hoaApprSw = $('#prop-hoaappr--switch');
-  
-  
-  var selEle = $('select[name="prop_subdiv"]');
-  var optEle = $(selEle).find('option:selected');
-  var subdIdx = Number(optEle.length > 0 ? $(optEle).val() : $(selEle).val());
-  var ldta = defs.tbls.estate_properties.dta[0];
-  
-  
-  if(Number(sDta.id) > 0 && Number(sDta.id) == Number(ldta.prop_subdiv)){
-    
-    if(Number(sDta.hoaappr) !== Number(ldta.prop_hoaappr)){
-      
+  var uperm = Number(defs.user.perm);
+  var subdIdx = Number($('select[name="prop_subdiv"]').find('option:selected').val());
+  var edtBtn = $('select[name="prop_subdiv"]').parent().find('button.selEditBtn1');
+  if(uperm > 0){
+    $(edtBtn).prop('title',defs.txt.add1).data('idx',Number(0)).html(JQADI);
+    if(subdIdx > 0){
+      if(uperm >= 3){
+        $(edtBtn).prop('title',defs.txt.add1+'/'+defs.txt.edit).data('idx',Number(subdIdx)).html(JQEDI);
+        }
+      else if(typeof fldta.src.perm !== 'undefined' && uperm >= Number(fldta.src.perm[1])){
+        $(edtBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
+        }
       }
-    
-    if(Number(sDta.hoareq) !== Number(ldta.prop_hoareq)){
-      
-      }
-    
-    if(Number(sDta.hoafrq) !== Number(ldta.prop_hoafrq)){
-      
-      }
-      
-    if(Number(sDta.hoafee) !== Number(ldta.prop_hoafee)){
-      
-      }
-      
-    }
-  
-  
-  if(subdIdx == Number(ldta.prop_subdiv)){
-    
-    $('input[name="prop_hoaappr"]').val(Number(ldta.prop_hoaappr)); //approval required? 0 or 1
-    $('input[name="prop_hoareq"]').val(Number(ldta.prop_hoareq)); //Mandatory? 0 or 1
-    $('input[name="prop_hoafrq"]').val(Number(ldta.prop_hoafrq)); //0=none, 1=monthly, 2=quarterly, 3=semi-annual, 4=annual
-    $('input[name="prop_hoafee"]').val(ldta.prop_hoafee);
-    $('input[name="prop_hoaland"]').val(Number(ldta.prop_hoaland)); //included? 0 or 1
-    $('input[name="prop_landfee"]').val(ldta.prop_landfee);
-    $('input[name="prop_landfreq"]').val(Number(ldta.prop_landfreq));
     }
   else{
-    if(mode == 2){
-      if(sDta.id == 0){
-        $('input[name="prop_landfee"]').val(Number(0)).change();
-        //estSetDIMUbtns(0,$('#LandLeaseBtn'),Number(0));
-        }
-      $('input[name="prop_hoafee"]').val(sDta.hoafee);
-      $('input[name="prop_hoafrq"]').val(sDta.hoafrq);
-      $('input[name="prop_hoareq"]').val(sDta.hoareq);
-      $('input[name="prop_hoaappr"]').val(sDta.hoaappr);
-      estSetDIMUbtns(1,HOAFreqBtn,Number(sDta.hoafrq));
-      estSetDIMUbtns(2,HOAReqBtn,Number(sDta.hoareq));
-      }
-      
-    
-    //console.log(hoaApprSw);
-    //
-    //var landFee = $('input[name="prop_landfee"]').val();
-    
-    //if(hoafee !== Number(sDta.hoafee) || hoafrq !== Number(sDta.hoafrq) || hoareq !== Number(sDta.hoareq) || hoaappr !== Number(sDta.hoaappr)){}
-      //if(jsconfirm('Update HOA?')){
-        //prop-hoaappr__switch
-        //}
-      
-    
+    if(edtBtn.length > 0){$(edtBtn).remove();}
     }
-  
-    
-  
   }
+
 
 function estResetSubDivs(){
   var defs = $('body').data('defs');
@@ -480,46 +425,234 @@ function estResetSubDivs(){
     }
   }
 
-function estSetSubDivEdtBtn(){
-  var defs = $('body').data('defs');
-  var subdIdx = Number($('select[name="prop_subdiv"]').find('option:selected').val());
-  var edtBtn = $('select[name="prop_subdiv"]').parent().find('button.selEditBtn1');
-  
-  $(edtBtn).prop('title',defs.txt.add1).data('idx',Number(0)).html(JQADI);
-  
-  if(subdIdx > 0){
-    var uperm = Number(defs.user.perm);
-    if(uperm >= 3){
-      $(edtBtn).prop('title',defs.txt.add1+'/'+defs.txt.edit).data('idx',Number(subdIdx)).html(JQEDI);
-      }
-    else if(typeof fldta.src.perm !== 'undefined' && uperm >= Number(fldta.src.perm[1])){
-      $(eSelBtn).attr('title',defs.txt.add1+'/'+defs.txt.edit).html(JQEDI);
-      }
-    }
-    
+
+
+function estHOAautoTog(mtch,targ){
+  if(mtch == 0 && $('input[name="prop-'+targ+'__switch"]').is(':checked')){$('input[name="prop-'+targ+'__switch"]').click();}
+  if(mtch == 1 && !$('input[name="prop-'+targ+'__switch"]').is(':checked')){$('input[name="prop-'+targ+'__switch"]').click();}
   }
 
-function estGetSubDivs(mode=1){
+
+function estSetHOAchks(kv,chks=[],flds=[]){
+  if(kv > 0){
+    if(flds.length > 0){
+      $(flds).each(function(i,fld){
+        if(chks[fld][0] > 0){
+          console.log(fld,chks[fld]);
+          if(fld == 'prop_hoaappr'){estHOAautoTog(chks[fld][1][kv],'hoaappr');}
+          else if(fld == 'prop_hoaland'){estHOAautoTog(chks[fld][1][kv],'hoaland');}
+          else{
+            $('input[name="'+fld+'"]').val(chks[fld][1][kv]);
+            if(fld == 'prop_hoafrq'){estSetDIMUbtns(1,$('#estPropHOAFreqBtn'),chks[fld][1][kv]);}
+            else if(fld == 'prop_hoareq'){estSetDIMUbtns(2,$('#estPropHOAReqBtn'),chks[fld][1][kv]);}
+            else if(fld == 'prop_landfreq'){estSetDIMUbtns(0,'#LandLeaseBtn',chks[fld][1][kv]);}
+            }
+          }
+        });
+      }
+    else{
+      var dud = 0;
+      if(kv > 3){kv = kv - 3; dud++;}
+      $.each(chks,function(fld,vals){
+        if(dud > 0 || vals[0] > 0){
+          if(fld == 'prop_hoaappr'){estHOAautoTog(vals[1][kv],'hoaappr');}
+          else if(fld == 'prop_hoaland'){estHOAautoTog(vals[1][kv],'hoaland');}
+          else{
+            $('input[name="'+fld+'"]').val(vals[1][kv]);
+            if(fld == 'prop_hoafrq'){estSetDIMUbtns(1,$('#estPropHOAFreqBtn'),vals[1][kv]);}
+            else if(fld == 'prop_hoareq'){estSetDIMUbtns(2,$('#estPropHOAReqBtn'),vals[1][kv]);}
+            else if(fld == 'prop_landfreq'){estSetDIMUbtns(0,'#LandLeaseBtn',vals[1][kv]);}
+            }
+          }
+        });
+      }
+    }
+  else{
+    if($('input[name="prop-hoaappr__switch"]').is(':checked')){$('input[name="prop-hoaappr__switch"]').click();}
+    $('input[name="prop_hoaappr"]').val(0);
+    $('input[name="prop_hoafee"]').val(0);
+    $('input[name="prop_hoareq"]').val(0);
+    $('input[name="prop_hoafrq"]').val(0);
+    estSetDIMUbtns(1,$('#estPropHOAFreqBtn'),0);
+    estSetDIMUbtns(2,$('#estPropHOAReqBtn'),0);
+    if($('input[name="prop-hoaland__switch"]').is(':checked')){$('input[name="prop-hoaland__switch"]').click();}
+    $('input[name="prop_hoaland"]').val(0);
+    $('input[name="prop_landfee"]').val(0);
+    $('input[name="prop_landfreq"]').val(0);
+    estSetDIMUbtns(0,'#LandLeaseBtn',0);
+    }
+  }
+
+
+function estSHHOAResetBtn(mode,ele=null){
+  var defs = $('body').data('defs');
   var selEle = $('select[name="prop_subdiv"]');
   var optEle = $(selEle).find('option:selected');
   var subdIdx = Number(optEle.length > 0 ? $(optEle).val() : $(selEle).val());
+  $('#estResetSub1').hide();
+  if(subdIdx == Number(defs.tbls.estate_properties.dta[0].prop_subdiv)){
+    if(ele !== null){
+      if(mode == 1){
+        if(Number($(ele).val()) !== Number($(ele).data('pval'))){$('#estResetSub1').show();}
+        }
+      }
+    }
+  }
+
+
+function estGetSubDivs(mode=1){
+  var defs = $('body').data('defs');
+  
+  var selCityEle = $('select[name="prop_city"]');
+  var selCityOptEle = $(selCityEle).find('option:selected');
+  var cityIdx = Number(selCityOptEle.length > 0 ? $(selCityOptEle).val() : $(selCityEle).val());
+  
+  var subdivSelEle = $('select[name="prop_subdiv"]');
+  var subdivOptEle = $(subdivSelEle).find('option:selected');
+  var subdIdx = Number(subdivOptEle.length > 0 ? $(subdivOptEle).val() : $(subdivSelEle).val());
+  
+  
+  var udtxt = [defs.txt.hoaupdta0,defs.txt.hoaupdta1,defs.txt.hoaupdta2,defs.txt.hoaupdta3,defs.txt.hoaupdta4];
   
   estSetSubDivEdtBtn();
+  $('.estHOAudbtn').remove();
   
-  if(subdIdx !== Number($('select[name="prop_subdiv"]').data('pval'))){
-    selEle.data('pval',subdIdx);
-    $('#estCommunityPreviewCont').empty().promise().done(function(){
+  //subd_city <-- need to limit defs.tbls.estate_subdiv.dta on load...
+  var subDivPreVal = Number($('select[name="prop_subdiv"]').data('pval'));
+  
+  if(mode == 2 || subdIdx !== subDivPreVal){
+    $(subdivSelEle).data('pval',subdIdx);
+    $('#estCommSpaceGrpDiv').empty().promise().done(function(){
       $.ajax({
         url: vreFeud+'?81||0',
         type:'get',
-        data:{'fetch':81,'subd_idx':subdIdx,'rt':'js'},
-        dataType:'text',
+        data:{'fetch':81,'subd_idx':subdIdx,'subd_city':cityIdx,'rt':'js'},
+        dataType:'json',
         cache:false,
         processData:true,
         success: function(ret, textStatus, jqXHR){
-          $('#estCommunityPreviewCont').html(ret).promise().done(function(){
-            estLoadSubDiv(mode);
-            });
+          console.log(ret);
+          var prp = defs.tbls.estate_properties.dta[0];
+          //var selectDta = $.grep(defs.tbls.estate_subdiv.dta, function (element, index) {return Number(element.subd_idx) == Number(subdIdx);});
+          
+          //mode 1 = Select ele change, 2 = edit form closed, 3 = form load (pval = -1 to force ajax)
+          var flds = ['hoareq','hoafee','hoafrq','hoaappr','hoaland','landfee','landfreq'];
+          var chks = {};
+          $(flds).each(function(i,fldn){
+            var fldname = 'prop_'+fldn;
+            var defname = 'subd_'+fldn;
+            var fld = $('input[name="'+fldname+'"]');
+            chks[fldname] = [0,[Number($(fld).val()), Number($(fld).data('pval')), Number(prp[fldname]), Number(ret[defname])]];
+            if(mode < 3 && Number(subdIdx) > 0){
+              if(mode == 2){
+                if(chks[fldname][1][0] !== chks[fldname][1][3]){chks[fldname][0] = 3;}
+                }
+              else{
+                if(chks[fldname][1][0] !== chks[fldname][1][3]){chks[fldname][0] = 3;}
+                else if(chks[fldname][1][0] !== chks[fldname][1][2]){chks[fldname][0] = 2;}
+                else if(chks[fldname][1][0] !== chks[fldname][1][1]){chks[fldname][0] = 1;}
+                }
+              }
+            }).promise().done(function(){
+              //console.log(chks);
+              if(!document.getElementById('estResetSub1')){
+                $(JQBTN,{'type':'button','id':'estResetSub1','class':'btn btn-default','title':udtxt[2]}).on({
+                  click : function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    estSetHOAchks(5,chks);
+                    $(this).hide();
+                    }
+                  }).html('<i class="fa fa-rotate-left"></i> '+udtxt[2]).appendTo($('select[name="prop_subdiv"]').parent()).hide();
+                }
+              
+              estSHHOAResetBtn(mode,subdivSelEle);
+              
+              
+              if(mode < 3 && subdIdx == 0){
+                estSetHOAchks(0,chks);
+                }
+              else{
+                if(subDivPreVal == 0 && Number(prp.prop_subdiv) == Number(subdIdx)){
+                  estSetHOAchks(2,chks);
+                  }
+                else if(Number(prp.prop_subdiv) == Number(subdIdx)){
+                  if(mode == 2){
+                    if(jsconfirm(udtxt[4])){
+                      estSetHOAchks(3,chks);
+                      }
+                    }
+                  else{
+                    estSetHOAchks(2,chks);
+                    }
+                  }
+                else{
+                  
+                  if(chks['prop_hoaappr'][0] > 0){
+                    var ky = chks['prop_hoaappr'][0];
+                    $(JQBTN,{'type':'button','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
+                      click : function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        $(this).remove();
+                        $('input[name="prop-hoaappr__switch"]').click();
+                        }
+                      }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoaappr"]').parent().find('div.estUpBtnCont'));
+                    }
+                  
+                  if(chks['prop_hoafee'][0] > 0 || chks['prop_hoareq'][0] > 0 || chks['prop_hoafrq'][0] > 0){
+                    var ky = (chks['prop_hoafee'][0] > 0 ? chks['prop_hoafee'][0] : (chks['prop_hoareq'][0] > 0 ? chks['prop_hoareq'][0] : chks['prop_hoafrq'][0]));
+                    $(JQBTN,{'type':'button','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
+                      click : function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        estSetHOAchks(ky,chks,['prop_hoafee','prop_hoareq','prop_hoafrq']);
+                        $(this).remove();
+                        }
+                      }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoafee"]').parent().find('div.estUpBtnCont'));
+                    }
+                  
+                  
+                  if(chks['prop_hoaland'][0] > 0){
+                    var ky = chks['prop_hoaland'][0];
+                    $(JQBTN,{'type':'button','id':'estHOAup3','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
+                      click : function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        $('input[name="prop-hoaland__switch"]').click();
+                        //$('#estHOAup4').click();
+                        $(this).remove();
+                        }
+                      }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoaland"]').parent().find('div.estUpBtnCont'));
+                    }
+                  
+                  if(chks['prop_landfee'][0] > 0 || chks['prop_landfreq'][0] > 0){
+                    var ky = (chks['prop_landfee'][0] > 0 ? chks['prop_landfee'][0] : chks['prop_landfreq'][0]);
+                    $(JQBTN,{'type':'button','id':'estHOAup4','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
+                      click : function(e){
+                        e.preventDefault();
+                        e.stopPropagation();
+                        estSetHOAchks(3,chks,['prop_landfee','prop_landfreq']);
+                        //$('#estHOAup3').click();
+                        $(this).remove();
+                        }
+                      }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_landfee"]').parent().find('div.estUpBtnCont'));
+                    
+                    //estSetDIMUbtns(0,$('#LandLeaseBtn'),Number($('input[name="prop_landfreq"]').val()));
+                    
+                    }
+                  }
+                }
+              });
+          
+          
+          //console.log(selectDta);
+          
+          //estUDSubdivision
+          //group_name
+          //estSpaceGrpDiv
+          
+          estBuildSubdivSpaces(ret);
           },
         error: function(jqXHR, textStatus, errorThrown){
           console.log('ERRORS: '+textStatus+' '+errorThrown);
@@ -528,7 +661,15 @@ function estGetSubDivs(mode=1){
         });
       });
     }
+  
   }
+
+
+function estBuildSubdivSpaces(dta){
+  //console.log(dta);
+  
+  }
+
 
 
 
@@ -798,8 +939,10 @@ function estGetFeatCatInfo(lev=1){
     return {'ele':ele,'evlu':$(ele).val(),'txt':$(opt).text(),'cvlu':$(opt).val()};
     }
   else{
-    optTxt = $('body').data('defs').txt.subdiv;//$('input[name="subd_name"]').val();
-    return {'ele':null,'evlu':0,'txt':(optTxt.length > 0 ? optTxt : txt.subdiv),'cvlu':0};
+    var txt = $('body').data('defs').txt;
+    var ele = $('select[name="subd_type"]');
+    //optTxt = txt.subdiv;//$('input[name="subd_name"]').val();
+    return {'ele':null,'evlu':0,'txt':txt.subdiv,'cvlu':0};
     }
   }
 
@@ -1735,7 +1878,8 @@ function estPopGo(mode,popIt,frmn=0){
                              //prop_subdiv
                             }
                           }
-                        else if(Number(ret.upres) > 0){
+                        else{
+                          //if(Number(ret.upres) > 0){}
                           estGetSubDivs(2);
                           }
                         break;
@@ -2955,6 +3099,11 @@ function fltrSelectGo(fldta,rtbl,newVal,rfld,fele,cVal){
 
 
 function fltrSelect(fldta,rtbl,newVal,rfld,fele){
+  //console.log('fltrSelect: '+rfld+' = '+newVal);
+  //console.log('fldta',fldta);
+  //console.log('rtbl',rtbl);
+  //console.log('fele',fele);
+  
   var defs = $('body').data('defs');
   var propId = Number($('body').data('propid'));
   
@@ -4045,6 +4194,17 @@ function estBuildSubDivForm(popIt){
       }
     }).appendTo(tabtr[tabx].tr[tri][1]).promise().done(function(){
       estPosPopover();
+      
+      $('input[name="subd_hoafee"]').addClass('ILBLK estNoRBord');
+      $('input[name="subd_landfee"]').addClass('ILBLK estNoRBord');
+      var remtrs = [$('select[name="subd_hoafrq"]').closest('tr'),$('select[name="subd_landfreq"]').closest('tr')];
+      $('select[name="subd_hoafrq"]').addClass('ILBLK estNoLBord').appendTo($('input[name="subd_hoafee"]').closest('td')).promise().done(function(){
+        $(remtrs[0]).remove();
+        });
+      $('select[name="subd_landfreq"]').addClass('ILBLK estNoLBord').appendTo($('input[name="subd_landfee"]').closest('td')).promise().done(function(){
+        $(remtrs[1]).remove();
+        });
+      
       estBuildMediaList(0);
       estTestEles(popFrm.form,popFrm.savebtns);
       });
@@ -4058,7 +4218,7 @@ function estBuildSubDivForm(popIt){
 
 
 
-
+//featcat_lev
 
 function estBuildSpaceOptns(sTep=0){
   var defs = $('body').data('defs');
@@ -4642,9 +4802,31 @@ function estBuildCategoryList(lev=1){
     }
   else{
     var catInf = estGetFeatCatInfo(lev);
-    console.log(catInf);
+    console.log(lev,catInf);
     
-    $(popDta.popit.frm[0].form).data('levdta').space_catid = Number(catInf.evlu);
+    /*
+    array(
+    0=>'Community/Subdivision: General',
+    1=>'Property: General',
+    2=>'Property Spaces/Rooms',
+    3=>'City/Town Individual Amenities',
+    4=>'Community/Subdivision Individual Amenities'
+    );
+    */
+    
+    switch(lev){
+      
+      case 2 : // Property Spaces/Rooms
+        $(popDta.popit.frm[0].form).data('levdta').space_catid = Number(catInf.evlu);
+        break;
+        
+      case 0 : //Community/Subdivision: General
+        console.log(defs.tbls.estate_features.dta);
+        //featcat_name[1][0][13]
+        break;
+      }
+    
+    
     
     if(catInf.ele !== null && catInf.evlu == 0){
       $('#estFeatureMgrCont').hide();
@@ -4657,7 +4839,10 @@ function estBuildCategoryList(lev=1){
       
       grpGrepX = $.grep(defs.tbls.estate_featurelist.dta, function (element, index) {return element['featurelist_lev'] == lev;});
       grpGrep1 = $.grep(grpGrepX, function (element, index) {return element['featurelist_levidx'] == levDta[sectKey];});
-      grpGrep2 = $.grep(defs.tbls.estate_features.dta, function (element, index) {return element['feature_cat'] == catInf.evlu;});
+      grpGrep2 = $.grep(defs.tbls.estate_features.dta, function (element, index) {return Number(element['feature_cat']) == Number(catInf.evlu);});
+      
+      console.log(grpGrep1);
+      console.log(grpGrep2);
       
       $(popDta.ftarg.targ[1]).empty().promise().done(function(){
         $(popDta.ftarg.targ[0]).empty().promise().done(function(){
@@ -4881,7 +5066,7 @@ function estBuildSpaceListTbl(i,tbx){
       else{$(tdta[i].tr[tri][7]).css({'background-image':'url('+urlpth+mediaGrep1[0].media_thm+noCache+')'});}
       }
     
-    $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="fa fa-arrows-v"></i></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
+    $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="fa fa-arrows-v"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
     
     $(JQBTN,{'class':'btn btn-default btn-secondary','title':xt.edit+' '+rmdta.space_name}).html('<i class="fa fa-pencil-square-o"></i>').on({
       click : function(e){
@@ -5757,9 +5942,6 @@ function estAgentForm(btn=null){
   }
 
 
-
-
-
 function estSetDIMUbtns(mode,btn,nVal=-1){
   var flds = ['prop_landfreq','prop_hoafrq','prop_hoareq','prop_currency','prop_leasefreq'];
   
@@ -5877,20 +6059,12 @@ function propOPpct(mode=0){
 
 
 function estateBuildDIMUbtns(){
-  console.log('estateBuildDIMUbtns');
+  //console.log('estateBuildDIMUbtns');
   var defs = $('body').data('defs');
   //Number($('select[name="prop_subdiv"]').val())
-  $('select[name="prop_subdiv"]').data('pval',-1).on({
-    change : function(){estGetSubDivs(1)}
-    });
-  
-  $('input[name="prop_landfee"]').data('pval',$('input[name="prop_landfee"]').val());
-  $('input[name="prop_landfreq"]').data('pval',Number($('input[name="prop_landfreq"]').val()));
-  
-  $('select[name="prop_leasedur"]').data('pval',$('select[name="prop_leasedur"]').val());
-  $('input[name="prop_listprice"]').data('pval',Number($('input[name="prop_listprice"]').val()));
-  $('input[name="prop_origprice"]').data('pval',Number($('input[name="prop_origprice"]').val()));
-  
+  var bgColor = $('body').css('background-color');
+  var lightordark = ''; 
+  if(typeof bgColor !== 'undefined'){lightordark = ' '+lightOrDark(bgColor);}
   
   $('select[name="prop_listype"]').on({
     change : function(){
@@ -5913,15 +6087,21 @@ function estateBuildDIMUbtns(){
       }
     });
   
-  $('input[name="prop_origprice"]').on({
+  
+  
+  $('input[name="prop_origprice"]').data('pval',Number($('input[name="prop_origprice"]').val())).on({
     change : function(){estateSetOrigPrice(1)},
     keyup : function(){estateSetOrigPrice(0)}
     });
   
-  $('input[name="prop_listprice"]').on({
+  
+  $('input[name="prop_listprice"]').data('pval',Number($('input[name="prop_listprice"]').val())).on({
     change : function(){estateSetOrigPrice(2)},
     keyup : function(){estateSetOpLp()}
     });
+  
+  
+  $('select[name="prop_leasedur"]').data('pval',$('select[name="prop_leasedur"]').val());
   
   var LeaseFrqDiv = $(JQDIV,{'class':'WSNWRP'}).appendTo($('input[name="prop_origprice"]').parent());
   var currencyBtn = $(JQBTN,{'id':'estPropCurrBtn','class':'btn btn-default estNoRightBord'}).on({
@@ -5931,8 +6111,9 @@ function estateBuildDIMUbtns(){
       estSetDIMUbtns(3,this);
       }
     }).appendTo(LeaseFrqDiv);
-  
   $('input[name="prop_origprice"]').appendTo(LeaseFrqDiv);
+  
+  
   var LeaseFrqBtn = $(JQBTN,{'id':'estPropLeaseFrqBtn','class':'btn btn-default estNoLeftBord'}).on({
     click : function(e){
       e.preventDefault();
@@ -5940,6 +6121,7 @@ function estateBuildDIMUbtns(){
       estSetDIMUbtns(4,this);
       }
     }).appendTo(LeaseFrqDiv);
+  
   
   var propLPdiv = $(JQDIV,{'id':'propLPdiv'}).appendTo($('input[name="prop_listprice"]').parent());
   $(JQBTN,{'id':'propOPpctBtn','class':'btn btn-default estNoRightBord'}).on({
@@ -5954,71 +6136,126 @@ function estateBuildDIMUbtns(){
   estSetDIMUbtns(3,currencyBtn,Number($('input[name="prop_currency"]').val()));
   estateSetOpLp();
   
-  $('input[name="prop_hoaland"]').on({
-    change : function(){
-      if(this.value == 1){
-        $('input[name="prop_landfee"]').val(Number(0));
-        $('input[name="prop_landfee"]').closest('tr').hide();
-        }
-      else{
-        $('input[name="prop_landfee"]').closest('tr').show();
-        //$('input[name="prop_landfee"]').val(Number($('input[name="prop_landfee"]').data('pval')));
-        }
-      }
-    });
-  
   estSetDIMUbtns(4,LeaseFrqBtn,Number($('input[name="prop_leasefreq"]').val()));
   
-  var LandLeaseDiv = $(JQDIV,{'class':'WSNWRP'});
-  $('input[name="prop_landfee"]').parent().append(LandLeaseDiv);
-  $('input[name="prop_landfee"]').appendTo(LandLeaseDiv);
-  $('input[name="prop_landfee"]').data('pval',Number($('input[name="prop_landfee"]').val()));
-  var LandLeaseBtn = $(JQBTN,{'id':'LandLeaseBtn','class':'btn btn-primary estNoLeftBord FL'}).on({
-    click : function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      estSetDIMUbtns(0,this);
-      }
-    }).appendTo(LandLeaseDiv);
   
-  estSetDIMUbtns(0,LandLeaseBtn,Number($('input[name="prop_landfreq"]').val()));
   
-  $('input[name="prop_landfee"]').on({
-    keyup : function(){
-      if(Number(this.value) > 0){$('#LandLeaseBtn').prop('disabled',false).removeProp('disabled');}
-      else{$('#LandLeaseBtn').prop('disabled',true);}
-      },
-    change : function(){
-      if(Number(this.value) > 0){$('#LandLeaseBtn').prop('disabled',false).removeProp('disabled');}
-      else{
-        estSetDIMUbtns(0,$('#LandLeaseBtn'),0);
-        $('#LandLeaseBtn').prop('disabled',true);
-        }
-      }
+  
+  
+  
+  // start of subdivision fields
+  $('select[name="prop_subdiv"]').data('pval',-1).on({
+    change : function(){estGetSubDivs(1)}
     });
-  $('input[name="prop_landfee"]').change();
   
-  var HOADiv = $(JQDIV,{'class':'WSNWRP'});
-  $('input[name="prop_hoafee"]').parent().append(HOADiv);
-  $('input[name="prop_hoafee"]').appendTo(HOADiv);
-  $('input[name="prop_hoafee"]').data('pval',Number($('input[name="prop_hoafee"]').val()));
+  
+  var selContA = $(JQDIV,{'class':'estHOAInptCont'+lightordark}).appendTo($('input[name="prop_hoaappr"]').parent());
+  $('input[name="prop_hoaappr"]').data('pval',Number($('input[name="prop_hoaappr"]').val())).on({
+    change : function(){
+      estSHHOAResetBtn(1,this);
+      }
+    }).appendTo(selContA);
+  $('input[name="prop_hoaappr"]').closest('td').find('div.bootstrap-switch').appendTo(selContA); //.addClass('ILBLK')
+  $(JQDIV,{'class':'estUpBtnCont'+lightordark}).appendTo(selContA);
+  
+  
+  //prop_hoafee
+  var selContA = $(JQDIV,{'class':'estHOAInptCont'+lightordark}).appendTo($('input[name="prop_hoafee"]').parent());
   var HOAFreqBtn = $(JQBTN,{'id':'estPropHOAFreqBtn','class':'btn btn-primary estNoLRBord FL'}).on({
     click : function(e){
       e.preventDefault();
       e.stopPropagation();
       estSetDIMUbtns(1,this);
+      estSHHOAResetBtn(1,$('input[name="prop_hoafrq"]'));
       }
-    }).appendTo(HOADiv);
-  estSetDIMUbtns(1,HOAFreqBtn,Number($('input[name="prop_hoafrq"]').val()));
+    }).appendTo(selContA);
   
   var HOAReqBtn = $(JQBTN,{'id':'estPropHOAReqBtn','class':'btn btn-primary estNoLeftBord FL'}).on({
     click : function(e){
       e.preventDefault();
       e.stopPropagation();
       estSetDIMUbtns(2,this);
+      estSHHOAResetBtn(1,$('input[name="prop_hoareq"]'));
       }
-    }).appendTo(HOADiv);
+    }).appendTo(selContA);
+  $('input[name="prop_hoafee"]').data({'pval':Number($('input[name="prop_hoafee"]').val()),'btns':[HOAFreqBtn,HOAReqBtn]}).on({
+    change : function(){estSHHOAResetBtn(1,this);}
+    }).prependTo(selContA);
+  $('input[name="prop_hoareq"]').data({'pval':Number($('input[name="prop_hoareq"]').val()),'btns':[HOAFreqBtn,HOAReqBtn]}).prependTo(selContA);
+  $('input[name="prop_hoafrq"]').data({'pval':Number($('input[name="prop_hoafrq"]').val()),'btns':[HOAFreqBtn,HOAReqBtn]}).prependTo(selContA);
+  $(JQDIV,{'class':'estUpBtnCont'+lightordark}).appendTo(selContA);
+  
+  
+  
+  
+  
+  
+  //prop_landfee
+  
+  var selContA = $(JQDIV,{'class':'estHOAInptCont'+lightordark}).appendTo($('input[name="prop_landfee"]').parent());
+  var LandLeaseBtn = $(JQBTN,{'id':'LandLeaseBtn','class':'btn btn-primary estNoLeftBord FL'}).on({
+    click : function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      estSetDIMUbtns(0,this);
+      estSHHOAResetBtn(1,$('input[name="prop_landfee"]'));
+      }
+    }).appendTo(selContA);
+  
+  $('input[name="prop_landfee"]').data({'pval':Number($('input[name="prop_landfee"]').val()),'btns':[LandLeaseBtn]}).on({
+    keyup : function(){
+      if(Number(this.value) > 0){$('#LandLeaseBtn').prop('disabled',false).removeProp('disabled');}
+      else{$('#LandLeaseBtn').prop('disabled',true);}
+      },
+    change : function(){
+      estSHHOAResetBtn(1,this);
+      if(Number(this.value) > 0){$('#LandLeaseBtn').prop('disabled',false).removeProp('disabled');}
+      else{
+        estSetDIMUbtns(0,$('#LandLeaseBtn'),0);
+        $('#LandLeaseBtn').prop('disabled',true);
+        }
+      }
+    }).prependTo(selContA);
+  
+  $('input[name="prop_landfreq"]').data({'pval':Number($('input[name="prop_landfreq"]').val()),'btns':[LandLeaseBtn]}).prependTo(selContA);
+  $(JQDIV,{'class':'estUpBtnCont'+lightordark}).appendTo(selContA);
+  
+  
+  
+  
+  //prop_hoaland
+  var selContA = $(JQDIV,{'class':'estHOAInptCont'+lightordark}).appendTo($('input[name="prop_hoaland"]').parent());
+  $('input[name="prop_hoaland"]').closest('td').find('div.bootstrap-switch').addClass('ILBLK').appendTo(selContA);
+  $('input[name="prop_hoaland"]').data({'pval':Number($('input[name="prop_hoaland"]').val()),'btns':[LandLeaseBtn]}).on({
+    change : function(){
+      estSHHOAResetBtn(1,this);
+      if(Number(this.value) == 1){
+        $('input[name="prop_landfee"]').val(Number(0));
+        $('input[name="prop_landfee"]').closest('tr').hide();
+        $('input[name="prop_hoaland"]').closest('td').find('div.bootstrap-switch').removeClass('bootstrap-switch-off').addClass('bootstrap-switch-on');
+        }
+      else{
+        $('input[name="prop_landfee"]').closest('tr').show();
+        $('input[name="prop_hoaland"]').closest('td').find('div.bootstrap-switch').removeClass('bootstrap-switch-on').addClass('bootstrap-switch-off');
+        }
+      }
+    }).appendTo(selContA);
+  
+  $(JQDIV,{'class':'estUpBtnCont'+lightordark}).appendTo(selContA);
+  
+    
+  
+  
+    
+  estSetDIMUbtns(0,LandLeaseBtn,Number($('input[name="prop_landfreq"]').val()));
+  estSetDIMUbtns(1,HOAFreqBtn,Number($('input[name="prop_hoafrq"]').val()));
   estSetDIMUbtns(2,HOAReqBtn,Number($('input[name="prop_hoareq"]').val()));
+  $('input[name="prop_landfee"]').change();
+  
+  //end of subdivision fields
+  
+  
+  
   
   $('select[name="prop_listype"]').change();
   
@@ -6154,7 +6391,7 @@ function estateBuildDIMUbtns(){
       }
     });
   
-  estGetSubDivs(1);
+  estGetSubDivs(3);
   }
 
 
@@ -6250,6 +6487,13 @@ function selectEdit(mainTbl,targ,frmn=0){
     popFrm.savebtns.push(saveBtn2);
     popFrm.savebtns.push(fileSlipBtn);
     fnct = {'name':'estUDSubdivision'};
+    
+    $(JQSPAN,{'class':'FL','title':defs.txt.cancelremove}).html(frmLabel).on({
+      click : function(){
+        estRemovePopover();
+        estGetSubDivs(2);
+        }
+      }).appendTo(popFrm.h3);
     }
   else{
     var popIt = estBuildPopover([{'tabs':fTabs}]);
@@ -6273,13 +6517,15 @@ function selectEdit(mainTbl,targ,frmn=0){
       $(newBtn).data('step',2).html(defs.txt.new2);
       $(saveBtn).html(defs.txt.save2);
       }
+    
+    
+    $(JQSPAN,{'class':'FL','title':defs.txt.cancelremove}).html(frmLabel).on({
+      click : function(){estRemovePopover()}
+      }).appendTo(popFrm.h3);
     }
   
   
-  
-  $(JQSPAN,{'class':'FL','title':defs.txt.cancelremove}).html(frmLabel).on({
-    click : function(){estRemovePopover()}
-    }).appendTo(popFrm.h3);
+    
   
   var tbdy = popFrm.tabs.tab[0].tbody;
   if(typeof tdta !== 'undefined' && typeof tdta.fnct !== 'undefined'){fnct = tdta.fnct;}
