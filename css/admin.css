@@ -300,7 +300,9 @@ tbody.estPropListTB tr > td:nth-child(2) p{
   vertical-align:top;
   white-space:nowrap;
   }
-.estInptCont select{
+
+.estInptCont select,
+.estInptCont input{
   display:inline-block;
   border-top-right-radius:0px;
   border-bottom-right-radius:0px;
@@ -359,6 +361,32 @@ tbody.estPropListTB tr > td:nth-child(2) p{
   border-left:none !important;
   border-top-left-radius:0px !important;
   border-bottom-left-radius:0px !important;
+  }
+
+
+.estHOAInptCont{
+  display:inline-block;
+  position:relative;
+  width:100%;
+  background-color: inherit;
+  vertical-align:top;
+  white-space:nowrap;
+  }
+
+.estHOAInptCont button,
+.estHOAInptCont div,
+.estHOAInptCont div.btn{
+  display:inline-block;
+  position:relative;
+  }
+
+.estUpBtnCont{
+  display:inline-block;
+  position: relative;
+  margin-left:6px;
+  }
+.estHOAudbtn{
+  
   }
 
 /*
