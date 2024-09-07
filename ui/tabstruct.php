@@ -194,7 +194,7 @@ function estTablStruct(){
         'str'=>'int',
         'cls'=>'xlarge',
         //'chng'=>array('estGetSubDivs'),
-        'src'=>array('tbl'=>'estate_subdiv','idx'=>'subd_idx','map'=>array('subd_idx','subd_name'),'req'=>array('prop_city','subd_city',EST_PROP_MSG_CITY))
+        'src'=>array('tbl'=>'estate_subdiv','idx'=>'subd_idx','map'=>array('subd_idx','subd_name'),'perm'=>array(1,2,3),'req'=>array('prop_city','subd_city',EST_PROP_MSG_CITY))
         ),
       
       'prop_modelname'=>array('hlpm'=>'estHlp-detail0'),
@@ -426,20 +426,11 @@ function estTablStruct(){
         ),
       'subd_hoaname'=>array('type'=>'text','tab'=>2,'cls'=>'xlarge','labl'=>EST_PROP_HOANAME,'plch'=>EST_GEN_HOAPLCH),
       'subd_hoaweb'=>array('type'=>'text','tab'=>2,'cls'=>'xlarge','labl'=>EST_PROP_HOAWEB,'plch'=>'www.somesite.com'),
-      'subd_hoafee'=>array('type'=>'number','tab'=>2,'cls'=>'large','str'=>'int','labl'=>EST_PROP_HOAFEE,'attr'=>array('min'=>0)),
-      'subd_hoafrq'=>array(
-        'type'=>'select',
-        'tab'=>2,
-        'str'=>'int',
-        'labl'=>EST_PROP_HOAFRQ,
-        'cls'=>'large',
-        'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>$GLOBALS['EST_HOAFREQ'])
-        ),
       'subd_hoareq'=>array(
         'type'=>'select',
         'tab'=>2,
         'str'=>'int',
-        'labl'=>EST_PROP_HOAREQ,
+        'labl'=>EST_PROP_HOAMEMBERSHIP,
         'cls'=>'large',
         'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>$GLOBALS['EST_HOAREQD'])
         ),
@@ -451,9 +442,45 @@ function estTablStruct(){
         'cls'=>'large',
         'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>array(EST_GEN_NOTREQUIRED,EST_GEN_REQUIRED))
         ),
+      'subd_hoafee'=>array('type'=>'number','tab'=>2,'cls'=>'small','str'=>'int','labl'=>EST_PROP_HOAFEE,'attr'=>array('min'=>0)),
+      'subd_hoafrq'=>array(
+        'type'=>'select',
+        'tab'=>2,
+        'str'=>'int',
+        'labl'=>EST_PROP_HOAFRQ,
+        'cls'=>'large',
+        'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>$GLOBALS['EST_HOAFREQ'])
+        ),
+      'subd_hoaland'=>array(
+        'type'=>'select',
+        'tab'=>2,
+        'str'=>'int',
+        'cls'=>'large',
+        'labl'=>EST_GEN_INCLANDLEASE,
+        'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>array(LAN_NO,LAN_YES)),
+        ),
+      'subd_landfee'=>array('type'=>'number','tab'=>2,'cls'=>'small','str'=>'int','labl'=>EST_PROP_LANDLEASE,'attr'=>array('min'=>0)),
+      'subd_landfreq'=>array(//'type'=>'hidden','str'=>'int'
+        'type'=>'select',
+        'tab'=>2,
+        'str'=>'int',
+        'cls'=>'large',
+        'labl'=>EST_PROP_LANDLEASE,
+        'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>$GLOBALS['EST_HOAFREQ']),
+        ),
       ),
     
-    
+    'estate_subdivcats'=>array(
+      'subdivcat_idx'=>array('type'=>'idx','str'=>'int'),
+      'subdivcat_zone'=>array(
+        'type'=>'select',
+        'str'=>'int',
+        'cls'=>'xlarge',
+        'labl'=>EST_GEN_ZONING,
+        'src'=>array('tbl'=>'estate_zoning','idx'=>'zoning_idx','map'=>array('zoning_idx','zoning_name')),
+        ),
+      'subdivcat_name'=>array('type'=>'text','cls'=>'xlarge','chks'=>array('noblank')),
+      ),
     
     'estate_subdiv_spaces'=>array(
       'subspace_idx'=>array('type'=>'idx','str'=>'int'),

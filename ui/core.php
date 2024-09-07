@@ -2363,6 +2363,7 @@ class estateCore{
   public function estGetPresetsForm($zi,$newZone=''){
     $tp = e107::getParser();
     $frm = e107::getForm(false, true);
+    //estCommunitySpacesForm
     
     $dtaset = $this->estGetCompFeatures($zi);
     $zoning = $this->estGetZoning();
@@ -3213,6 +3214,92 @@ class estateCore{
   
   
   
+  public function estCommunitySpacesForm($subd_idx,$subd_city){
+    $tp = e107::getParser();
+    $sql = e107::getDb();
+    if($subd_idx == 0){
+      return '<div id="estSubDivCont" data-id="0" data-city="0" data-hoareq="0" data-hoafee="0" data-hoafrq="0" data-hoaappr="0">'.EST_GEN_SUBDIVISIONNONE.'</div>';
+      }
+    
+    //featcat_name featcat_name[featcat_zone][featcat_lev][featcat_idx]
+    //group_name
+    //estate_subdivcats
+    /*
+    
+      <button class="e-sort sort-trigger btn btn-default ui-sortable-handle" title="Click And Drag To Re-order Section">
+        <i class="fa fa-arrows-v"></i>
+      </button>
+    
+    */
+    
+    $dta = estGetSubDivDta($subd_idx,$subd_city);
+    
+    $txt = '
+    <div id="estSubDivCont" class="WD100"  data-id="'.intval($dta['subd_idx']).'" data-city="'.intval($subd_city).'" data-hoareq="'.intval($dta['subd_hoareq']).'" data-hoafee="'.intval($dta['subd_hoafee']).'" data-hoafrq="'.intval($dta['subd_hoafrq']).'" data-hoaappr="'.intval($dta['subd_hoaappr']).'">
+      <table id="estate-commspaces-tabl" class="table-striped estateSubTable estDragTable">
+        <colgroup></colgroup>
+        <colgroup></colgroup>
+        <colgroup></colgroup>
+        <colgroup style="width:128px;"></colgroup>
+        <thead>
+          <tr>
+            <th class="TAC">
+              <div class="btn-group">
+                <button type="button" class="btn btn-default " title="Add New Community Space"><i class="fa fa-plus"></i></button>
+              </div>
+            </th>
+            <th class="left">Community Spaces</th>
+            <th class="left">Category</th>
+            <th class="TAC">Options</th>
+          </tr>
+        </thead>
+        <tbody id="estate-commspaces-tbody">';
+      
+      if(is_array($dta['spaces']['subd'])){
+        foreach($dta['spaces']['subd'] as $k=>$v){
+          $thm = ''; //EST_PTHABS_SUBDTHM.6-2-39-200.jpg?12080
+          $txt .= '
+          <tr class="estDragableTR" data-subspace_idx="'.intval($v['subspace_idx']).'" data-subspace_city="'.intval($v['subspace_city']).'" data-subspace_subidx="'.intval($v['subspace_subidx']).'" data-subspace_catid="'.intval($v['subspace_catid']).'" data-subspace_ord="'.intval($v['subspace_ord']).'" >
+            <td class="left noPAD posREL">
+              <div id="estCommSectThm-2-39" class="estPropThumb" style="background-image: url(\''.$thm.'\');"></div>
+            </td>
+            <td class="left">'.$tp->toHTML($v['subspace_name']).'</td>
+            <td class="left">'.$tp->toHTML($v['subspace_catname']).'</td>
+            <td class="TAR">
+              <div class="btn-group">
+                <button class="e-sort sort-trigger btn btn-default ui-sortable-handle" title="Drag To Re-order Spaces"><i class="fa fa-arrows-v"></i></button>
+                <button class="btn btn-default btn-secondary" title="Edit Front"><i class="fa fa-pencil-square-o"></i></button>
+                <button type="button" class="action delete btn btn-default" title="Delete Space"><i class="fa fa-close"></i></button>
+              </div>
+            </td>
+          </tr>';
+          
+          }
+        }
+      
+      $txt .= '
+          <tr class="estDragableTR">
+            <td class="left noPAD posREL">
+              <div id="estCommSectThm-2-39" class="estPropThumb" style="background-image: url(\'https://www.sandpiperhome.org/e107_plugins/estate/media/prop/thm/6-2-39-200.jpg?12080\');"></div>
+            </td>
+            <td class="left">Test/Sample Space</td>
+            <td class="left">A Category</td>
+            <td class="TAR">
+              <div class="btn-group">
+                <button class="e-sort sort-trigger btn btn-default ui-sortable-handle" title="Drag To Re-order Spaces"><i class="fa fa-arrows-v"></i></button>
+                <button class="btn btn-default btn-secondary" title="Edit Front"><i class="fa fa-pencil-square-o"></i></button>
+                <button type="button" class="action delete btn btn-default" title="Delete Space"><i class="fa fa-close"></i></button>
+              </div>
+            </td>
+          </tr>';
+    
+    $txt .= '
+        <tbody>
+      </table>
+    </div>';
+    unset($dta);
+    return $txt;
+    }
   
   
   public function estPropFormEle($name,$atr,$value,$DTA){}
@@ -3312,7 +3399,7 @@ class estateCore{
         $text .= $this->estOAHidden('prop_landfreq',$DTA);
         $text .= $this->estOAHidden('prop_hoareq',$DTA);
         $text .= $this->estOAHidden('prop_hoafrq',$DTA);
-        //$text .= '<div class="WD100"><h4>'.EST_GEN_COMMUNITYPREVIEW.'</h4></div><div id="estCommunityPreviewCont"></div>';
+        //$text .= '<div class="WD100"><h4>'.EST_GEN_COMMUNITYPREVIEW.'</h4></div><div id="estCommSpaceGrpDiv"></div>';
         break;
         
       case 1 :
@@ -3345,7 +3432,6 @@ class estateCore{
         $text .= $this->estOAFormTableEnd($SN,$DTA);
         $text .= $this->estOAHidden('prop_currency',$DTA);
         $text .= $this->estOAHidden('prop_leasefreq',$DTA);
-        $text .= $this->estOAHidden('prop_landfreq',$DTA);
         //prop_uidcreate
         
         break;
@@ -3536,7 +3622,7 @@ class estateCore{
     
     switch($TYPE){
       case 'commumityPreview': 
-        return '<tr><td colspan="2" class="noPAD"><div id="estCommunityPreviewCont"></div></td></tr>';
+        return '<tr><td colspan="2" class="noPAD"><h4 class="WD100">'.EST_GEN_COMMUNITYPREVIEW.'</h4><div id="estCommSpaceGrpDiv"></div></td></tr>';
         break;
       
       case 'prop_appr' :

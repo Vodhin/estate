@@ -627,13 +627,13 @@ class estate_listing_ui extends e_admin_ui{
       
 			'prop_comminuty' => array (
         'tab'=>2,
-        'title'=>EST_GEN_COMMUNITYPREVIEW,
+        //'title'=>EST_GEN_COMMUNITYPREVIEW,
         'type' => 'method',
         'data' => false,
         'width' => 'auto',
         'nolist'=>true,
         'readParms' => array(),
-        'writeParms' => array(), // 'nolabel'=>1
+        'writeParms' => array('nolabel'=>1),
         'class' => 'left',
         'thclass' => 'left',
         ),
@@ -2509,7 +2509,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
   public function prop_comminuty($curVal,$mode){
     switch($mode){
 			case 'write':
-        return '<div id="estCommunityPreviewCont" class="WD100"></div>';
+        return '<h4>'.EST_GEN_COMMUNITYPREVIEW.'</h4 class="WD100"><div id="estCommSpaceGrpDiv" class="estSpaceGrpDiv WD100"></div>';
         break;
 			case 'read': 
 			case 'filter':
