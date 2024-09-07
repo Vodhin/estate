@@ -223,6 +223,7 @@ define("EST_GEN_HOAPLCH","Leave blank if same as Subdivision");
 define("EST_GEN_HOAREQ1","HOA Membership Required");
 define("EST_GEN_HOAREQ2","Voluntary HOA Membership");
 define("EST_GEN_INCINHOAFEE","Included in HOA Fees");
+define("EST_GEN_NOTINCINHOAFEE","NOT Included in HOA Fees");
 define("EST_GEN_INCLANDLEASE","Includes Land Lease");
 define("EST_GEN_INFO","Information");
 define("EST_GEN_INFOCHANGED","Inforamtion has changed");
@@ -274,6 +275,7 @@ define("EST_GEN_NOOPENHOUSE","There are no Open House events scheduled");
 define("EST_GEN_NODBRESULTS","No rusults for current criteria");
 define("EST_GEN_NOT","Not");
 define("EST_GEN_NOTAVAIL2","Event Scheduling is not available on this form");
+define("EST_GEN_NOTAVAIL3","The Community Form is only available to Agents");
 define("EST_GEN_NOTAFILE","Not A File");
 define("EST_GEN_NOTBELONGTO","Does Not Belong To");
 define("EST_GEN_NOTCONFIRMED","Not Confirmed");
@@ -434,8 +436,8 @@ define("EST_PROP_HOADISCLAIMER1","Association fees may vary between properties i
 define("EST_PROP_HOADISCLAIMER2","Please review your closing documents carefully before signing.");
 define("EST_PROP_HOADISCLAIMER3","There may be requirements that occupants must meet in order to purchase and/or live within the community. A common example of this is a retirement community where occupants must be 55 or more years old.");
 
+define("EST_PROP_HOAMEMBERSHIP","HOA Membership");
 define("EST_PROP_HOANAME","HOA Name");
-define("EST_PROP_HOAWEB","HOA Website");
 define("EST_PROP_HOAREQ","HOA Required");
 define("EST_PROP_HOAREQHLP","Homeowner is required to join the Home Owner's Association");
 define("EST_PROP_HOAFEE","HOA Fee");
@@ -444,7 +446,12 @@ define("EST_PROP_HOAFEESHLP","Dues for Home Owner's Association. Enter zero if t
 define("EST_PROP_HOALAND","HOA Fee Includes Land Lease");
 define("EST_PROP_HOALANDHLP","Enable if a Land Lease is included in the HOA fees.");
 define("EST_PROP_HOAFRQ","HOA Frequency");
-
+define("EST_PROP_HOAUPDTA0","Remove Property HOA Information?");
+define("EST_PROP_HOAUPDTA1","Reset to Previous Values");
+define("EST_PROP_HOAUPDTA2","Reload Last Saved Values");
+define("EST_PROP_HOAUPDTA3","Update to Subdivision Values");
+define("EST_PROP_HOAUPDTA4","Update Property HOA Information?");
+define("EST_PROP_HOAWEB","HOA Website");
 define("EST_PROP_INTSIZE", "Livable Space");
 define("EST_PROP_LANDLEASE", "Land Lease");
 define("EST_PROP_LANDLEASEHLP", "Land Lease amount. Enter zero if there is no land lease OR if a Land Lease is included in HOA Fees.");
