@@ -9,9 +9,10 @@ MANUAL UPDATING ON YOUR WEBSITE DURING DEVELOPMENT:
 
 Download ALL files and replace all existing files on your website with current. Run your Check Database Validity on the Estate tables and fix any entries that are found. Then go to the Preference section of the Estate Plugin and Save your preferences.
 
- 
 
 DEVELOPMENT/REVISION HISTORY:
+
+15 September 2024: In fou already have installed this plugin, you may have to MANUALLY EDIT YOUR `estate_spaces` table to remove `space_propidx` though your server's Database Administration Tool (eg phpMyAdmin), then run the e107 Database Update/Check to check your installation. Estate Preferences Load & Save required. Database Structure and Estate Prefs have changed.
 
 7 September 2024: Database Update/Check required. Estate Preferences Load & Save required. Database Structure and Estate Prefs have changed. Added Undo functions for Community/Subdivision Form.
 
