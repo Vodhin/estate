@@ -2706,7 +2706,6 @@
   
   
   function estThmsForList(ret){
-    $('body').on({click : function(){$('.estThmMgrCont').remove()}});
     var helpInFull = (typeof ret.prefs.helpinfull !== 'undefined' ? Number(ret.prefs.helpinfull) : 0);
     $('.estPropThumb').each(function(i,thmEle){
       var trID = Number($(thmEle).parent().parent().attr('id').toLowerCase().replace('row-',''));
@@ -3398,6 +3397,7 @@
   $(document).ready(function(){
     console.log(vreQry);
     $(document).data('estJSpth',$('#estJSpth').data('pth'));
+    $('body').on({click : function(){$('.estThmMgrCont').remove()}});
     $('#estJSpth').remove();
     
     $('body').addClass('noFCOutline');

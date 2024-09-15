@@ -26,6 +26,8 @@ var JQTH = '<th></th>';
 var JQTD = '<td></td>';
 var JQEDI = '<i class="fa fa-pencil-square-o"></i>';
 var JQADI = '<i class="fa fa-plus"></i>';
+var JQDDI = '<i class="fa fa-close"></i>';
+var JQSAV = '<i class="fa fa-save"></i>';
 
   /*
   
@@ -520,154 +522,343 @@ function estGetSubDivs(mode=1){
   //subd_city <-- need to limit defs.tbls.estate_subdiv.dta on load...
   var subDivPreVal = Number($('select[name="prop_subdiv"]').data('pval'));
   
-  if(mode == 2 || subdIdx !== subDivPreVal){
+  if(mode > 1 || subdIdx !== subDivPreVal){
     $(subdivSelEle).data('pval',subdIdx);
-    $('#estCommSpaceGrpDiv').empty().promise().done(function(){
-      $.ajax({
-        url: vreFeud+'?81||0',
-        type:'get',
-        data:{'fetch':81,'subd_idx':subdIdx,'subd_city':cityIdx,'rt':'js'},
-        dataType:'json',
-        cache:false,
-        processData:true,
-        success: function(ret, textStatus, jqXHR){
-          console.log(ret);
-          var prp = defs.tbls.estate_properties.dta[0];
-          //var selectDta = $.grep(defs.tbls.estate_subdiv.dta, function (element, index) {return Number(element.subd_idx) == Number(subdIdx);});
-          
-          //mode 1 = Select ele change, 2 = edit form closed, 3 = form load (pval = -1 to force ajax)
-          var flds = ['hoareq','hoafee','hoafrq','hoaappr','hoaland','landfee','landfreq'];
-          var chks = {};
-          $(flds).each(function(i,fldn){
-            var fldname = 'prop_'+fldn;
-            var defname = 'subd_'+fldn;
-            var fld = $('input[name="'+fldname+'"]');
-            chks[fldname] = [0,[Number($(fld).val()), Number($(fld).data('pval')), Number(prp[fldname]), Number(ret[defname])]];
-            if(mode < 3 && Number(subdIdx) > 0){
-              if(mode == 2){
-                if(chks[fldname][1][0] !== chks[fldname][1][3]){chks[fldname][0] = 3;}
-                }
-              else{
-                if(chks[fldname][1][0] !== chks[fldname][1][3]){chks[fldname][0] = 3;}
-                else if(chks[fldname][1][0] !== chks[fldname][1][2]){chks[fldname][0] = 2;}
-                else if(chks[fldname][1][0] !== chks[fldname][1][1]){chks[fldname][0] = 1;}
-                }
+    $.ajax({
+      url: vreFeud+'?81||0',
+      type:'get',
+      data:{'fetch':81,'subd_idx':subdIdx,'subd_city':cityIdx,'rt':'js'},
+      dataType:'json',
+      cache:false,
+      processData:true,
+      success: function(ret, textStatus, jqXHR){
+        ret.subd_title = (subdIdx > 0 ? ret.subd_name : defs.txt.community);
+        
+        if(cityIdx > 0 && typeof selCityOptEle !== 'undefined'){ret.city_title = $(selCityOptEle).text();}
+        else{ret.city_title = defs.txt.city;}
+        ret.city_idx = cityIdx;
+        
+        var subDdta = {'subd_idx':Number(subdIdx),'subd_title':ret.subd_title,'subd_city':Number(cityIdx),'city_title':ret.city_title};
+        $('#estCitySpaceGrpDiv').data(subDdta);
+        $('#estCommSpaceGrpDiv').data(subDdta);
+        
+        var prp = defs.tbls.estate_properties.dta[0];
+        if(mode == 4){
+          estBuildSubdivSpaces(ret);
+          return;
+          }
+        
+        //mode 1 = Select ele change, 2 = edit form closed, 3 = form load (pval = -1 to force ajax)
+        var flds = ['hoareq','hoafee','hoafrq','hoaappr','hoaland','landfee','landfreq'];
+        var chks = {};
+        $(flds).each(function(i,fldn){
+          var fldname = 'prop_'+fldn;
+          var defname = 'subd_'+fldn;
+          var fld = $('input[name="'+fldname+'"]');
+          chks[fldname] = [0,[Number($(fld).val()), Number($(fld).data('pval')), Number(prp[fldname]), Number(ret[defname])]];
+          if(mode < 3 && Number(subdIdx) > 0){
+            if(mode == 2){
+              if(chks[fldname][1][0] !== chks[fldname][1][3]){chks[fldname][0] = 3;}
               }
-            }).promise().done(function(){
-              //console.log(chks);
-              if(!document.getElementById('estResetSub1')){
-                $(JQBTN,{'type':'button','id':'estResetSub1','class':'btn btn-default','title':udtxt[2]}).on({
-                  click : function(e){
-                    e.preventDefault();
-                    e.stopPropagation();
-                    estSetHOAchks(5,chks);
-                    $(this).hide();
-                    }
-                  }).html('<i class="fa fa-rotate-left"></i> '+udtxt[2]).appendTo($('select[name="prop_subdiv"]').parent()).hide();
-                }
-              
-              estSHHOAResetBtn(mode,subdivSelEle);
-              
-              
-              if(mode < 3 && subdIdx == 0){
-                estSetHOAchks(0,chks);
-                }
-              else{
-                if(subDivPreVal == 0 && Number(prp.prop_subdiv) == Number(subdIdx)){
-                  estSetHOAchks(2,chks);
+            else{
+              if(chks[fldname][1][0] !== chks[fldname][1][3]){chks[fldname][0] = 3;}
+              else if(chks[fldname][1][0] !== chks[fldname][1][2]){chks[fldname][0] = 2;}
+              else if(chks[fldname][1][0] !== chks[fldname][1][1]){chks[fldname][0] = 1;}
+              }
+            }
+          }).promise().done(function(){
+            if(!document.getElementById('estResetSub1')){
+              $(JQBTN,{'type':'button','id':'estResetSub1','class':'btn btn-default','title':udtxt[2]}).on({
+                click : function(e){
+                  e.preventDefault();
+                  e.stopPropagation();
+                  estSetHOAchks(5,chks);
+                  $(this).hide();
                   }
-                else if(Number(prp.prop_subdiv) == Number(subdIdx)){
-                  if(mode == 2){
-                    if(jsconfirm(udtxt[4])){
-                      estSetHOAchks(3,chks);
-                      }
-                    }
-                  else{
-                    estSetHOAchks(2,chks);
+                }).html('<i class="fa fa-rotate-left"></i> '+udtxt[2]).appendTo($('select[name="prop_subdiv"]').parent()).hide();
+              }
+            
+            estSHHOAResetBtn(mode,subdivSelEle);
+            
+            if(mode < 3 && subdIdx == 0){
+              estSetHOAchks(0,chks);
+              }
+            else{
+              if(subDivPreVal == 0 && Number(prp.prop_subdiv) == Number(subdIdx)){
+                estSetHOAchks(2,chks);
+                }
+              else if(Number(prp.prop_subdiv) == Number(subdIdx)){
+                if(mode == 2){
+                  if(jsconfirm(udtxt[4])){
+                    estSetHOAchks(3,chks);
                     }
                   }
                 else{
-                  
-                  if(chks['prop_hoaappr'][0] > 0){
-                    var ky = chks['prop_hoaappr'][0];
-                    $(JQBTN,{'type':'button','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
-                      click : function(e){
-                        e.preventDefault();
-                        e.stopPropagation();
-                        $(this).remove();
-                        $('input[name="prop-hoaappr__switch"]').click();
-                        }
-                      }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoaappr"]').parent().find('div.estUpBtnCont'));
-                    }
-                  
-                  if(chks['prop_hoafee'][0] > 0 || chks['prop_hoareq'][0] > 0 || chks['prop_hoafrq'][0] > 0){
-                    var ky = (chks['prop_hoafee'][0] > 0 ? chks['prop_hoafee'][0] : (chks['prop_hoareq'][0] > 0 ? chks['prop_hoareq'][0] : chks['prop_hoafrq'][0]));
-                    $(JQBTN,{'type':'button','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
-                      click : function(e){
-                        e.preventDefault();
-                        e.stopPropagation();
-                        estSetHOAchks(ky,chks,['prop_hoafee','prop_hoareq','prop_hoafrq']);
-                        $(this).remove();
-                        }
-                      }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoafee"]').parent().find('div.estUpBtnCont'));
-                    }
-                  
-                  
-                  if(chks['prop_hoaland'][0] > 0){
-                    var ky = chks['prop_hoaland'][0];
-                    $(JQBTN,{'type':'button','id':'estHOAup3','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
-                      click : function(e){
-                        e.preventDefault();
-                        e.stopPropagation();
-                        $('input[name="prop-hoaland__switch"]').click();
-                        //$('#estHOAup4').click();
-                        $(this).remove();
-                        }
-                      }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoaland"]').parent().find('div.estUpBtnCont'));
-                    }
-                  
-                  if(chks['prop_landfee'][0] > 0 || chks['prop_landfreq'][0] > 0){
-                    var ky = (chks['prop_landfee'][0] > 0 ? chks['prop_landfee'][0] : chks['prop_landfreq'][0]);
-                    $(JQBTN,{'type':'button','id':'estHOAup4','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
-                      click : function(e){
-                        e.preventDefault();
-                        e.stopPropagation();
-                        estSetHOAchks(3,chks,['prop_landfee','prop_landfreq']);
-                        //$('#estHOAup3').click();
-                        $(this).remove();
-                        }
-                      }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_landfee"]').parent().find('div.estUpBtnCont'));
-                    
-                    //estSetDIMUbtns(0,$('#LandLeaseBtn'),Number($('input[name="prop_landfreq"]').val()));
-                    
-                    }
+                  estSetHOAchks(2,chks);
                   }
                 }
-              });
-          
-          
-          //console.log(selectDta);
-          
-          //estUDSubdivision
-          //group_name
-          //estSpaceGrpDiv
-          
-          estBuildSubdivSpaces(ret);
-          },
-        error: function(jqXHR, textStatus, errorThrown){
-          console.log('ERRORS: '+textStatus+' '+errorThrown);
-          estAlertLog(jqXHR.responseText);
-          }
-        });
+              else{
+                
+                if(chks['prop_hoaappr'][0] > 0){
+                  var ky = chks['prop_hoaappr'][0];
+                  $(JQBTN,{'type':'button','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
+                    click : function(e){
+                      e.preventDefault();
+                      e.stopPropagation();
+                      $('input[name="prop-hoaappr__switch"]').click();
+                      $(this).remove();
+                      }
+                    }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoaappr"]').parent().find('div.estUpBtnCont'));
+                  }
+                
+                if(chks['prop_hoafee'][0] > 0 || chks['prop_hoareq'][0] > 0 || chks['prop_hoafrq'][0] > 0){
+                  var ky = (chks['prop_hoafee'][0] > 0 ? chks['prop_hoafee'][0] : (chks['prop_hoareq'][0] > 0 ? chks['prop_hoareq'][0] : chks['prop_hoafrq'][0]));
+                  $(JQBTN,{'type':'button','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
+                    click : function(e){
+                      e.preventDefault();
+                      e.stopPropagation();
+                      estSetHOAchks(ky,chks,['prop_hoafee','prop_hoareq','prop_hoafrq']);
+                      $(this).remove();
+                      }
+                    }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoafee"]').parent().find('div.estUpBtnCont'));
+                  }
+                
+                
+                if(chks['prop_hoaland'][0] > 0){
+                  var ky = chks['prop_hoaland'][0];
+                  $(JQBTN,{'type':'button','id':'estHOAup3','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
+                    click : function(e){
+                      e.preventDefault();
+                      e.stopPropagation();
+                      $('input[name="prop-hoaland__switch"]').click();
+                      $(this).remove();
+                      }
+                    }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_hoaland"]').parent().find('div.estUpBtnCont'));
+                  }
+                
+                if(chks['prop_landfee'][0] > 0 || chks['prop_landfreq'][0] > 0){
+                  var ky = (chks['prop_landfee'][0] > 0 ? chks['prop_landfee'][0] : chks['prop_landfreq'][0]);
+                  $(JQBTN,{'type':'button','id':'estHOAup4','class':'btn btn-default estHOAudbtn','title':udtxt[ky]}).on({
+                    click : function(e){
+                      e.preventDefault();
+                      e.stopPropagation();
+                      estSetHOAchks(3,chks,['prop_landfee','prop_landfreq']);
+                      $(this).remove();
+                      }
+                    }).html('<i class="fa fa-chevron-left"></i> '+udtxt[ky]).appendTo($('input[name="prop_landfee"]').parent().find('div.estUpBtnCont'));
+                  }
+                }
+              }
+            });
+        
+        //console.log(selectDta);
+        
+        //estUDSubdivision
+        estBuildSubdivSpaces(ret);
+        },
+      error: function(jqXHR, textStatus, errorThrown){
+        console.log('ERRORS: '+textStatus+' '+errorThrown);
+        estAlertLog(jqXHR.responseText);
+        }
       });
     }
   
   }
 
 
-function estBuildSubdivSpaces(dta){
-  //console.log(dta);
+
+
+function estBuildSubdivSpaces(ret){
+  var defs = $('body').data('defs');
+  $('#estCommSpaceName').html(ret.subd_title);
+  $('#estCitySpaceName').html(ret.city_title);
   
+  $('#estCommSpaceGrpDiv').empty().promise().done(function(){
+    if(Number(ret.subd_idx) > 0){
+      var ordr = 1;
+      $(ret.spaces.subd).each(function(i,dta){
+        var ele = estBuildSpaceTile(4,dta);
+        $(ele).appendTo('#estCommSpaceGrpDiv');
+        ordr++;
+        }).promise().done(function(){
+          var dta = estDefDta('estate_subdiv_spaces');
+          dta.space_lev = 4;
+          dta.space_levidx = Number($('#estCommSpaceGrpDiv').data('subd_idx'));
+          dta.space_ord = ordr;
+          var ele = estBuildSpaceTile(4,dta,{'grpname':defs.txt.community});
+          $(ele).appendTo('#estCommSpaceGrpDiv');
+          });
+      }
+    });
+  
+  $('#estCitySpaceGrpDiv').empty().promise().done(function(){
+    if(Number(ret.city_idx) > 0){
+      var ordr = 1;
+      $(ret.spaces.city).each(function(i,dta){
+        var ele = estBuildSpaceTile(3,dta);
+        $(ele).appendTo('#estCitySpaceGrpDiv');
+        ordr++;
+        }).promise().done(function(){
+          var dta = estDefDta('estate_subdiv_spaces');
+          dta.space_lev = 3;
+          dta.space_levidx = Number($('#estCitySpaceGrpDiv').data('subd_city'));
+          dta.space_ord = ordr;
+          var ele = estBuildSpaceTile(3,dta,{'grpname':defs.txt.city});
+          $(ele).appendTo('#estCitySpaceGrpDiv');
+          });
+      }
+    });
+  
+  }
+
+function estSpaceClean(dta){
+  dta.space_idx = Number(dta.space_idx);
+  dta.space_lev = Number(dta.space_lev);
+  dta.space_levidx = Number(dta.space_levidx);
+  dta.space_grpid = Number(dta.space_grpid);
+  dta.space_catid = Number(dta.space_catid);
+  dta.space_ord = Number(dta.space_ord);
+  if(typeof dta.space_dimu !== 'undefined'){dta.space_dimu = Number(dta.space_dimu);}
+  if(typeof dta.space_dimx !== 'undefined'){dta.space_dimx = Number(dta.space_dimx);}
+  if(typeof dta.space_dimy !== 'undefined'){dta.space_dimy = Number(dta.space_dimy);}
+  if(typeof dta.space_dimxy !== 'undefined'){dta.space_dimxy = Number(dta.space_dimxy);}
+  return dta;
+  }
+
+
+
+function estBuildSpaceTile(mode,tDta,mDta=null){
+  var defs = $('body').data('defs');
+  var tDta = estSpaceClean(tDta);
+  
+  //mode acts as a parent table key: 
+    // 0=subdiv (for media), 
+    // 1=property (for media & spaces), 
+    // 2=spaces (for media), 
+    // 3=city space (for media & spaces),
+    // 4=subdiv space (for media & spaces)
+  
+  if(mode > 2){var levmap = defs.keys.levmap[4];}
+  else{var levmap = defs.keys.levmap[mode];}
+  //console.log(mode,levmap);
+  //console.log(tDta);
+  
+  var dta = {'db':tDta,'idx':tDta.space_idx,'keys':levmap,'media':[],'title1':defs.txt.new1+' '+defs.txt.space,'title2':'','title3':'','text':''};
+  if(mDta !== null){$.extend(dta,mDta);}
+  
+  
+  if(dta.idx > 0){
+    var lev = Number(dta.db.space_lev);
+    
+    if(typeof dta.db.media !== 'undefined'){delete dta.db.media;}
+    
+    if(dta.media.length == 0){
+      dta.media = $.grep(defs.tbls.estate_media.dta, function (elm, index) {return Number(elm.media_lev) == mode && Number(elm.media_levidx) == Number(dta.idx);});
+      }
+    
+    dta.title1 = dta.db.space_name;
+    
+    var tx = defs.tbls.estate_featcats.dta.find(x => Number(x.featcat_lev) === Number(mode) && Number(x.featcat_idx) === Number(dta.db.space_catid));
+    if(typeof tx !== 'undefined'){dta.title2 = tx.featcat_name;}
+    if(mode == 2){
+      if(Number(dta.idx) > 0){
+        dta.title3 = (dta.db.space_loc !== '' ? '<i>'+dta.db.space_loc+'</i> ' : '')+dta.db.space_dimxy+' '+defs.keys.dim1u[dta.db.space_dimu][0];
+        }
+      }
+    else{
+      var tx = defs.tbls.estate_group.dta.find(x => Number(x.group_lev) === Number(mode) && Number(x.group_idx) === Number(dta.db.space_grpid));
+      if(typeof tx !== 'undefined'){dta.title3 = tx.group_name;}
+      }
+    
+    dta.text = dta.db.space_description;
+    }
+  else{
+    dta.title2 = defs.txt.new1+' '+dta.grpname+' '+defs.txt.space;
+    }
+  
+  //console.log(dta.db);
+  
+  
+  
+  var tile = $(JQDIV,{'class':'estSpaceGroupTile','title':defs.txt.create+' '+dta.title2}).data(dta).on({click : function(e){estBuildSpace(mode,this);}});
+  $(JQDIV).html(dta.title1).appendTo(tile);
+  var imgDiv = $(JQDIV,{'id':'estSectThm-'+mode+'-'+dta.idx}).appendTo(tile);
+  $(JQDIV).html(dta.title2).appendTo(tile);
+  $(JQDIV).html(dta.title3).appendTo(tile);
+  var txtDiv = $(JQDIV).html(dta.text).appendTo(tile);
+  
+  if(Number(dta.idx) > 0){
+    var delBtn = $(JQBTN,{'id':'','class':'btn btn-primary btn-sm estNoLRBord estSpaceDelBtn','title':defs.txt.deletes+' '+dta.title1}).html(JQDDI).on({
+      click : function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        $('.estThmMgrCont').remove();
+        if(jsconfirm(defs.txt.deletes+' '+dta.title1+'?')){
+          estBuildSpace((mode * -1),tile);
+          }
+        }
+      }).appendTo(tile).hide();
+    
+    $(tile).attr('title',defs.txt.edit+' '+dta.title1).on({
+      mouseenter : function(e){$('.estSpaceDelBtn').hide().promise().done(function(){$(delBtn).show();})},
+      mouseleave : function(e){$('.estSpaceDelBtn').hide()}
+      });
+    
+    $(txtDiv).attr('title',defs.txt.drag2reord).addClass('estSpaceSortable').on({click : function(e){e.stopPropagation();$('.estThmMgrCont').remove();}});
+    
+    if(dta.media.length > 0){
+      var firstThm = dta.media[0];//.find(x => x.media_levord === 1);
+      if(typeof firstThm !== 'undefined'){
+        var noCache = '?'+Math.floor(Math.random() * (99999 - 99 + 1) + 99);
+        if(Number(firstThm.media_lev) > 0){var urlpth = defs.dir.prop.thm;}
+        else{var urlpth = defs.dir.subdiv.thm;}
+        $(imgDiv).css({'background-image':'url('+urlpth+firstThm.media_thm+noCache+')'});
+        if(dta.media.length > 1){
+          $(imgDiv).attr('title',defs.txt.choosethm).on({
+            click : function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              var targ = this;
+              var dta = $(tile).data();
+              $('.estThmMgrCont').remove().promise().done(function(){
+                var mBox0 = $(JQDIV,{'id':'estMediaMgrCont','class':'estThmMgrCont','title':defs.txt.drag2reord}).on({
+                  click : function(e){
+                    e.stopPropagation();
+                    }
+                  }).appendTo(targ).promise().done(function(){
+                    var ulbtn = [];
+                    $(dta.media).each(function(k,mediaDta){
+                      if(Number(mediaDta.media_lev) > 0){var urlpth = defs.dir.prop.thm+mediaDta.media_thm+noCache;}
+                      else{var urlpth = defs.dir.subdiv.thm+mediaDta.media_thm+noCache;}
+                      ulbtn[k] = $(JQDIV,{'class':'upldPvwBtn pvw-'+mediaDta.media_idx}).css({'background-image':'url('+urlpth+')'})
+                      $(ulbtn[k]).data(mediaDta).on({click :function(e){e.stopPropagation();}}).appendTo('#estMediaMgrCont');
+                      if(Number(mediaDta.media_asp) !== 0){$(ulbtn[k]).css({'width':Math.floor($(ulbtn[k]).height() * mediaDta.media_asp)});}
+                      }).promise().done(function(){
+                        estSetMediaMgrSorting(imgDiv);
+                        });
+                    });
+                });
+              }
+            });
+          }
+        else{
+          $(imgDiv).on({ 
+          //.attr('title',defs.txt.add1+' '+defs.txt.new1+' '+defs.txt.space)
+            click : function(e){
+              e.preventDefault();
+              $(this).addClass('jiggle');
+              setTimeout(function() {$(this).removeClass('jiggle');}, 500);
+              }
+            });
+          }
+        }
+      }
+    }
+  else{
+    $(tile).addClass('estLastTile');
+    }
+  
+  return tile;
   }
 
 
@@ -840,6 +1031,7 @@ function estSaveElemOrder(tDta,sect=0){
   if(tDta.length > 0){
     var propId = Number($('body').data('propid'));
     var sDta = {'fetch':3,'propid':propId,'rt':'js','tdta':tDta};
+    
     $.ajax({
       url: vreFeud+'?5||0',
       type:'post',
@@ -1515,7 +1707,7 @@ function estCalcSqFt(eleno,ele1,ele2,ele3){
       $(ele2).val(Math.round(Math.sqrt(ev3)));
       }
     }
-  else{$(ele3).val(ev1*ev2);}
+  else{$(ele3).val(Math.round(ev1*ev2));}
   }
 
 function estRemovePopover(mode=null){
@@ -1596,22 +1788,30 @@ function estPopHeight(hld=0){
   
   
 function estSpaceReorder(){
+  //console.log('estSpaceReorder');
+  
   var defs = $('body').data('defs');
-  var tbls=[], trs=[];
-  $('#estSpaceGrpDiv').find('table.estateSubTable').each(function(ti,tabl){
+  var tbls=[], comms=[], trs=[];
+  $('#estSpaceGrpDiv').find('div.estSpaceGrpBlock').each(function(ti,tabl){
     var tblDta = $(tabl).data('tdta').groupdta;
-    var grpId = tblDta.grouplist_groupidx; //;
+    var grpId = tblDta.grouplist_groupidx;
     if(tblDta.grouplist_ord !== (ti + 1)){
       tblDta.grouplist_ord = (ti + 1);
       tbls.push(tblDta);
       }
     
-    $(tabl).find('tbody tr').each(function(ri,trw){
-      var rwDta = $(trw).data();
-      var chng = 0;
-      if(rwDta.space_grpid !== grpId){rwDta.space_grpid = grpId; chng++;}
-      if(rwDta.space_ord !== (ri + 1)){rwDta.space_ord = (ri + 1); chng++;}
-      if(chng > 0){trs.push(rwDta);}
+    $(tabl).find('div.estSpaceGroupTile').each(function(ri,trw){
+      var rwDta = $(trw).data('db');
+      if(Number(rwDta.space_idx) > 0){
+        var chng = 0;
+        if(rwDta.space_grpid !== grpId){rwDta.space_grpid = grpId; chng++;}
+        if(rwDta.space_ord !== (ri + 1)){rwDta.space_ord = (ri + 1); chng++;}
+        if(chng > 0){
+          trs.push(rwDta);
+          $(trw).data('db',rwDta);
+          }
+        }
+        
       });
     }).promise().done(function(){
       var tDta = [];
@@ -1619,7 +1819,14 @@ function estSpaceReorder(){
         $(tbls).each(function(i,dta){tDta.push({'tbl':'estate_grouplist','key':'grouplist_idx','fdta':dta,'del':0});});
         }
       if(trs.length > 0){
-        $(trs).each(function(i,dta){tDta.push({'tbl':'estate_spaces','key':'space_idx','fdta':dta,'del':0});});
+        $(trs).each(function(i,dta){
+          tDta.push({'tbl':'estate_spaces','key':'space_idx','fdta':dta,'del':0});
+          });
+        }
+      if(comms.length > 0){
+        $(comms).each(function(i,dta){
+          tDta.push({'tbl':'estate_subdiv_spaces','key':'space_idx','fdta':dta,'del':0});
+          });
         }
       //console.log(tDta);
       if(tDta.length > 0){
@@ -1634,7 +1841,7 @@ function estSpaceReorder(){
           cache:false,
           processData:true,
           success: function(ret, textStatus, jqXHR){
-            console.log(ret);
+            //console.log(ret);
             var kx = tDta.length-1;
             if(typeof ret[kx].error !== 'undefined'){
               estAlertLog(ret[kx].error);
@@ -1645,6 +1852,9 @@ function estSpaceReorder(){
                 estProcDefDta(ret[kx].alldta.tbls);
                 }
               }
+            $('div.estSpaceGrpTileCont').each(function(i,edv){
+              $(edv).find('div.estLastTile').appendTo(edv);
+              });
             },
           error: function(jqXHR, textStatus, errorThrown){
             console.log('ERRORS: '+textStatus+' '+errorThrown);
@@ -1800,6 +2010,9 @@ function estPopGo(mode,popIt,frmn=0){
     var stopit = 0;
     var inpts = [];
     
+    console.log(popIt.frm[frmn].form);
+    console.log(fldStruct);
+    
     $(pDta.destTbl.flds).each(function(i,fld){
       inpts[i] = estProcInpt(fld,popIt.frm[frmn].form,fldStruct);
       if(inpts[i] == 'stop'){stopit++;}
@@ -1828,6 +2041,7 @@ function estPopGo(mode,popIt,frmn=0){
             processData:true,
             success: function(ret, textStatus, jqXHR){
               ret = ret[0];
+              console.log(mode,ret);
               $('#estPopCover').remove();
               if(typeof ret.error !== 'undefined'){
                 estAlertLog(ret.error);
@@ -1896,7 +2110,7 @@ function estPopGo(mode,popIt,frmn=0){
                         break;
                       
                       case 'estSpaceGroupChange' : 
-                        estBuildSpaceOptns(2);
+                        estBuildSpaceOptns(2); //need mode
                         estBuildSpaceList();
                         break;
                         
@@ -3415,8 +3629,7 @@ function estMediaEditBtns(mode,mediaThm){
               estMediaDelGo(mediaDta,targEle);
               }
             }
-          }).appendTo(mediaEditBox);
-        $(JQSPAN,{'class':'fa fa-close'}).appendTo(delMedBtn);
+          }).html(JQDDI).appendTo(mediaEditBox);
         }
       }
       
@@ -3426,7 +3639,7 @@ function estMediaEditBtns(mode,mediaThm){
 
 
 
-function estSetMediaMgrSorting(){
+function estSetMediaMgrSorting(imgDiv=null){
   $('#estMediaMgrCont').children('div.upldPvwBtn').sort(function (a, b){
     var cA = $(a).data().media_levord;
     var cB = $(b).data().media_levord;
@@ -3449,8 +3662,10 @@ function estSetMediaMgrSorting(){
           var defs = $('body').data('defs');
           var tDta = [];
           var li = 0;
+          var nMedArr = [];
           $('#estMediaMgrCont').children('div.upldPvwBtn').each(function(i,ele){
             var eDta = $(ele).data();
+            nMedArr.push(eDta);
             if(Number(eDta.media_levord) !== (i + 1)){
               eDta.media_levord = i + 1;
               $('.pvw-'+eDta.media_idx).data(eDta);
@@ -3458,14 +3673,16 @@ function estSetMediaMgrSorting(){
               tDta.push({'tbl':'estate_media','key':'media_idx','fdta':fdta,'del':0});
               }
             if(Number(eDta.media_lev) > 0 && Number(eDta.media_type) == 1 && Number(eDta.media_levord) == 1){
-              //if(Number(eDta.media_lev) > 0){var urlpth = defs.dir.prop.thm;}
-              //else{var urlpth = defs.dir.subdiv.thm;}
-              var urlpth = defs.dir.prop.thm;
+              if(Number(eDta.media_lev) > 0){var urlpth = defs.dir.prop.thm;}
+              else{var urlpth = defs.dir.subdiv.thm;}
               var mURL = urlpth+eDta.media_thm+'?'+Math.floor(Math.random()*(99999-99+1)+99);
-              $('#estSectThm-'+eDta.media_lev+'-'+eDta.media_levidx).css({'background-image':'url('+mURL+')'});
+              if(imgDiv !== null){$(imgDiv).css({'background-image':'url('+mURL+')'});}
+              else{$('#estSectThm-'+eDta.media_lev+'-'+eDta.media_levidx).css({'background-image':'url('+mURL+')'});}
               }
             }).promise().done(function(){
               estSaveElemOrder(tDta,1);
+              $('#estMediaMgrCont').closest('div.estSpaceGroupTile').data('media',nMedArr);
+              console.log($('#estMediaMgrCont').closest('div.estSpaceGroupTile').data());
               });
           }
         });
@@ -3484,7 +3701,7 @@ function estBuildMediaList(lev=1){
   
   var optMenuSlide = popDta.popit.frm[0].slide;
   var levDta = $(popDta.popit.frm[0].form).data('levdta');
-  console.log(levDta);
+  //console.log(levDta);
   
   var sectKey = defs.tbls.estate_sects[lev][1];
   var mediaCont = $('#estMediaMgrCont');
@@ -3934,11 +4151,11 @@ function estBuildContactTR(tBody,yDta,tri){
   if(yDta.contact_idx > 0){
     $(td).addClass('noPAD');
     $(JQBTN,{'class':'btn btn-default estContMove','title':defs.txt.sort}).html('<i class="fa fa-arrows-v"></i>').appendTo(contDiv);
-    $(JQBTN,{'class':'btn btn-default estContGo','title':defs.txt.deletes}).data('del',-1).css({'color':'#CC0000'}).html('<i class="fa fa-close"></i>').appendTo(contDiv);
+    $(JQBTN,{'class':'btn btn-default estContGo','title':defs.txt.deletes}).data('del',-1).css({'color':'#CC0000'}).html(JQDDI).appendTo(contDiv);
     }
   else{
     $(td).addClass('noPADLR');
-    $(JQBTN,{'class':'btn btn-default estContGo','title':defs.txt.save}).data('del',0).css({'color':'#00CC00'}).html('<i class="fa fa-save"></i>').appendTo(contDiv);
+    $(JQBTN,{'class':'btn btn-default estContGo','title':defs.txt.save}).data('del',0).css({'color':'#00CC00'}).html(JQSAV).appendTo(contDiv);
     }
   estBindContactTR(tr);
   }
@@ -4049,7 +4266,7 @@ function estContactUpDate(mode,btn){
                     else{
                       console.log('yDta saved');
                       $(yTR).data(yDta);
-                      $(yTR).find('button.estContGo').data('del',-1).css({'color':'#CC0000'}).html('<i class="fa fa-close"></i>');
+                      $(yTR).find('button.estContGo').data('del',-1).css({'color':'#CC0000'}).html(JQDDI);
                       }
                     }
                   }
@@ -4106,12 +4323,12 @@ function estSetContGoBtn(mode,yTR){
   
   if($(yTR).parent().is('tbody')){
     if(mode == -1){
-      $(btn3).attr('title',defs.txt.deletes).data('del',-1).css({'color':'#CC0000'}).html('<i class="fa fa-close"></i>');
+      $(btn3).attr('title',defs.txt.deletes).data('del',-1).css({'color':'#CC0000'}).html(JQDDI);
       //$(txt1).removeProp('name');
       //$(txt2).removeProp('name');
       }
     else{
-      $(btn3).attr('title',defs.txt.save).data('del',0).css({'color':'#00CC00'}).html('<i class="fa fa-save"></i>');
+      $(btn3).attr('title',defs.txt.save).data('del',0).css({'color':'#00CC00'}).html(JQSAV);
       //$(txt1).prop('name','contact_key['+Number(contDta.contact_tabkey)+']['+Number(contDta.contact_idx)+']');
       //$(txt2).prop('name','contact_data['+Number(contDta.contact_tabkey)+']['+Number(contDta.contact_idx)+']');
       }
@@ -4228,7 +4445,9 @@ function estBuildSpaceOptns(sTep=0){
   var popit = $('#estPopCont').data('popit');
   var cForm = $(targ[0]).closest('form');
   
-  var levDta = $(cForm).data('levdta');
+  var allDta = $(cForm).data();
+  var mode = Number(allDta.mode);
+  var levDta = allDta.levdta;
   
   propZone = Number($('select[name="prop_zoning"]').val());
   var zoneDta = defs.tbls.estate_zoning.dta.find(x => x.zoning_idx === propZone);
@@ -4237,7 +4456,7 @@ function estBuildSpaceOptns(sTep=0){
    //residential, commercial...
   var zoneGrpX = $.grep(defs.tbls.estate_group.dta, function (element, index) {return element.group_zone == propZone;});
   //above groups only for "spaces"
-  var zoneGroups = $.grep(zoneGrpX, function (element, index) {return element.group_lev == 2;});
+  var zoneGroups = $.grep(zoneGrpX, function (element, index) {return element.group_lev == mode;});
   
   $(targ[0]).empty().promise().done(function(){
     $(zoneGroups).each(function(i,opt){
@@ -4269,7 +4488,7 @@ function estBuildSpaceOptns(sTep=0){
   //residential, commercial...
   var zoneCatX = $.grep(defs.tbls.estate_featcats.dta, function (element, index) {return element.featcat_zone == propZone;});
    // above groups only for 'spaces'
-  var zoneCats = $.grep(zoneCatX, function (element, index) {return element.featcat_lev == 2;});
+  var zoneCats = $.grep(zoneCatX, function (element, index) {return element.featcat_lev == mode;});
   
   $(targ[1]).empty().promise().done(function(){
     $(zoneCats).each(function(i,opt){
@@ -4301,43 +4520,125 @@ function estBuildSpaceOptns(sTep=0){
 
 
 
-function estBuildSpace(SPDTA,tbx){
-  var spaceId = (SPDTA !== null ? SPDTA.space_idx : 0);
-  var spaceLev = (SPDTA !== null ? SPDTA.space_lev : 1);
-  var spaceLevIdx = (SPDTA !== null ? SPDTA.space_levidx : 0);
-  
+function estBuildSpace(mode,ele){
   var defs = $('body').data('defs');
   var propId = Number($('body').data('propid'));
-  var spaceFrm = defs.tbls.estate_spaces.form;
   var xt = defs.txt;
-  
   var uperm = Number(defs.user.perm);
   var SpIc = [JQADI,defs.txt.add1];
   if(uperm >= 3){SpIc = [JQEDI,defs.txt.add1+'/'+defs.txt.edit];}
+
+  $('.estThmMgrCont').remove();
   
-  var levmap = defs.keys.levmap;
+  var DTA = $(ele).data();
+  //console.log(DTA);
+  
+  var SPDTA = DTA.db;
+  
+  if(typeof DTA.idx == 'undefined'){
+    console.log('no DTA.idx');
+    return;
+    }
+  
+  if(mode < 0){ // delete a space
+    var delDta = [{'tbl':DTA.keys[0],'key':DTA.keys[1],'fdta':SPDTA,'del':-1}];
+    //console.log(delDta);
+    
+    $.ajax({
+      url: vreFeud+'?3||0',
+      type:'post',
+      data:{'fetch':3,'propid':propId,'rt':'js','tdta':delDta},
+      dataType:'json',
+      cache:false,
+      processData:true,
+      success: function(ret, textStatus, jqXHR){
+        console.log(ret);
+        ret = ret[0];
+        if(typeof ret.error !== 'undefined'){
+          estAlertLog(ret.error);
+          }
+        
+        if(typeof ret.alldta !== 'undefined'){
+          estProcDefDta(ret.alldta.tbls);
+          }
+        if(mode < -2){
+          estGetSubDivs(4);
+          }
+        else{
+          estBuildSpaceList();
+          estBuildGallery();
+          }
+        },
+      error: function(jqXHR, textStatus, errorThrown){
+        estBuildSpaceList();
+        console.log('ERRORS: '+textStatus+' '+errorThrown);
+        estAlertLog(jqXHR.responseText);
+        }
+      });
+    return;
+    }
+  
+  
+  var spaceFrm = defs.tbls[DTA.keys[0]].form;
+  //console.log(spaceFrm);
   
   var popIt = estBuildPopover([{'tabs':[xt.main,xt.features,xt.description,xt.media],'fnct':{'name':'estSHUploadBtn','args':3}}]); //fnct acts on tab click
   var popFrm = popIt.frm[0];
   
-  //need to configure form for 'spaceLev' value
-  //spaceLev: 0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space
-  
   var zoneDta = defs.tbls.estate_zoning.dta.find(x => Number(x.zoning_idx) === Number($('select[name="prop_zoning"]').val()));
   var zoneName = (typeof zoneDta !== 'undefined' ? zoneDta.zoning_name : defs.txt.unk);
   
-  var destTbl = defs.tbls.estate_spaces;
-  var levDta = destTbl.dta.find(x => Number(x.space_idx) === Number(spaceId));
-  if(typeof levDta !== 'undefined'){var frmLabel = levDta.space_name;}
-  else{
-    var frmLabel = xt.new1+' '+zoneName+' '+xt.space;
-    var levDta = estDefDta('estate_spaces');
-    levDta.space_propidx = propId;
-    levDta.space_lev = 1;
-    levDta.space_levidx = propId;
-    levDta.space_grpid = tbx.grouplist_groupidx;
-    levDta.space_ord = (Number(destTbl.dta.length)+1);
+  
+  var spaceLev = Number(SPDTA.space_lev); // 1 for Property Spaces, 3 & 4 for City & Subdiv
+  var spaceLevIdx = Number(SPDTA.space_levidx);
+  
+  
+  var TBX = $(ele).closest('div.estSpaceGrpTileCont').data();
+  //console.log(TBX);
+  
+  
+  var destTbl = defs.tbls[DTA.keys[0]];
+  //console.log(destTbl);
+  
+  var spaceId = Number(SPDTA[DTA.keys[1]]);
+  var levDta = destTbl.dta.find(x => Number(x[DTA.keys[1]]) === Number(spaceId));
+  //console.log(levDta);
+  
+  //need to configure form for 'spaceLev' value
+  //spaceLev: 0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space
+  
+  /*
+  groups = sandpip_estate_group (2=prop, 3=city, 4=subdiv) - ties to tile sections!
+  
+  cats = sandpip_estate_featcats (0=subdiv, 2=prop, 3=city spaces, 4=subdiv spaces) - ties to tile sections!
+  
+  */
+  
+  //estMediaMgrCont
+  
+  if(typeof levDta == 'undefined'){
+    var levDta = estDefDta(DTA.keys[0]);
+    levDta.space_ord = $(ele).parent().find('div.estSpaceGroupTile').length;
+    levDta.space_catid = 0;
+    
+    if(mode > 2){
+      var frmLabel = xt.new1+' '+DTA.grpname+' '+xt.space;
+      levDta.space_lev = mode;
+      levDta.space_levidx = (mode == 4 ? Number($('select[name="prop_subdiv"]').val()) : Number($('select[name="prop_city"]').val()));
+      }
+    else{
+      var frmLabel = xt.new1+' '+zoneName+' '+xt.space;
+      levDta.space_lev = 1;
+      levDta.space_levidx = propId;
+      levDta.space_grpid = TBX.grouplist_groupidx;
+      }
+    
     }
+  else{
+    var frmLabel = levDta.space_name;
+    }
+  
+  //console.log(levDta);
   
   $(popFrm.form).prop('enctype','multipart/form-data');
   
@@ -4374,22 +4675,23 @@ function estBuildSpace(SPDTA,tbx){
   if(levDta.space_idx == 0){$(saveBtn2).hide();}
   
   
+  $(popFrm.form).data({'form':{'elem':null,'attr':null,'match':{},'fnct':{'name':'estSaveSpace'}},'mode':mode,'levdta':levDta,'destTbl':{'dta':destTbl.dta,'flds':destTbl.flds,'idx':DTA.keys[1],'table':DTA.keys[0]},'maintbl':null});
   
-  $(popFrm.form).data('levdta',levDta).data('destTbl',{'dta':destTbl.dta,'flds':destTbl.flds,'idx':'space_idx','table':'estate_spaces'});
-  $(popFrm.form).data('maintbl',null).data('form',{'elem':null,'attr':null,'match':{},'fnct':{'name':'estSaveSpace'}});
-  
-  var newMediaDta = estNewMediaDta(2);
+  var newMediaDta = estNewMediaDta(mode);
   estFileUplFld(newMediaDta);
   
-  $(JQNPT,{'type':'hidden','name':'space_propidx','class':'estNoClear','value':Number(levDta.space_propidx)}).prependTo(popFrm.form);
-  $(JQNPT,{'type':'hidden','name':'space_levidx','class':'estReOrd','value':Number(levDta.space_levidx)}).prependTo(popFrm.form);
-  $(JQNPT,{'type':'hidden','name':'space_lev','class':'estNoClear','value':Number(levDta.space_lev)}).prependTo(popFrm.form);
-  $(JQNPT,{'type':'hidden','name':'space_idx','value':Number(levDta.space_idx)}).prependTo(popFrm.form);
   
   var tabx = 0;
   var tri = 0;
   var tabtr = popFrm.tabs.tab;
   var tooltips = [];
+  
+  $(JQNPT,{'type':'hidden','name':'space_ord','value':Number(levDta.space_ord)}).prependTo(popFrm.form);
+  $(JQNPT,{'type':'hidden','name':'space_levidx','class':'estNoClear','value':Number(levDta.space_levidx)}).prependTo(popFrm.form);
+  $(JQNPT,{'type':'hidden','name':'space_lev','class':'estNoClear','value':Number(levDta.space_lev)}).prependTo(popFrm.form);
+  $(JQNPT,{'type':'hidden','name':'space_idx','value':Number(levDta.space_idx)}).prependTo(popFrm.form);
+  
+    
   // TAB 0
   tabtr[tabx].tr[tri] = [];
   tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
@@ -4408,12 +4710,15 @@ function estBuildSpace(SPDTA,tbx){
   tri++;
   
   
-  tabtr[tabx].tr[tri] = [];
-  tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
-  tabtr[tabx].tr[tri][1] = $(JQTD).html(xt.location).appendTo(tabtr[tabx].tr[tri][0]);
-  tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
-  $(JQNPT,{'type':'text','name':'space_loc','value':levDta.space_loc,'placeholder':xt.posithnt,'class':'tbox form-control input-xlarge'}).appendTo(tabtr[tabx].tr[tri][2]);
-  tri++;
+  
+  if(mode == 2){
+    tabtr[tabx].tr[tri] = [];
+    tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
+    tabtr[tabx].tr[tri][1] = $(JQTD).html(xt.location).appendTo(tabtr[tabx].tr[tri][0]);
+    tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
+    $(JQNPT,{'type':'text','name':'space_loc','value':levDta.space_loc,'placeholder':xt.posithnt,'class':'tbox form-control input-xlarge'}).appendTo(tabtr[tabx].tr[tri][2]);
+    tri++;
+    }
   
   
   tabtr[tabx].tr[tri] = [];
@@ -4436,9 +4741,9 @@ function estBuildSpace(SPDTA,tbx){
     click : function(e){
       var defs = $('body').data('defs');
       var defDta = estDefDta('estate_group');
-      defDta.group_lev = 2;
+      defDta.group_lev = mode;
       defDta.group_zone = Number($('select[name="prop_zoning"]').val());
-      estPopoverAlt(1,{'tbl':'estate_spaces','fld':'space_grpid','defdta':defDta,'fnct':{'name':'estSpaceGroupChange'}});
+      estPopoverAlt(1,{'tbl':DTA.keys[0],'fld':'space_grpid','defdta':defDta,'fnct':{'name':'estSpaceGroupChange'}});
       }
     }).appendTo(sonar);
   $(tabtr[tabx].tr[tri][3]).data('chk',space_grpid);
@@ -4451,7 +4756,7 @@ function estBuildSpace(SPDTA,tbx){
   tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
   tabtr[tabx].tr[tri][3] = $(JQDIV,{'class':'estInptCont'}).appendTo(tabtr[tabx].tr[tri][2]);
   space_catid = $(JQSEL,{'name':'space_catid','value':levDta.space_catid,'class':'tbox form-control xlarge input-xlarge ILBLK oneBtn'}).on({
-    change : function(){estBuildCategoryList(2);}
+    change : function(){estBuildCategoryList(mode);}
     }).appendTo(tabtr[tabx].tr[tri][3]);
   
   var sonar = $(JQDIV,{'class':'estSonar'}).appendTo(tabtr[tabx].tr[tri][3]);
@@ -4463,55 +4768,58 @@ function estBuildSpace(SPDTA,tbx){
     click : function(e){
       var defs = $('body').data('defs');
       var defDta = estDefDta('estate_featcats');
-      defDta.featcat_lev = 2;
+      defDta.featcat_lev = mode;
       defDta.featcat_zone = Number($('select[name="prop_zoning"]').val());
-      estPopoverAlt(1,{'tbl':'estate_spaces','fld':'space_catid','defdta':defDta,'fnct':{'name':'estBuildSpaceOptns'}});
+      estPopoverAlt(1,{'tbl':DTA.keys[0],'fld':'space_catid','defdta':defDta,'fnct':{'name':'estBuildSpaceOptns'}});
       }
     }).appendTo(sonar);
   $(tabtr[tabx].tr[tri][3]).data('chk',space_catid);
   tri++;
   
-  
-  tabtr[tabx].tr[tri] = [];
-  tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
-  tabtr[tabx].tr[tri][1] = $(JQTD).html(xt.dimensions+' '+xt.xbyy).appendTo(tabtr[tabx].tr[tri][0]);
-  tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
-  tabtr[tabx].tr[tri][3] = $(JQDIV,{'class':'estInptCont'}).appendTo(tabtr[tabx].tr[tri][2]);
-  var dimux = $(JQNPT,{'type':'number','name':'space_dimx','value':levDta.space_dimx,'min':0,'class':'tbox form-control input-small ILBLK'}).appendTo(tabtr[tabx].tr[tri][3]);
-  var dimuy = $(JQNPT,{'type':'number','name':'space_dimy','value':levDta.space_dimy,'min':0,'class':'tbox form-control input-small ILBLK MLFT3'}).appendTo(tabtr[tabx].tr[tri][3]);
-  tri++;
-  
-  tabtr[tabx].tr[tri] = [];
-  tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
-  tabtr[tabx].tr[tri][1] = $(JQTD).html(xt.dimensions+' '+xt.sqr).appendTo(tabtr[tabx].tr[tri][0]);
-  tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
-  tabtr[tabx].tr[tri][3] = $(JQDIV,{'class':'estInptCont'}).appendTo(tabtr[tabx].tr[tri][2]);
-  var dimuxy = $(JQNPT,{'type':'number','name':'space_dimxy','value':levDta.space_dimxy,'min':0,'step':2,'class':'tbox form-control input-small FL ILBLK estNoRightBord'}).appendTo(tabtr[tabx].tr[tri][3]);
-  
-  
-  if(Number(levDta.space_idx) > 0){var dimuLev = Number(levDta.space_dimu);}
-  else{var dimuLev = Number($('input[name="prop_dimu1"]').val());}
-  var dimu = $(JQNPT,{'type':'hidden','name':'space_dimu','value':dimuLev}).appendTo(tabtr[tabx].tr[tri][3]);
-  
-  var spaceDimuBtn = $(JQBTN,{'id':'spaceDimuBtn','class':'btn btn-default estNoLeftBord'});
-  $(spaceDimuBtn).html(defs.keys.dim1u[dimuLev][0]).on({
-    click : function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      var defs = $('body').data('defs');
-      var cv = Number($('input[name="space_dimu"]').val()) +1;
-      if(cv >= defs.keys.dim1u.length){cv = 0;}
-      $('input[name="space_dimu"]').val(cv);
-      $(spaceDimuBtn).html(defs.keys.dim1u[cv][0]);
-      }
-    }).appendTo(tabtr[tabx].tr[tri][3]);
-  
-  
-  $(dimux).on({change : function(){estCalcSqFt(1,dimux,dimuy,dimuxy);}});
-  $(dimuy).on({change : function(){estCalcSqFt(2,dimux,dimuy,dimuxy);}});
-  $(dimuxy).on({change : function(){estCalcSqFt(3,dimux,dimuy,dimuxy);}});
-  
-  tri++;
+    
+  if(mode == 2){
+    tabtr[tabx].tr[tri] = [];
+    tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
+    tabtr[tabx].tr[tri][1] = $(JQTD).html(xt.dimensions+' '+xt.xbyy).appendTo(tabtr[tabx].tr[tri][0]);
+    tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
+    tabtr[tabx].tr[tri][3] = $(JQDIV,{'class':'estInptCont'}).appendTo(tabtr[tabx].tr[tri][2]);
+    var dimux = $(JQNPT,{'type':'number','name':'space_dimx','value':levDta.space_dimx,'min':0,'class':'tbox form-control input-small ILBLK'}).appendTo(tabtr[tabx].tr[tri][3]);
+    var dimuy = $(JQNPT,{'type':'number','name':'space_dimy','value':levDta.space_dimy,'min':0,'class':'tbox form-control input-small ILBLK MLFT3'}).appendTo(tabtr[tabx].tr[tri][3]);
+    tri++;
+    
+    tabtr[tabx].tr[tri] = [];
+    tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
+    tabtr[tabx].tr[tri][1] = $(JQTD).html(xt.dimensions+' '+xt.sqr).appendTo(tabtr[tabx].tr[tri][0]);
+    tabtr[tabx].tr[tri][2] = $(JQTD).appendTo(tabtr[tabx].tr[tri][0]);
+    tabtr[tabx].tr[tri][3] = $(JQDIV,{'class':'estInptCont'}).appendTo(tabtr[tabx].tr[tri][2]);
+    var dimuxy = $(JQNPT,{'type':'number','name':'space_dimxy','value':levDta.space_dimxy,'min':0,'step':1,'class':'tbox form-control input-small FL ILBLK estNoRightBord'}).appendTo(tabtr[tabx].tr[tri][3]);
+    
+    
+    if(Number(levDta.space_idx) > 0){var dimuLev = Number(levDta.space_dimu);}
+    else{var dimuLev = Number($('input[name="prop_dimu1"]').val());}
+    var dimu = $(JQNPT,{'type':'hidden','name':'space_dimu','value':dimuLev}).appendTo(tabtr[tabx].tr[tri][3]);
+    
+    var spaceDimuBtn = $(JQBTN,{'id':'spaceDimuBtn','class':'btn btn-default estNoLeftBord'});
+    $(spaceDimuBtn).html(defs.keys.dim1u[dimuLev][0]).on({
+      click : function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var defs = $('body').data('defs');
+        var cv = Number($('input[name="space_dimu"]').val()) +1;
+        if(cv >= defs.keys.dim1u.length){cv = 0;}
+        $('input[name="space_dimu"]').val(cv);
+        $(spaceDimuBtn).html(defs.keys.dim1u[cv][0]);
+        }
+      }).appendTo(tabtr[tabx].tr[tri][3]);
+    
+    
+    $(dimux).on({change : function(){estCalcSqFt(1,dimux,dimuy,dimuxy);}});
+    $(dimuy).on({change : function(){estCalcSqFt(2,dimux,dimuy,dimuxy);}});
+    $(dimuxy).on({change : function(){estCalcSqFt(3,dimux,dimuy,dimuxy);}});
+    
+    tri++;
+    }
+    
   
   
   
@@ -4527,7 +4835,7 @@ function estBuildSpace(SPDTA,tbx){
   fBox1a = $(JQDIV,{'id':'estFeatureMgrLcol'}).appendTo(fBox0);
   fBox1b = $(JQDIV,{'id':'estFeatureListHead'}).appendTo(fBox1a);
   $(JQBTN,{'class':'btn btn-primary btn-sm'}).html(xt.new1+' '+xt.feature).on({
-    click : function(e){e.preventDefault(); estAddEditFeature(2);}
+    click : function(e){e.preventDefault(); estAddEditFeature(mode);}
     }).appendTo(fBox1b);
   $(JQNPT,{'type':'hidden','name':'feature_name','value':''}).appendTo(fBox1b);
   fBox1c = $(JQDIV,{'id':'estFeatureListCont','class':'estFeatNotUsed estFeatureListSort'}).appendTo(fBox1a);
@@ -4564,14 +4872,14 @@ function estBuildSpace(SPDTA,tbx){
   
   var mBox0 = $(JQDIV,{'id':'estMediaMgrCont'}).on({
     click : function(){
-      var newMediaDta = estNewMediaDta(2);
+      var newMediaDta = estNewMediaDta(mode);
       estFileUplFld(newMediaDta);
       }
     }).appendTo(tabtr[tabx].tr[tri][1]);
   
   estBuildSpaceOptns();
-  estBuildCategoryList(2);
-  estBuildMediaList(2);
+  estBuildCategoryList(mode);
+  estBuildMediaList(mode);
   estPosPopover();
   }
 
@@ -4796,13 +5104,15 @@ function estBuildCategoryList(lev=1){
   var levDta = $(popDta.popit.frm[0].form).data('levdta');
   var sectKey = defs.tbls.estate_sects[lev][1];
   
+  //console.log(levDta,sectKey);
+  
   if(levDta[sectKey] == 0){
     $('#estFeatureMgrCont').hide();
     $('#estFeatureNoGo').html(defs.txt.savefirst+' '+defs.txt.features).show();
     }
   else{
     var catInf = estGetFeatCatInfo(lev);
-    console.log(lev,catInf);
+    //console.log(lev,catInf);
     
     /*
     array(
@@ -4841,8 +5151,8 @@ function estBuildCategoryList(lev=1){
       grpGrep1 = $.grep(grpGrepX, function (element, index) {return element['featurelist_levidx'] == levDta[sectKey];});
       grpGrep2 = $.grep(defs.tbls.estate_features.dta, function (element, index) {return Number(element['feature_cat']) == Number(catInf.evlu);});
       
-      console.log(grpGrep1);
-      console.log(grpGrep2);
+      //console.log(grpGrep1);
+      //console.log(grpGrep2);
       
       $(popDta.ftarg.targ[1]).empty().promise().done(function(){
         $(popDta.ftarg.targ[0]).empty().promise().done(function(){
@@ -4885,29 +5195,40 @@ function estBuildCategoryList(lev=1){
     }
   }
 
-function estSaveSpace(spaceId){
+
+function estSaveSpace(spaceId,mode=2){
   var defs = $('body').data('defs');
+  var popit = $('#estPopCont').data('popit');
   $('input[name="space_idx"]').val(spaceId);
-  console.log(defs);
   
-  var levDta = defs.tbls.estate_spaces.dta.find(x => x.space_idx === spaceId);
+  var DTA = $(popit.frm[0].form).data();
+  console.log(DTA);
+  var tablName = DTA.destTbl.table;
+  var tablKey = DTA.destTbl.flds[0];
+  var tablMode = Number(DTA.mode);
+  
+  var levDta = defs.tbls[tablName].dta.find(x => x[tablKey] === spaceId);
   console.log(levDta);
   
-  var popit = $('#estPopCont').data('popit');
+  if(typeof levDta == 'undefined'){
+    console.log('levDta not found');
+    return;
+    }
+  
   $(popit.frm[0].form).data('levdta',levDta);
   estTestEles(popit.frm[0].form, popit.frm[0].savebtns);
   
   var grpLstDta = defs.tbls.estate_grouplist.dta.find(x => Number(x.grouplist_groupidx) === Number(levDta.space_grpid));
   
-  if(typeof grpLstDta == 'undefined'){
+  if(tablMode == 2 && typeof grpLstDta == 'undefined'){ // Need? seems really old code
     console.log('get grpLstDta');
     var grpOrd = 1;
-    var fdta = [{'grouplist_idx':0},{'grouplist_propidx':levDta.space_propidx},{'grouplist_groupidx':levDta.space_grpid},{'grouplist_ord':grpOrd}];
+    var fdta = {'grouplist_idx':0,'grouplist_propidx':levDta.space_levidx,'grouplist_groupidx':levDta.space_grpid,'grouplist_ord':grpOrd};
 
     $.ajax({
       url: vreFeud+'?5||0',
       type:'post',
-      data:{'fetch':3,'propid':levDta.space_propidx,'rt':'js','tdta':[{'tbl':'estate_grouplist','key':'grouplist_idx','del':0,'fdta':fdta}]},
+      data:{'fetch':3,'propid':levDta.space_levidx,'rt':'js','tdta':[{'tbl':'estate_grouplist','key':'grouplist_idx','del':0,'fdta':[fdta]}]},
       dataType:'json',
       cache:false,
       processData:true,
@@ -4921,8 +5242,8 @@ function estSaveSpace(spaceId){
         else{
           if(typeof ret.alldta !== 'undefined'){
             estProcDefDta(ret.alldta.tbls);
-            estBuildCategoryList(2);
-            estBuildMediaList(2);
+            estBuildCategoryList(tablMode);
+            estBuildMediaList(tablMode);
             estBuildSpaceList();
             estPopHeight();
             }
@@ -4936,12 +5257,15 @@ function estSaveSpace(spaceId){
       });
     }
   else{
-    estBuildCategoryList(2);
-    estBuildMediaList(2);
+    estBuildCategoryList(tablMode);
+    estBuildMediaList(tablMode);
     estBuildSpaceList();
     estPopHeight();
     }
-  
+  if(tablMode > 2){
+    estGetSubDivs(4);
+    //prop_subdiv
+    }
   }
 
 
@@ -4970,150 +5294,42 @@ function estBuildSpaceListTbl(i,tbx){
   
   
   tdta[i] = {'groupdta':tbx,'tbl':'','th':'','tb':'','tr':[],'sqsp':0};
+  tdta[i].tbl = $(JQDIV,{'id':'estate-spaces-tabl-'+tbx.grouplist_groupidx,'class':'estSpaceGrpBlock estDragTable'}).data(tbx);
+  tdta[i].th = $(JQDIV,{'id':'estate-spaces-head-'+tbx.grouplist_groupidx,'class':'estSpaceGrpHeadCont estDragableTR'}).appendTo(tdta[i].tbl);
+  tdta[i].tb = $(JQDIV,{'id':'estSortTBody-'+tbx.grouplist_groupidx,'class':'ui-sortable estSpaceGrpTileCont estSortTBody estSortTarg'}).data(tbx).appendTo(tdta[i].tbl);
   
-  
-  tdta[i].tbl = $(JQTABLE,{'id':'estate-spaces-tabl-'+tbx.grouplist_groupidx,'class':'table-striped estateSubTable estDragTable'}).data(tbx);
-  $(JQCOLGRP,{'class':'left'}).appendTo(tdta[i].tbl);//.css({'width':'10%'})
-  $(JQCOLGRP,{'class':'left'}).appendTo(tdta[i].tbl);//.css({'width':'20%'})
-  $(JQCOLGRP,{'class':'left'}).appendTo(tdta[i].tbl);//.css({'width':'*'})
-  $(JQCOLGRP,{'class':'left'}).appendTo(tdta[i].tbl);//.css({'width':'*'})
-  $(JQCOLGRP,{'class':'center last'}).appendTo(tdta[i].tbl);//.css({'min-width':'192px'})
-  
-  tdta[i].th = $(JQTHEAD).appendTo(tdta[i].tbl);
-  tdta[i].tb = $(JQTBODY,{'id':'estSortTBody-'+tbx.grouplist_groupidx,'class':'ui-sortable estSortTBody estSortTarg'}).data(tbx).appendTo(tdta[i].tbl);
   
   tdta[i].tr[tri] = [];
-  tdta[i].tr[tri][0] = $(JQTR,{'class':'estDragableTR'}).appendTo(tdta[i].th);
-  tdta[i].tr[tri][1] = $(JQTH,{'class':'left'}).appendTo(tdta[i].tr[tri][0]);
-  tdta[i].tr[tri][2] = $(JQDIV,{'class':'btn-group'}).appendTo(tdta[i].tr[tri][1]);
+  tdta[i].tr[tri][0] = $(JQDIV,{'class':'btn-group'}).appendTo(tdta[i].th);
+  tdta[i].tr[tri][1] = $(JQSPAN).html(groupName).appendTo(tdta[i].th);
   
-  tdta[i].tr[tri][3] = $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.section}).html('<i class="fa fa-arrows-v"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][2]);
+  var srtBlkBtn1 = $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.section}).on({
+    click : function(e){e.preventDefault()}
+    }).html('<i class="fa fa-arrows-v"></i>').appendTo(tdta[i].tr[tri][0]);
   
   if(tbx.grouplist_idx == 0){
-    $(tdta[i].tr[tri][3]).prop('disabled',true).css({'cursor':'not-allowed'}).attr('title',xt.nauntilspaces);
+    $(srtBlkBtn1).prop('disabled',true).css({'cursor':'not-allowed'}).attr('title',xt.nauntilspaces);
     $(tdta[i].tb).removeClass('estSortTBody');
     $(tdta[i].tbl).removeClass('estDragTable');
     }
   
-  tdta[i].tr[tri][4] = $(JQBTN,{'type':'button','class':'btn btn-default ','title':xt.add1+' '+xt.new1+' '+xt.space+': '+groupName}).html(JQADI).on({
-    click : function(e){
-      e.preventDefault();
-      estBuildSpace(null,tbx)
-      }
-    }).appendTo(tdta[i].tr[tri][2]);
-  
-  $(JQTH,{'class':'left','colspan':2}).html(groupName).appendTo(tdta[i].tr[tri][0]);
-  $(JQTH,{'class':'left'}).html(xt.dimu0).appendTo(tdta[i].tr[tri][0]);
-  $(JQTH,{'class':'center last options'}).html(xt.options).appendTo(tdta[i].tr[tri][0]);
   tri++;
   
   // LIST OF SPACES
   //estDragableTR
   grpGrep2 = $.grep(defs.tbls.estate_spaces.dta, function (element, index) {return element.space_grpid == tbx.grouplist_groupidx;});
   $(grpGrep2).each(function(ri,rmdta){
-    tdta[i].tr[tri] = [];
-    tdta[i].tr[tri][0] = $(JQTR,{'class':'estDragTR'}).data(rmdta).appendTo(tdta[i].tb);
-    tdta[i].tr[tri][1] = $(JQTD,{'class':'left noPAD posREL'}).appendTo(tdta[i].tr[tri][0]);
-    tdta[i].tr[tri][2] = $(JQTD,{'class':'left'}).html(rmdta.space_name).appendTo(tdta[i].tr[tri][0]);
-    tdta[i].tr[tri][3] = $(JQTD,{'class':'left'}).html(rmdta.space_loc).appendTo(tdta[i].tr[tri][0]);
-    tdta[i].tr[tri][4] = $(JQTD,{'class':'left'}).html(rmdta.space_dimxy+' '+xt.dimu0).appendTo(tdta[i].tr[tri][0]);
-    tdta[i].tr[tri][5] = $(JQTD,{'class':'last'}).appendTo(tdta[i].tr[tri][0]);
-    tdta[i].tr[tri][6] = $(JQDIV,{'class':'btn-group'}).appendTo(tdta[i].tr[tri][5]);
-    tdta[i].tr[tri][7] = $(JQDIV,{'id':'estSectThm-2-'+rmdta.space_idx,'class':'estPropThumb'}).appendTo(tdta[i].tr[tri][1]);//
-    
-    $(tdta[i].tr[tri][7]).on({
-      click : function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        //estPropThumb
-        var targ = this;
-        $('.estThmMgrCont').remove().promise().done(function(){
-          mediaGrep1 = $.grep(defs.tbls.estate_media.dta, function (element, index) {return element['media_lev'] == 2;});
-          mediaGrep2 = $.grep(mediaGrep1, function (element, index) {return element['media_levidx'] == rmdta.space_idx;});
-          if(mediaGrep2.length > 1){
-            var xW = $(targ).closest('table').width() - $(targ).closest('tr').find('div.btn-group').outerWidth();
-            var mBox0 = $(JQDIV,{'id':'estMediaMgrCont','class':'estThmMgrCont'}).css({'max-width':xW+'px'}).appendTo($(targ).parent()).promise().done(function(){
-                var ulbtn = [];
-                $(mediaGrep2).each(function(k,mediaDta){
-                  if(Number(mediaDta.media_lev) > 0){var urlpth = defs.dir.prop.thm+mediaDta.media_thm+noCache;}
-                  else{var urlpth = defs.dir.subdiv.thm+mediaDta.media_thm+noCache;}
-                  ulbtn[k] = $(JQDIV,{'class':'upldPvwBtn pvw-'+mediaDta.media_idx}).data(mediaDta).css({'background-image':'url('+urlpth+')'}).appendTo('#estMediaMgrCont');
-                  if(Number(mediaDta.media_asp) !== 0){$(ulbtn[k]).css({'width':Math.floor($(ulbtn[k]).height() * mediaDta.media_asp)});}
-                  }).promise().done(function(){
-                    estSetMediaMgrSorting();
-                    });
-              });
-            }
-          else{
-            $(targ).addClass('jiggle');
-            setTimeout(function() {$(targ).removeClass('jiggle');}, 500);
-            }
-          });
-        }
-      });
-    
-    
+    var tstEle = estBuildSpaceTile(2,rmdta,{'grpname':groupName,'grpidx':tbx.grouplist_idx});
+    $(tstEle).appendTo(tdta[i].tb);
     tdta[i].sqsp =  Number(tdta[i].sqsp) + Number(rmdta.space_dimxy);
-    
-    var mediaGrep1 = $.grep(defs.tbls.estate_media.dta, function (element, index) {return element['media_levidx'] == rmdta.space_idx;});
-    if(mediaGrep1.length > 0){
-      var firstThm = mediaGrep1.find(x => x.media_levord === 1);
-      var noCache = '?'+Math.floor(Math.random() * (99999 - 99 + 1) + 99);      
-      if(Number(firstThm.media_lev) > 0){var urlpth = defs.dir.prop.thm;}
-      else{var urlpth = defs.dir.subdiv.thm;}
-        
-      if(typeof firstThm !== 'undefined'){$(tdta[i].tr[tri][7]).css({'background-image':'url('+urlpth+firstThm.media_thm+noCache+')'});}
-      else{$(tdta[i].tr[tri][7]).css({'background-image':'url('+urlpth+mediaGrep1[0].media_thm+noCache+')'});}
-      }
-    
-    $(JQBTN,{'class':'e-sort sort-trigger btn btn-default ui-sortable-handle','title':xt.dragto+' '+xt.reorder+' '+xt.spaces}).html('<i class="fa fa-arrows-v"></i>').on({click : function(e){e.preventDefault()}}).appendTo(tdta[i].tr[tri][6]);
-    
-    $(JQBTN,{'class':'btn btn-default btn-secondary','title':xt.edit+' '+rmdta.space_name}).html('<i class="fa fa-pencil-square-o"></i>').on({
-      click : function(e){
-        e.preventDefault();
-        var SPDTA = $(this).closest('tr').data();
-        var TBX = $(this).closest('tbody').data();
-        estBuildSpace(SPDTA,TBX);
-        }
-      }).appendTo(tdta[i].tr[tri][6]);
-    
-    $(JQBTN,{'type':'button','class':'action delete btn btn-default','title':xt.deletes+': '+rmdta.space_name}).html('<i class="fa fa-close"></i>').on({
-      click : function(e){
-        e.preventDefault();
-        console.log(rmdta);
-        if(jsconfirm(xt.deletes+': '+rmdta.space_name+' - '+xt.areyousure)){
-          $.ajax({
-            url: vreFeud+'?3||0',
-            type:'post',
-            data:{'fetch':3,'propid':rmdta.space_propidx,'rt':'js','tdta':[{'tbl':'estate_spaces','key':'space_idx','fdta':rmdta,'del':-1}]},
-            dataType:'json',
-            cache:false,
-            processData:true,
-            success: function(ret, textStatus, jqXHR){
-              console.log(ret);
-              ret = ret[0];
-              if(typeof ret.alldta !== 'undefined'){
-                estProcDefDta(ret.alldta.tbls);
-                }
-              estBuildSpaceList();
-              estBuildGallery();
-                
-              if(typeof ret.error !== 'undefined'){
-                estAlertLog(ret.error);
-                }
-              },
-            error: function(jqXHR, textStatus, errorThrown){
-              estBuildSpaceList();
-              console.log('ERRORS: '+textStatus+' '+errorThrown);
-              estAlertLog(jqXHR.responseText);
-              }
-            });
-          }
-        }
-      }).appendTo(tdta[i].tr[tri][6]);
-    
     tri++;
-    });
+    }).promise().done(function(){
+      var rmdta = estDefDta('estate_spaces');
+      rmdta.space_lev = 1;
+      rmdta.space_grpid = tbx.grouplist_idx;
+      var tstEle = estBuildSpaceTile(2,rmdta,{'grpname':groupName,'grpidx':tbx.grouplist_idx});
+      $(tstEle).appendTo(tdta[i].tb);
+      });
   
   $(tdta[i].tbl).data('tdta',tdta[i]).appendTo('#estSpaceGrpDiv');
   return tdta[i];
@@ -5126,7 +5342,7 @@ function estBuildSpaceList(){
   var propZone = Number($('select[name="prop_zoning"]').val());
   var totSqSp = 0;
   
-  var levmap = defs.keys.levmap;
+  //var levmap = defs.keys.levmap;
   //space_lev
   //space_levidx
   
@@ -5190,7 +5406,6 @@ function estBuildSpaceList(){
             }).promise().done(function(){
               $('.estSpaceTRrem').parent().parent().remove();
               
-              
               $('#estSQFT1BtnInner').data('sqft',totSqSp).html(defs.txt.auto+' '+totSqSp);
               $('#estSQFT2BtnInner').data('sqft',totSqSp).html(defs.txt.auto+' '+totSqSp);
               
@@ -5215,10 +5430,10 @@ function estBuildSpaceList(){
                 var itemGrpCont = document.getElementById(oeleId);
                 Sortable.create(itemGrpCont,{
                   group: 'estSortTBody', 
-                  draggable: '.estDragTR',
+                  draggable: '.estSpaceGroupTile',
                   sort: true,
                   animation: 450,
-                  handle: '.ui-sortable-handle',
+                  handle: '.estSpaceSortable',
                   pull: true,
                   put: true,
                   ghostClass: 'sortTR-ghost',
@@ -5230,17 +5445,21 @@ function estBuildSpaceList(){
                 });
               
               
-              $('#estSpaceGrpDiv').children('table.estateSubTable').sort(function (a, b) {
+              $('#estSpaceGrpDiv').children('div.estSpaceGrpBlock').sort(function (a, b) {
                 var cA = $(a).data('grouplist_ord');
                 var cB = $(b).data('grouplist_ord');
                 return (cA > cB) ? 1 : (cA < cB) ? -1 : 0;
                 }).appendTo('#estSpaceGrpDiv').promise().done(function(){
-                  $('#estSpaceGrpDiv > table.estateSubTable').find('tbody.estSortTBody').each(function(tbi,tbdy){
-                    $(tbdy).children('tr').sort(function (a, b) {
-                      var cA = $(a).data('space_ord');
-                      var cB = $(b).data('space_ord');
+                  $('#estSpaceGrpDiv > div.estSpaceGrpBlock').find('div.estSortTBody').each(function(tbi,tbdy){
+                    $(tbdy).children('div.estSpaceGroupTile').sort(function (a, b) {
+                      var cA = $(a).data('db').space_ord;
+                      var cB = $(b).data('db').space_ord;
+                      //console.log('A: '+$(a).data('db').space_name,cA);
+                      //console.log('B: '+$(b).data('db').space_name,cB);
                       return (cA > cB) ? 1 : (cA < cB) ? -1 : 0;
-                      }).appendTo(tbdy);
+                      }).appendTo(tbdy).promise().done(function(){
+                        $(tbdy).find('div.estLastTile').appendTo(tbdy);
+                        });
                     });
                   });
               });

@@ -14,7 +14,7 @@ e107::includeLan(e_PLUGIN.'estate/languages/'.e_LANGUAGE.'/'.e_LANGUAGE.'_msg.ph
 $EMQRY = array();
 if(e_QUERY && e_QUERY !== ''){$EMQRY = explode('||',e_QUERY);}
 $DSPL = ($_GET['rt'] ? $_GET['rt'] : ($_POST['rt'] ? $_POST['rt'] : 'js'));
-$FETCH = ($_GET['fetch'] ? $_GET['fetch'] : ($_POST['fetch'] ? $_POST['fetch'] : intval($EMQRY[0])));
+$FETCH = intval($_GET['fetch'] ? $_GET['fetch'] : ($_POST['fetch'] ? $_POST['fetch'] : intval($EMQRY[0])));
 
 if(!in_array($DSPL,array('js','html','txt','pop'))){
   echo 'Fail Disp ['.$DSPL.'] ['.$FETCH.'] ';
@@ -60,7 +60,7 @@ $PROPIDREQ = array('estate_grouplist','estate_spaces'); //,'estate_featurelist'
 
 $RES = array();
 
-//preps edit and create - get tables, key, and fields
+//preps edit and create - get tables, keys, and fields
 $RES['fetch'] = $FETCH;
 if($FETCH == 1 || $FETCH == 2){
   $PROPID = intval($_GET['propid']);
@@ -80,11 +80,9 @@ if($FETCH == 1 || $FETCH == 2){
   $RES['propid'] = $PROPID;
   $RES['dir'] = estDirList();
   $RES['tbls']['estate_listypes']['dta'] = $sql->retrieve('estate_listypes', '*', '',true);
-  
   $RES['classes'] = $GLOBALS['EST_CLASSES'];
   $pref = e107::pref();
   $RES['weblogo'] = $tp->thumbUrl($pref['sitelogo'],false,false,true);
-  
   $RES['user'] = estCurUser();
   $RES['userlevs'] = EST_USRLEVELS;
   }
@@ -1138,7 +1136,7 @@ function estGetAllDta($PROPID){
     'estate_grouplist'=>'grouplist_propidx="'.$PROPID.'"',
     'estate_featurelist'=>'featurelist_propidx="'.$PROPID.'"',
     'estate_media'=>'media_propidx="'.$PROPID.'" OR (media_propidx="0" AND media_lev="0" AND media_levidx="'.$SUBDID.'")',
-    'estate_spaces'=>'space_propidx="'.$PROPID.'"',
+    'estate_spaces'=>'space_lev="1" AND space_levidx="'.$PROPID.'"',
     'estate_events'=>'event_idx>"0" ORDER BY event_start ASC' //event_propidx event_agt
     );
   
@@ -1202,7 +1200,7 @@ function estJStext(){
   return array(
     'add1'=>EST_GEN_ADD1,
     'addevent'=>EST_PROP_MSG_ADDEVENTS,
-    'addnewspace'=>EST_GEN_ADDNEWROOM,
+    'addnewspace'=>EST_GEN_ADDNEWSPACE,
     'addrnotfound'=>EST_MSG_ADDRNOTFOUND,
     'addrtooshort'=>EST_MSG_ADDRTOOSHORT,
     'addspaces'=>EST_PROP_MSG_ADDSPACES,
@@ -1230,10 +1228,13 @@ function estJStext(){
     'category'=>LAN_CATEGORY,
     'categories'=>LAN_CATEGORIES,
     'changeimgsrc'=>EST_GEN_CHANGEIMGSRC,
+    'choosethm'=>EST_GEN_CHOOSETHM,
+    'city'=>EST_PROP_CITY,
     'clkcust'=>EST_GEN_CLKCUSTOM,
     'clksave'=>EST_GEN_CLKSAVEFOROPTS,
     'create'=>EST_GEN_CREATE,
     'createagnt'=>EST_GEN_CREATEAGENT,
+    'community'=>EST_GEN_COMMUNITY,
     'contact'=>EST_GEN_CONTACT,
     'contacts'=>EST_GEN_CONTACTS,
     'crop'=>EST_GEN_CROP,
@@ -1248,6 +1249,7 @@ function estJStext(){
     'dimu0'=>$DIMU[0],
     'dimu1'=>$DIMU[1],
     'donotreload'=>EST_GEN_DONOTRELOAD,
+    'drag2reord'=>EST_GEN_DRAGTOREORDER,
     'dragto'=>EST_GEN_DRAGTO,
     'edit'=>EST_GEN_EDIT,
     'enabdisab'=>EST_GEN_ENABLEDIS,
@@ -1307,6 +1309,7 @@ function estJStext(){
     'nocontype'=>EST_ERR_NOCONTYPE,
     'notavail2'=>EST_GEN_NOTAVAIL2,
     'notdefined'=>EST_GEN_NOTDEFINED,
+    'nothing2change'=>EST_GEN_NOTHING2CHANGE,
     'option'=>EST_OPTION,
     'options'=>EST_OPTIONS,
     'optionlist'=>EST_GEN_OPTLIST,
