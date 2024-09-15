@@ -389,6 +389,159 @@ tbody.estPropListTB tr > td:nth-child(2) p{
   
   }
 
+
+div.estSpaceGrpBlock{
+  display:block;
+  position:relative;
+  width:100%;
+  }
+
+div.estSpaceGrpHeadCont{
+  display:block;
+  position:relative;
+  width:100%;
+  min-height:32px;
+  background-color:rgba(0,0,0,0.25);
+  text-transform:uppercase;
+  }
+
+div.estSpaceGrpHeadCont div.btn-group{
+  margin-right:8px;
+  }
+
+div.estSpaceGrpTileCont{
+  display: flex;
+  position:relative;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-start;
+  align-items: stretch;
+  width:100%;
+  margin-bottom:16px;
+  }
+
+
+
+div.estSpaceGrpTileCont div.estSpaceGroupTile{
+  display: flex;
+  position: relative;
+  flex: 15%;
+  flex-direction: column;
+  max-width: 16%;
+  border: 1px solid rgba(0,0,0,0.25);
+  margin: 5px 8px 5px 0px;
+  padding: 0.5%;
+  cursor:pointer;
+  box-shadow: 1px 1px 2px #0000009C;
+  -webkit-box-shadow: 1px 1px 2px #0000009C;
+  -moz-box-shadow: 1px 1px 2px #0000009C;
+  }
+
+div.estSpaceGrpTileCont div.estSpaceSortable{
+  cursor:move;
+  }
+
+div.estSpaceGrpTileCont div.estSpaceGroupTile:hover{
+  margin-top:6px;
+  margin-left:1px;
+  box-shadow: 0px 0px 2px #0000009C;
+  -webkit-box-shadow: 0px 0px 2px #0000009C;
+  -moz-box-shadow: 0px 0px 2px #0000009C;
+  }
+
+div.estSpaceGrpTileCont div.estSpaceGroupTile div:nth-child(1){
+  display:block;
+  position:relative;
+  width:99%;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+
+
+div.estSpaceGrpTileCont div.estSpaceGroupTile div:nth-child(2){
+  display:block;
+  position:relative;
+  width: 98%;
+  height:96px;
+  background-image:url('../images/imgnotavail.png');
+  background-size: contain;
+  background-position: center center;
+  background-clip: content-box;
+  background-origin: padding-box;
+  background-repeat: no-repeat;
+  border: 0.35em solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  }
+
+div.estSpaceGrpTileCont div.estSpaceGroupTile div:nth-child(3){
+  display:block;
+  position:relative;
+  width:99%;
+  min-height:16px;
+  text-transform:uppercase;
+  white-space:nowrap;
+  font-size:0.8em;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+
+div.estSpaceGrpTileCont div.estSpaceGroupTile div:nth-child(4){
+  display:block;
+  position:relative;
+  width:99%;
+  text-transform:uppercase;
+  white-space:nowrap;
+  font-size:0.8em;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+div.estSpaceGrpTileCont div.estSpaceGroupTile div:nth-child(5){
+  display:block;
+  position:relative;
+  width:99%;
+  height:64px;
+  font-size:0.75em;
+  text-transform:none;
+  overflow:hidden;
+  }
+
+
+div.estSpaceGrpTileCont div.estSpaceGroupTile ul{
+  text-indent: 0px;
+  padding: 0px 0px 0px 6px;
+  margin: 0px 0px 8px 0px;
+  }
+div.estSpaceGrpTileCont div.estSpaceGroupTile ul li{
+  width:96%;
+  font-size:0.9em;
+  list-style-position: inside;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  }
+
+.estSpaceDelBtn{
+  display:block;
+  position:absolute;
+  top:0px;
+  left: unset;
+  right: 0px;
+  width: 30px;
+  height: 30px;
+  border: 0px;
+  padding: 0px 10px 0px 13px;
+  text-align:center;
+  z-index:5;
+  }
+
+
+
+
 /*
 .estBtnCont div button{
   position:absolute;
@@ -960,7 +1113,7 @@ select optgroup.optFilter.inact::before{
   height: 100vh;
   z-index: 100000;
   }
-#estBlackout{background-color: rgba(0,0,0,0.75);}
+#estBlackout{background-color: rgba(0,0,0,0.5);}
 
 #estPopCover{
   display: block;
@@ -1203,9 +1356,8 @@ div.estSched15c.evtInUse:hover{
   color:#FFFF00;
   }
 
-.estateSubTable{
+.estateSubTable,{
   width:100%;
-  
   }
 
 .estateSubTable td{
@@ -2464,21 +2616,42 @@ li.estPresetDataLI3:hover div.estDivX{
 
 #estMediaMgrCont.estThmMgrCont{
   position:absolute;
-  top:-6px;
-  left:-6px;
-  min-width:min-content;
+  top:0px;
+  left:0px;
+  min-width:16em;
   width: max-content;
+  max-width: 17em;
   min-height: 5.5em;
   background-color:rgba(0,0,0,0.90);
   border: 6px solid #2d6da3;
   border-radius: 3px;
   text-align:left;
-  z-index:5;
+  overflow:visible;
+  z-index:100005;
   }
 #estMediaMgrCont.estThmMgrCont div.upldPvwBtn{
+  display: inline-block;
   height: 5em;
   }
-
+/*
+#estMediaMgrCont.estThmMgrCont::after{
+  content: "X";
+  position: absolute;
+  font-size: 0.8em;
+  top: -18px;
+  right: -18px;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  font-weight: bold;
+  color: #FFFFFF;
+  border-radius: 16px;
+  background-color: #2D6DA3;
+  cursor: pointer;
+  z-index: 10;
+  }
+*/
 #estMediaMgrUpload, #estMediaMgrExist{
   display: block;
   position: relative;
