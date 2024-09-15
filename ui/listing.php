@@ -2509,7 +2509,15 @@ class estate_listing_form_ui extends e_admin_form_ui{
   public function prop_comminuty($curVal,$mode){
     switch($mode){
 			case 'write':
-        return '<h4>'.EST_GEN_COMMUNITYPREVIEW.'</h4 class="WD100"><div id="estCommSpaceGrpDiv" class="estSpaceGrpDiv WD100"></div>';
+        return '
+        <h4 class="WD100">
+          <span id="estCommSpaceName"></span> '.EST_GEN_SPACES.'
+        </h4>
+        <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>
+        <h4 class="WD100">
+          <span id="estCitySpaceName"></span> '.EST_GEN_SPACES.'
+        </h4>
+        <div id="estCitySpaceGrpDiv" class="estSpaceGrpTileCont"></div>';
         break;
 			case 'read': 
 			case 'filter':

@@ -3259,12 +3259,12 @@ class estateCore{
         foreach($dta['spaces']['subd'] as $k=>$v){
           $thm = ''; //EST_PTHABS_SUBDTHM.6-2-39-200.jpg?12080
           $txt .= '
-          <tr class="estDragableTR" data-subspace_idx="'.intval($v['subspace_idx']).'" data-subspace_city="'.intval($v['subspace_city']).'" data-subspace_subidx="'.intval($v['subspace_subidx']).'" data-subspace_catid="'.intval($v['subspace_catid']).'" data-subspace_ord="'.intval($v['subspace_ord']).'" >
+          <tr class="estDragableTR" data-space_idx="'.intval($v['space_idx']).'" data-space_lev="'.intval($v['space_lev']).'" data-space_levidx="'.intval($v['space_levidx']).'"  data-space_grpid="'.intval($v['space_grpid']).'" data-space_catid="'.intval($v['space_catid']).'" data-space_ord="'.intval($v['space_ord']).'" >
             <td class="left noPAD posREL">
               <div id="estCommSectThm-2-39" class="estPropThumb" style="background-image: url(\''.$thm.'\');"></div>
             </td>
-            <td class="left">'.$tp->toHTML($v['subspace_name']).'</td>
-            <td class="left">'.$tp->toHTML($v['subspace_catname']).'</td>
+            <td class="left">'.$tp->toHTML($v['space_name']).'</td>
+            <td class="left">'.$tp->toHTML($v['space_catname']).'</td>
             <td class="TAR">
               <div class="btn-group">
                 <button class="e-sort sort-trigger btn btn-default ui-sortable-handle" title="Drag To Re-order Spaces"><i class="fa fa-arrows-v"></i></button>
@@ -3622,7 +3622,19 @@ class estateCore{
     
     switch($TYPE){
       case 'commumityPreview': 
-        return '<tr><td colspan="2" class="noPAD"><h4 class="WD100">'.EST_GEN_COMMUNITYPREVIEW.'</h4><div id="estCommSpaceGrpDiv"></div></td></tr>';
+        return '
+        <tr>
+          <td colspan="2" class="noPAD">
+            <h4 class="WD100">
+              <span id="estCommSpaceName"></span> '.EST_GEN_SPACES.'
+            </h4>
+            <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>
+            <h4 class="WD100">
+              <span id="estCitySpaceName"></span> '.EST_GEN_SPACES.'
+            </h4>
+            <div id="estCitySpaceGrpDiv" class="estSpaceGrpTileCont"></div>
+          </td>
+        </tr>';
         break;
       
       case 'prop_appr' :
