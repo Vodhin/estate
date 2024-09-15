@@ -288,7 +288,7 @@
   	<dbTable name="estate_spaces">
   		<item>
   			<field name="space_idx">1</field>
-  			<field name="space_propidx">1</field>
+  			<field name="space_levidx">1</field>
   			<field name="space_grpid">1</field>
   			<field name="space_catid">3</field>
   			<field name="space_ord">1</field>
@@ -302,7 +302,7 @@
   		</item>
   		<item>
   			<field name="space_idx">2</field>
-  			<field name="space_propidx">1</field>
+  			<field name="space_levidx">1</field>
   			<field name="space_grpid">1</field>
   			<field name="space_catid">4</field>
   			<field name="space_ord">2</field>
@@ -316,7 +316,7 @@
   		</item>
   		<item>
   			<field name="space_idx">3</field>
-  			<field name="space_propidx">1</field>
+  			<field name="space_levidx">1</field>
   			<field name="space_grpid">1</field>
   			<field name="space_catid">2</field>
   			<field name="space_ord">3</field>
@@ -330,7 +330,7 @@
   		</item>
   		<item>
   			<field name="space_idx">4</field>
-  			<field name="space_propidx">1</field>
+  			<field name="space_levidx">1</field>
   			<field name="space_grpid">2</field>
   			<field name="space_catid">2</field>
   			<field name="space_ord">4</field>
@@ -344,7 +344,7 @@
   		</item>
   		<item>
   			<field name="space_idx">5</field>
-  			<field name="space_propidx">1</field>
+  			<field name="space_levidx">1</field>
   			<field name="space_grpid">2</field>
   			<field name="space_catid">2</field>
   			<field name="space_ord">5</field>
@@ -358,7 +358,7 @@
   		</item>
   		<item>
   			<field name="space_idx">6</field>
-  			<field name="space_propidx">1</field>
+  			<field name="space_levidx">1</field>
   			<field name="space_grpid">1</field>
   			<field name="space_catid">3</field>
   			<field name="space_ord">6</field>
@@ -372,7 +372,7 @@
   		</item>
   		<item>
   			<field name="space_idx">7</field>
-  			<field name="space_propidx">1</field>
+  			<field name="space_levidx">1</field>
   			<field name="space_grpid">1</field>
   			<field name="space_catid">3</field>
   			<field name="space_ord">7</field>
