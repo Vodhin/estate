@@ -262,6 +262,7 @@
   
   
   $(document).ready(function(){
+    $('body').on({click : function(){$('.estThmMgrCont').remove()}});
     var propId = Number($('#plugin-estate-OAform').data('propid'));
     $.ajax({
       url: vreFeud+'?0||0',
