@@ -2514,6 +2514,8 @@ class estate_listing_form_ui extends e_admin_form_ui{
           <span id="estCommSpaceName"></span> '.EST_GEN_SPACES.'
         </h4>
         <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>
+        <div id="estCommDesc"></div>
+        <hr />
         <h4 class="WD100">
           <span id="estCitySpaceName"></span> '.EST_GEN_SPACES.'
         </h4>
