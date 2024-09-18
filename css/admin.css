@@ -390,6 +390,15 @@ tbody.estPropListTB tr > td:nth-child(2) p{
   }
 
 
+#estCommDesc{
+  display:block;
+  position:relative;
+  background-color:rgba(0,0,0,0.15);
+  font-size:0.9em;
+  margin: 2px 1%;
+  padding:1em 1em;
+  }
+
 div.estSpaceGrpBlock{
   display:block;
   position:relative;
