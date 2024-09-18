@@ -291,7 +291,7 @@ function estSetFormEles(mainTbl,cForm,cSave){
           }
         });
   
-  $('select[name="prop_zoning"]').on({change : function(){estBuildSpaceList();}});
+  $('select[name="prop_zoning"]').on({change : function(){estBuildSpaceList('prop_zoning');}});
   
   var chk1 = $('select[name="prop_country"]').find('option:selected').val();
   if(!chk1 || chk1 === '0'){
@@ -670,6 +670,11 @@ function estGetSubDivs(mode=1){
 
 function estBuildSubdivSpaces(ret){
   var defs = $('body').data('defs');
+  
+  console.log(ret);
+  
+  $('#estCommDesc').html(ret.subd_description);
+  
   $('#estCommSpaceName').html(ret.subd_title);
   $('#estCitySpaceName').html(ret.city_title);
   
@@ -2010,8 +2015,8 @@ function estPopGo(mode,popIt,frmn=0){
     var stopit = 0;
     var inpts = [];
     
-    console.log(popIt.frm[frmn].form);
-    console.log(fldStruct);
+    //console.log(popIt.frm[frmn].form);
+    //console.log(fldStruct);
     
     $(pDta.destTbl.flds).each(function(i,fld){
       inpts[i] = estProcInpt(fld,popIt.frm[frmn].form,fldStruct);
@@ -2026,7 +2031,7 @@ function estPopGo(mode,popIt,frmn=0){
         else{
           var propId = Number($('body').data('propid'));
           var sDta = {'fetch':3,'propid':propId,'rt':'js','tdta':[{'tbl':pDta.destTbl.table,'key':pDta.destTbl.idx,'del':0,'fdta':inpts}]};
-          console.log(sDta);
+          //console.log(sDta);
           
           var fldmap = null;
           if(pDta.form.attr !== null){fldmap = pDta.form.attr.src.map;}
@@ -2040,8 +2045,8 @@ function estPopGo(mode,popIt,frmn=0){
             cache:false,
             processData:true,
             success: function(ret, textStatus, jqXHR){
-              ret = ret[0];
               console.log(mode,ret);
+              ret = ret[0];
               $('#estPopCover').remove();
               if(typeof ret.error !== 'undefined'){
                 estAlertLog(ret.error);
@@ -2111,7 +2116,7 @@ function estPopGo(mode,popIt,frmn=0){
                       
                       case 'estSpaceGroupChange' : 
                         estBuildSpaceOptns(2); //need mode
-                        estBuildSpaceList();
+                        estBuildSpaceList('estPopGo estSpaceGroupChange');
                         break;
                         
                       case 'estSaveSpace' :
@@ -2840,7 +2845,7 @@ function estMediaDeepReorder(){
           }
         }).promise().done(function(){
           estSaveElemOrder(tDta,1);
-          estBuildSpaceList();
+          estBuildSpaceList('estMediaDeepReorder');
           });
       });
   }
@@ -4565,12 +4570,12 @@ function estBuildSpace(mode,ele){
           estGetSubDivs(4);
           }
         else{
-          estBuildSpaceList();
+          estBuildSpaceList('estBuildSpace');
           estBuildGallery();
           }
         },
       error: function(jqXHR, textStatus, errorThrown){
-        estBuildSpaceList();
+        estBuildSpaceList('estBuildSpace');
         console.log('ERRORS: '+textStatus+' '+errorThrown);
         estAlertLog(jqXHR.responseText);
         }
@@ -5214,27 +5219,28 @@ function estSaveSpace(spaceId,mode=2){
     console.log('levDta not found');
     return;
     }
+  //estate_spaces.dta
   
   $(popit.frm[0].form).data('levdta',levDta);
   estTestEles(popit.frm[0].form, popit.frm[0].savebtns);
   
   var grpLstDta = defs.tbls.estate_grouplist.dta.find(x => Number(x.grouplist_groupidx) === Number(levDta.space_grpid));
   
-  if(tablMode == 2 && typeof grpLstDta == 'undefined'){ // Need? seems really old code
-    console.log('get grpLstDta');
+  if(tablMode == 2 && typeof grpLstDta == 'undefined'){
+    console.log('save new grpLstDta');
     var grpOrd = 1;
-    var fdta = {'grouplist_idx':0,'grouplist_propidx':levDta.space_levidx,'grouplist_groupidx':levDta.space_grpid,'grouplist_ord':grpOrd};
+    var fdta = [{'grouplist_idx':0},{'grouplist_propidx':levDta.space_levidx},{'grouplist_groupidx':levDta.space_grpid},{'grouplist_ord':grpOrd}];
 
     $.ajax({
       url: vreFeud+'?5||0',
       type:'post',
-      data:{'fetch':3,'propid':levDta.space_levidx,'rt':'js','tdta':[{'tbl':'estate_grouplist','key':'grouplist_idx','del':0,'fdta':[fdta]}]},
+      data:{'fetch':3,'propid':levDta.space_levidx,'rt':'js','tdta':[{'tbl':'estate_grouplist','key':'grouplist_idx','fdta':fdta,'del':0}]},
       dataType:'json',
       cache:false,
       processData:true,
       success: function(ret, textStatus, jqXHR){
-        ret = ret[0];
         console.log(ret);
+        ret = ret[0];
         if(typeof ret.error !== 'undefined'){
           estAlertLog(ret.error);
           $('#estPopContRes'+0).html(ret.error).fadeIn(200,function(){estPopHeight(1)});
@@ -5244,7 +5250,7 @@ function estSaveSpace(spaceId,mode=2){
             estProcDefDta(ret.alldta.tbls);
             estBuildCategoryList(tablMode);
             estBuildMediaList(tablMode);
-            estBuildSpaceList();
+            estBuildSpaceList('estSaveSpace save group');
             estPopHeight();
             }
           }
@@ -5259,7 +5265,7 @@ function estSaveSpace(spaceId,mode=2){
   else{
     estBuildCategoryList(tablMode);
     estBuildMediaList(tablMode);
-    estBuildSpaceList();
+    estBuildSpaceList('estSaveSpace ');
     estPopHeight();
     }
   if(tablMode > 2){
@@ -5317,6 +5323,8 @@ function estBuildSpaceListTbl(i,tbx){
   
   // LIST OF SPACES
   //estDragableTR
+  
+  
   grpGrep2 = $.grep(defs.tbls.estate_spaces.dta, function (element, index) {return element.space_grpid == tbx.grouplist_groupidx;});
   $(grpGrep2).each(function(ri,rmdta){
     var tstEle = estBuildSpaceTile(2,rmdta,{'grpname':groupName,'grpidx':tbx.grouplist_idx});
@@ -5336,7 +5344,8 @@ function estBuildSpaceListTbl(i,tbx){
   }
 
 
-function estBuildSpaceList(){
+function estBuildSpaceList(wherex){
+  console.log(wherex);
   var defs = $('body').data('defs');
   var propId = Number($('body').data('propid'));
   var propZone = Number($('select[name="prop_zoning"]').val());
@@ -5358,6 +5367,9 @@ function estBuildSpaceList(){
       
       return;
       }
+    
+    var spaceDta = $.grep(defs.tbls.estate_spaces.dta, function (element, index) {return element.space_lev == 1;});
+    console.log(spaceDta);
     
     var zoneGroups = $.grep(defs.tbls.estate_group.dta, function (element, index) {return  element.group_zone == propZone;});
     

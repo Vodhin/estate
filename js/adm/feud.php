@@ -729,6 +729,7 @@ else if($FETCH == 76){
 
 else if($FETCH == 81){
   $RES = estGetSubDivDta(intval($_GET['subd_idx']),intval($_GET['subd_city']));
+  $RES['subd_description'] = $tp->toHTML($RES['subd_description'],true);
   echo e107::getParser()->toJSON($RES);
   /*
   if(EST_USERPERM > 0){
@@ -961,14 +962,16 @@ function estSaveDB($PROPID,$TDTA){
     $CTWORK = count($TDTA);
     foreach($TDTA as $TK=>$TBLDTA){
       $TBL = trim($TBLDTA['tbl']);
+      $FLDLST = $sql->db_FieldList($TBL);
       $KEYF = trim($TBLDTA['key']);
       $FDTA = $TBLDTA['fdta'];
       $DEL = intval($TBLDTA['del']);
-      $CHKMEDIA = 0;
       
+      $DBRES['sendnew'] = array('tbl'=>$TBL,'key'=>$KEYF,'fdta'=>$FDTA,'flds'=>$FLDLST);
+        
+      $CHKMEDIA = 0;
       if(!in_array($TBL,$TBLIST)){$DBRES[$TK] = array('error'=>EST_ERR_TABLE1);}
       else{
-        $FLDLST = $sql->db_FieldList($TBL);
         if(!in_array($KEYF,$FLDLST)){
           $DBRES[$TK] = array('error'=>EST_ERR_KEYFIELD1,'tbl'=>$TBL,'tblkey'=>$KEYF,'tblfld'=>$FLDLST);
           }
@@ -1059,9 +1062,9 @@ function estSaveDB($PROPID,$TDTA){
                   }
                 }
               }
-            else{$DBRES[$TK] = array('error'=>EST_ERR_TABLE2,'line'=>'638','fdta'=>$FDTA);}
+            else{$DBRES[$TK] = array('error'=>EST_ERR_TABLE2,'line'=>'1063','fdta'=>$FDTA);}
             }
-          else{$DBRES[$TK] = array('error'=>EST_ERR_DATANOTARRAY,'line'=>'640','fdta'=>$FDTA);}
+          else{$DBRES[$TK] = array('error'=>EST_ERR_DATANOTARRAY,'line'=>'1065','fdta'=>$FDTA);}
           }
         }
       }

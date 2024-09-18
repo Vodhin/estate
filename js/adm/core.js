@@ -2574,7 +2574,7 @@
         estPrepPropAgent();
         estateBuildDIMUbtns();
         estBuildGallery();
-        estBuildSpaceList();
+        //estBuildSpaceList('core load');
         estInitDefHrs(1);
         estBuildEvtTab();
         estBuildMap('prop');
