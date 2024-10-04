@@ -414,6 +414,17 @@ define("EST_PREF_DEFHRSHINT1","Last Event Start Time");
 define("EST_PREF_DEFPUBHRS","Default Public Hours");
 define("EST_PREF_DEFPUBHRSHLP","The default Public hours for creating a New Property Listing. Each Property Listing's hours can be customized");
 
+
+define("EST_PREF_DIMU1","Units Of Measure");
+define("EST_PREF_DIMU1A","Imperial");
+define("EST_PREF_DIMU1B","Metric");
+define("EST_PREF_DIMU1HLP","Set the default Unit Of Measure");
+
+define("EST_PREF_DIMU2","Land Measurement");
+define("EST_SQFOOTX","Sq Feet");
+define("EST_SQMTRX","Sq Meeter");
+define("EST_PREF_DIMU2HLP","Set the default Unit Of Land Measurement");
+
 define("EST_PREF_EVENTNAME","Event Name");
 define("EST_PREF_EVENTLEN","Event Length");
 
@@ -428,6 +439,7 @@ define("EST_PREF_LISTPAGESECT","Listing Page Layout");
 
 define("EST_PREF_MAPLISTABOVE","Map Above Listings");
 define("EST_PREF_MAPLISTBELOW","Map Below Listings");
+
 
 define("EST_PREF_MAPAGENCY","Include Agency Pins");
 define("EST_PREF_MAPAGENCYHLP","Include nearby Agency Pins in the Map on the View Page");
@@ -450,6 +462,15 @@ define("EST_PREF_MAPKEYHLP","This key is provided by Leaflet and used to authent
 define("EST_PREF_MAPURL","Remote URL");
 define("EST_PREF_MAPURLRESET","Reset URL");
 define("EST_PREF_MAPURLHLP","This key is provided by Leaflet and used to authenticate the cross-origin javascript files when your website uses the HTTPS protocal");
+
+
+define("EST_PREF_MAPINCLPROP","List View Pins");
+define("EST_PREF_MAPINCLPROPHLP","Show or hide Pins for properties not listed as For Sale. Pins for Off Market properties are always excluded.");
+define("EST_PREF_MAPINCLPROPOPT0","Include Pins for All Properties");
+define("EST_PREF_MAPINCLPROPOPT1","Hide Sold Properties");
+define("EST_PREF_MAPINCLPROPOPT2","Hide Sold & Pending Properties");
+
+
 define("EST_PREF_MULTICOMP","Multi-Company");
 define("EST_PREF_MULTICOMPHLP","When Enabled you canlist Agencies from different Companies. When Disabled all Agencies belong to a single company");
 

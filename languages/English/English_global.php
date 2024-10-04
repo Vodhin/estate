@@ -217,7 +217,7 @@ define("EST_GEN_HIDDEN", "Hidden");
 define("EST_GEN_HIDE", "Hide");
 define("EST_GEN_HOA","HOA");
 define("EST_GEN_HOADEF1","General HOA Information");
-define("EST_GEN_HOADEF2","Property Specific HOA Information");
+define("EST_GEN_HOADEF2","Property Specific Information");
 define("EST_GEN_HOMEOWNASS","Home Owners Association");
 define("EST_GEN_HOAAPPR1","HOA Approval Required");
 define("EST_GEN_HOAAPPR2","Buyer must meet requirements set by the Home Owners Association.");
@@ -439,6 +439,7 @@ define("EST_PROP_HOADISCLAIMER0","Please refer to the Association's Covenants, C
 define("EST_PROP_HOADISCLAIMER1","Association fees may vary between properties in the development and are subject to change.");
 define("EST_PROP_HOADISCLAIMER2","Please review your closing documents carefully before signing.");
 define("EST_PROP_HOADISCLAIMER3","There may be requirements that occupants must meet in order to purchase and/or live within the community. A common example of this is a retirement community where occupants must be 55 or more years old.");
+define("EST_PROP_HOADISCLAIMER4","A Land Lease is where you pay rent for the land that the dwelling resides upon and may or may not be included in HOA fees. A typical example is for the parking spot for a mobile home.");
 
 define("EST_PROP_HOAMEMBERSHIP","HOA Membership");
 define("EST_PROP_HOANAME","HOA Name");
