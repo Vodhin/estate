@@ -56,6 +56,7 @@ else{
   }
 
     
+e107::meta('mobile-web-app-capable','yes'); // example
 e107::js('estate','js/Leaflet.markercluster/dist/leaflet.markercluster.js');
 
 
@@ -114,9 +115,9 @@ if(!ADMIN){
   }
 
 
-$MQRY = "SELECT #estate_properties.*, city_name, city_url, city_timezone, state_name, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_properties LEFT JOIN #estate_city ON city_idx = prop_city LEFT JOIN #estate_county ON cnty_idx = prop_county LEFT JOIN #estate_states ON state_idx = prop_state LEFT JOIN #estate_agents ON agent_idx = prop_agent LEFT JOIN #user ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid) LEFT JOIN #estate_agencies ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)";
+$MQRY = "SELECT #estate_properties.*, #estate_subdiv.subd_name, city_name, city_url, city_timezone, state_name, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_properties LEFT JOIN #estate_subdiv ON subd_idx = prop_subdiv LEFT JOIN #estate_city ON city_idx = prop_city LEFT JOIN #estate_county ON cnty_idx = prop_county LEFT JOIN #estate_states ON state_idx = prop_state LEFT JOIN #estate_agents ON agent_idx = prop_agent LEFT JOIN #user ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid) LEFT JOIN #estate_agencies ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)";
   
-  
+
   
   
 if($qs[0] == 'agent'){
@@ -267,7 +268,7 @@ unset($dberr);
       
       estGetMeta($PROPDTA,$ESTDTA,1);
       
-      e107::meta('apple-mobile-web-app-capable','yes'); // example
+      //e107::meta('mobile-web-app-capable','yes'); // example
       
       $sc = e107::getScBatch('estate',true);
       $sc->setVars($PROPDTA[0]);
@@ -558,20 +559,21 @@ function est_map_pins(){
 	$tp = e107::getParser();
   $ARR1 = array('agcy'=>array(),'prop'=>array());
   
-  if($pref['estate']['map_include_agency'] == 1){
+  if(intval($GLOBALS['EST_PREF']['map_include_agency']) == 1){
+  
     if($AGY = $sql->retrieve("SELECT #estate_agencies.* FROM #estate_agencies WHERE NOT agency_lat='' AND NOT agency_lon='' ",true)){
       $i = 0;
       foreach($AGY as $k=>$v){
         if(intval($v['agency_pub']) > 0){
           $ARR1['agcy'][$i] = array(
             'idx'=>$v['agency_idx'],
-            'name1'=>$v['agency_name'],
+            'name1'=>$tp->toHTML($v['agency_name']),
             'name2'=>'',
             'addr'=>$v['agency_addr'],
             'lat'=>$v['agency_lat'],
             'lon'=>$v['agency_lon'],
             'thm'=>(intval($v['agency_imgsrc']) == 1 && trim($v['agency_image']) !== '' ? EST_PTHABS_AGENCY.$tp->toHTML($v['agency_image']) : $tp->thumbUrl($pref['sitelogo'],false,false,true)),
-            'zoom'=>$pref['estate']['map_zoom_def']
+            'zoom'=>$GLOBALS['EST_PREF']['map_zoom_def']
             );
           $i++;
           }
@@ -595,25 +597,29 @@ function est_map_pins(){
         }
       else{
         $i = 0;
+        $incs = (5 - intval($GLOBALS['EST_PREF']['map_include_sold']));
         foreach($GLOBALS['EST_PROP'] as $k=>$v){
-          //if(intval($v['prop_status']) > 1 && intval($v['prop_status']) < 5 && trim($v['prop_lat']) !== '' && trim($v['prop_lon']) !== ''){
-            $ARR1['prop'][$i] = array(
-              'drop'=>est_PinsPriceDrop($v,1),
-              'feat'=>explode(',',$v['prop_features']),
-              'idx'=>$v['prop_idx'],
-              'lat'=>$v['prop_lat'],
-              'lon'=>$v['prop_lon'],
-              'lnk'=>EST_PTH_LISTINGS.'?view.'.intval($v['prop_idx']).'.0',
-              'name1'=>$tp->toHTML($v['prop_name']),
-              'prc'=>estPinsPrice($v,1),
-              'sta'=>$tp->toHTML(estPinsPropStat($v)),
-              'stat'=>intval($v['prop_status']),
-              'thm'=>$v['img'][1]['t'],
-              'type'=>$v['prop_listype'],
-              'zoom'=>$v['prop_zoom']
-              );
-            $i++;
-            //}
+          if(intval($v['prop_status']) > 0){
+            if(intval($v['prop_status']) <= $incs){
+              $ARR1['prop'][$i] = array(
+                'drop'=>estPriceDrop($v,1),
+                'hue'=>estPinColor($v),
+                'feat'=>explode(',',$v['prop_features']),
+                'idx'=>$v['prop_idx'],
+                'lat'=>$v['prop_lat'],
+                'lon'=>$v['prop_lon'],
+                'lnk'=>EST_PTH_LISTINGS.'?view.'.intval($v['prop_idx']).'.0',
+                'name1'=>$tp->toHTML($v['prop_name']),
+                'prc'=>estGetListPrice($v,1),
+                'sta'=>$tp->toHTML(estPinsPropStat($v)),
+                'stat'=>intval($v['prop_status']),
+                'thm'=>$v['img'][1]['t'],
+                'type'=>$v['prop_listype'],
+                'zoom'=>$v['prop_zoom']
+                );
+              $i++;
+              }
+            }
           }
         }
       }
@@ -622,56 +628,32 @@ function est_map_pins(){
   }
 
 
-
-
-function estPinsPrice($DTA,$NOADV=0){
-	$tp = e107::getParser();
-  $nf = new NumberFormatter('en_US', \NumberFormatter::CURRENCY);
-  $nf->setTextAttribute(NumberFormatter::CURRENCY_CODE, 'USD');
-  $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
-  
-  $ListPrice = $nf->format($DTA['prop_listprice']).($DTA['prop_listype'] == 0 ? '/'.$GLOBALS['EST_LEASEFREQ'][$DTA['prop_leasefreq']] : '');
-  $ListPrice .= est_PinsPriceDrop($DTA,0);
-  
-  if(ADMIN && (intval($DTA['prop_status']) < 2 || intval($DTA['prop_status']) > 4)){
-    $ADMVIEW = '<span class="estAdmView" title="'.EST_GEN_ADMVIEW.'">'.$ListPrice.'</span>';
-    }
-
-  if(intval($DTA['prop_status']) == 5){
-    if($ADMVIEW){$ret = $ADMVIEW;}
-    }
-  elseif(intval($DTA['prop_status']) == 4 || intval($DTA['prop_status']) == 3){
-    $ret = $ListPrice;
-    }
-  elseif(intval($DTA['prop_status']) == 2){
-    if(intval($DTA['prop_datelive']) > 0 && intval($DTA['prop_datelive']) <= $GLOBALS['STRTIMENOW']){
-      $ret = $ListPrice;
-      }
-    elseif(USERID > 0 && (intval($DTA['prop_dateprevw']) > 0 && intval($DTA['prop_dateprevw']) <= $GLOBALS['STRTIMENOW'])){
-      $ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ListPrice;
-      }
-    elseif($ADMVIEW){$ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ADMVIEW;}
-    }
-  elseif(intval($DTA['prop_status']) == 1){
-    if($ADMVIEW){$ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ADMVIEW;}
-    }
-  unset($nf,$ListPrice,$ADMVIEW);
-  return $ret;
-  }
-
-
-function est_PinsPriceDrop($DTA,$MODE){
-  if(intval($DTA['prop_listprice']) !== intval($DTA['prop_origprice'])){
-    $OPLP = round((1 -(intval($DTA['prop_listprice']) / intval($DTA['prop_origprice']))) * 100, 1);
-    if($MODE > 0){
-      if($MODE == 1){return $OPLP;}
-      }
-    else{
-      if($OPLP > 0){return '<span class="estPriceDrop">↓'.$OPLP.'%</span>';} // style="color:#009900"
-      else{return'<span class="estPriceDrop">↑'.$OPLP.'%</span>';} // style="color:#990000"
-      }
+function estPinColor($DTA){
+  switch(intval($DTA['prop_status'])){
+    case 5 :
+      return 'estMarkGray';
+      break;
+    case 4 :
+      return 'estMarkYellow';
+      break;
+    case 3 :
+      return null;
+      break;
+    case 2 :
+      return 'estMarkGreen';
+      break;
+    case 1 :
+      return 'estMark';
+      break;
+    case 0 :
+      return null;
+      break;
     }
   }
+
+
+
+
 
 function estPinsPropStat($DTA){
   if(intval($DTA['prop_status']) == 5){$ret = (intval($DTA['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);}

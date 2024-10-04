@@ -19,9 +19,10 @@ $EST_CURSYMB = array('$','€','£','¥','฿','₡','¢','₴','₽','₱','CHF
 
 define("EST_HOAFREQ", $EST_HOAFREQ);
 define("EST_CURSYMB", $EST_CURSYMB);
-define("EST_CONTKEYS",array(EST_GEN_MOBILE,EST_GEN_EMAIL,EST_GEN_OFFICE,EST_GEN_FAX,EST_GEN_WEBSITE,EST_GEN_LINKIN,EST_GEN_TWITER,EST_GEN_FACEBOOK));
-define("EST_LEVMAP",array(0=>array('estate_subdiv','subd_idx'),1=>array('estate_properties','prop_idx'),2=>array('estate_spaces','space_idx'),3=>array('estate_city','city_idx'),4=>array('estate_subdiv_spaces','subspace_idx')));
 define("EST_MSGTYPES",array('',EST_MSG_SHOWINGREQUESTS,EST_MSG_OFFERS,EST_MSG_QUOTEREQ,EST_MSG_OTHERQUESTIONS));
+define("EST_CONTKEYS",array(EST_GEN_MOBILE,EST_GEN_EMAIL,EST_GEN_OFFICE,EST_GEN_FAX,EST_GEN_WEBSITE,EST_GEN_LINKIN,EST_GEN_TWITER,EST_GEN_FACEBOOK));
+
+define("EST_LEVMAP",array(0=>array('estate_subdiv','subd_idx'),1=>array('estate_properties','prop_idx'),2=>array('estate_spaces','space_idx'),3=>array('estate_subdiv_spaces','space_idx'),4=>array('estate_subdiv_spaces','space_idx')));
 
 $EST_LEASEDUR = array(EST_GEN_NOLEASE);
 for($i = 1; $i <= 6; $i++){array_push($EST_LEASEDUR,$i." ".EST_GEN_MONTH);}
@@ -58,23 +59,121 @@ $EST_PROPSTATUS = array(
   );
 
 define("EST_IMGTYPES",array(".jpg",".jpeg",".gif",".png"));
+
 define("EST_PTH_ADMIN", e_PLUGIN."estate/admin_config.php");
 define("EST_PTH_LISTINGS", e_PLUGIN."estate/listings.php");
 define("EST_PTH_AVATAR", e_MEDIA."avatars/upload/");
+define("EST_PTH_MEDIA", e_PLUGIN."estate/media/");
+
 define("EST_PTHABS_AVATAR", SITEURLBASE.e_MEDIA_ABS."avatars/upload/");
+
 define("EST_PATHABS", SITEURLBASE.e_PLUGIN_ABS."estate/");
 define("EST_PATHABS_LISTINGS", EST_PATHABS."listings.php");
 
-define("EST_PATHABS_MEDIA", EST_PATHABS."media/");
 define("EST_PATHABS_IMAGES", EST_PATHABS."images/");
+
+define("EST_PATHABS_MEDIA", EST_PATHABS."media/");
 define("EST_PTHABS_AGENCY", EST_PATHABS_MEDIA."agency/");
 define("EST_PTHABS_AGENT", EST_PATHABS_MEDIA."agent/");
+
+define("EST_PTHABS_CITYTHM", EST_PATHABS_MEDIA."city/thm/");
+define("EST_PTHABS_CITYFULL", EST_PATHABS_MEDIA."city/full/");
+define("EST_PTHABS_CITYVID", EST_PATHABS_MEDIA."city/vid/");
+
 define("EST_PTHABS_PROPTHM", EST_PATHABS_MEDIA."prop/thm/");
 define("EST_PTHABS_PROPFULL", EST_PATHABS_MEDIA."prop/full/");
 define("EST_PTHABS_PROPVID", EST_PATHABS_MEDIA."prop/vid/");
+
 define("EST_PTHABS_SUBDTHM", EST_PATHABS_MEDIA."subdiv/thm/");
 define("EST_PTHABS_SUBDFULL", EST_PATHABS_MEDIA."subdiv/full/");
 define("EST_PTHABS_SUBDVID", EST_PATHABS_MEDIA."subdiv/vid/");
+
+
+
+
+
+if(EST_USERPERM == 4){
+  $sdir = array('/full','/thm','/vid');
+  $dirs = array('agency'=>0,'agent'=>0,'city'=>$sdir,'prop'=>$sdir,'subdiv'=>$sdir);
+  foreach($dirs as $k=>$v){
+    $ok = estDirChk($k,'',EST_PTH_MEDIA,EST_PATHABS_MEDIA);
+    if($ok[0] < 2){$tst .= '<div>'.$ok[1].'</div>';}
+    else{
+      if(is_array($v)){
+        foreach($v as $sk=>$sv){
+          $ok = estDirChk($k,$sv,EST_PTH_MEDIA,EST_PATHABS_MEDIA);
+          if($ok[0] < 2){$tst .= '<div>'.$ok[1].'</div>';}
+          }
+        }
+      }
+    }
+  if(isset($tst)){
+    e107::getMessage()->addWarning('<div>There are errors with the Media Directories:</div>'.$tst);
+    }
+  unset($dirs,$sdir,$k,$v,$sk,$sv,$ok,$tst);
+  }
+
+
+
+function estGetListPrice($DTA,$NOADV=0){
+  $EST_PREF = e107::pref('estate');
+  //$nf = new NumberFormatter('en_US', \NumberFormatter::CURRENCY);
+  //$nf->setTextAttribute(NumberFormatter::CURRENCY_CODE, 'USD');
+  //$nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
+  
+  $ListPrice = EST_CURSYMB[$DTA['prop_currency']].' '.$DTA['prop_listprice'];
+  $ListPrice .= ($DTA['prop_listype'] == 0 ? '/'.$GLOBALS['EST_LEASEFREQ'][$DTA['prop_leasefreq']] : '');
+  $ListPrice .= estPriceDrop($DTA);
+  
+  if(ADMIN && (intval($DTA['prop_status']) < 2 || intval($DTA['prop_status']) > 4)){
+    $ADMVIEW = '<span class="estAdmView" title="'.EST_GEN_ADMVIEW.'">'.$ListPrice.'</span>';
+    }
+  if(intval($DTA['prop_status']) == 5){
+      if($ADMVIEW){$ret = $ADMVIEW;}
+      }
+    elseif(intval($DTA['prop_status']) == 4 || intval($DTA['prop_status']) == 3){
+      $ret = $ListPrice;
+      }
+    elseif(intval($DTA['prop_status']) == 2){
+      if(intval($DTA['prop_datelive']) > 0 && intval($DTA['prop_datelive']) <= $GLOBALS['STRTIMENOW']){
+        $ret = $ListPrice;
+        }
+      elseif(USERID > 0 && (intval($DTA['prop_dateprevw']) > 0 && intval($DTA['prop_dateprevw']) <= $GLOBALS['STRTIMENOW'])){
+        $ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ListPrice;
+        }
+      elseif($ADMVIEW){$ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ADMVIEW;}
+      }
+    elseif(intval($DTA['prop_status']) == 1){
+      if($ADMVIEW){$ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ADMVIEW;}
+      }
+    unset($ListPrice,$ADMVIEW);
+  
+  return $ret;
+  }
+
+
+function estPriceDrop($DTA,$MODE=0){
+  if(intval($DTA['prop_listprice']) !== intval($DTA['prop_origprice'])){
+    $OPLP = round((1 -(intval($DTA['prop_listprice']) / intval($DTA['prop_origprice']))) * 100, 1);
+    if($MODE > 0){
+      if($MODE == 1){return $OPLP;}
+      }
+    else{
+      if($OPLP > 0){return '<span class="estPriceDrop">↓'.$OPLP.'%</span>';} // style="color:#009900"
+      else{return'<span class="estPriceDrop">↑'.$OPLP.'%</span>';} // style="color:#990000"
+      }
+    }
+  }
+
+
+function estGetCurencySym($ID=-1){
+  $EST_PREF = e107::pref('estate');
+  $ID = ($ID > -1 ? $ID : Intval($EST_PREF['currency']));
+  
+  return EST_CURSYMB[$ID];
+  }
+
+
 
 function spgrpsort($a, $b){
   return strnatcmp($a['ord'], $b['ord']);
@@ -330,8 +429,10 @@ function estMediaArr($row){
         'i'=>$row['media_idx'],
         'l'=>$row['media_levidx'],
         'o'=>$row['media_levord'],
+        'p'=>$row['media_propidx'],
         'n'=>$row['media_name'],
         't'=>$row['media_thm'],
+        'v'=>$row['media_lev'],
         'y'=>$row['media_type']
         );
   }
@@ -370,7 +471,7 @@ function estGetSpaces($DTA,$PSTAT=0){
   ON feature_idx = featurelist_key
   LEFT JOIN #estate_grouplist
   ON grouplist_groupidx = space_grpid
-  WHERE space_propidx=".$PROPID."
+  WHERE space_lev=1 AND space_levidx=".$PROPID."
   ORDER BY grouplist_ord ASC, space_ord ASC";
   
   if($data3 = $sql->retrieve($query3,true)){
@@ -389,7 +490,7 @@ function estGetSpaces($DTA,$PSTAT=0){
       }
     }
   
-  if($SUBDIVID > 0){
+  if($CITYID > 0 || $SUBDIVID > 0){
     $SUBDIVDTA = estGetSubDivDta($SUBDIVID,$CITYID);
     if(isset($SUBDIVDTA)){$RET[2] = $SUBDIVDTA;}
     }
@@ -418,10 +519,10 @@ function estGetCitySpaces($city_idx){
   $sql = e107::getDb();
   $tp = e107::getParser();
   $RET = array();
-  if($dbRow1 = $sql->retrieve('estate_subdiv_spaces', '*', 'subspace_city="'.$city_idx.'" AND subspace_subidx="0"',true)){
+  if($dbRow1 = $sql->retrieve('estate_subdiv_spaces', '*', 'space_lev="3" AND space_levidx="'.$city_idx.'"',true)){
     foreach($dbRow1 as $k=>$v){
-      $v['media'] = estGetMediaRows($v['subspace_idx'],3);
-      $RET[$v['subspace_idx']] = $v;
+      $v['media'] = estGetMediaRows($v['space_idx'],3);
+      $RET[$v['space_idx']] = $v;
       }
     }
   
@@ -480,15 +581,19 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
     }
   
   $RET['spaces'] = array('city'=>array(),'subd'=>array());
-  if($dbRow3 = $sql->retrieve('estate_subdiv_spaces', '*', 'subspace_subidx="'.$subd_idx.'"'.(intval($subd_city) > 0 ? ' OR subspace_city="'.$subd_city.'"' : ''),true)){
+  
+  
+  if($dbRow2 = $sql->retrieve('estate_subdiv_spaces', '*', 'space_lev="4" AND space_levidx="'.$subd_idx.'"',true)){
+    foreach($dbRow2 as $k=>$v){
+      $media = estGetMediaRows($v['space_idx'],4);
+      $RET['spaces']['subd'][$k] = array_merge($v,$media);
+      }
+    }
+  
+  if($dbRow3 = $sql->retrieve('estate_subdiv_spaces', '*', 'space_lev="3" AND space_levidx="'.$subd_city.'"',true)){
     foreach($dbRow3 as $k=>$v){
-      $v['media'] = estGetMediaRows($v['subspace_idx'],4);
-      if(intval($v['subspace_subidx']) > 0){
-        $RET['spaces']['subd'][$v['subspace_idx']] = $v;
-        }
-      else{
-        $RET['spaces']['city'][$v['subspace_city']] = $v;
-        }
+      $media = estGetMediaRows($v['space_idx'],3);
+      $RET['spaces']['city'][$k] = array_merge($v,$media);
       }
     }
   
@@ -498,119 +603,81 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
   }
 
 
+
+function estDirChk($dir,$sdir,$relpth,$abspth){
+  $reldir = $relpth.$dir.$sdir;
+  $ok = 2;
+  if($sdir !== ''){
+    $tst = estDirChk($dir,'',$relpth,$abspth);
+    if($tst[0] > 1){}
+    else{return array(0,'Failed to make root folder "'.$dir.'" for sub folder "'.$sdir.'"');}
+    }
+  
+  if(!is_dir($reldir)){
+    if(mkdir($reldir, 0755, true)){$ok++;}
+    else{return array(1,'Failed to make "'.$reldir.'" ');}
+    }
+  clearstatcache();
+  
+  if($ok > 1){
+    if(!is_writable($reldir)){
+      @chmod($reldir, 0755);
+      $ok++;
+      }
+    clearstatcache();
+    
+    if(!file_exists($reldir.'/index.html')){
+      $file = fopen($reldir."/index.html","w");
+      fwrite($file,"Hello World.");
+      fclose($file);
+      $ok++;
+      }
+    clearstatcache();
+    }
+  return array($ok,'');
+  }
+
 function estSubDivisionView($subd_idx,$mode=0){
-  //estGetSpaces
-  $sql = e107::getDb();
-  $tp = e107::getParser();
-  
-  if($mode == 1){
-    if($subd_idx == 0){
-      return '<div id="estSubDivCont" data-id="0" data-city="0" data-hoareq="0" data-hoafee="0" data-hoafrq="0" data-hoaappr="0">'.EST_GEN_SUBDIVISIONNONE.'</div>';
-      }
-    
-    $dta = estGetSubDivDta($subd_idx);
-    extract($dta);
-    if(isset($media) && count($media) > 0){
-      $CSSTOP = estViewImgCSS('#estSubDivSlideShow',$media,2);
-      if(isset($CSSTOP[0])){
-        $SLIDESHOW = '<style>'.$CSSTOP[0].'</style><div id="estSubDivSlideShow"></div>';
-        }
-      }
+  return (ADMIN ? '<div>Not Used</div>' : '');
+  }
+
+
+function estImgPaths($dta){
+  switch(intval($dta['v'])){
+    case 3 :
+      return [EST_PTHABS_CITYTHM.$dta['t'],EST_PTHABS_CITYFULL.$dta['f']];
+      break;
+    case 2 :
+    case 1 :
+      return [EST_PTHABS_PROPTHM.$dta['t'],EST_PTHABS_PROPFULL.$dta['f']];
+      break;
+    default :
+      return [EST_PTHABS_SUBDTHM.$dta['t'],EST_PTHABS_SUBDFULL.$dta['f']];
+      break;
     }
-  else{
-    if(is_array($subd_idx)){
-      $dta = $subd_idx;
-      extract($dta);
-      if(isset($media) && count($media) > 0){
-        $SLIDESHOW = '<div id="estSubDivSlideShow" class="WD100"></div>';
-        }
-      }
-      
-    }
-  
-  if(trim($subd_url) !== ""){
-    $SUBDWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_url,'url',array('ext'=>1)).'</h4>';
-    }
-  
-  if(trim($subd_hoaweb) !== ""){
-    $HOAWEB = '<h4 class="WD100">'.$tp->makeClickable($subd_hoaweb,'url',array('ext'=>1)).'</h4>';
-    }
-  
-  if($mode == 1){
-    $txt = '
-    <div id="estSubDivCont" data-id="'.intval($subd_idx).'" data-city="'.intval($subd_city).'" data-hoareq="'.intval($subd_hoareq).'" data-hoafee="'.intval($subd_hoafee).'" data-hoafrq="'.intval($subd_hoafrq).'" data-hoaappr="'.intval($subd_hoaappr).'">
-      '.$SLIDESHOW.'
-      <div id="estSubDivS1">
-        <h3 class="WD100">'.$tp->toHTML($subd_name,true).'</h3>
-        <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
-        '.$SUBDWEB.'
-        '.(trim($subd_description) !== '' ? '<div class="WD100">'.$tp->toHTML($subd_description,true).'</div>' : '').'
-      </div>';
-      }
-  
-  else{
-    $txt = '
-    <div id="estSubDivCont">
-      <h3 class="WD100">'.$tp->toHTML($subd_name,true).'</h3>
-      '.$SLIDESHOW.'
-      <div id="estSubDivS1">
-        <h4 class="WD100">'.EST_GEN_SUBDIVTYPE[$subd_type].'</h4>
-        '.$SUBDWEB.'
-        '.(trim($subd_description) !== '' ? '<div class="WD100 DTH256">'.$tp->toHTML($subd_description,true).'</div>' : '').'
-      </div>';
-    }
-  
-  
-  if($subd_hoaappr == 1 || $subd_hoareq == 1 || intval($subd_hoafee) > 0){
-      $txt .= '
-      <div id="estSubDivS2">
-        <h4>'.$tp->toHTML((trim($subd_hoaname) !== '' ? $subd_hoaname : $subd_name),true).' '.EST_GEN_HOMEOWNASS.'</h4>
-        '.($HOAWEB ? $HOAWEB : ($SUBDWEB ? $SUBDWEB : '')).'
-        <h4>'.EST_GEN_HOADEF1.'</h4>
-        <ul class="DTH256">
-          <li>'.($subd_hoareq == 1 ? EST_GEN_HOAREQ1 : EST_GEN_HOAREQ2).'</li>
-          '.($subd_hoafee > 0 ? '<li>'.EST_PROP_HOAFEES.': '.$subd_hoafee.'  '.($subd_hoafrq > 0 ? EST_HOAFREQ[$subd_hoafrq] : '').'<a class="estSTlnk" href="#hoaDisclaimers">²</a></li>' : '').'
-          '.($subd_hoaappr == 1 ? '<li>'.EST_GEN_HOAAPPR2.'<a class="estSTlnk" href="#hoaDisclaimers">³</a></li>' : '').'
-        </ul>
-      </div>';
-      }
-    
-    
-    $txt .= '
-    <div id="estSubDivS3">
-    </div>';
-    
-    $txt .= '
-  </div>';
-  
-  //$EST_HOAREQD[$subd_hoareq]
-  //EST_HOAFREQ
-  unset($SLIDESHOW,$SUBDWEB,$HOAWEB,$CSSTOP);
-  return $txt;
   }
 
 
 function estViewImgCSS($cssName,$gal,$loc=1){
   $EST_PREF = e107::pref('estate');
-  $actv = $EST_PREF['slideshow_act'];
-  $stime = intval($EST_PREF['slideshow_time']) * $loc;
-  $sdelay = $EST_PREF['slideshow_delay'];
-  $CSS = array();
   $galCt = (is_array($gal) ? count($gal) : 0);
+  
+  $CSS = array();
   if($galCt == 0){
     $CSS[0] = '      '.$cssName.'{background-image: url("'.EST_PATHABS_IMAGES.'imgnotavail.png");}';
     $CSS[1] .= '
         <img src="'.EST_PATHABS_IMAGES.'imgnotavail.png" />';
     }
   else{
-    $sdelay = intval($sdelay);
-    $iStep = round(99 / $galCt, 2);
-    $imgpth = ($loc == 2 ? EST_PTHABS_SUBDTHM : EST_PTHABS_PROPTHM);
-    $imgpthfull = ($loc == 2 ? EST_PTHABS_SUBDFULL : EST_PTHABS_PROPFULL);
     $g1 = (!isset($gal[1]) && isset($gal[0]) ? 0 : 1);
-    $CSS[0] = '';
-    $URLIST = 'url(\''.$imgpth.$gal[$g1]['t'].'\')';
+    $stime = intval($EST_PREF['slideshow_time']);
+    $actv = $EST_PREF['slideshow_act'];
+    $sdelay = intval($EST_PREF['slideshow_delay']);
+    $iStep = round(99 / $galCt, 2);
     
+    $pths = estImgPaths($gal[$g1]);
+    $CSS[0] = '';
+    $URLIST = 'url(\''.$pths[0].'\')';
     
     if(intval($actv) == 1 && $galCt > 1){
       $aniName = str_replace('.','',str_replace('#','',$cssName));
@@ -618,11 +685,16 @@ function estViewImgCSS($cssName,$gal,$loc=1){
       $fi = 0;
       foreach($gal as $ik=>$idta){
         $fi++;
-        if($fi > $g1){$URLIST .= ',url(\''.$imgpth.$idta['t'].'\')';}
-        $CSS[1] .= '
-        <img src="'.$imgpth.$idta['t'].'"'.(trim($idta['f']) !== '' ? ' data-full="'.$imgpthfull.$idta['f'].'"' : '').' />';
+        $pths = estImgPaths($idta);
+        
+        if($fi > $g1){$URLIST .= ',url(\''.$pths[0].'\')';}
+        if($idta['v'] == 1 || $idta['v'] == 2){
+          $CSS[1] .= '
+        <img src="'.$pths[0].'"'.(trim($idta['f']) !== '' ? ' data-full="'.$pths[1].'"' : '').' />';
+          }
+        
         $CSS[2][$ik] = $idta['t'];
-        $galCSS .= $iPct.'%'.($fi == 1 ? ', 100%' : '').' {background-image: url("'.$imgpth.$idta['t'].'");}
+        $galCSS .= $iPct.'%'.($fi == 1 ? ', 100%' : '').' {background-image: url("'.$pths[0].'");}
     ';
         $iPct = ($iStep + $iPct);
         }
@@ -644,8 +716,10 @@ function estViewImgCSS($cssName,$gal,$loc=1){
       '.$galCSS.'}';
         }
     elseif($galCt == 1){
-      $CSS[1] .= '
-        <img src="'.$imgpth.$gal[$g1]['t'].'"'.(trim($gal[$g1]['f']) !== '' ? ' class="estGetFullImg" data-full="'.$imgpthfull.$gal[$g1]['f'].'"' : '').' />';
+        if($gal[$g1]['v'] == 1 || $gal[$g1]['v'] == 2){
+          $CSS[1] .= '
+        <img src="'.$pths[0].'"'.(trim($gal[$g1]['f']) !== '' ? ' class="estGetFullImg" data-full="'.$pths[1].'"' : '').' />';
+          }
       }
     $CSS[0] .= '
     '.$cssName.'{

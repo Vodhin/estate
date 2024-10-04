@@ -31,12 +31,15 @@
 		<pref name='country'>us</pref>
     <pref name='currency'>0</pref>
 		<pref name='dbfix'>1</pref>
+    <pref name='dimu1'>0</pref>
+    <pref name='dimu2'>0</pref>
 		<pref name='helpinfull'>1</pref>
 		<pref name='firsttime'>2</pref>
 		<pref name='listing_save'>0</pref>
 		<pref name='pref_addr_lookup'>New York, NY</pref>
 		<pref name='map_height'>320</pref>
 		<pref name='map_include_agency'>1</pref>
+		<pref name='map_include_sold'>1</pref>
     <pref name='map_jssrc'>1</pref>
 		<pref name='map_key'>sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=</pref>
 		<pref name='map_url'>https://unpkg.com/leaflet@1.9.2/dist/leaflet.js</pref>

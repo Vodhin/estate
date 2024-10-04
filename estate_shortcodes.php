@@ -142,7 +142,13 @@ class estate_shortcodes extends e_shortcode{
     else{return '';}
     }
   
-  
+  //PROP_THMSTY
+  function sc_prop_subdivname($parm){
+    if(trim($this->var['subd_name']) !== ""){
+      return e107::getParser()->toHTML(''.$this->var['subd_name'].'');
+      }
+    }
+    
   function sc_prop_modelname($parm){
     if(trim($this->var['prop_modelname']) !== ""){return '"'.e107::getParser()->toHTML($this->var['prop_modelname']).'"';}
     }
@@ -233,12 +239,7 @@ class estate_shortcodes extends e_shortcode{
     return $tp->toHTML($this->var['city_name']).(trim($this->var['state_init']) ? ', '.$this->var['state_init'] : '');
     }
   
-  function sc_prop_subdivname($parm){
-    if(intval($this->var['prop_subdiv']) > 0){
-      $ret = '<span>'.e107::getParser()->toHTML($GLOBALS['EST_SUBDIV'][$this->var['prop_subdiv']]['subd_name']).'</span>';
-      }
-    return $ret;
-    }
+  
   
   function sc_prop_thmsty($parm){
     if(trim($this->var['img'][1]['t']) !== ''){
@@ -532,49 +533,288 @@ class estate_shortcodes extends e_shortcode{
   
   
   
+  function sc_prop_hoadisclaimers($parm){
+		$tp = e107::getParser();
+    $subapr = intval($this->var['subdiv']['subd_hoaappr']);
+    $subreq = intval($this->var['subdiv']['subd_hoareq']);
+    $subfee = intval($this->var['subdiv']['subd_hoafee']);
+    $subfrq = intval($this->var['subdiv']['subd_hoafrq']);
+    $sublnd = intval($this->var['subdiv']['subd_hoaland']);
+    
+    $hoaapr = intval($this->var['prop_hoaappr']);
+    $hoareq = intval($this->var['prop_hoareq']);
+    $hoafee = intval($this->var['prop_hoafee']);
+    $hoafrq = intval($this->var['prop_hoafrq']);
+    $hoalnd = intval($this->var['prop_hoaland']);
+    
+    $liarr = array();
+    if($hoaapr == 1 || $hoareq > 0|| $hoafee > 0 || $hoalnd > 0){array_push($liarr,'¹'.EST_PROP_HOADISCLAIMER);}
+    if($subfee > 0 || $hoafee > 0){array_push($liarr,'²'.EST_PROP_HOADISCLAIMER1.' '.EST_PROP_HOADISCLAIMER0.' '.EST_PROP_HOADISCLAIMER2);}
+    if($subapr == 1 || $hoaapr == 1){array_push($liarr,'³'.EST_PROP_HOADISCLAIMER3.' '.EST_PROP_HOADISCLAIMER0);}
+    
+    if(intval($this->var['prop_landfee']) > 0){
+      array_push($liarr,'⁴'.EST_PROP_HOADISCLAIMER4);
+      }
+    
+    if(count($liarr) > 0){
+      $txt = '<div id="hoaDisclaimers" class="estDisclaimer">';
+      foreach($liarr as $k=>$v){$txt .= '<p>'.$tp->toHTML($v).'</p>';}
+      $txt .= '</div>';
+      
+      return $txt;
+      }
+    
+    if($this->var['prop_hoareq'] == 1 ||  $this->var['subd_hoaappr'] == 1 || $this->var['subd_hoareq'] == 1){
+    
+      }
+    unset($subapr,$subreq,$subfee,$subfrq,$sublnd,$hoaapr,$hoareq,$hoafee,$hoafrq,$hoalnd);
+    }
+  
+  
+  
+  
+  
+  
+  
   function sc_prop_hoa($parm){
 		$tp = e107::getParser();
     
-    if($this->var['prop_hoaappr'] == 1 || $this->var['prop_hoareq'] == 1 || intval($this->var['prop_hoafee']) > 0){
-      $txt = '
-      <h2>'.EST_GEN_HOADEF2.'<a class="estSTlnk" href="#hoaDisclaimers">¹</a></h2>
-      <ul class="DTH256">
-        '.($this->var['prop_hoareq'] == 1 ? '<li>'.EST_GEN_HOAREQ1.'</li>' : EST_GEN_HOAREQ2).'
-        '.($this->var['prop_hoafee'] > 0 ? '<li>'.EST_PROP_HOAFEES.': '.$this->var['prop_hoafee'].'  '.($this->var['prop_hoafrq'] > 0 ? EST_HOAFREQ[$this->var['prop_hoafrq']] : '').'<a class="estSTlnk" href="#hoaDisclaimers">²</a></li>' : '').'
-        '.($this->var['prop_hoaappr'] == 1 ? '<li>'.EST_GEN_HOAAPPR2.'<a class="estSTlnk" href="#hoaDisclaimers">³</a></li>' : '').'
-      </ul>';
+    $subapr = intval($this->var['subdiv']['subd_hoaappr']);
+    $subreq = intval($this->var['subdiv']['subd_hoareq']);
+    $subfee = intval($this->var['subdiv']['subd_hoafee']);
+    $subfrq = intval($this->var['subdiv']['subd_hoafrq']);
+    $sublnd = intval($this->var['subdiv']['subd_hoaland']);
+    
+    $hoaapr = intval($this->var['prop_hoaappr']);
+    $hoareq = intval($this->var['prop_hoareq']);
+    $hoafee = intval($this->var['prop_hoafee']);
+    $hoafrq = intval($this->var['prop_hoafrq']);
+    $hoalnd = intval($this->var['prop_hoaland']);
+    
+    $liarr = array();
+    
+    if($subapr !== 1 && $hoaapr == 1){
+      $liarr[0] = '<a class="estSTlnk" href="#hoaDisclaimers">'.EST_GEN_HOAAPPR2.'³</a>';
       }
+    
+    
+    if($hoareq !== $subreq){
+      if($hoareq == 1){$liarr[1] = EST_GEN_HOAREQ1;}
+      else{$liarr[1] = EST_GEN_HOAREQ2;}
+      }
+      
+    
+    if($hoafee !== $subfee){
+      if($hoafee > 0){
+        $liarr[2] = '<a class="estSTlnk" href="#hoaDisclaimers">'.EST_PROP_HOAFEES.': '.$hoafee.($hoafrq > 0 ? ' '.EST_HOAFREQ[$hoafrq] : '').($hoalnd == 1 ? ' '.$GLOBALS['EST_HOALAND'][1][$hoalnd] : '').'²</a>';
+        }
+      }
+    
+    $landfee = intval($this->var['prop_landfee']);
+    $landfrq = intval($this->var['prop_landfreq']);
+    if($landfee > 0){
+      $liarr[3] = '<a class="estSTlnk" href="#hoaDisclaimers">'.EST_PROP_LANDLEASE.': '.$landfee.' '.($landfrq > 0 ? ' '.$GLOBALS['EST_HOAFREQ'][$landfrq] : '').'⁴</a>';
+      }
+    
+    
+    if(count($liarr) > 0){
+      $txt = '
+      <h4 class="TAL"><a class="estSTlnk" href="#hoaDisclaimers">'.EST_GEN_HOADEF2.'¹</a></h4>
+      <ul class="WD100">';
+      foreach($liarr as $k=>$v){$txt .= '<li>'.$tp->toHTML($v).'</li>';}
+      $txt .= '</ul>';
+      }
+    
+    unset($subapr,$subreq,$subfee,$subfrq,$sublnd,$hoaapr,$hoareq,$hoafee,$hoafrq,$hoalnd);
     return $txt;
     }
   
-  function sc_prop_hoadisclaimers($parm){
-		$tp = e107::getParser();
-    if($this->var['prop_hoaappr'] == 1 || $this->var['prop_hoareq'] == 1 || intval($this->var['prop_hoafee']) > 0 || $this->var['subd_hoaappr'] == 1 || $this->var['subd_hoareq'] == 1 || intval($this->var['subd_hoafee']) > 0){
-    return '
-      <div id="hoaDisclaimers" class="estDisclaimer">
-        <p>¹'.EST_PROP_HOADISCLAIMER.'</p>
-        '.($this->var['prop_hoafee'] > 0  || intval($this->var['subd_hoafee']) > 0 ? '<p>²'.EST_PROP_HOADISCLAIMER1.' '.EST_PROP_HOADISCLAIMER0.' '.EST_PROP_HOADISCLAIMER2.'</p>' : '').'
-        '.($this->var['prop_hoaappr'] == 1 || $this->var['subd_hoaappr'] == 1 ? '<p>³'.EST_PROP_HOADISCLAIMER3.' '.EST_PROP_HOADISCLAIMER0.'</p>' : '').'
-      </div>';
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  function sc_community_slideshow($parm){
+    if(isset($this->var['subdiv']['media']) && count($this->var['subdiv']['media']) > 0){
+      return '<div id="estSubDivSlideShow"></div>';
       }
+    }
+  
+  function sc_comminuty_name($parm){
+    return e107::getParser()->toHTML($this->var['subdiv']['subd_name'],true);
+    }
+  
+  function sc_community_url($parm){
+    if(trim($this->var['subdiv']['subd_url']) !== "" && $this->var['subdiv']['subd_url'] !== $this->var['subdiv']['subd_hoaweb']){
+      return e107::getParser()->makeClickable($this->var['subdiv']['subd_url'],'url',array('ext'=>1));
+      }
+    }
+  
+  function sc_community_type($parm){
+    return  e107::getParser()->toHTML(EST_GEN_SUBDIVTYPE[$this->var['subdiv']['subd_type']]);
+    }
+  
+  
+  function sc_community_desc($parm){
+    if(trim($this->var['subdiv']['subd_description']) !== ''){
+      return e107::getParser()->toHTML($this->var['subdiv']['subd_description'],true);
+      }
+    }
+  
+  
+  
+  function sc_community_hoa($parm){
+    $tp = e107::getParser();
+    
+    $subapr = intval($this->var['subdiv']['subd_hoaappr']);
+    $subreq = intval($this->var['subdiv']['subd_hoareq']);
+    $subfee = intval($this->var['subdiv']['subd_hoafee']);
+    $subfrq = intval($this->var['subdiv']['subd_hoafrq']);
+    $sublnd = intval($this->var['subdiv']['subd_hoaland']);
+    
+    
+    $liarr = array();
+    if(trim($this->var['subdiv']['subd_hoaweb']) !== "" && $this->var['subdiv']['subd_hoaweb'] == $this->var['subdiv']['subd_url']){
+      $liarr['txt'][0] = '<h4>'.$tp->makeClickable($this->var['subdiv']['subd_hoaweb'],'url',array('ext'=>1)).'</h4>';
+      }
+    
+    if(trim($this->var['subdiv']['subd_hoaname']) !== '' && $this->var['subdiv']['subd_hoaname'] !== $this->var['subdiv']['subd_name']){
+      $liarr['txt'][1] = '<h4>'.$tp->toHTML($this->var['subdiv']['subd_hoaname'],true).' '.EST_GEN_HOMEOWNASS.'</h4>';
+      }
+    
+    if(trim($this->var['subdiv']['subd_url']) !== "" && $this->var['subdiv']['subd_url'] !== $this->var['subdiv']['subd_hoaweb']){
+      $liarr['txt'][2] = '<h4>'.$tp->makeClickable($this->var['subdiv']['subd_hoaweb'],'url',array('ext'=>1)).'</h4>';
+      }
+    
+    if($subapr == 1 || $subreq == 1 || $subfee > 0){
+      $liarr['ul'][0] = ($subreq == 1 ? EST_GEN_HOAREQ1 : EST_GEN_HOAREQ2);
+      if($subfee > 0){
+        $liarr['ul'][1] = '<a class="estSTlnk" href="#hoaDisclaimers">'.EST_PROP_HOAFEES.': '.$subfee.($subfrq > 0 ? ' '.EST_HOAFREQ[$subfrq] : '').'²</a>';
+        }
+      if($subapr == 1){
+        $liarr['ul'][2] = '<a class="estSTlnk" href="#hoaDisclaimers">'.EST_GEN_HOAAPPR2.'³</a>';
+        }
+      }
+    
+    if(count($liarr) > 0){
+      $txt = '';//'<h4>'.EST_GEN_HOADEF1.'</h4>';
+      if(isset($liarr['txt']) && count($liarr['txt']) > 0){
+        foreach($liarr['txt'] as $k=>$v){$txt .= $v;}
+        }
+      
+      if(isset($liarr['ul']) && count($liarr['ul']) > 0){
+        $txt .= '<ul class="WD100">';
+        foreach($liarr['ul'] as $k=>$v){$txt .= '<li>'.$v.'</li>';}
+        $txt .= '</ul>';
+        }
+      $txt .= '';
+      }
+    return $txt;
+    unset($subapr,$subreq,$subfee,$subfrq,$sublnd,$txt);
     }
   
   
   function sc_prop_community($parm){
     if(!isset($this->var['subdiv'])){return '';}
-		$tp = e107::getParser();
+    if(!is_array($this->var['subdiv'])){return '';}
+		
+    $tp = e107::getParser();
     
-    if($parm['get'] == 'capt'){return $tp->toHTML(EST_GEN_COMMUNITY.': '.$this->var['subdiv']['subd_name']);}
+    if($parm['get'] == 'capt'){
+      if(intval($this->var['subdiv']['subd_idx']) == 0){return'';}
+      return $tp->toHTML(EST_GEN_COMMUNITY.': '.$this->var['subdiv']['subd_name']);
+      }
     
-    return estSubDivisionView($this->var['subdiv'],0);
+    
+    //$EST_HOAREQD[$subd_hoareq]
+    //EST_HOAFREQ
+    unset($CSSTOP);
+    return $txt;
     }
   
   
-  function sc_prop_community_sect($parm){
-    if(!isset($this->var['subdiv'])){return '';}
-    $txt = $this->sc_prop_community($parm);
-    return '<div class="WD100">'.e107::getRender()->tablerender(EST_GEN_COMMUNITY, $txt, 'community-section',true).'</div>';
-    unset($capt, $txt);
+  function minithumb($v){
+    if(isset($v['media']) && count($v['media']) > 0){
+      $g1 = (!isset($v['media'][1]) && isset($v['media'][0]) ? 0 : 1);
+      $EST_PREF = e107::pref('estate');
+      $galCt = count($v['media']);
+      if(intval($EST_PREF['slideshow_act']) == 1 && $galCt > 1){
+        $cssName = 'estMiniThumb-'.intval($v['media'][$g1]['p']).'-'.intval($v['media'][$g1]['v']).'-'.intval($v['media'][$g1]['l']).'-img'; 
+        $stime = intval($EST_PREF['slideshow_time']);
+        $sdelay = intval($EST_PREF['slideshow_delay']);
+        if($sdelay == 0){$sdelay = ($galCt > 7 ? ceil($galCt / 2) : 4);}
+        
+        $iStep = round(99 / $galCt, 2);
+        $iPct = 0;
+        foreach($v['media'] as $mk=>$mv){
+          $pth = estImgPaths($mv);
+          if($mk == 0){
+            $urlist = 'url(\''.$pth[0].'\')';
+            $keyframes = '@keyframes '.$cssName.'{
+                0%, 100% {background-image: url("'.$pth[0].'");}
+                ';
+            }
+          else{
+            $urlist .= ',url(\''.$pth[0].'\')';
+            $keyframes .= $iPct.'% {background-image: url("'.$pth[0].'");}
+                ';
+            }
+          
+          $iPct = ($iStep + $iPct);
+          unset($mk,$mv);
+          }
+        return '
+            <style>
+              '.$keyframes.'}
+              #'.$cssName.'{
+                background-image:'.$urlist.';
+                animation: '.$cssName.' '.($galCt * intval($stime)).'s infinite;
+                animation-delay: '.$sdelay.'s;
+                visibility: visible !important;
+                -webkit-animation-name: '.$cssName.';
+                -webkit-animation-duration: '.($galCt * intval($stime)).'s;
+                -webkit-animation-iteration-count: infinite;
+                }
+            </style>
+            <div id="'.$cssName.'" class="estImgSlide"><div class="estSSict">'.$galCt.'</div></div>';
+        unset($pth,$cssName,$urlist,$keyframes,$galCt,$sdelay,$stime);
+        }
+      else{
+        $pth = estImgPaths($v['media'][0]);
+        return '
+            <div class="estImgSlide" style="background-image:url('.$pth[0].')"></div>';
+        unset($pth,$galCt);
+        }
+      }
+    else{
+      return '
+            <div class="estImgSlide"></div>';
+      }
+    }
+  
+  
+  function sc_community_spaces($parm){
+    $tp = e107::getParser();
+    if(isset($this->var['subdiv']['spaces']['subd'])){
+      if(count($this->var['subdiv']['spaces']['subd']) > 0){
+        foreach($this->var['subdiv']['spaces']['subd'] as $k=>$v){
+          $txt .= '
+          <div class="estViewSpaceBtn estTableGroupTile">
+            <div class="estSpTtl">'.$tp->toHTML($v['space_name'],true).'</div>';
+          $txt .=  $this->minithumb($v);
+          $txt .= '
+            <p class="DTH128">'.$tp->toHTML($v['space_description'],true).'</p>
+          </div>';
+          }
+        return $txt;
+        unset($txt,$k,$v);
+        }
+      }
     }
   
   
@@ -622,9 +862,10 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_prop_newicon(){
-		$tp = e107::getParser();
+		//$tp = e107::getParser();
     if(EST_USERPERM > 0){
-      return '<a title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a><p><a class="btn btn-primary noMobile" href="'.EST_PTH_ADMIN.'?action=create" title="'.EST_GEN_FULLADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_FULLADDLIST.'</a><a class="btn btn-primary" href="'.EST_PATHABS_LISTINGS.'?new.0.0" title="'.EST_GEN_QUICKADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_QUICKADDLIST.'</a></p>';
+      // <a class="btn btn-primary noMobile" href="'.EST_PTH_ADMIN.'?action=create" title="'.EST_GEN_FULLADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_FULLADDLIST.'</a><a title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a><p><a class="btn btn-primary" href="'.EST_PATHABS_LISTINGS.'?new.0.0" title="'.EST_GEN_QUICKADDLIST.'"><i class="fa fa-plus"></i> '.EST_GEN_QUICKADDLIST.'</a></p>
+      return '<a class="FR" href="'.EST_PATHABS_LISTINGS.'?new.0.0" title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a>';
       }
     if(intval($GLOBALS['EST_PREF']['public_act']) !== 0 && USERID > 0 && check_class($GLOBALS['EST_PREF']['public_act'])){
       return '<a class="FR" href="'.EST_PATHABS_LISTINGS.'?new.0.0" title="'.EST_GEN_NEW.'"><i class="fa fa-plus"></i></a>';
@@ -757,11 +998,9 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_prop_agentcard($parm){
-    //if(defined("ESTAGENTRENDERED")){return '<div id="estAgentCardDupe"></div>';}
 		$tp = e107::getParser();
     $EST_PREF = e107::pref('estate');
     $AGENT = $this->estGetSeller();
-    
     
     if($AGENT['error']){
       if(ADMIN){e107::getMessage()->addWarning($AGENT['error']);}
@@ -926,7 +1165,7 @@ class estate_shortcodes extends e_shortcode{
   
   
   function estPropStat($DTA){
-    if(intval($DTA['prop_status']) == 5){$ret = (intval($DTA['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);}
+    if(intval($DTA['prop_status']) == 5){$ret = (intval($DTA['prop_listype']) == 0 ? EST_GEN_OFFMARKET : EST_GEN_SOLD);}//'';
     elseif(intval($DTA['prop_status']) == 4){$ret = EST_GEN_PENDING; $parm = '';}
     elseif(intval($DTA['prop_status']) == 3){$ret = $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']]; $parm = '';}
     elseif(intval($DTA['prop_status']) == 2){
@@ -949,55 +1188,6 @@ class estate_shortcodes extends e_shortcode{
     }
   
   
-  function estPriceDrop($DTA,$MODE){
-    if(intval($DTA['prop_listprice']) !== intval($DTA['prop_origprice'])){
-      $OPLP = round((1 -(intval($DTA['prop_listprice']) / intval($DTA['prop_origprice']))) * 100, 1);
-      if($MODE > 0){
-        if($MODE == 1){return $OPLP;}
-        }
-      else{
-        if($OPLP > 0){return '<span class="estPriceDrop">↓'.$OPLP.'%</span>';} // style="color:#009900"
-        else{return'<span class="estPriceDrop">↑'.$OPLP.'%</span>';} // style="color:#990000"
-        }
-      }
-    }
-  
-  
-  function estPropPrice($DTA,$NOADV=0){
-		$tp = e107::getParser();
-    $nf = new NumberFormatter('en_US', \NumberFormatter::CURRENCY);
-    $nf->setTextAttribute(NumberFormatter::CURRENCY_CODE, 'USD');
-    $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
-    //EST_CURSYMB
-    
-    $ListPrice = $nf->format($DTA['prop_listprice']).($DTA['prop_listype'] == 0 ? '/'.$GLOBALS['EST_LEASEFREQ'][$DTA['prop_leasefreq']] : '');
-    $ListPrice .= $this->estPriceDrop($this->var,0);
-    
-    if(ADMIN && (intval($DTA['prop_status']) < 2 || intval($DTA['prop_status']) > 4)){
-      $ADMVIEW = '<span class="estAdmView" title="'.EST_GEN_ADMVIEW.'">'.$ListPrice.'</span>';
-      }
-
-    if(intval($DTA['prop_status']) == 5){
-      if($ADMVIEW){$ret = $ADMVIEW;}
-      }
-    elseif(intval($DTA['prop_status']) == 4 || intval($DTA['prop_status']) == 3){
-      $ret = $ListPrice;
-      }
-    elseif(intval($DTA['prop_status']) == 2){
-      if(intval($DTA['prop_datelive']) > 0 && intval($DTA['prop_datelive']) <= $GLOBALS['STRTIMENOW']){
-        $ret = $ListPrice;
-        }
-      elseif(USERID > 0 && (intval($DTA['prop_dateprevw']) > 0 && intval($DTA['prop_dateprevw']) <= $GLOBALS['STRTIMENOW'])){
-        $ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ListPrice;
-        }
-      elseif($ADMVIEW){$ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ADMVIEW;}
-      }
-    elseif(intval($DTA['prop_status']) == 1){
-      if($ADMVIEW){$ret = ($NOADV == 0 ? $GLOBALS['EST_LISTTYPE1'][$DTA['prop_listype']] : '').' '.$ADMVIEW;}
-      }
-    unset($nf,$ListPrice,$ADMVIEW);
-    return $ret;
-    }
   
   
   
@@ -1007,7 +1197,7 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_prop_price($parm = ''){
-    return $this->estPropPrice($this->var);
+    return estGetListPrice($this->var);//$this->estPropPrice($this->var);
     }
   
   

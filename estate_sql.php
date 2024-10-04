@@ -49,6 +49,7 @@ CREATE TABLE `estate_city` (
   `city_zip` text NOT NULL,
   `city_timezone` varchar(100) NOT NULL,
   `city_url` varchar(100) NOT NULL,
+  `city_description` text NOT NULL,
   PRIMARY KEY (`city_idx`)
 ) ENGINE=InnoDB;
 
@@ -142,7 +143,6 @@ CREATE TABLE `estate_grouplist` (
   `grouplist_ord` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`grouplist_idx`)
 ) ENGINE=InnoDB;
-
 
 
 CREATE TABLE `estate_likes` (
@@ -281,7 +281,6 @@ CREATE TABLE `estate_properties` (
 
 CREATE TABLE `estate_spaces` (
   `space_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `space_propidx` int(11) unsigned NOT NULL,
   `space_lev` tinyint(1) unsigned NOT NULL default '1',
   `space_levidx` int(11) unsigned NOT NULL,
   `space_grpid` int(11) unsigned NOT NULL,
@@ -327,23 +326,17 @@ CREATE TABLE `estate_subdiv` (
 
 
 CREATE TABLE `estate_subdiv_spaces` (
-  `subspace_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `subspace_city` int(10) unsigned NOT NULL,
-  `subspace_subidx` int(10) unsigned NOT NULL,
-  `subspace_catid` int(11) unsigned NOT NULL,
-  `subspace_ord` tinyint(1) unsigned NOT NULL,
-  `subspace_name` varchar(55) NOT NULL,
-  `subspace_description` text NOT NULL,
-  PRIMARY KEY (`subspace_idx`)
+  `space_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `space_lev` tinyint(1) unsigned NOT NULL default '4',
+  `space_levidx` int(11) unsigned NOT NULL,
+  `space_grpid` int(11) unsigned NOT NULL,
+  `space_catid` int(11) unsigned NOT NULL,
+  `space_ord` tinyint(1) unsigned NOT NULL,
+  `space_name` varchar(55) NOT NULL,
+  `space_description` text NOT NULL,
+  PRIMARY KEY (`space_idx`)
 ) ENGINE=InnoDB;
 
-
-CREATE TABLE `estate_subdivcats` (
-  `subdivcat_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `subdivcat_zone` int(10) unsigned NOT NULL,
-  `subdivcat_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`subdivcat_idx`)
-) ENGINE=InnoDB;
 
 
 CREATE TABLE `estate_user` (

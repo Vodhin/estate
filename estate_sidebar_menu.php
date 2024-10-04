@@ -10,8 +10,7 @@
 if (!defined('e107_INIT')) { exit; }
 if (!e107::isInstalled('estate')) { return; }
 
-if(defined("EST_MENU_RENDERED")){return;}
-
+if(defined("EST_RENDERED_SIDEBARMENU")){return;}
 
 $EST_PREF = e107::pref('estate');
 $tp = e107::getParser();
@@ -31,7 +30,7 @@ else{$qs = array('list',0);}
 
 
 if(EST_USERPERM == 4){echo '<form name="estMenuTemplateForm" method="POST" action="'.e_SELF.'?'.e_QUERY.'" >';}
-echo '<div id="estMenuCont" class="WD100">';
+echo '<div id="estSidebarMenuCont" class="WD100">';
 
 
 
@@ -92,6 +91,6 @@ else{
 
 echo "</div>";
 if(EST_USERPERM == 4){echo '</form>';}
-define("EST_MENU_RENDERED",true);
+define("EST_RENDERED_SIDEBARMENU",1);
 unset($PREFTMP,$TEMPLATE,$tkey,$ns,$tp);
 ?>
