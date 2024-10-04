@@ -505,6 +505,9 @@ foreach($TBS as $k=>$v){$TBS[$k]['text'] = $estateCore->estOAFormTable($k,$DTA['
 $OATXT .= $frm->tabs($TBS, $TBSOPTS);
 
 $OATXT .= '<input type="hidden" name="estPTrig" value="'.USERID.'" />
+<input type="hidden" name="estDefCur" value="'.$EST_PREF['currency'].'" />
+<input type="hidden" name="estDefDIMU1" value="'.$EST_PREF['dimu1'].'" />
+<input type="hidden" name="estDefDIMU2" value="'.$EST_PREF['dimu2'].'" />
 </form>
 <div id="estJSpth" data-pth="'.EST_PATHABS.'"></div>
 <div id="estMobTst"></div>

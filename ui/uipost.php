@@ -518,7 +518,7 @@ function estPropDelete($ID){
     $sql = e107::getDB();
     $tp = e107::getParser();
     
-    if($sql->delete("estate_spaces", "space_propidx='".$ID."'")){
+    if($sql->delete("estate_spaces", "space_lev='2' AND space_levidx='".$ID."'")){
       $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_SPACES.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
       }
     if($sql->delete("estate_grouplist", "grouplist_propidx='".$ID."'")){
@@ -557,7 +557,7 @@ function estPropDelete($ID){
       <ul id="estMediaDeleted">'.$MEDIA.'</ul>';
       
     
-    if($sql->delete("estate_media", "media_propidx='".$ID."'")){
+    if($sql->delete("estate_media", "media_propidx='".$ID."'")){ //
       $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_MEDIA.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
       }
     return $RESLT;

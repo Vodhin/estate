@@ -1150,6 +1150,26 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' => array (), 
         'writeParms' => array('size'=>'small','optArray'=>EST_CURSYMB),
         ),
+			'dimu1' => array (
+        'tab'=>0,
+        'title' => LAN_DEFAULT.' '.EST_PREF_DIMU1,
+        'type' => 'dropdown',
+        'data' => 'str',
+        'width' => 'auto',
+        'help' => EST_PREF_DIMU1HLP,
+        'readParms' => array (), 
+        'writeParms' => array('size'=>'large','optArray'=>array(EST_PREF_DIMU1A,EST_PREF_DIMU1B)),
+        ),
+			'dimu2' => array (
+        'tab'=>0,
+        'title' => LAN_DEFAULT.' '.EST_PREF_DIMU2,
+        'type' => 'dropdown',
+        'data' => 'str',
+        'width' => 'auto',
+        'help' => EST_PREF_DIMU2HLP,
+        'readParms' => array (), 
+        'writeParms' => array('size'=>'small','optArray'=>array(EST_GEN_ACRES,EST_GEN_SQRMI,EST_SQFOOTX,EST_GEN_SQRKM,EST_SQMTRX)),
+        ),
       
 			'addnewuser' => array (
         'tab'=>0,
@@ -1388,6 +1408,15 @@ class estate_listing_ui extends e_admin_ui{
         'width' => 'auto',
         'writeParms' => array('size'=>'xlarge','optArray'=>array(0=>EST_PREF_MAPAGENCY_NO,1=>EST_PREF_MAPAGENCY_YES)),
         ),
+      'map_include_sold'=>array(
+        'tab'=>5,
+        'title'=>EST_PREF_MAPINCLPROP,
+        'help'=>EST_PREF_MAPINCLPROPHLP,
+        'type'=>'dropdown',
+        'data'=>'str',
+        'width' => 'auto',
+        'writeParms' => array('size'=>'xlarge','optArray'=>array(0=>EST_PREF_MAPINCLPROPOPT0,1=>EST_PREF_MAPINCLPROPOPT1,2=>EST_PREF_MAPINCLPROPOPT2)),
+        ),
       
       'map_jssrc'=>array( 
         'tab'=>5,
@@ -1575,6 +1604,7 @@ class estate_listing_ui extends e_admin_ui{
 			$this->fields['prop_country']['writeParms']['default'] = 'blank';
 			$this->fields['prop_country']['writeParms']['optArray'] = $frm->getCountry();
 			$this->fields['prop_country']['writeParms']['default'] = 'blank';
+      
       
 			$this->prefs['country']['writeParms']['optArray'] = $frm->getCountry();
       
@@ -2072,7 +2102,10 @@ class estate_listing_form_ui extends e_admin_form_ui{
         if(intval($dta['prop_agent']) > 0){return EST_GEN_NOT.' '.EST_GEN_REQUIRED.'<input type="hidden" name="prop_appr" value="1" />';}
         else if(EST_USERPERM >= intval($EST_PREF['public_mod'])){
           return '<select name="prop_appr" value="'.intval($curVal).'">
-          <option value=""'.(intval($curVal) == 0 ? ' selected="selected"' : '').'>'.EST_GEN_NOT.' '.EST_GEN_APPROVED.'</option><option value=""'.(intval($curVal) == 1 ? ' selected="selected"' : '').'>'.EST_GEN_APPROVED.'</option></select>';
+          <option value=""'.(intval($curVal) == 0 ? ' selected="selected"' : '').'>'.EST_GEN_NOT.' '.EST_GEN_APPROVED.'</option><option value=""'.(intval($curVal) == 1 ? ' selected="selected"' : '').'>'.EST_GEN_APPROVED.'</option></select>
+          <input type="hidden" name="estDefCur" value="'.$EST_PREF['currency'].'" />
+          <input type="hidden" name="estDefDIMU1" value="'.$EST_PREF['dimu1'].'" />
+          <input type="hidden" name="estDefDIMU2" value="'.$EST_PREF['dimu2'].'" />';
           }
         else{
           if(EST_USERPERM > 0 || check_class($EST_PREF['public_apr'])){$curVal = 1;}      
@@ -2509,17 +2542,19 @@ class estate_listing_form_ui extends e_admin_form_ui{
   public function prop_comminuty($curVal,$mode){
     switch($mode){
 			case 'write':
+        
         return '
-        <h4 class="WD100">
-          <span id="estCommSpaceName"></span> '.EST_GEN_SPACES.'
-        </h4>
-        <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>
-        <div id="estCommDesc"></div>
-        <hr />
-        <h4 class="WD100">
-          <span id="estCitySpaceName"></span> '.EST_GEN_SPACES.'
-        </h4>
-        <div id="estCitySpaceGrpDiv" class="estSpaceGrpTileCont"></div>';
+          <h4 class="WD100">
+            <span class="estCommSpaceName"></span> '.EST_GEN_SPACES.'
+          </h4>
+          <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>
+          <div id="estCommDesc"></div>
+          <hr />
+          <h4 class="WD100">
+            <span class="estCitySpaceName"></span> '.EST_GEN_SPACES.'
+          </h4>
+          <div id="estCitySpaceGrpDiv" class="estSpaceGrpTileCont"></div>
+          <div id="estCityDesc"></div>';
         break;
 			case 'read': 
 			case 'filter':

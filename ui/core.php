@@ -3235,6 +3235,7 @@ class estateCore{
     $dta = estGetSubDivDta($subd_idx,$subd_city);
     
     $txt = '
+    <div>'.$tp->toHTML($dta['subd_description'],true).'</div>
     <div id="estSubDivCont" class="WD100"  data-id="'.intval($dta['subd_idx']).'" data-city="'.intval($subd_city).'" data-hoareq="'.intval($dta['subd_hoareq']).'" data-hoafee="'.intval($dta['subd_hoafee']).'" data-hoafrq="'.intval($dta['subd_hoafrq']).'" data-hoaappr="'.intval($dta['subd_hoaappr']).'">
       <table id="estate-commspaces-tabl" class="table-striped estateSubTable estDragTable">
         <colgroup></colgroup>
@@ -3626,13 +3627,16 @@ class estateCore{
         <tr>
           <td colspan="2" class="noPAD">
             <h4 class="WD100">
-              <span id="estCommSpaceName"></span> '.EST_GEN_SPACES.'
+              <span class="estCommSpaceName"></span> '.EST_GEN_SPACES.'
             </h4>
             <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>
+            <div id="estCommDesc"></div>
+            <hr />
             <h4 class="WD100">
-              <span id="estCitySpaceName"></span> '.EST_GEN_SPACES.'
+              <span class="estCitySpaceName"></span> '.EST_GEN_SPACES.'
             </h4>
             <div id="estCitySpaceGrpDiv" class="estSpaceGrpTileCont"></div>
+            <div id="estCityDesc" class="estSpaceGrpTileCont">'.$DTA['city_description'].'</div>
           </td>
         </tr>';
         break;

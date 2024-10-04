@@ -668,7 +668,7 @@ function est_msg_form($DTA=null){
         </tr>
         <tr>
           <td>
-            <select name="msg_mode" class="tbox form-control" value="'.$msg_mode.'">';
+            <select name="msg_mode" class="tbox form-control" value="-1">';
     foreach($EST_MSG_MODES as $k=>$v){
       
       $ret .= '<option value="'.$k.'">'.$tp->toHTML($v).'</option>'; //'.($k == $msg_mode ? 'selected="selected"' : '').'
