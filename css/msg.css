@@ -169,8 +169,8 @@
   margin:0px;
   }
 
-#estMsgFormTB fieldset{
-  
+#estMsgModule fieldset{
+  width: 93%;
   }
 
 #estMsgFormTB fieldset legend{

@@ -64,6 +64,17 @@
   }
 
 
+.estCommSpaces{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 1em;
+  }
+
+.estViewSpaceBtn{border-color:#A8B8BD;}
+
 .estViewSpTxt{
   width: 96%;
   margin: 0px 2%;
@@ -73,13 +84,13 @@
   }
 
 
-.estViewSpaceBtn{border-color:#A8B8BD;}
 
 
 div.estViewSpTxt ul{
   text-indent: 0px;
   padding: 0px 0px 0px 6px;
   margin: 0px 0px 8px 0px;
+  line-height: 1em;
   }
 
 
@@ -97,7 +108,6 @@ div.estTableGroupWrapper{
   justify-content: flex-start;
   align-items: stretch;
   }
-
 
 div.estTableGroupTile{
   display: flex;
@@ -458,6 +468,13 @@ div#estViewSpaceBtnCont{width: 100%;}
 @media only screen and (min-device-width:640px) and (max-device-width:767px){
   .dummy{}
   
+  div.estTableGroupTile{
+    flex: 50%;
+    width: 48%;
+    min-width: 48%;
+    max-width: 48%;
+    }
+  
   #estSpacesCont div.estSpaceGroup div.estViewSpaceBtn{
     display: flex;
     position: relative;
@@ -520,6 +537,12 @@ div#estViewSpaceBtnCont{width: 100%;}
     cursor: auto;
     }
   
+  div.estTableGroupTile{
+    flex: 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    }
   
   
   #estSpacesCont div.estImgSlide{

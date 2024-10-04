@@ -84,7 +84,13 @@
   white-space: nowrap;
   }
 
+#estImgGalMain{
+  /*display:block;*/
+  }
 
+#estImgGalMenu{
+  /*display:none;*/
+  }
 
 #estGalCont{
   display: flex;
@@ -156,7 +162,8 @@
 
 
 
-#estSubDivCont{
+#estSubDivCont,
+#estCityCont{
   display:flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -167,9 +174,11 @@
 #estSubDivSlideShow{
   display: inline-block;
   position:relative;
-  width: 49%;
-  height: calc(100vw * 0.30);
-  min-height: 320px;
+  /*width: 48%;*/
+  flex: 48%;
+  height: calc(100vw * 0.20);
+  min-height: 256px;
+  margin: 0px 1em 1em 0px;
   background-repeat: no-repeat;
   background-clip: content-box;
   background-origin: content-box;
@@ -179,27 +188,6 @@
   border-radius: 8px;
   overflow: hidden;
   }
-
-#estSubDivS1{
-  width:49%;
-  flex: 49%;
-  margin: 1em 1em;
-  }
-
-#estSubDivS2{
-  width:49%;
-  flex: 49%;
-  margin: 1em 1em;
-  }
-
-#estSubDivS3{
-  width:49%;
-  flex: 49%;
-  margin: 1em 1em;
-  }
-
-
-
 
 .estSSPlayPause{
   display:none;
@@ -306,6 +294,7 @@
   min-height:256px;
   padding: 8px 0px 32px 0px;
   margin:auto;
+  line-height: 1em;
   }
 
 
@@ -316,6 +305,7 @@
   flex-wrap: wrap;
   flex-direction: row;
   align-items: stretch;
+  line-height: 1em;
   }
 
 .estFLEXCont{
@@ -325,6 +315,7 @@
   flex-wrap: wrap;
   flex-direction: row;
   align-items: stretch;
+  line-height: 1em;
   }
 
 .estFLEXCol{
@@ -342,7 +333,9 @@
   flex: 45%;
   max-width: 50%;
   }
-
+.estFLEX100{
+  flex: 100%;
+  }
 
 .flexRev{
   flex-direction: row-reverse !important;
@@ -1102,6 +1095,9 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   }
 
 
+.estMarkYellow{
+  filter: hue-rotate(204deg) brightness(1.5);
+  }
 .estMarkRed{
   filter: hue-rotate(152deg);
   }
@@ -1110,6 +1106,10 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   }
 .estMarkGreen{
   filter: hue-rotate(266deg);
+  }
+
+.estMarkGray{
+  filter: brightness(1.1) grayscale();
   }
 
 .estNoteTxt{
@@ -1190,13 +1190,45 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
 .WD32{width: 32% !important;}
 
 
+
+.DTH128{
+  display: block;
+  position: relative;
+  max-height:128px;
+  overflow:hidden;
+  overflow-wrap:break-word;
+  padding-bottom:2em;
+  cursor:pointer;
+  }
+.DTH128:after{
+  content: "";
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255, 1) 90%);
+  width: 100%;
+  height: 3em;
+  }
+
+
+.DTH128:hover{
+  max-height:unset;
+  }
+.DTH128:hover:after{
+  height: 0px;
+  }
+
+
 .DTH256{
   display: block;
   position: relative;
   max-height:256px;
   overflow:hidden;
   overflow-wrap:break-word;
-  padding-bottom:1em;
+  padding-bottom:2em;
+  cursor:pointer;
   }
 .DTH256:after{
   content: "";
@@ -1288,6 +1320,15 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   .noMobile{display:none !important;}
   
   #estMiniNav{}
+  
+  
+  #estImgGalMain{
+    /*display:none;*/
+    }
+  
+  #estImgGalMenu{
+    /*display:block;*/
+    }
   
   #estMobTst{
     display:block;
