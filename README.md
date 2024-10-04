@@ -12,6 +12,8 @@ Download ALL files and replace all existing files on your website with current. 
 
 DEVELOPMENT/REVISION HISTORY:
 
+4 October 2024: Many, many bug fixes. Added description field for City information, Added City Spaces functionality. Added directory checks for Media folders. Fixed default settings for currency and units of measure (thanks jimmi08). In the future I plan of implementing currency selection based on the Property's Country.
+
 15 September 2024: In fou already have installed this plugin, you may have to MANUALLY EDIT YOUR `estate_spaces` table to remove `space_propidx` though your server's Database Administration Tool (eg phpMyAdmin), then run the e107 Database Update/Check to check your installation. Estate Preferences Load & Save required. Database Structure and Estate Prefs have changed.
 
 7 September 2024: Database Update/Check required. Estate Preferences Load & Save required. Database Structure and Estate Prefs have changed. Added Undo functions for Community/Subdivision Form.
