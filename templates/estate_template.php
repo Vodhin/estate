@@ -55,10 +55,14 @@ if (!defined('e107_INIT')) { exit; }
 // Estate Template file:  default layout
 
 global $sc,$EST_PREF,$EST_PROP,$EST_SPACES,$IDIV;
-$ns = e107::getRender();
 
-$estLoadSidebar = e107::getMenu()->isLoaded('estate_sidebar');
 $estLoadInbox = e107::getMenu()->isLoaded('estate_inbox');
+$estLoadSidebar = e107::getMenu()->isLoaded('estate_sidebar');
+if(strstr(strtolower($_SERVER['HTTP_USER_AGENT']), 'mobile') || strstr(strtolower($_SERVER['HTTP_USER_AGENT']), 'android')) {
+  $estLoadSidebar = 0;
+  }
+
+$ns = e107::getRender();
 $ESTATE_TEMPLATE = array();
 
 
@@ -72,9 +76,8 @@ if(!isset($EST_LIST_CAP)){
     <div class="estCardTopIcons">{PROP_LIKE_ICON:for=card}{PROP_EDITICONS:for=card}</div>
     <a href="{PROP_LIST_LINKVIEW}">
       <div class="estCardTopName">{PROP_NAME}</div>
+      <div class="FSITAL">{PROP_SUBDIVNAME}</div>
       <div>{PROP_CITYSTATE}</div>
-      <div>{PROP_BULLETS1}</div>
-      <div>{PROP_LIKESVIEWS}</div>
     </a>
   </div>';
   // or  {PROP_LIKES} {PROP_VIEWCOUNT}
@@ -86,6 +89,8 @@ if(!isset($EST_LIST_TXT)){
     <a href="{PROP_LIST_LINKVIEW}">
       <div class="estCardImg" style="{PROP_THMSTY}"></div>
       <div class="estILBullets">
+        <h4>{PROP_BULLETS1}</h4>
+        <h5>{PROP_LIKESVIEWS}</h5>
         <div class="FSITAL">{PROP_MODELNAME}</div>
         {PROP_FEATURES}
         {PROP_SUMMARY}
@@ -128,15 +133,31 @@ if(!isset($EST_VIEW_FEATURES)){
     <div class="estInfoCard DTH256 estFLEX45">
       {PROP_FEATURE_EXTENDED}
     </div>
-  </div>
-  <div>
-    <div class="estInfoCard">
-    {PROP_HOA}
-    </div>
   </div>';
   }
 
 
+
+if(!isset($EST_VIEW_COMMUNITY)){
+  $EST_VIEW_COMMUNITY = '
+  <div id="estSubDivCont">
+    {COMMUNITY_SLIDESHOW}
+    <div class="estFLEX45">
+      <h3 class="WD100">{COMMINUTY_NAME}</h3>
+      <h4 class="WD100">{COMMUNITY_TYPE}</h4>
+      <h4 class="WD100">{COMMUNITY_URL}</h4>
+      <div>{COMMUNITY_HOA}</div>
+      <div>{PROP_HOA}</div>
+    </div>
+    <div class="estFLEX100">{COMMUNITY_DESC}</div>
+    <div class="estCommSpaces">
+      <div class="estTableGroupWrapper WD100">{COMMUNITY_SPACES}</div>
+    </div>
+  </div>';
+  }
+/*
+
+*/
 
 
 //NOT ready yet...
@@ -180,8 +201,8 @@ if(!isset($EST_MENU_BASIC)){
  * Below are the actual templates loaded by the listings.php and estate_menu.php pages
  **/
  
-$ns->setStyle('menu'); 
 
+$ns->setStyle('menu'); 
 
 //VIEW ALTERNATE 1
 $ESTATE_TEMPLATE['view']['alternate1']['name'] = 'Alternate 1';
@@ -190,7 +211,7 @@ $ESTATE_TEMPLATE['view']['alternate1']['txt'] = "
 <div class='WD100'>$EST_VIEW_SUMMARY</div>
 <div class='WD100'>$EST_VIEW_FEATURES</div>
 <div class='WD100'>{VIEW_SPACES}</div>
-<div class='WD100'>{PROP_COMMUNITY}</div>
+<div class='WD100'>$EST_VIEW_COMMUNITY</div>
 <div class='WD100'>{EST_VIEW_GALLERY}</div>";
 
 
@@ -211,6 +232,7 @@ $ESTATE_TEMPLATE['view']['default']['txt']['summary'] = '<div class="estFLEXCont
 if($estLoadSidebar == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
   $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '<div class="estSummaryMenu">'.$ns->tablerender('{PROP_NAME}{PROP_LIKE_ICON}',$EST_VIEW_SUMMARY_SIDEBAR,'summary-table',true).'</div>';
   define("ESTAGENTRENDERED",1);
+  define("EST_RENDERED_SIDEBARMENU",1);
   }
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '<div class="estSummaryMain"><div class="WD100">';
 //$ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$EST_VIEW_SUMMARY,'overview-table',true);
@@ -220,10 +242,10 @@ $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '</div></div></div>';
 
 $ESTATE_TEMPLATE['view']['default']['txt']['spaces'] = '{VIEW_SPACES}';
 $ESTATE_TEMPLATE['view']['default']['txt']['map'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_MAP,'{EST_LEAFLET_MAP}','map-section',true).'</div>';
-$ESTATE_TEMPLATE['view']['default']['txt']['comminuty'] = '{PROP_COMMUNITY_SECT}';
+$ESTATE_TEMPLATE['view']['default']['txt']['comminuty'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_COMMUNITY,$EST_VIEW_COMMUNITY,'community-section',true).'</div>';
 
 $ESTATE_TEMPLATE['view']['default']['txt']['nearby'] = $EST_VIEW_NXPR;
-$ESTATE_TEMPLATE['view']['default']['txt']['gallery'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_IMAGE.' '.EST_GEN_GALLERY,'{EST_VIEW_GALLERY}','image-gallery',true).'</div>';
+$ESTATE_TEMPLATE['view']['default']['txt']['gallery'] = '<div id="estImgGalMain" class="WD100">'.$ns->tablerender(EST_GEN_IMAGE.' '.EST_GEN_GALLERY,'{EST_VIEW_GALLERY}','image-gallery-main',true).'</div>';
 
 
 
@@ -236,6 +258,7 @@ $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] = '<div class="estFLEXCont
 if($estLoadSidebar == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
   $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= '<div class="estSummaryMenu">'.$ns->tablerender('{PROP_NAME}{PROP_LIKE_ICON}',$EST_VIEW_SUMMARY_SIDEBAR,'summary-table',true).'</div>';
   define("ESTAGENTRENDERED",1);
+  define("EST_RENDERED_SIDEBARMENU",1);
   }
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= '<div class="estSummaryMain"><div class="WD100">';
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$EST_VIEW_SUMMARY,'overview-sect',true);
@@ -243,11 +266,9 @@ $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= $ns->tablerender(EST_GE
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['summary'] .= '</div></div></div>';
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['spaces'] = '{VIEW_SPACES:dynamic=1}';
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['map'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_MAP,'{EST_LEAFLET_MAP}','map-section',true).'</div>';
-$ESTATE_TEMPLATE['view']['dynamic']['txt']['comminuty'] = '{PROP_COMMUNITY_SECT}';
+$ESTATE_TEMPLATE['view']['dynamic']['txt']['comminuty'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_COMMUNITY,$EST_VIEW_COMMUNITY,'community-section',true).'</div>';
 $ESTATE_TEMPLATE['view']['dynamic']['txt']['nearby'] = $EST_VIEW_NXPR;
-$ESTATE_TEMPLATE['view']['dynamic']['txt']['gallery'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_IMAGE.' '.EST_GEN_GALLERY,'{EST_VIEW_GALLERY}','image-gallery',true).'</div>';
-
-
+$ESTATE_TEMPLATE['view']['dynamic']['txt']['gallery'] = '<div id="estImgGalMain" class="WD100">'.$ns->tablerender(EST_GEN_IMAGE.' '.EST_GEN_GALLERY,'{EST_VIEW_GALLERY}','image-gallery-main',true).'</div>';
 
 
 
@@ -279,6 +300,8 @@ $ESTATE_TEMPLATE['list']['default']['txt'] .= '</div>';
 //MENU LAYOUTS
 
 //MENU DEFAULT LAYOUT
+$ns->setStyle('menu'); 
+
 $ESTATE_TEMPLATE['menu']['default']['name'] = 'Default Sidebar Layout';
 $ESTATE_TEMPLATE['menu']['default']['ord'] = array('top','agent','saved','events','spaces');
 $ESTATE_TEMPLATE['menu']['default']['txt']['top'] = $ns->tablerender('{PROP_NAME}{PROP_LIKE_ICON}', $EST_MENU_MAIN, 'estSideMenuTitle',true);
