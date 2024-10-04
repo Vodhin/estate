@@ -6,10 +6,6 @@
   // All your code here.
   
   
-  function estInitSetupUpl(ele){
-    if($(ele).data('upl') > 0){$(ele).find('input[type="file"]').prop('disabled',false).removeProp('disabled');}
-    else{$(ele).find('input[type="file"]').prop('disabled',true);}
-    }
   
   
   function estEditCalEvent(popIt,tdta){
@@ -2401,7 +2397,7 @@
               $(eImg).on({load : function(e){estAvatarWH(e.target);}});
               });
             //estAgentAvatar
-            
+            //estInitSetupUpl
             $('#estAgencyImg').on({
               mouseenter : function(e){estMediaEditBtns(8,e.target)},
               mouseleave : function(e){estMediaEditBtns(-2,e.target);}
@@ -2578,9 +2574,10 @@
         estInitDefHrs(1);
         estBuildEvtTab();
         estBuildMap('prop');
+        //estInitSetupUpl 
         
-        var mediaDta = estNewMediaDta(1);
-        estFileUplFld(mediaDta,1);
+        var mediaDta = estNewMediaDta(1,'CORE estatePrepForm');
+        estFileUplFld(mediaDta,1,null,1);
         $('#fileSlipBtn').on({
           click : function(e){
             e.stopPropagation();

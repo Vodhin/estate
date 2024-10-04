@@ -104,16 +104,12 @@ else if($FETCH == 4){ //upload file
     $PROPID = intval($_POST['propid']);
     $desttarg = intval($_POST['desttarg']);
     
-    $RES['desttarg'] = $desttarg;
     $RES['post'] = $_POST;
     
-    $THMBFILEDIR = "../../media/prop/thm";
-    $FULLFILEDIR = "../../media/prop/full";
-    $VIDFILEDIR = "../../media/prop/vid";
     
     $media_idx = intval($_POST['media_idx']);
-    $media_lev = intval($_POST['media_lev']); // 0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space
-    $media_propidx = ($media_lev == 0 ? 0 : intval($_POST['media_propidx'])); //0 prevents batch delete of media used for other properties
+    $media_lev = intval($_POST['media_lev']); // 0=subdiv, 1=property, 2= property spaces, 3=city spaces, 4=subdiv spaces
+    $media_propidx = intval($_POST['media_propidx']); //($media_lev == 0 ? 0 : )0 prevents batch delete of media used for other properties
     $media_levidx = intval($_POST['media_levidx']);
     $media_levord = intval($_POST['media_levord']);
     $media_galord = intval($_POST['media_galord']);
@@ -123,12 +119,23 @@ else if($FETCH == 4){ //upload file
     $media_full = $tp->toDB($_POST['media_full']);
     $media_name = $tp->toDB($_POST['media_name']);
     
+    $THMBFILEDIR = "../../media/prop/thm";
+    $FULLFILEDIR = "../../media/prop/full";
+    $VIDFILEDIR = "../../media/prop/vid";
+    
+    if($media_lev == 0 || $media_lev == 3 || $media_lev == 4){
+      $desttarg = $media_lev;
+      }
+    
+    $RES['desttarg'] = $desttarg;
+    
     switch($desttarg){
       case 6 :
         $THMBFILEDIR = "../../media/agent";
         $agent_idx = intval($_POST['agent_idx']);
         $GENFILENAME = ($_POST['genfilename'] ? $tp->toDB($_POST['genfilename']) : 'agent-'.$agent_idx);
         $media_full = "";
+        $media_propidx = 0;
         break;
       
       case 5 :
@@ -136,22 +143,33 @@ else if($FETCH == 4){ //upload file
         $agency_idx = intval($_POST['agency_idx']);
         $GENFILENAME = ($_POST['genfilename'] ? $tp->toDB($_POST['genfilename']) : 'agency-'.$agency_idx);
         $media_full = "";
-        break;
-      
-      
-      case 1 :
-        $THMBFILEDIR = "../../media/subdiv/thm";
-        $FULLFILEDIR = "../../media/subdiv/full";
-        $VIDFILEDIR = "../../media/subdiv/vid";
-        $media_levidx = (isset($_POST['subd_idx']) ? intval($_POST['subd_idx']) : intval($_POST['media_levidx']));
-        $media_lev = 0;
         $media_propidx = 0;
         break;
       
       case 0 :
+      case 4 :
+        $THMBFILEDIR = "../../media/subdiv/thm";
+        $FULLFILEDIR = "../../media/subdiv/full";
+        $VIDFILEDIR = "../../media/subdiv/vid";
+        $media_levidx = (isset($_POST['subd_idx']) ? intval($_POST['subd_idx']) : intval($_POST['media_levidx']));
+        $media_propidx = 0;
         break;
+      
+      case 3 :
+        $THMBFILEDIR = "../../media/city/thm";
+        $FULLFILEDIR = "../../media/city/full";
+        $VIDFILEDIR = "../../media/city/vid";
+        $media_levidx = (isset($_POST['city_idx']) ? intval($_POST['city_idx']) : intval($_POST['media_levidx']));
+        $media_lev = 3;
+        $media_propidx = 0;
+        break;
+      
+      case 2 :
+      case 1 :
       default :
-        
+        $THMBFILEDIR = "../../media/prop/thm";
+        $FULLFILEDIR = "../../media/prop/full";
+        $VIDFILEDIR = "../../media/prop/vid";
         break;
       }
     
@@ -393,9 +411,48 @@ else if($FETCH == 5){ //delete file
   $PROPID = intval($_POST['propid']);
   if(intval($_POST['mediadta']['media_idx']) > 0){
     $MDTA = $_POST['mediadta'];
-    $THMBFILEDIR = "../../media/prop/thm"; //EST_PTHABS_PROPTHM;//
-    $FULLFILEDIR = "../../media/prop/full"; //EST_PTHABS_PROPFULL;//
-    $VIDFILEDIR = "../../media/prop/vid"; //EST_PTHABS_PROPVID;//
+    
+    switch($MDTA['media_lev']){
+      case 6 :
+        $RES['error'] = 'Not Allowed';
+        echo $tp->toJSON($RES);
+        exit;
+        //$THMBFILEDIR = "../../media/agent";
+        //$agent_idx = intval($_POST['agent_idx']);
+        //$GENFILENAME = ($_POST['genfilename'] ? $tp->toDB($_POST['genfilename']) : 'agent-'.$agent_idx);
+        break;
+      
+      case 5 :
+        $RES['error'] = 'Not Allowed';
+        echo $tp->toJSON($RES);
+        exit;
+        //$THMBFILEDIR = "../../media/agency";
+        //$agency_idx = intval($_POST['agency_idx']);
+        //$GENFILENAME = ($_POST['genfilename'] ? $tp->toDB($_POST['genfilename']) : 'agency-'.$agency_idx);
+        break;
+      
+      case 0 :
+      case 4 :
+        $THMBFILEDIR = "../../media/subdiv/thm";
+        $FULLFILEDIR = "../../media/subdiv/full";
+        $VIDFILEDIR = "../../media/subdiv/vid";
+        break;
+      
+      case 3 :
+        $THMBFILEDIR = "../../media/city/thm";
+        $FULLFILEDIR = "../../media/city/full";
+        $VIDFILEDIR = "../../media/city/vid";
+        break;
+      
+      case 2 :
+      case 1 :
+      default :
+        $THMBFILEDIR = "../../media/prop/thm";
+        $FULLFILEDIR = "../../media/prop/full";
+        $VIDFILEDIR = "../../media/prop/vid";
+        break;
+      }
+    
     $MRES = estMediaRemove($MDTA,$THMBFILEDIR,$FULLFILEDIR,$VIDFILEDIR,1);
     if($MRES['error']){$RES['error'] = $MRES['error'];}
     else{
@@ -731,15 +788,6 @@ else if($FETCH == 81){
   $RES = estGetSubDivDta(intval($_GET['subd_idx']),intval($_GET['subd_city']));
   $RES['subd_description'] = $tp->toHTML($RES['subd_description'],true);
   echo e107::getParser()->toJSON($RES);
-  /*
-  if(EST_USERPERM > 0){
-    echo $estateCore->estCommunitySpacesForm($subd_idx,$subd_city);
-    }
-  else{
-    echo '<div class="WD100">'.EST_GEN_NOTAVAIL3.'</div>';
-    }
-  //echo estSubDivisionView($subd_idx,1);
-  */
   exit;
   }
 
@@ -891,6 +939,7 @@ function estDirList(){
     'avatar'=>EST_PTHABS_AVATAR,
     'agency'=>EST_PTHABS_AGENCY,
     'agent'=>EST_PTHABS_AGENT,
+    'city'=>array('full'=>EST_PTHABS_CITYFULL,'thm'=>EST_PTHABS_CITYTHM,'vid'=>EST_PTHABS_CITYVID),
     'prop'=>array('full'=>EST_PTHABS_PROPFULL,'thm'=>EST_PTHABS_PROPTHM,'vid'=>EST_PTHABS_PROPVID),
     'subdiv'=>array('full'=>EST_PTHABS_SUBDFULL,'thm'=>EST_PTHABS_SUBDTHM,'vid'=>EST_PTHABS_SUBDVID)
     );
@@ -922,9 +971,11 @@ function estBatchDelSpaces($PROPID,$LEVIDX){
   while($rows = $sql->fetch()){$MROWS[$i] = $rows; $i++;}
   
   if(count($MROWS) > 0){
-    $THMBFILEDIR = "../../media/prop/thm"; //EST_PTHABS_PROPTHM;//
-    $FULLFILEDIR = "../../media/prop/full"; //EST_PTHABS_PROPFULL;//
-    $VIDFILEDIR = "../../media/prop/vid"; //EST_PTHABS_PROPVID;//
+    // 9/21/2024 = this is OK for now. Need to update to handle batch delete City and Subdiv spaces
+    $THMBFILEDIR = "../../media/prop/thm";
+    $FULLFILEDIR = "../../media/prop/full";
+    $VIDFILEDIR = "../../media/prop/vid";
+    
     foreach($MROWS as $k=>$v){
       $MRES = estMediaRemove($rows,$THMBFILEDIR,$FULLFILEDIR,$VIDFILEDIR,1);
       if($MRES['error']){$UPRES['files'][$k]['error'] = $MRES['error'];}
@@ -1135,10 +1186,13 @@ function estGetAllDta($PROPID){
   $SUBDID = intval($ESTTBL['estate_properties']['dta'][0]['prop_subdiv']);
   
    //media_lev = 0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space
+   
+   // OR (media_propidx="0" AND media_lev="4" AND media_levidx=" ??? ") OR (media_propidx="0" AND media_lev="0" AND media_levidx="'.$SUBDID.'")
+   
   $ESTTABDTA = array(
     'estate_grouplist'=>'grouplist_propidx="'.$PROPID.'"',
     'estate_featurelist'=>'featurelist_propidx="'.$PROPID.'"',
-    'estate_media'=>'media_propidx="'.$PROPID.'" OR (media_propidx="0" AND media_lev="0" AND media_levidx="'.$SUBDID.'")',
+    'estate_media'=>'media_propidx="'.$PROPID.'"',
     'estate_spaces'=>'space_lev="1" AND space_levidx="'.$PROPID.'"',
     'estate_events'=>'event_idx>"0" ORDER BY event_start ASC' //event_propidx event_agt
     );
