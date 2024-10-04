@@ -226,7 +226,7 @@
     //estSaveSpace 
     estateBuildDIMUbtns();
     estBuildGallery();
-    //estBuildSpaceList();
+    //estBuildSpaceList('oa load');
     //estInitDefHrs(1);
     //estBuildEvtTab();
     estOABuildMap();
@@ -235,8 +235,8 @@
     
     $(JQDIV,{'class':'s-message alert alert-block warning alert-warning'}).html(defs.txt.notavail2).prependTo('#estEventsCont');
     
-    var mediaDta = estNewMediaDta(1);
-    estFileUplFld(mediaDta,1);
+    var mediaDta = estNewMediaDta(1,'OA estOAPrep');
+    estFileUplFld(mediaDta,1,null,1);
     $('#fileSlipBtn').on({
       click : function(e){
         e.stopPropagation();

@@ -126,7 +126,6 @@ function estSetLike(ele,cok=0){
       });
     }
   
-  
   function estDynamicSlideShow(){
     
     $('.estGetFullImg').on({
@@ -144,7 +143,14 @@ function estSetLike(ele,cok=0){
           }
         });
       }
-      
+    
+    $('div.estJQImg').each(function(i,iEle){
+      var sarr = $(iEle).data('imgs');
+      $(iEle).removeAttr('data-imgs');
+      if(sarr.indexOf(',') > -1){sarr = sarr.split(',')}
+      else{sarr = [sarr];}
+      console.log(sarr);
+      });
     
     if($('#estSpacesCont').hasClass('estSlideshow')){
       $('#estSpacesCont div.estImgSlide').each(function(i,iEle){
@@ -259,6 +265,7 @@ function estSetLike(ele,cok=0){
       $(estMapPins.agcy).each(function(i,ax){
         agcyPoints[i] = L.marker([ax.lat,ax.lon]);
         var marker = L.marker(new L.LatLng(ax.lat,ax.lon), {icon: agIcon, title: ax.name1+': '+ax.name2});
+        
         marker.bindPopup('<div class="estMapPopAgyThm" style="background-image:url('+(ax.thm !== null ? ax.thm : estJSpth+'images/imgnotavail.png')+')"></div><div class="estMapPopH1">'+ax.name1+'</div><div class="estMapPopH2 FSITAL">'+ax.name2+'</div><div class="estMapPopAddr">'+ax.addr+'</div>');
         agcyPins.addLayer(marker);
         }).promise().done(function(){
@@ -270,18 +277,37 @@ function estSetLike(ele,cok=0){
               }
             else{map.setView([estMapPins.agcy[0].lat, estMapPins.agcy[0].lon], 13);}
             }
+          
+          console.log(estMapPins.prop);
+          
           $(estMapPins.prop).each(function(i,px){
             propPoints[i] = L.marker([px.lat,px.lon]);
-        		var marker = L.marker(new L.LatLng(px.lat,px.lon), { title: px.name1 });
+        		if(px.hue !== null){
+              var pIcon = L.icon({
+                iconUrl: estJSpth+'js/leaflet/images/marker-icon.png',
+                className: px.hue,
+                iconSize: [25, 40],
+                iconAnchor: [15, 40],
+                popupAnchor:[0, -35],
+                shadowUrl: estJSpth+'js/leaflet/images/marker-shadow.png',
+                shadowSize: [45, 35],
+                shadowAnchor: [13, 30]
+                });
+              var marker = L.marker(new L.LatLng(px.lat,px.lon), {icon: pIcon, title: px.name1 });
+              }
+            else{
+              var marker = L.marker(new L.LatLng(px.lat,px.lon), { title: px.name1 });
+              }
+            
+            
+            
+            
             if(px.lnk !== null){
+              var iURL = (px.thm !== null ? 'media/prop/thm/'+px.thm : 'images/imgnotavail.png');
               var pMrkr = '<a href="'+px.lnk+'" class="estMapPopClk">';
-              pMrkr += '<div class="estMapPopThm" style=\'background-image:url('+estJSpth+(px.thm !== null ? 'media/prop/thm/'+px.thm : 'images/imgnotavail.png')+')\'></div>';
-              pMrkr += '<div class="estMapPopH1">'+px.sta+'</div><div class="estMapPopH1">'+px.prc+'</div>';// class="estPosR"
-              
-              if(px.drop !== null){
-                //if(Number(px.drop) > 0){pMrkr += '<div class="estMapPopH1"><div class="estPosR">↓ '+px.drop+'%</div></div>';}
-                //else if(Number(px.drop) < 0){pMrkr += '<div class="estMapPopH1"><div class="estPosR">↑ '+px.drop+'%</div></div>';}
-                }
+              pMrkr += '<div class="estMapPopThm" style=\'background-image:url('+estJSpth+iURL+')\'></div>';
+              pMrkr += '<div class="estMapPopH1">'+px.sta+'</div>';// class="estPosR"
+              pMrkr += (px.prc !== null ? '<div class="estMapPopH1">'+px.prc+'</div>' : '');
               
               if(px.feat.length > 0){
                 pMrkr += '<div class="estMapPopH2"><ul>';
@@ -322,6 +348,12 @@ function estSetLike(ele,cok=0){
   
   
   function estPrepSectReorder(){
+    $('.estReordCont').each(function(i,ele){
+      //console.log(ele);
+      //$('#estSubDivCont')
+      });
+    
+    
     if(document.getElementById('estFEReorder')){
       $('#estFEReorder').on({
         click : function(){
@@ -338,7 +370,7 @@ function estSetLike(ele,cok=0){
           }
         });
       
-      $(['#estateCont','#estMenuCont']).each(function(ci,cele){
+      $(['#estateCont','#estSidebarMenuCont']).each(function(ci,cele){
         var dragCont = document.getElementById($(cele).prop('id'));
         if(dragCont !== null){
           var saveBtn = $(cele).find('input[type="submit"]');
@@ -421,6 +453,7 @@ function estSetLike(ele,cok=0){
     estCardTabs();
     estLnkBar();
     estPrepSectReorder();
+    $('.DTH128').on({click :function(){$(this).removeClass('DTH128')}});
     $('.DTH256').on({click :function(){$(this).removeClass('DTH256')}});
     $('#estJSpth').remove();
     });
