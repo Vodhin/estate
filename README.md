@@ -12,6 +12,10 @@ Download ALL files and replace all existing files on your website with current. 
 
 DEVELOPMENT/REVISION HISTORY:
 
+November 27 2024: So many changes, so many fixes. Added new functions to handle PHP based Currency and Date formatting based on PHP Locale settings which can be localized for each property listing. Currency formatting can also be forced to a spcific symbol before or after the number, or omitted altogether. This is handled by a new form that replaces the old Original Price and Listing Price fields (they are still present, but hidden). Included in the new form is also a new Price History table to record changes to the listing's price or status. Added ability to save custom Listing templates for each property: these can be altered either in the Admin area or directly on a Listing's View page.
+
+
+
 4 October 2024: Many, many bug fixes. Added description field for City information, Added City Spaces functionality. Added directory checks for Media folders. Fixed default settings for currency and units of measure (thanks jimmi08). In the future I plan of implementing currency selection based on the Property's Country.
 
 15 September 2024: In fou already have installed this plugin, you may have to MANUALLY EDIT YOUR `estate_spaces` table to remove `space_propidx` though your server's Database Administration Tool (eg phpMyAdmin), then run the e107 Database Update/Check to check your installation. Estate Preferences Load & Save required. Database Structure and Estate Prefs have changed.
