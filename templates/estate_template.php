@@ -113,6 +113,8 @@ if(!isset($EST_VIEW_SUMMARY)){
   }
 
 if(!isset($EST_VIEW_SUMMARY_SIDEBAR)){
+  //This is loaded into the Summary section of this plugin only if the Sidebar Menu is not loaded by your theme.
+  //See your e107 Menu & Theme settings to adjust your website layout
   $EST_VIEW_SUMMARY_SIDEBAR = '
   <div class="WD100 noPADTB">
     <h3 class="sumCapt">{PROP_STATUS}</h3>
@@ -120,7 +122,8 @@ if(!isset($EST_VIEW_SUMMARY_SIDEBAR)){
     <div>{PROP_LIKES:bullet=right}{PROP_MODELNAME}</div>
   </div>
   <div class="estFLEXCol WD100 noPADTB">{PROP_AGENTCARD:img=1}</div>
-  <div class="WD100 noPADTB">{PROP_EVENTS}</div>';
+  <div class="WD100 noPADTB">{PROP_EVENTS}</div>
+  <div class="WD100 noPADTB">{PROP_PRICEHISTORY:mode=menu}</div>';
   //{PROP_EVENTS:as=ul}
   }
 
@@ -133,10 +136,14 @@ if(!isset($EST_VIEW_FEATURES)){
     <div class="estInfoCard DTH256 estFLEX45">
       {PROP_FEATURE_EXTENDED}
     </div>
-  </div>';
+  </div>
+  <div></div>';
   }
 
-
+if(!isset($EST_VIEW_HOURS)){
+  $EST_VIEW_HOURS = '
+  <div class="estPropViewSchedCont estFLEXCont">{PROP_HOURS:mode=view}</div>';
+  }
 
 if(!isset($EST_VIEW_COMMUNITY)){
   $EST_VIEW_COMMUNITY = '
@@ -153,11 +160,26 @@ if(!isset($EST_VIEW_COMMUNITY)){
     <div class="estCommSpaces">
       <div class="estTableGroupWrapper WD100">{COMMUNITY_SPACES}</div>
     </div>
+  </div>
+  <hr />
+  <div id="estCityInfoCont">
+    <h3 class="WD100">{PROP_CITYSTATE}</h3>
+    <div class="estFLEX100">{CITY_DESC}</div>
+    <div class="estCommSpaces">
+      <div class="estTableGroupWrapper WD100">{COMMUNITY_SPACES:for=city}</div>
+    </div>
   </div>';
+  /*
+  <hr />
+  <div class="estCommSpaces">
+    <div class="estTableGroupWrapper WD100">{COMMUNITY_PROPS}</div>
+  </div>
+  <hr />
+  <div class="estCommSpaces">
+    <div class="estTableGroupWrapper WD100">{COMMUNITY_PROPS:for=city}</div>
+  </div>
+  */
   }
-/*
-
-*/
 
 
 //NOT ready yet...
@@ -171,7 +193,7 @@ if(!isset($EST_VIEW_NXPR)){
 
 
 
-// THEMEABLE MENU TEMPLATE (may be called by View, too)
+// THEMEABLE MENU TEMPLATE (MUST BE BEFORE View Templates - may be called by View, too)
 if(!isset($EST_MENU_MAIN)){
   $EST_MENU_MAIN = '
   <div class="noPADTB">
@@ -180,6 +202,7 @@ if(!isset($EST_MENU_MAIN)){
     <div>{PROP_MODELNAME}</div>
   </div>';
   }
+
 
 if(!isset($EST_MENU_BASIC)){
   $EST_MENU_BASIC = '
@@ -192,8 +215,15 @@ if(!isset($EST_MENU_BASIC)){
   </div>
   <div class="WD100"><h4>{AGENT_ROLL}</h4>{PROP_AGENTCARD:img=1}</div>
   <div class="WD100">{PROP_EVENTS}</div> 
+  <div class="WD100">{PROP_PRICEHISTORY:mode=menu}</div>
   <div class="WD100">{PROP_SAVED_LIST}</div>';
   }
+
+
+
+
+
+
 
 
 
@@ -221,12 +251,13 @@ $ESTATE_TEMPLATE['view']['basic']['txt'] = "
 <div class='WD100'>{EST_SLIDESHOW_TOP}</div>
 <div class='WD100'>$EST_VIEW_SUMMARY</div>
 <div class='WD100'>$EST_VIEW_FEATURES</div>
+<div class='WD100'>$EST_VIEW_HOURS</div>
 <div class='WD100'>{VIEW_SPACES}</div>";
 
 
 //VIEW DEFAULT with re-orderable sections and Tile Spaces layout
 $ESTATE_TEMPLATE['view']['default']['name'] = 'Default View Layout';
-$ESTATE_TEMPLATE['view']['default']['ord'] = array('slideshow','summary','spaces','map','comminuty','nearby','gallery');
+$ESTATE_TEMPLATE['view']['default']['ord'] = array('slideshow','summary','hours','spaces','map','comminuty','nearby','gallery');
 $ESTATE_TEMPLATE['view']['default']['txt']['slideshow'] = '{EST_SLIDESHOW_TOP}';
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] = '<div class="estFLEXCont flexRev">';
 if($estLoadSidebar == 0 || strpos(strtolower(THEME_LAYOUT),'full') !== false){
@@ -239,7 +270,7 @@ $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '<div class="estSummary
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_OVERVIEW,$EST_VIEW_SUMMARY,'overview-sect',true);
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= $ns->tablerender(EST_GEN_FEATURES,$EST_VIEW_FEATURES,'features-sect',true);
 $ESTATE_TEMPLATE['view']['default']['txt']['summary'] .= '</div></div></div>';
-
+$ESTATE_TEMPLATE['view']['default']['txt']['hours'] = $ns->tablerender(EST_PROP_HRS,$EST_VIEW_HOURS,'prop-hours-sect',true);
 $ESTATE_TEMPLATE['view']['default']['txt']['spaces'] = '{VIEW_SPACES}';
 $ESTATE_TEMPLATE['view']['default']['txt']['map'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_MAP,'{EST_LEAFLET_MAP}','map-section',true).'</div>';
 $ESTATE_TEMPLATE['view']['default']['txt']['comminuty'] = '<div class="WD100">'.$ns->tablerender(EST_GEN_COMMUNITY,$EST_VIEW_COMMUNITY,'community-section',true).'</div>';
@@ -298,14 +329,16 @@ $ESTATE_TEMPLATE['list']['default']['txt'] .= '</div>';
 
 
 //MENU LAYOUTS
-
-//MENU DEFAULT LAYOUT
 $ns->setStyle('menu'); 
 
+//MENU DEFAULT LAYOUT
+
 $ESTATE_TEMPLATE['menu']['default']['name'] = 'Default Sidebar Layout';
-$ESTATE_TEMPLATE['menu']['default']['ord'] = array('top','agent','saved','events','spaces');
+$ESTATE_TEMPLATE['menu']['default']['ord'] = array('top','agent','hours','saved','history','events','spaces');
 $ESTATE_TEMPLATE['menu']['default']['txt']['top'] = $ns->tablerender('{PROP_NAME}{PROP_LIKE_ICON}', $EST_MENU_MAIN, 'estSideMenuTitle',true);
 $ESTATE_TEMPLATE['menu']['default']['txt']['agent'] =  $ns->tablerender('{AGENT_ROLL}', '{PROP_AGENTCARD:img=1}','estSideMenuSeller',true);
+$ESTATE_TEMPLATE['menu']['default']['txt']['hours'] = '{PROP_HOURS:mode=menu}';
+$ESTATE_TEMPLATE['menu']['default']['txt']['history'] = '{PROP_PRICEHISTORY:mode=menu}';
 $ESTATE_TEMPLATE['menu']['default']['txt']['events'] = '{PROP_EVENTS}';
 $ESTATE_TEMPLATE['menu']['default']['txt']['saved'] = $ns->tablerender(EST_GEN_SAVEDLISTINGS, '{PROP_SAVED_LIST}', 'estSideMenuSaved',true);
 $ESTATE_TEMPLATE['menu']['default']['txt']['spaces'] = '{SPACES_MENU}';
