@@ -7,8 +7,6 @@ if(e107::isInstalled('estate')){
   define("EST_USRLEVELS",array("",EST_ULVAGENT,EST_ULVMANAGER,EST_ULVADMIN,EST_ULVMAINADMIN));
   
   
-
-  
   if(USERID > 0){
     $tp = e107::getParser();
     $sql = e107::getDB();
@@ -85,46 +83,6 @@ if(e107::isInstalled('estate')){
   
   
   
-  
-if(EST_USERPERM == 4){
-  if(isset($_POST['estSaveviewLayout'])){
-    $EST_PREF = e107::pref('estate');
-    $TMPLNAME = $_POST['template_view'];
-    if($TMPLNAME !== $EST_PREF['template_view']){
-		  $EST_PREF['template_view'] = $TMPLNAME;
-      e107::getConfig('estate')->setPref($EST_PREF)->save(true,false,false);
-      }
-    else{
-		  $EST_PREF['template_view_ord'][$TMPLNAME] = $_POST['template_view_ord'][$TMPLNAME];
-      e107::getConfig('estate')->setPref($EST_PREF)->save(true,false,false);
-      }
-    
-    unset($TMPLNAME);
-    e107::getMessage()->addInfo('View Template Updated');
-    }
-  
-  
-  if(isset($_POST['estSavemenuLayout'])){
-    $EST_PREF = e107::pref('estate');
-    $TMPLNAME = $_POST['template_menu'];
-    if($TMPLNAME !== $EST_PREF['template_menu']){
-		  $EST_PREF['template_menu'] = $TMPLNAME;
-      e107::getConfig('estate')->setPref($EST_PREF)->save(true,false,false);
-      }
-    else{
-		  $EST_PREF['template_menu_ord'][$TMPLNAME] = $_POST['template_menu_ord'][$TMPLNAME];
-      e107::getConfig('estate')->setPref($EST_PREF)->save(true,false,false);
-      }
-    unset($TMPLNAME);
-    e107::getMessage()->addInfo('Menu Template Updated');
-    }
-  }
-  
-  
-  
-  
-  
-  
   if(check_class(e107::pref('estate','listing_save'))){
     //define("EST_COOKIESAVE",array('name'=>'estSaved-'.USERID,'opts'=>array('expires' => time() + 60 * 60 * 24 * 180,'path' => '/','domain' => e_DOMAIN,'secure' => true,'httponly' => true,'samesite' => 'Strict'));
     //$EST_COOKIE_SAVED = $_COOKIE[EST_COOKIESAVE['name']];
@@ -148,6 +106,72 @@ if(EST_USERPERM == 4){
     }
   else{
     define("EST_MGS_NEWMSGS",-1);
+    }
+  
+  
+  if(defined('e_PAGE')){
+    if(e_PAGE == 'listings.php'){
+      if(isset($_POST['estSaveviewLayout'])){
+        $TMPIDX = intval($_POST['template_idx_view']);
+        if($TMPIDX > 0){
+          $sql = e107::getDb();
+          $TMPLNAME = $_POST['old_template_view'];
+          
+          if($_POST['template_view'] !== $TMPLNAME){
+            if($sql->update('estate_properties','prop_template_view="'.$tp->toDB($_POST['template_view']).'" WHERE prop_idx="'.$TMPIDX.'" LIMIT 1')){
+              e107::getMessage()->addInfo(EST_GEN_VIEWTMPLUP); 
+              }
+            }
+          else{
+            $TMPLARR = e107::pref('estate','template_view_ord');
+            $TMPLARR = (is_array($TMPLARR) ? $TMPLARR : e107::unserialize($TMPLARR));
+            if(is_array($_POST['template_view_ord'])){
+              if(isset($TMPLARR[$TMPLNAME])){
+                $TMPLARR[$TMPLNAME] = $_POST['template_view_ord'][$TMPLNAME];
+                if($sql->update('estate_properties','prop_template_view_ord="'.e107::serialize($TMPLARR).'" WHERE prop_idx="'.$TMPIDX.'" LIMIT 1')){
+                  e107::getMessage()->addInfo(EST_GEN_VIEWLAYOUTUP);
+                  }
+                }
+              }
+            unset($TMPIDX,$TMPLNAME,$TMPLARR);
+            }
+          $dberr = $sql->getLastErrorText();
+          if($dberr){e107::getMessage()->addError($dberr);}
+          unset($dberr);
+          }
+        }
+      
+      if(isset($_POST['estSavemenuLayout'])){
+        $TMPIDX = intval($_POST['template_idx_menu']);
+        if($TMPIDX > 0){
+          $sql = e107::getDb();
+          $TMPLNAME = $_POST['old_template_menu'];
+          
+          if($_POST['template_menu'] !== $TMPLNAME){
+            if($sql->update('estate_properties','prop_template_menu="'.$tp->toDB($_POST['template_menu']).'" WHERE prop_idx="'.$TMPIDX.'" LIMIT 1')){
+              e107::getMessage()->addInfo(EST_GEN_MENUTMPLUP);
+              }
+            }
+          else{
+            $TMPLARR = e107::pref('estate','template_menu_ord');
+            $TMPLARR = (is_array($TMPLARR) ? $TMPLARR : e107::unserialize($TMPLARR));
+            if(is_array($_POST['template_menu_ord'])){
+              if(isset($TMPLARR[$TMPLNAME])){
+                $TMPLARR[$TMPLNAME] = $_POST['template_menu_ord'][$TMPLNAME];
+                if($sql->update('estate_properties','prop_template_menu_ord="'.e107::serialize($TMPLARR).'" WHERE prop_idx="'.$TMPIDX.'" LIMIT 1')){
+                  e107::getMessage()->addInfo(EST_GEN_MENULAYOUTUP);
+                  }
+                }
+              }
+            unset($TMPIDX,$TMPLNAME,$TMPLARR);
+            }
+          $dberr = $sql->getLastErrorText();
+          if($dberr){e107::getMessage()->addError($dberr);}
+          unset($dberr);
+          }
+          
+        }
+      }
     }
   }
 ?>

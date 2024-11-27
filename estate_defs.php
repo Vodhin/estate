@@ -15,7 +15,9 @@ $EST_DIM2UNITS = array(EST_GEN_ACRES,EST_GEN_SQRMI,$EST_DIM1UNITS[0][0],EST_GEN_
 
 $EST_FOLDERS = array(0=>'prop',1=>'subdiv',2=>'agency',3=>'agency',4=>'agent');
 $EST_SUBFLDR = array(0=>array('full','vid'));
-$EST_CURSYMB = array('$','€','£','¥','฿','₡','¢','₴','₽','₱','CHF','Gs','kn','Kč','kr','MT','₪','Q','R','Rp','RM','₨','L','lei','Ft','₹','₺','₦','₭','₩','zł','₫','؋','៛','ƒ','лв','ден','₼','&nbsp;','');
+$EST_CURSYMB = e107::pref('estate','cursym');
+
+//$EST_CURSYMB = array('$','€','£','¥','฿','₡','¢','₴','₽','₱','CHF','Gs','kn','Kč','kr','MT','₪','Q','R','Rp','RM','₨','L','lei','Ft','₹','₺','₦','₭','₩','zł','₫','؋','៛','ƒ','лв','ден','₼','');
 
 define("EST_HOAFREQ", $EST_HOAFREQ);
 define("EST_CURSYMB", $EST_CURSYMB);
@@ -41,21 +43,15 @@ $EST_EVENTARR = array(
   );
 
 
-$EST_EVENTKEYS = array(
-  0=>array('l'=>EST_GEN_PRIVATEVIEWING,'t'=>'0:30','ms'=>1800),
-  1=>array('l'=>EST_GEN_OPENHOUSE,'t'=>'4:00','ms'=>14400),
-  2=>array('l'=>EST_GEN_INSPECTION,'t'=>'2:00','ms'=>7200),
-  3=>array('l'=>EST_GEN_MEETING,'t'=>'1:30','ms'=>5400),
-  4=>array('l'=>EST_GEN_CLOSING,'t'=>'2:00','ms'=>7200),
-  );
+$EST_EVENTKEYS = e107::pref('estate','eventkeys');
 
 $EST_PROPSTATUS = array(
-  0=>array('opt'=>EST_GEN_OFFMARKET,'tit'=>''),
-  1=>array('opt'=>EST_GEN_COMINGSOON,'tit'=>''),
-  2=>array('opt'=>EST_GEN_ACTIVE1,'tit'=>''),
-  3=>array('opt'=>EST_GEN_ACTIVE2,'tit'=>''),
-  4=>array('opt'=>EST_GEN_PENDING,'tit'=>''),
-  5=>array('opt'=>EST_GEN_SOLD,'tit'=>''),
+  0=>array('opt'=>EST_GEN_OFFMARKET,'alt'=>EST_GEN_OFFMARKET,'tit'=>''),
+  1=>array('opt'=>EST_GEN_COMINGSOON,'alt'=>EST_GEN_COMINGSOON,'tit'=>''),
+  2=>array('opt'=>EST_GEN_ACTIVE1,'alt'=>EST_GEN_LISTEDCOMING,'tit'=>''),
+  3=>array('opt'=>EST_GEN_ACTIVE2,'alt'=>EST_GEN_LISTEDFORSALE,'tit'=>''),
+  4=>array('opt'=>EST_GEN_PENDING,'alt'=>EST_GEN_PENDING,'tit'=>''),
+  5=>array('opt'=>EST_GEN_SOLD,'alt'=>EST_GEN_SOLD,'tit'=>''),
   );
 
 define("EST_IMGTYPES",array(".jpg",".jpeg",".gif",".png"));
@@ -115,14 +111,105 @@ if(EST_USERPERM == 4){
 
 
 
+
+
+function estGetLocales(){
+  $TRANSL = array();
+  $sql = e107::getDB();
+  if($sql->select('estate_locales', '*', '')){
+    while($row = $sql->fetch()){$TRANSL[$row['locale_init']] = $row['locale_name'];}
+    }
+  
+  $PHP_LOCALES = ResourceBundle::getLocales('');
+  $RES = array();
+  foreach($PHP_LOCALES as $k=>$v){$RES[$v] = ($TRANSL[$v] ? $TRANSL[$v] : $v);}
+  asort($RES);
+  unset($PHP_LOCALES,$TRANSL);
+  return $RES;
+  }
+
+
+function estCurrencyTrans(){
+  $RES = array();
+  $sql = e107::getDB();
+  if($sql->select('estate_curcodes', '*', '')){
+    while($row = $sql->fetch()){$RES[$row['curcode_init']] = $row['curcode_name'];}
+    }
+  asort($RES);
+  return $RES;
+  }
+
+
+
+function estChkMDlocale($locale){
+  if(!is_array($locale)){$locale = explode(",",$locale);}
+  if(count($locale) !== 4){
+    $dl = array(3,1,'en_US','USD');
+    $locale = e107::pref('estate','locale');
+    if(!is_array($locale)){$locale = $dl;}
+    elseif(count($locale) !== 4){$locale = $dl;}
+    else{
+      if($locale[0] == ''){$locale[0] = $dl[0];}
+      if($locale[1] == ''){$locale[1] = $dl[1];}
+      if($locale[2] == ''){$locale[2] = $dl[2];}
+      if($locale[3] == ''){$locale[3] = $dl[3];}
+      }
+    }
+  return $locale;
+  }
+
+
+function estGetCurencySym($ID=-1){
+  $EST_PREF = e107::pref('estate');
+  $ID = ($ID > -1 ? $ID : Intval($EST_PREF['locale'][1]));
+  return EST_CURSYMB[$ID];
+  }
+
+function estParseCurrency($price,$locale=array()){
+  $EST_PREF = e107::pref('estate');
+  $price = intval($price);
+  $locale = estChkMDlocale($locale);
+  
+  if($locale[0] == 3){
+    $nf = new NumberFormatter($locale[2], \NumberFormatter::CURRENCY);
+    $nf->setTextAttribute(NumberFormatter::CURRENCY_CODE, $locale[3]);
+    $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
+    return $nf->format($price);
+    }
+  else{
+    if($locale[0] == 2){
+      return $price.' '.EST_CURSYMB[$locale[1]];
+      }
+    else{
+      return EST_CURSYMB[$locale[1]].' '.$price;
+      }
+    }
+  }
+
+
+
+function estGetPHPCalDays($locale){
+  $EST_PREF = e107::pref('estate');
+  $locale = estChkMDlocale($locale);
+  
+  $oldLocale = setlocale( LC_TIME, '0' );
+  $curlocale = setlocale(LC_TIME, $locale[2]);
+  $today = (86400 * (date("N")));
+  
+  $wkdyas = array();
+  for($i=0;$i<7;$i++){
+    $wkdyas[$i] = strftime('%A', time() - $today + ($i * 86400));
+    }
+  return $wkdyas;
+  }
+
+
 function estGetListPrice($DTA,$NOADV=0){
   $EST_PREF = e107::pref('estate');
-  //$nf = new NumberFormatter('en_US', \NumberFormatter::CURRENCY);
-  //$nf->setTextAttribute(NumberFormatter::CURRENCY_CODE, 'USD');
-  //$nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
-  
-  $ListPrice = EST_CURSYMB[$DTA['prop_currency']].' '.$DTA['prop_listprice'];
-  $ListPrice .= ($DTA['prop_listype'] == 0 ? '/'.$GLOBALS['EST_LEASEFREQ'][$DTA['prop_leasefreq']] : '');
+  //$locale = explode(",",$DTA['prop_locale']);
+  $locale = estChkMDlocale($DTA['prop_locale']);
+  $ListPrice = estParseCurrency($DTA['prop_listprice'],$locale);
+  $ListPrice .= ($DTA['prop_listype'] == 0 ? ' / '.$GLOBALS['EST_LEASEFREQ'][$DTA['prop_leasefreq']] : '');
   $ListPrice .= estPriceDrop($DTA);
   
   if(ADMIN && (intval($DTA['prop_status']) < 2 || intval($DTA['prop_status']) > 4)){
@@ -152,6 +239,40 @@ function estGetListPrice($DTA,$NOADV=0){
   }
 
 
+function estChkPriceHist($propid,$ndate,$listprice,$status){
+  $sql = e107::getDB();
+  $RES = array('noc',$histid,$listprice,$status);
+  $nogo = 0;
+  $histid = 0; 
+  if($propid == 0){
+    return array('err',$histid,$listprice,$status);
+    }
+  
+  if(intval($ndate) == 0){$ndate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));}
+  
+  if($sql->select("estate_prophist", "*", "prophist_propidx='".$propid."' AND prophist_date='".$ndate."' ORDER BY prophist_idx DESC, prophist_date DESC LIMIT 1")){
+    $row = $sql->fetch();
+    if(intval($row['prophist_idx']) > 0){
+      $histid = intval($row['prophist_idx']);
+      if(intval($row['prophist_price']) !== $listprice){$nogo++;}
+      if(intval($row['prophist_status']) !== $status){$nogo++;}
+      }
+    }
+  if($nogo == 0){
+    if($histid > 0){
+      if($sql->update("estate_prophist","prophist_date='".$ndate."', prophist_price='".$listprice."', prophist_status='".$status."' WHERE prophist_idx='".$histid."' LIMIT 1")){
+        $RES = array('upd',$histid,$listprice,$status);
+        }
+      }
+    else{
+      if($histid = $sql->insert("estate_prophist","'0','".$propid."','".$ndate."','".$listprice."','".$status."'")){
+        $RES = array('add',$histid,$listprice,$status);
+        }
+      }
+    }
+  return $RES;
+  }
+
 function estPriceDrop($DTA,$MODE=0){
   if(intval($DTA['prop_listprice']) !== intval($DTA['prop_origprice'])){
     $OPLP = round((1 -(intval($DTA['prop_listprice']) / intval($DTA['prop_origprice']))) * 100, 1);
@@ -166,12 +287,6 @@ function estPriceDrop($DTA,$MODE=0){
   }
 
 
-function estGetCurencySym($ID=-1){
-  $EST_PREF = e107::pref('estate');
-  $ID = ($ID > -1 ? $ID : Intval($EST_PREF['currency']));
-  
-  return EST_CURSYMB[$ID];
-  }
 
 
 
@@ -504,8 +619,9 @@ function estGetSpaces($DTA,$PSTAT=0){
 function estGetMediaRows($media_levidx,$media_lev){
   $sql = e107::getDb();
   $RET = array();
-  // media_lev =  0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space  
-  if($dbRow = $sql->retrieve('estate_media', '*', 'media_levidx="'.intval($media_levidx).'" AND media_lev="'.intval($media_lev).'"',true)){
+  // media_lev =  0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space
+  $media_lev = intval($media_lev);
+  if($dbRow = $sql->retrieve('estate_media', '*','media_lev="'.$media_lev.'" AND '.($media_lev == 1 ? '(media_propidx="'.intval($media_levidx).' OR media_levidx="'.intval($media_levidx).'")' : 'media_levidx="'.intval($media_levidx).'"').'',true)){
     foreach($dbRow as $k=>$v){
       $RET['media'][$k] = estMediaArr($v);
       }
@@ -514,6 +630,34 @@ function estGetMediaRows($media_levidx,$media_lev){
   return $RET;
   }
 
+
+
+function estGetPropHist($PID,$prop_dateupdated,$prop_listprice,$prop_status){
+  $sql = e107::getDb();
+  $DTODAY = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+  if($prop_dateupdated > 0){$prop_dateupdated = mktime(0, 0, 0, date("m",$prop_dateupdated), date("d",$prop_dateupdated), date("Y",$prop_dateupdated));}
+  else{$prop_dateupdated = $DTODAY;}
+  $RET = array('dta'=>array());
+  $RET['dta'] = $sql->retrieve("SELECT * FROM #estate_prophist WHERE prophist_propidx='".$PID."' ORDER BY prophist_date DESC",true); //, prophist_idx DESC
+  $propupd = 0;
+  foreach($RET['dta'] as $k=>$v){
+    $prophist_date = intval($v['prophist_date']);
+    $prophist_price = intval($v['prophist_price']);
+    $prophist_status = intval($v['prophist_status']);
+    if($prophist_date == 0 || $prophist_price == 0){unset($RET['dta'][$k]);}
+    else{
+      if($prophist_date > $prop_dateupdated && $prophist_date <= $DTODAY && ($prophist_price !== $prop_listprice || $prophist_status !== $prop_status)){
+        if($propupd == 0){
+          if($sql->update("estate_properties","prop_listprice='".$prophist_price."', prop_status='".$prophist_status."', prop_dateupdated='".$DTODAY."'".(USERID > 0 ? ", prop_uidupdate='".USERID."'" : "")." WHERE prop_idx='".$PID."' LIMIT 1")){
+            if(ADMIN){$RET['msg'] = EST_GEN_PRICEHISTUP1;}
+            }
+          $propupd++;
+          }
+        }
+      }
+    }
+  return $RET;
+  }
 
 function estGetCitySpaces($city_idx){
   $sql = e107::getDb();
@@ -580,6 +724,21 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
     $RET = array('subd_idx'=>0,'subd_city'=>0,'subd_name'=>'','subd_type'=>2,'subd_url'=>'','subd_hoaname'=>'','subd_hoaweb'=>'','subd_hoareq'=>0,'subd_hoafee'=>0,'subd_hoafrq'=>0,'subd_hoaappr'=>0,'subd_hoaland'=>0,'subd_landfee'=>0,'subd_landfreq'=>0,'subd_description'=>'');
     }
   
+  if($subd_city == 0 && intval($RET['subd_city']) > 0){$subd_city = intval($RET['subd_city']);}
+  if($dbRow1b = $sql->retrieve('estate_city', '*', 'city_idx="'.$subd_city.'"',true)){
+    $RET = array_merge($RET,$dbRow1b[0]);
+    }
+  else{
+    $RET['city_idx'] = 0;
+    $RET['city_county'] = 0;
+    $RET['city_name'] = '';
+    $RET['city_zip'] = '';
+    $RET['city_timezone'] = '';
+    $RET['city_url'] = '';
+    $RET['city_description'] = '';
+    }
+  
+  
   $RET['spaces'] = array('city'=>array(),'subd'=>array());
   
   
@@ -597,6 +756,22 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
       }
     }
   
+  $RET['props'] = array('city'=>array(),'subd'=>array());
+  /*
+  if($dbRow2 = $sql->retrieve('estate_properties', 'prop_idx,prop_name,prop_thmb,prop_summary', 'prop_subdiv="'.$subd_idx.'"',true)){
+    foreach($dbRow2 as $k=>$v){
+      $media = estGetMediaRows($v['prop_idx'],1);
+      $RET['props']['subd'][$k] = array_merge($v,$media);
+      }
+    }
+  
+  if($dbRow2 = $sql->retrieve('estate_properties', 'prop_idx,prop_name,prop_thmb,prop_summary', 'prop_city="'.$subd_city.'"',true)){
+    foreach($dbRow2 as $k=>$v){
+      $media = estGetMediaRows($v['prop_idx'],1);
+      $RET['props']['city'][$k] = array_merge($v,$media);
+      }
+    }
+  */
   
   unset($dbRow1,$dbRow2,$dbRow3,$k,$v);
   return $RET;

@@ -29,8 +29,6 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
   e107::js('estate','js/adm/shared.js', 'jquery');
   e107::js('jquery', 5);
   e107::js('estate','js/Sortable/Sortable.js', 'jquery');
-  
-  
   e107::js('estate','js/cropperjs/dist/cropper.js', 'jquery');
   require_once(e_HANDLER.'form_handler.php');
   
@@ -61,9 +59,6 @@ if(ADMINPERMS === '0' || intval(EST_USERPERM) > 0){
   define("EST_AGENCYID",intval($EST_AGENT['agent_agcy']));
   
   if(!empty($_POST)){require_once(e_PLUGIN.'estate/ui/uipost.php');}
-  
-
-  
   
   require_once(e_PLUGIN.'estate/ui/menus.php');
   require_once(e_PLUGIN.'estate/ui/instruct.php');

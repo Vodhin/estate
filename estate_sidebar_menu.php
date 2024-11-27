@@ -16,20 +16,32 @@ $EST_PREF = e107::pref('estate');
 $tp = e107::getParser();
 $ns = e107::getRender();
 $ns->setStyle('menu');
-$tmpl = e107::getTemplate('estate');
-$sc = e107::getScBatch('estate',true);
-
-$tkey = (trim($EST_PREF['template_menu']) !=='' ? $EST_PREF['template_menu'] : 'default');
-$TEMPLATE = $tmpl['menu'][$tkey];
 
 
 if(strpos(strtolower(THEME_LAYOUT),'full') !== false){return '';}
 
 if(e_QUERY){$qs = explode(".", e_QUERY);}
 else{$qs = array('list',0);}
+$PROPID = intval($qs[1]);
+$PROPDTA = array();
+if(isset($GLOBALS['PROPDTA'])){$PROPDTA = $GLOBALS['PROPDTA'];}
+elseif($PROPID > 0){$PROPDTA = e107::getDb()->retrieve("SELECT * FROM #estate_properties WHERE prop_idx='".$PROPID."'",true);}
 
 
-if(EST_USERPERM == 4){echo '<form name="estMenuTemplateForm" method="POST" action="'.e_SELF.'?'.e_QUERY.'" >';}
+
+$TMPLREORDOK = 0;
+if(EST_USERPERM > 2){$TMPLREORDOK++;}
+elseif(EST_USERPERM == 2 && intval($PROPDTA[0]['prop_agency']) == EST_AGENCYID){$TMPLREORDOK++;}
+elseif(EST_USERPERM == 1 && intval($PROPDTA[0]['prop_agent']) == EST_AGENTID){$TMPLREORDOK++;}
+elseif(intval($PROPDTA[0]['prop_uidcreate']) == EST_SELLERUID){$TMPLREORDOK++;}
+
+if($TMPLREORDOK > 0){
+  echo '<form name="estMenuTemplateForm" method="POST" action="'.e_SELF.'?'.e_QUERY.'" >';
+  }
+
+$tmpl = e107::getTemplate('estate');
+$sc = e107::getScBatch('estate',true);
+
 echo '<div id="estSidebarMenuCont" class="WD100">';
 
 
@@ -37,27 +49,42 @@ echo '<div id="estSidebarMenuCont" class="WD100">';
 if(e_PAGE == 'listings.php'){
   
   if($qs[0] == 'view'){
+    $tkey = (trim($PROPDTA[0]['prop_template_menu']) !== '' ?  $PROPDTA[0]['prop_template_menu'] : (trim($EST_PREF['template_menu']) !== '' ? $EST_PREF['template_menu'] : 'default'));
+        
+    $TEMPLATE = $tmpl['menu'][$tkey];
+    $tmplct = 0;
     
-    $tmplct = count($TEMPLATE['txt']);
+    if(isset($PROPDTA[0]['prop_template_menu_ord'])){
+      if(is_array($PROPDTA[0]['prop_template_menu_ord'])){$MENUTMPL = $PROPDTA[0]['prop_template_menu_ord'];}
+      elseif(trim($PROPDTA[0]['prop_template_menu_ord']) !== ''){$MENUTMPL = e107::unserialize($PROPDTA[0]['prop_template_menu_ord']);}
+      }
+    
+    if(!is_array($MENUTMPL) && isset($EST_PREF['template_menu_ord'])){
+      echo '<div>Pref Menu Loaded</div>';
+      if(is_array($EST_PREF['template_menu_ord'])){$MENUTMPL = $EST_PREF['template_menu_ord'];}
+      elseif(trim($EST_PREF['template_menu_ord']) !== ''){$MENUTMPL = e107::unserialize($EST_PREF['template_menu_ord']);}
+      }
+    
     
     if(is_array($TEMPLATE['txt'])){
-      $PREFTMP = $EST_PREF['template_menu_ord'][$tkey];
-      if($TEMPLATE['ord'] && count($PREFTMP) > 0){
-        if(EST_USERPERM == 4){
+      $tmplct = count($TEMPLATE['txt']);
+      
+      if(isset($TEMPLATE['ord']) && isset($MENUTMPL[$tkey]) && count($MENUTMPL[$tkey]) > 0){
+        if($TMPLREORDOK > 0){
           $NEWK = array();
           $ALLK = $TEMPLATE['ord'];
           echo $tp->parseTemplate('{ADMIN_REORDER_MENU:area=menu&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
-          foreach($PREFTMP as $sk=>$sv){$NEWK[$sk] = $TEMPLATE['txt'][$sk];}
+          foreach($MENUTMPL[$tkey] as $sk=>$sv){$NEWK[$sk] = $TEMPLATE['txt'][$sk];}
           foreach($ALLK as $nk=>$nv){if(!$NEWK[$nv]){$NEWK[$nv] = '';}}
           unset($ALLK,$sk,$sv,$nk,$nv,$NEWK['dummy']);
           foreach($NEWK as $ok=>$dta){
-            echo $tp->parseTemplate('{ADMIN_REORDER:area=menu&templ='.$tkey.'&ok='.$ok.'&ov='.intval($PREFTMP[$ok]).'}', false, $sc);
+            echo $tp->parseTemplate('{ADMIN_REORDER:area=menu&templ='.$tkey.'&ok='.$ok.'&ov='.intval($MENUTMPL[$tkey][$ok]).'}', false, $sc);
             echo $tp->parseTemplate($dta, false, $sc).'</div></div>';
             }
           unset($NEWK,$ok,$dta);
           }
         else{
-          foreach($PREFTMP as $ok=>$ov){
+          foreach($MENUTMPL[$tkey] as $ok=>$ov){
             if(isset($TEMPLATE['txt'][$ok]) && $ov == 1){
               echo $tp->parseTemplate($TEMPLATE['txt'][$ok], false, $sc);
               }
@@ -66,7 +93,7 @@ if(e_PAGE == 'listings.php'){
         }
       else{
         ksort($TEMPLATE['txt']);
-        if(EST_USERPERM == 4){
+        if($TMPLREORDOK > 0){
           echo $tp->parseTemplate('{ADMIN_REORDER_MENU:area=menu&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
           }
         foreach($TEMPLATE['txt'] as $ok=>$ov){
@@ -75,7 +102,7 @@ if(e_PAGE == 'listings.php'){
         }
       }
     else{
-      if(EST_USERPERM == 4){
+      if($TMPLREORDOK > 0){
         echo $tp->parseTemplate('{ADMIN_REORDER_MENU:area=menu&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
         }
       echo $tp->parseTemplate($TEMPLATE['txt'], false, $sc);
@@ -90,7 +117,7 @@ else{
   }
 
 echo "</div>";
-if(EST_USERPERM == 4){echo '</form>';}
+if($TMPLREORDOK > 0){echo '</form>';}
 define("EST_RENDERED_SIDEBARMENU",1);
-unset($PREFTMP,$TEMPLATE,$tkey,$ns,$tp);
+unset($MENUTMPL,$PROPID,$PROPDTA,$TEMPLATE,$TMPLREORDOK,$tkey,$ns,$tp);
 ?>

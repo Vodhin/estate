@@ -22,8 +22,6 @@ if(!$e107->isInstalled('estate')){
   }
 
 
-$sql = e107::getDb();
-
 if(intval($EST_PREF['adminonly']) == 1){
   if(ADMIN){$estText = '<div class="WD100 TAC FWB">'.EST_GEN_PLUGADMINONLY.'</div>';}
   else{
@@ -34,9 +32,13 @@ if(intval($EST_PREF['adminonly']) == 1){
     }
   }
 
+$sql = e107::getDb();
 
 if(e_QUERY){$qs = explode(".", e_QUERY);}
 else{$qs = array('list',0);}
+
+$PROPID = intval($qs[1]);
+
 
 
 e107::css('url',e_PLUGIN.'estate/js/leaflet/leaflet.css');
@@ -60,14 +62,6 @@ e107::meta('mobile-web-app-capable','yes'); // example
 e107::js('estate','js/Leaflet.markercluster/dist/leaflet.markercluster.js');
 
 
-
-if(EST_USERPERM == 4){
-  e107::js('estate','js/Sortable/Sortable.js', 'jquery');
-  $TFORM1 = '<form name="estViewTemplateForm" method="POST" action="'.e_SELF.'?'.e_QUERY.'" >';
-  $TFORM2 = '</form>';
-  }
-
-
 e107::js('estate','js/listing.js', 'jquery');
 require_once('estate_defs.php');
 
@@ -82,7 +76,6 @@ if($Z2 = $sql->retrieve("SELECT * FROM #estate_listypes",true)){
 
 
 
-$PROPID = intval($qs[1]);
 if($qs[0] == 'edit' || $qs[0] == 'new'){
   require_once(e_PLUGIN.'estate/ui/oa.php');
   exit;
@@ -103,7 +96,6 @@ $order = (isset($_POST['sort']) ? $_POST['sort'][1] : "DESC");
 $from = (isset($_POST['from']) ? intval($_POST['from']) : 0);
 $records = (isset($_POST['to']) ? intval($_POST['to']) : 25);
 
-
 $WHERE = "";
 if(!ADMIN){
   if(intval(USERID) > 0 && intval(EST_USERPERM) == 0){
@@ -115,7 +107,7 @@ if(!ADMIN){
   }
 
 
-$MQRY = "SELECT #estate_properties.*, #estate_subdiv.subd_name, city_name, city_url, city_timezone, state_name, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_properties LEFT JOIN #estate_subdiv ON subd_idx = prop_subdiv LEFT JOIN #estate_city ON city_idx = prop_city LEFT JOIN #estate_county ON cnty_idx = prop_county LEFT JOIN #estate_states ON state_idx = prop_state LEFT JOIN #estate_agents ON agent_idx = prop_agent LEFT JOIN #user ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid) LEFT JOIN #estate_agencies ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)";
+$MQRY = "SELECT #estate_properties.*, #estate_subdiv.subd_name, city_name, city_url, city_timezone, city_description, state_name, state_init, state_url, cnty_name, cnty_url, user_id,user_name,user_loginname,user_email,user_admin,user_perms,user_class,user_signature,user_image, #estate_agents.*, #estate_agencies.* FROM #estate_properties LEFT JOIN #estate_subdiv ON subd_idx = prop_subdiv LEFT JOIN #estate_city ON city_idx = prop_city LEFT JOIN #estate_county ON cnty_idx = prop_county LEFT JOIN #estate_states ON state_idx = prop_state LEFT JOIN #estate_agents ON agent_idx = prop_agent LEFT JOIN #user ON (prop_agent = 0 AND user_id = prop_uidcreate) OR (agent_uid > 0 AND user_id = agent_uid) LEFT JOIN #estate_agencies ON (agent_agcy > 0 AND agency_idx = agent_agcy) OR (agent_agcy = 0 AND agency_idx = prop_agency)";
   
 
   
@@ -165,6 +157,10 @@ if(!$estQdta = $sql->retrieve($query,true)){
 
 include_once('ui/qry.php'); // <-- generates clean $EST_PROP array used here and oa.php
 
+
+
+
+
 $dberr = $sql->getLastErrorText();
 if($dberr){e107::getMessage()->addError($dberr);}
 unset($dberr);
@@ -183,7 +179,7 @@ unset($dberr);
   if(check_class($EST_PREF['contact_class'])){
     foreach($EST_PROP as $MPID=>$MDTA){
       if(intval($MDTA['prop_appr']) < 1){
-        if(EST_USERPERM < intval($EST_PREF['public_mod']) && intval($v['prop_uidcreate']) !== USERID){
+        if(EST_USERPERM < intval($EST_PREF['public_mod']) && intval($MDTA['prop_uidcreate']) !== USERID){
           unset($EST_PROP[$MPID]);
           }
         }
@@ -242,11 +238,26 @@ unset($dberr);
         $EST_PROP[$PROPID]['subdiv'] = $ESTDTA[2];
         }
       
+      $EST_PROP[$PROPID]['history'] = estGetPropHist($PROPID,$EST_PROP[$PROPID]['prop_dateupdated'],$EST_PROP[$PROPID]['prop_listprice'],$EST_PROP[$PROPID]['prop_status']);
       
       
       $IDIV = estViewCSS($ESTDTA);
       $EST_SPACES = $ESTDTA[1];
       $PROPDTA[0] = $EST_PROP[$PROPID];
+      
+      
+      $TMPLREORDOK = 0;
+      if(EST_USERPERM > 2){$TMPLREORDOK++;}
+      elseif(EST_USERPERM == 2 && intval($PROPDTA[0]['prop_agency']) == EST_AGENCYID){$TMPLREORDOK++;}
+      elseif(EST_USERPERM == 1 && intval($PROPDTA[0]['prop_agent']) == EST_AGENTID){$TMPLREORDOK++;}
+      elseif(intval($PROPDTA[0]['prop_uidcreate']) == EST_SELLERUID){$TMPLREORDOK++;}
+      
+      if($TMPLREORDOK > 0){
+        e107::js('estate','js/Sortable/Sortable.js', 'jquery');
+        $TFORM1 = '<form name="estViewTemplateForm" method="POST" action="'.e_SELF.'?'.e_QUERY.'" >';
+        $TFORM2 = '</form>';
+        }
+      
       
       if(intval($PROPDTA[0]['prop_uidcreate']) !== USERID){
         $PROPDTA[0]['prop_views'] = $PROPDTA[0]['prop_views'] + 1;
@@ -275,62 +286,38 @@ unset($dberr);
       
       require_once(HEADERF);
       $tmpl = e107::getTemplate('estate');
+      $tkey = (trim($PROPDTA[0]['prop_template_view']) !== '' ?  $PROPDTA[0]['prop_template_view'] : (trim($EST_PREF['template_view']) !== '' ? $EST_PREF['template_view'] : 'default'));
       
-      /*
-      //pref['xurl']['facebook']
-      echo '
-      <div id="fb-root"></div>';
-      echo '
-      <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v20.0&appId=1024154842269829" nonce="FOKrbAYI"></script>';
-      echo '
-  <div class="fb-like" 
-       data-href="'.$PROPDTA[0]['prop_link'].'" 
-       data-width=""
-       data-layout="standard" 
-       data-action="like" 
-       data-size="small"  
-       data-share="true">
-  </div>
-  ';
-      
-      echo "
-        <script>
-        window.fbAsyncInit = function() {
-          FB.init({
-            appId            : '1024154842269829',
-            xfbml            : true,
-            version          : 'v20.0'
-          });
-          FB.ui({
-            method: 'share',
-            href: 'https://developers.facebook.com/docs/'
-          }, function(response){});
-            };
-      </script>";
-      //echo '<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>';
-      */
-      
-      $tkey = (trim($EST_PREF['template_view']) !== '' ? $EST_PREF['template_view'] : 'default');
       $TEMPLATE = $tmpl['view'][$tkey];
-      $tmplct = count($TEMPLATE['txt']);
+      $tmplct = 0;
+      if(isset($PROPDTA[0]['prop_template_view_ord'])){
+        if(is_array($PROPDTA[0]['prop_template_view_ord'])){$VIEWTMPL = $PROPDTA[0]['prop_template_view_ord'];}
+        elseif(trim($PROPDTA[0]['prop_template_view_ord']) !== ''){$VIEWTMPL = e107::unserialize($PROPDTA[0]['prop_template_view_ord']);}
+        }
+      if(!is_array($VIEWTMPL) && isset($EST_PREF['template_view_ord'])){
+        if(is_array($EST_PREF['template_view_ord'])){$VIEWTMPL = $EST_PREF['template_view_ord'];}
+        elseif(trim($EST_PREF['template_view_ord']) !== ''){$VIEWTMPL = e107::unserialize($EST_PREF['template_view_ord']);}
+        }
+      
+      
       if(is_array($TEMPLATE['txt'])){
-        $PREFTMP = $EST_PREF['template_view_ord'][$tkey];
-        if(isset($PREFTMP) && count($PREFTMP) > 0 && $TEMPLATE['ord']){
-          if(EST_USERPERM == 4){
+        $tmplct = count($TEMPLATE['txt']);
+        if(isset($TEMPLATE['ord']) && isset($VIEWTMPL[$tkey]) && count($VIEWTMPL[$tkey]) > 0){
+          if($TMPLREORDOK > 0){
             $estText .= $tp->parseTemplate('{ADMIN_REORDER_MENU:area=view&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
             $NEWK = array();
             $ALLK = $TEMPLATE['ord'];
-            foreach($PREFTMP as $sk=>$sv){$NEWK[$sk] = $TEMPLATE['txt'][$sk];}
+            foreach($VIEWTMPL[$tkey] as $sk=>$sv){$NEWK[$sk] = $TEMPLATE['txt'][$sk];}
             foreach($ALLK as $nk=>$nv){if(!$NEWK[$nv]){$NEWK[$nv] = '';}}
             unset($ALLK,$sk,$sv,$nk,$nv,$NEWK['dummy']);
             foreach($NEWK as $ok=>$dta){
-              $estText .= $tp->parseTemplate('{ADMIN_REORDER:area=view&templ='.$tkey.'&ok='.$ok.'&ov='.intval($PREFTMP[$ok]).'}', false, $sc);
+              $estText .= $tp->parseTemplate('{ADMIN_REORDER:area=view&templ='.$tkey.'&ok='.$ok.'&ov='.intval($VIEWTMPL[$tkey][$ok]).'}', false, $sc);
               $estText .= $tp->parseTemplate($dta, false, $sc).'</div></div>';
               }
             unset($NEWK,$ok,$dta);
             }
           else{
-            foreach($PREFTMP as $ok=>$ov){
+            foreach($VIEWTMPL as $ok=>$ov){
               if(isset($TEMPLATE['txt'][$ok]) && $ov == 1){
                 $estText .= $tp->parseTemplate($TEMPLATE['txt'][$ok], false, $sc);
                 }
@@ -339,7 +326,7 @@ unset($dberr);
           }
         else{
           ksort($TEMPLATE['txt']);
-          if(EST_USERPERM == 4){
+          if($TMPLREORDOK > 0){
             $estText .= $tp->parseTemplate('{ADMIN_REORDER_MENU:area=view&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
             }
           foreach($TEMPLATE['txt'] as $k=>$tmpv){
@@ -348,7 +335,7 @@ unset($dberr);
           }
         }
       else{
-        if(EST_USERPERM == 4){
+        if($TMPLREORDOK > 0){
           $estText .= $tp->parseTemplate('{ADMIN_REORDER_MENU:area=view&tkey='.$tkey.'&ct='.$tmplct.'}', false, $sc);
           }
         $estText .= $tp->parseTemplate($TEMPLATE['txt'], false, $sc);
@@ -361,7 +348,7 @@ unset($dberr);
       $ns->tablerender('<span id="estMiniNav"></span>'.$estHead,$TFORM1.'<div id="estateCont" data-pid="'.$PROPID.'">'.$estText.'</div>'.$TFORM2,'estate-view');
       
       
-      unset($estHead,$estPT,$estText,$EST_PROP,$PREFTMP,$TEMPLATE);
+      unset($estHead,$estPT,$estText,$EST_PROP,$VIEWTMPL,$TEMPLATE);
       }
     
     if(USERID == 1){

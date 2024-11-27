@@ -86,6 +86,13 @@ CREATE TABLE `estate_county` (
   PRIMARY KEY (`cnty_idx`)
 ) ENGINE=InnoDB;
 
+
+CREATE TABLE `estate_curcodes` (
+  `curcode_init` varchar(5) NOT NULL,
+  `curcode_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`curcode_init`)
+) ENGINE=InnoDB;
+
 CREATE TABLE `estate_events` (
   `event_idx` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `event_agt` int(11) unsigned NOT NULL,
@@ -153,6 +160,12 @@ CREATE TABLE `estate_likes` (
   `like_ip` varchar(55) NOT NULL default '',
   `like_exp` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY (`like_idx`)
+) ENGINE=InnoDB;
+
+CREATE TABLE `estate_locales` (
+  `locale_init` varchar(20) NOT NULL,
+  `locale_name` varchar(60) NOT NULL,
+  PRIMARY KEY (`locale_init`)
 ) ENGINE=InnoDB;
 
 
@@ -248,6 +261,7 @@ CREATE TABLE `estate_properties` (
   `prop_modelname` varchar(50) NOT NULL,
   `prop_listprice` int(10) unsigned NOT NULL,
   `prop_origprice` int(10) unsigned NOT NULL,
+  `prop_locale` varchar(40) NOT NULL,
   `prop_leasefreq` tinyint(1) unsigned NOT NULL,
   `prop_leasedur` tinyint(1) unsigned NOT NULL,
   `prop_currency` tinyint(1) unsigned NOT NULL,
@@ -276,7 +290,21 @@ CREATE TABLE `estate_properties` (
   `prop_views` int(8) unsigned NOT NULL default '0',
   `prop_saves` int(8) unsigned NOT NULL default '0',
   `prop_appr` int(10) unsigned NOT NULL default '1',
+  `prop_template_view` varchar(55) NOT NULL,
+  `prop_template_view_ord` text NOT NULL,
+  `prop_template_menu` varchar(55) NOT NULL,
+  `prop_template_menu_ord` text NOT NULL,
   PRIMARY KEY (`prop_idx`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE `estate_prophist` (
+  `prophist_idx` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `prophist_propidx` int(11) unsigned NOT NULL,
+  `prophist_date` int(10) unsigned NOT NULL default '0',
+  `prophist_price` int(10) unsigned NOT NULL default '0',
+  `prophist_status` tinyint(1) unsigned NOT NULL default '0',
+  PRIMARY KEY (`prophist_idx`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `estate_spaces` (
