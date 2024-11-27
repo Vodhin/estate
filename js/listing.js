@@ -109,6 +109,7 @@ function estSetLike(ele,cok=0){
   
   function estLnkBar(){
     $('#estMiniNav').append($('#estMiniSrc').html()).promise().done(function(){
+      //$('#estMiniNav').prependTo('body');
       $('#estMiniSrc').remove();
       $('body').on({click : function(){$('#estMiniNav p').hide();}});
       $('#estMiniNav p').css({'top':$('#estMiniNav').outerHeight()+'px','background-color':$('body').css('background-color')});
@@ -210,7 +211,7 @@ function estSetLike(ele,cok=0){
           }
         else{
           if(picCt[2] !== 0){
-            console.log(picCt[2]);
+            //console.log(picCt[2]);
             }
           if(picCt[1] !== null){
             $(picCt[1]).click();
@@ -278,7 +279,6 @@ function estSetLike(ele,cok=0){
             else{map.setView([estMapPins.agcy[0].lat, estMapPins.agcy[0].lon], 13);}
             }
           
-          console.log(estMapPins.prop);
           
           $(estMapPins.prop).each(function(i,px){
             propPoints[i] = L.marker([px.lat,px.lon]);
@@ -395,7 +395,6 @@ function estSetLike(ele,cok=0){
           var sects = [];
           $(dragCont).find('.estReordCont').each(function(i,ele){
             sects[i] = $(ele).data('sect');
-            if($(ele).find('div.estReordDiv').is(':empty')){$(ele).find('label').append(' (No Data)');}
             $(ele).find('input[type="checkbox"]').data('sect',sects[i]).on({
               click : function(){
                 if($(this).is(':checked')){$(ele).find('div.estReordDiv').removeClass('noDISP');}
@@ -413,7 +412,7 @@ function estSetLike(ele,cok=0){
                 chosenClass: 'sortTR-chosen', 
                 dragClass: 'sortTR-drag',
                 onChoose: function(evt){},
-                onEnd: function(evt){},
+                onEnd: function(evt){estFETemplateReorder(evt.item);},
                 onUnchoose: function(evt){},
                 });
               });
@@ -423,6 +422,11 @@ function estSetLike(ele,cok=0){
     }
   
   
+  function estFETemplateReorder(btn){
+    if($(btn.nextSibling).find('input[type="checkbox"]').is(':checked')){
+      $(btn).find('input[type="checkbox"]').prop('checked','checked');
+      }
+    }
   
   
   function estCardTabs(){

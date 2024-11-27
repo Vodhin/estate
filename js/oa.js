@@ -152,13 +152,17 @@
   
   function estOAPrep(){
     console.log('OA Prep');
-    estProcDefDta();
     var propId = Number($('body').data('propid'));
     var defs = $('body').data('defs');
     var mainTbl = 'estate_properties';
     var cSave = $('input[type="submit"]');
     var cForm = $('#plugin-estate-OAform');
     
+    console.log(defs);
+    
+    $('select[name="prop_city"]').data('pval',Number($('select[name="prop_city"]').val())).on({
+      change : function(){estResetSubDivs();}
+      });
     
     $('.estOASubmit').on({
       click : function(e){
@@ -272,11 +276,11 @@
       cache:false,
       processData:true,
       success: function(ret, textStatus, jqXHR){
-        console.log(ret);
         if(typeof ret !== 'undefined' && ret !== null){
           if(typeof ret.error !== 'undefined'){estAlertLog(ret.error);}
           else{
             $('body').data({'defs':ret,'propid':propId});
+            estProcDefDta();
             estOAPrep();
             }
           }

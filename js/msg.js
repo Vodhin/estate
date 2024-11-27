@@ -223,8 +223,7 @@
   
   
   
-  function estBindViewBtns(){
-    console.log('estBindViewBtns');
+  function estBindMsgViewBtns(){
     $('.estDelMsg').each(function(i,btn){
       if(!$(btn).hasClass('estEleBound')){
         $(btn).addClass('estEleBound').on({
@@ -319,7 +318,7 @@
   function estPrevMsgBtns(){
     
     if(document.getElementById('estAdmMsgBoxes')){
-      estBindViewBtns();
+      estBindMsgViewBtns();
       return;
       }
     
@@ -336,7 +335,7 @@
           });
         }
       
-      estBindViewBtns();
+      estBindMsgViewBtns();
       
       
       if(!$('#estInBoxCont').hasClass('estEleBound')){
