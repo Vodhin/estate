@@ -140,7 +140,6 @@ define("EST_FEAT_NAMEPLCH","Bedroom, Bathroom, Outdoor Living, etc");
 define("EST_GEN_ACTIVE1", "Scheduled Publication");
 define("EST_GEN_ACTIVE2", "Live Now - Ignore Publication Schedule");
 define("EST_GEN_ACCESS","Access");
-define("EST_GEN_ADDED","Added");
 define("EST_GEN_ADDEDAS","Added as");
 define("EST_GEN_ADDEDNEW","Added New");
 define("EST_GEN_ADDEDTO","Added to");
@@ -200,6 +199,7 @@ define("EST_GEN_MISSING","Missing");
 define("EST_GEN_NAMEADDRESS","Name & Address");
 define("EST_GEN_NEWAGENT", "New Agent Profile");
 define("EST_GEN_NEWCOMPANY", "New Company");
+define("EST_GEN_NEWEVENTNAME", "New Event Preset");
 define("EST_GEN_NEWFEATURE","New Feature");
 define("EST_GEN_NEWGROUP","New Group");
 define("EST_GEN_NEWMESSAGES", "New Messages");
@@ -268,7 +268,6 @@ define("EST_GEN_SHOW", "Show");
 define("EST_GEN_SUCCESS", "Success");
 define("EST_GEN_SHOWALLUSERS", "Show All Users");
 
-define("EST_GEN_UPDATED","Updated");
 define("EST_GEN_UPDATEDWITH","Updated with");
 define("EST_GEN_UPDATEREQ","Update Required");
 define("EST_GEN_UPFOLDER","Upload folder");
@@ -405,10 +404,10 @@ define("EST_PREF_CONTACTTERMSHLP","The Terms a visitor must agree to to send a m
 
 define("EST_PREF_DEFAGTHRS","Default Agent Hours");
 define("EST_PREF_DEFAGTHRSHLP","The default hours for creating a New Agent. Each Agent can customize their own hours");
-define("EST_PREF_DEFCURRENCYHLP","The default Currency selected when creating a New Listing");
+
 define("EST_PREF_DEFCOUNTRYHLP","The default Country selected when creating a New Listing");
-define("EST_PREF_DEFEVTLEN","Default Event Lengths");
-define("EST_PREF_DEFEVTLENHLP","Set default Event Lengths when adding an event to a property's calendar. Each event can be customized");
+define("EST_PREF_DEFEVTLEN","Default Event Presets");
+define("EST_PREF_DEFEVTLENHLP","A list of Event Presets available when adding an event to a property's calendar.The first 5 events cannot be deleted but can have their names and lengths altered. Additional Event Presets can be added: WARNING: removing an event will re-label any existing events in all calendars.");
 define("EST_PREF_DEFHRSHINT0","First Event Start Time");
 define("EST_PREF_DEFHRSHINT1","Last Event Start Time");
 define("EST_PREF_DEFPUBHRS","Default Public Hours");
@@ -433,6 +432,10 @@ define("EST_PREF_HELPINFULL","Expanded Help Menu");
 define("EST_PREF_HELPINFULLHLP","If enabled, the Help Menu will always be shown in full height.");
 
 define("EST_PREF_LAYOUT_NOLISTINGS","No Listings To Preview");
+define("EST_PREF_LISTINGCAVI1","Off Market listings are allways hidden from the public.");
+define("EST_PREF_LISTINGCAVI2","Sold Properties are always visible to Admins and the Agent/Owner of the listing.");
+define("EST_PREF_LISTINGDISP1","Listing Visibility");
+define("EST_PREF_LISTINGDISP1HLP","Show or hide Properties based on Listing Status. Applies only to visitors who are not logged in.");
 define("EST_PREF_LISTINGSAVE","Listing Saves");
 define("EST_PREF_LISTINGSAVEHLP","Who can Save Listings on their Device (Uses cookies). ");
 define("EST_PREF_LISTPAGESECT","Listing Page Layout");
@@ -606,6 +609,8 @@ define("EST_HLPMNU_LISTING4","Required: [i]Zoning Category[/i] selector sets the
 define("EST_HLPMNU_LISTING5","Required: The [i]Property Type[/i] selector further categorizes the Property and sets addtional filters used thoughout this plugin's forms.");
 
 define("EST_HLPMNU_PREF_TEMPLATES01","Set options for the List and View Page Templates");
+define("EST_HLPMNU_PREF_TEMPLATES02","Choose Custom Templates to use for this property's View Page");
+define("EST_HLPMNU_PREF_TEMPLATES03","You can also re-arrange the layout and choose to show or hide different sections if the selected templates support that feature");
 define("EST_HLPMNU_PREF_MENU01","Set Options for the Estate Menu");
 
 define("EST_HLPMNU_PRESETS30","These are lists of preset data used in your listings. You can add & edit this information directly in the Listing Form, too.");

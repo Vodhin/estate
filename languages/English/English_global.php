@@ -35,7 +35,7 @@ define("EST_ERR_NOTYOURPROP2","You are not authorized to edit a Non-Agent's prop
 define("EST_ERR_NOTYOURPROP3","Not Your Agency's Property");
 define("EST_ERR_INFOCHANGED","Some information on this page has been automatically corrected upon loading.");
 define("EST_ERR_UPDATEDONE","The database has been successfully updated.");
-define("EST_ERR_UPDATENEEDED","Please be sure to click the Update button.");
+define("EST_ERR_UPDATENEEDED","Please be sure to click the Save/Update button to save your changes.");
 define("EST_ERR_NOTANIMG"," is not an image that can be edited by this plugin.");
 
 define("EST_OAE_DONOTRPLY","Do Not Reply To This Email");
@@ -88,6 +88,7 @@ define("EST_GEN_ACRES","Acres");
 define("EST_GEN_ACTIVE1", "Active - Scheduled Publication");
 define("EST_GEN_ACTIVE2", "Live Now");
 define("EST_GEN_ADD1","Add");
+define("EST_GEN_ADDED","Added");
 define("EST_GEN_ADDRESS", "Address");
 define("EST_GEN_ADDITIONAL","Additional");
 define("EST_GEN_ADDNEWSPACE","Add New Space");
@@ -95,15 +96,17 @@ define("EST_GEN_ADMIN", "Admin");
 define("EST_GEN_ADMINAREA", "Admin Area");
 define("EST_GEN_ADMINS", "Admins");
 define("EST_GEN_ADMINISTRATOR", "Administrator");
+define("EST_GEN_ADMVIEW","Not visible to the public. Only Admins can see this information");
 
 define("EST_GEN_AGENCY", "Agency");
 define("EST_GEN_AGENCIES", "Agencies");
 define("EST_GEN_AGENCYLOCS", "Agency Locations");
 define("EST_GEN_AGENT", "Agent");
+define("EST_GEN_AGENTCONFLICT1", "The Assigned Agent has an Event for a different property at this time");
 define("EST_GEN_AGENTS", "Agents");
 define("EST_GEN_ALL","All");
 define("EST_GEN_ALTERNATE","Alternate");
-define("EST_GEN_ADMVIEW","Not visible to the public. Only Admins can see this information");
+define("EST_GEN_AMOUNT", "Amount");
 define("EST_GEN_ANNUAL","Annual");
 define("EST_GEN_APPEND","Append");
 define("EST_GEN_APPLY","Apply");
@@ -129,17 +132,23 @@ define("EST_GEN_CAPTION","Caption");
 define("EST_GEN_CATEGORY","Category");
 define("EST_GEN_CATEGORIES","Categories");
 define("EST_GEN_CANCELREM","Cancel and remove form");
+define("EST_GEN_CANNOTBEEQOR", "Cannot be equal to or");
 define("EST_GEN_CHECKLATER","Please Check Back Later");
 define("EST_GEN_CHANGEIMGSRC","Change Image Source");
 define("EST_GEN_CHOOSETHM","Click to Choose Thumbnail");
+define("EST_GEN_CITYOF","City Of");
+define("EST_GEN_CITYPREVIEW","City Preview");
 define("EST_GEN_CITYSPACES","City Spaces");
 define("EST_GEN_CLEARFILTER","Clear Filter");
 define("EST_GEN_CLICKTHE","Click the");
 define("EST_GEN_CLIENT","Client");
+define("EST_GEN_CLOSE","Close");
 define("EST_GEN_CLOSING","Closing");
 define("EST_GEN_COMMUNITY", "Community");
+define("EST_GEN_COMMUNITYOF","Community Of");
 define("EST_GEN_COMMUNITYPREVIEW", "Community Preview");
 define("EST_GEN_COMMUNITYSPACES", "Community Spaces");
+define("EST_GEN_COMMUNITYSUBDIV", "Community/Subdivision");
 define("EST_GEN_COMPANY", "Company");
 define("EST_GEN_COMPANIES", "Companies");
 define("EST_GEN_CONFIRMED","Confirmed");
@@ -163,6 +172,10 @@ define("EST_GEN_DAYS","Days");
 define("EST_GEN_DEFAULT","Default");
 define("EST_GEN_DELETE","Delete");
 define("EST_GEN_DELETED","Deleted");
+define("EST_GEN_DELETEEVTKEY","Delete Event Preset?");
+define("EST_GEN_DELETEPRCEHIST","Delete Price History");
+define("EST_GEN_DELETEPRCEHIST2","There is no History Data to delete");
+define("EST_GEN_DELETEPRCEHIST3","Original Price cannot be deleted");
 define("EST_GEN_DETAILS","Details");
 define("EST_GEN_DIMENSIONS","Dimensions");
 define("EST_GEN_DIRECTORY","Directory");
@@ -175,6 +188,7 @@ define("EST_GEN_EMAIL","Email");
 define("EST_GEN_ENDOF","End of");
 define("EST_GEN_ENABLE","Enable");
 define("EST_GEN_ENABLEDIS","Enable/Disable");
+define("EST_GEN_ERROR","Error");
 define("EST_GEN_ESTATE","Estate");
 define("EST_GEN_ESTADMINS","Estate Admins");
 define("EST_GEN_ESTAGENTS","Estate Agents");
@@ -205,8 +219,10 @@ define("EST_GEN_FULL","Full");
 define("EST_GEN_FULLADDLIST","Full Add Listing");
 define("EST_GEN_FULLADDR", "Full Address");
 define("EST_GEN_FULLEDIT","Full Edit");
+define("EST_GEN_FUTURE","Future");
 define("EST_GEN_GALLERY", "Gallery");
 define("EST_GEN_GENERAL", "General");
+define("EST_GEN_GEATERTHAN", "Greater than");
 define("EST_GEN_GROUP", "Group");
 define("EST_GEN_GROUPINGS","Groupings");
 define("EST_GEN_GROUPS", "Groups");
@@ -241,8 +257,11 @@ define("EST_GEN_NOLEASE","No Lease");
 define("EST_GEN_1MONTH","1 Month");
 define("EST_GEN_6MONTH","6 Month");
 define("EST_GEN_ITEM","Item");
+define("EST_GEN_LESSTHAN", "Less than");
 define("EST_GEN_LINKIN", "Linked In");
 define("EST_GEN_LIST", "List");
+define("EST_GEN_LISTEDCOMING", "Listed: Scheduled");
+define("EST_GEN_LISTEDFORSALE", "Listed For Sale");
 define("EST_GEN_LISTING", "Listing");
 define("EST_GEN_LISTINGS", "Listings");
 define("EST_GEN_LISTAGENT", "Listing Agent");
@@ -258,6 +277,8 @@ define("EST_GEN_MAP","Map");
 define("EST_GEN_MEDIA","Media");
 define("EST_GEN_MEDIAERRORS1","There were Errors with some Media files");
 define("EST_GEN_MEETING","Meeting");
+define("EST_GEN_MENULAYOUTUP", "Menu Layout Updated");
+define("EST_GEN_MENUTMPLUP", "Menu Template Changed");
 define("EST_GEN_MEMBER","Member");
 define("EST_GEN_MESSAGE","Message");
 define("EST_GEN_MESSAGES","Messages");
@@ -286,6 +307,7 @@ define("EST_GEN_NOTDONE","Not Done");
 define("EST_GEN_NOTFOUND","Not Found");
 define("EST_GEN_NOTHING2CHANGE","Nothing To Change");
 define("EST_GEN_NOTREQUIRED","Not Required");
+define("EST_GEN_NOVIEWING","No Viewings");
 define("EST_GEN_NOW","Now");
 define("EST_GEN_NUMBERRESULTS","Number of Results");
 define("EST_GEN_OF","of");
@@ -295,6 +317,7 @@ define("EST_GEN_ONLY","Only");
 define("EST_GEN_OPENHOUSE","Open House");
 define("EST_GEN_OPTIONS","Options");
 define("EST_GEN_OPTLIST","Option List");
+define("EST_GEN_ORIGINAL", "Original");
 define("EST_GEN_OTHER","Other");
 define("EST_GEN_OTHERPROP1","You are editing a property created by");
 define("EST_GEN_OTHERPROP2","This property was created by");
@@ -305,6 +328,21 @@ define("EST_GEN_PERMISSIONS","Permissions");
 define("EST_GEN_PLAYPAUSESLIDE","Click to Play/Pause Slideshow");
 define("EST_GEN_PLEASE","Please");
 define("EST_GEN_PLUGUNAVAIL","This section of our website is currently unavailable to the public. Please check back later.");
+define("EST_GEN_PRICEHIST","Price History");
+define("EST_GEN_PRICEHISTFUT0","You can preset a change to the List Price and/or Status up to 14 days in advance.");
+define("EST_GEN_PRICEHISTFUT1","Future Price/Status changes are not shown to the public until the specified date.");
+define("EST_GEN_PRICEHISTFUT2","A Future Price/Status change exists. You can only add a change for today.");
+define("EST_GEN_PRICEHISTFUT3","Upcoming Price/Status change");
+define("EST_GEN_PRICEHISTFUT4","Not visible to the public");
+define("EST_GEN_PRICEHISTFUT5","Current public Price History ");
+define("EST_GEN_PRICEHISTGO","Changed values in this row updates the CURRENT Listing Price and Status");
+define("EST_GEN_PRICEHISTGO1","Changed values in this row ONLY updates the ORIGINAL Listing Price");
+define("EST_GEN_PRICEHISTNOGO","Changed values in this row DO NOT affect the current Listing Price or Status.");
+define("EST_GEN_PRICEHISTUP1","Listing Price and/or Status updated by scheduled Price History change");
+define("EST_GEN_PRIPCTINF0","Click to calculate percent from");
+define("EST_GEN_PRIPCTINF1","Click to choose a new price based on percentage change");
+define("EST_GEN_PRIPCTINF2","Original Price");
+define("EST_GEN_PRIPCTINF3","Concurrent values");
 define("EST_GEN_POSITHNT","Front, Back, East Side, etc.");
 define("EST_GEN_POSITION","Position");
 define("EST_GEN_POWEREDBY","Powered By");
@@ -327,6 +365,7 @@ define("EST_GEN_RECREATION","Recreation");
 define("EST_GEN_REQUIRED","Required");
 define("EST_GEN_ROOM","Room");
 define("EST_GEN_ROOMS", "Rooms");
+define("EST_GEN_ROUNDVALSTO", "Round Values to");
 define("EST_GEN_SAVE", "Save");
 define("EST_GEN_SAVES", "Saves");
 define("EST_GEN_SAVEINQ", "Saves & Inquiries");
@@ -359,6 +398,7 @@ define("EST_GEN_SUBDIVTYPE", array("Neighbourhood","Village","Incorporated Villa
 define("EST_GEN_SUBDIVISIONNONE", "Select or Add New Subdivision Above");
 define("EST_GEN_SUBMITTLISTING", "Submit New Listing");
 define("EST_GEN_SUBMITTEDLIST", "Submitted Listings");
+define("EST_GEN_TEMPLAYOUT", "Template Layout");
 define("EST_GEN_THUMBNAIL","Thumbnail");
 define("EST_GEN_TIMEZONE","Timezone");
 define("EST_GEN_TO","to");
@@ -375,6 +415,7 @@ define("EST_GEN_UNK","Unknown");
 define("EST_GEN_UNNAMEDPROPERTY","Unnamed Listing");
 define("EST_GEN_UPDATETHIS","Update this");
 define("EST_GEN_UPDATE","Update");
+define("EST_GEN_UPDATED","Updated");
 define("EST_GEN_UPLOADING","Uploading");
 define("EST_GEN_UPTODATE","Up to date");
 define("EST_GEN_USE","Use");
@@ -382,8 +423,10 @@ define("EST_GEN_USER","User");
 define("EST_GEN_VIDEO","Video");
 define("EST_GEN_VIEW","View");
 define("EST_GEN_VIEWS","Views");
+define("EST_GEN_VIEWLAYOUTUP", "View Layout Updated");
 define("EST_GEN_VIEWLISTING","View Listing");
 define("EST_GEN_VIEWLISTINGS","View Available Listings");
+define("EST_GEN_VIEWTMPLUP", "View Template Changed");
 define("EST_GEN_VOLANTARY","Voluntary");
 define("EST_GEN_WAITINGAPPROVAL","Waiting For Approval");
 define("EST_GEN_WEBSITE","Website");
@@ -395,6 +438,21 @@ define("EST_GEN_ZONING","Zoning");
 
 define("EST_MSG_ADDRNOTFOUND","Address Not Found. Edit in field above and try again.");
 define("EST_MSG_ADDRTOOSHORT","Address Too Short");
+
+
+define("EST_PREF_DEFLOCALE","PHP Currency Formatting");
+define("EST_PREF_DEFLOCALE0A","Prefix Currency Symbol");
+define("EST_PREF_DEFLOCALE0B","Postfix Currency Symbol");
+define("EST_PREF_DEFLOCALE1","Use PHP Number Formatter");
+define("EST_PREF_DEFLOCALE2","For Selected Country");
+define("EST_PREF_DEFLOCALE3","Other Countries");
+define("EST_PREF_DEFLOCALEHLP","Use either PHP's Number Formatter Function to format the Listing Price or force whatever currency symbol you choose before or after a non-delineated number. Every listing can have its own setting.");
+define("EST_PREF_DEFLOCALESEL1","Displays the Listing Price as a non-delineated integer and forces the selected currency symbol (if any) to appear either before or after the amount");
+define("EST_PREF_DEFLOCALESEL2","Use PHP Number formatting to display the Listing Price based on selected Locale information.");
+define("EST_PREF_DEFLOCALESEL3","Set the Locale Language and Currency Code ($, €, £, etc) to the desired setting.");
+
+
+
 
 define("EST_PROP_INTSIZE", "Interior Space");
 define("EST_PROP_LANDSIZE", "Property Size");
@@ -420,6 +478,7 @@ define("EST_PROP_BYLINE","Byline");
 define("EST_PROP_CITY", "City");
 define("EST_PROP_COUNTRY", "Country");
 define("EST_PROP_COUNTY", "County");
+define("EST_PROP_CURPRICE", "Current Price");
 define("EST_PROP_DATECREATED", "Date Created");
 define("EST_PROP_DATEUPDATE", "Date Updated");
 define("EST_PROP_DATELIVE", "Go Live Date");
@@ -487,6 +546,7 @@ define("EST_PROP_MSG_TYPE1", "Please Select Listing Type");
 define("EST_PROP_MSG_ZONE1", "Please Select a Zoning Category for this property");
 
 define("EST_PROP_NAME", "Property Name");
+define("EST_PROP_NAMEPLCH", "Listing Title (eg Martin Manor, 1234 Bluebelle Lane, etc)");
 define("EST_PROP_ORIGPRICE", "Original Price");
 define("EST_PROP_PARCELID", "Parcel ID");
 define("EST_PROP_PROPOWNER", "Property Owner");
@@ -511,13 +571,16 @@ define("EST_PROP_TYPEPLCH", "Single Family, Appartment, Retail, etc.");
 define("EST_PROP_UIDCREATE", "Listed By");
 define("EST_PROP_UNNAMEDPROP", "Unnamed Property");
 define("EST_PROP_UPDTEUID", "Updated By");
+define("EST_PROP_UPHIST1", "Pricing History ID #");
 define("EST_PROP_ZIP", "ZIP Code");
 define("EST_PROP_ZIPLIST", "ZIP Code List");
 
 
-define("EST_PROP_CITYHLP","Sets filters for Postal Code and Subdivision options. Click the Edit button to Add or Edit City and ZIP Code options.");
+
+define("EST_PROP_CITYHLP","Sets filters for Postal Code and Community/Subdivision options. Click the Edit button to Add or Edit City and ZIP Code options.");
 define("EST_PROP_COUNTRYHLP", "Sets filters for all remaining Address data and also sets filters for other options used throughout the forms in this plugin.");
 define("EST_PROP_COUNTYHLP", "Sets filters for City options. Click the Edit button to Add or Edit  County options.");
+define("EST_GEN_CURRENCYHLP","Sets Currency Symbol and Formatting Options");
 
 define("EST_PROP_DESCRIPTIONHLP", "Provide a full description of the property including information not covered in the interior/exterior sections");
 
@@ -526,6 +589,7 @@ define("EST_PROP_FLAGHLP","If a property is not Pending or Sold, this will appea
 define("EST_PROP_FLAGPLCHLDR","Pool/Waterfront/Newly Renovated/etc.");
 
 define("EST_PROP_HRS","Viewing Hours");
+define("EST_PROP_HRS1","This property is avaible for private showings during listed hours on the following days. Please contact [x] to make an appointment to view this property in person.");
 define("EST_PROP_HRSHLP","Displays when the Agent or Seller is available to show this property.");
 
 define("EST_PROP_INTERIORHLP", "Add/Edit interior features for this property");
@@ -538,7 +602,8 @@ define("EST_PROP_LISTAGENTHLP","The Agent & Agency assigned to this property. Wh
 define("EST_PROP_LISTAGENTHLP1","Main Admins and Estate Admins are able to Add/Edit Agencies and Agents.");
 define("EST_PROP_LISTAGENTHLP2","Estate Managers can only Add/Edit Agents.");
 define("EST_PROP_LISTAGENTHLP3","Estate Agents can only edit their own Profile.");
-define("EST_PROP_LISTPRICEHLP", "The List Price must be a whole number (0-9). Do not include any other characters. Currency type is the same as the Original Price Currency Option.");
+define("EST_PROP_LISTPRICEHLP", "Click the List Price Button to open the Pricing Form where you can view and change the price history and set currency formatting options.");
+define("EST_PROP_LISTPRICEHLP1", "Whole Numbers Only, No Symbols. This is the Original Price for this listing, which is used later on for various calculations.");
 define("EST_PROP_LISTYPEHLP", "The List Type option sets up For Sale or For Rent pricing options.");
 
 define("EST_PROP_LOTIDHLP", "Optional. The Lot ID for this property");
@@ -552,7 +617,7 @@ define("EST_PROP_MAPMAINHLP2", "If addresses are found, they will be listed belo
 define("EST_PROP_MAPMAINHLP3", "If no addresses are found, try changing the address to look up. Changing the address in this field does not affect the Property's address on the Address tab.");
 define("EST_PROP_MAPMAINHLP4", "You can also drag the Marker in the map to set the coordinates for this property.");
 
-define("EST_PROP_NAMEHLP","A Name for this property. If left blank, the Street Address will be copied here when you save the Property");
+define("EST_PROP_NAMEHLP","A Name/Title for this property listing");
 
 define("EST_PROP_MLSNOHLP", "Optional. An index for this property from an outside source, such as the Multiple Listing Service association.");
 define("EST_PROP_MODELNAMEHLP","Optional: Model Names can be used to filter and group listings for visitors to your website");
@@ -562,7 +627,7 @@ define("EST_PROP_DATEPREVWHLP", "The date Website Members can preview this listi
 define("EST_PROP_DATEPULLHLP", "The date this listing will automatically end. Leave blank to have the listing remain until you manually change it to Inactive");
 define("EST_PROP_DATETEASEHLP", "The date this listing becomes visible, but with limited data available to the public. You can set what data will be included in the ".LAN_PREFS." form.");
 
-define("EST_PROP_ORIGPRICEHLP", "The Original Price must be a whole number (0-9). Do not include any other characters. Click the currency button to cycle through available currency options.");
+define("EST_PROP_ORIGPRICEHLP", "The Original Price must be a whole number (0-9).");
 define("EST_PROP_PARCELIDHLP", "Optional. The Parcel ID for this property");
 define("EST_PROP_ROOFSIZEHLP", "Optional: Total space including non-HVAC areas");
 
