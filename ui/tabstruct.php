@@ -317,7 +317,6 @@ function estTablStruct(){
         'str'=>'int',
         'cls'=>'xlarge',
         'hlpm'=>'estHlp-addr2',
-        'chng'=>array('estResetSubDivs'),
         'src'=>array('tbl'=>'estate_city','idx'=>'city_idx','map'=>array('city_idx','city_name'),'req'=>array('prop_county','city_county',EST_PROP_MSG_CNTY)),
         'fltrs'=>array(
           'prop_zip'=>array('map'=>array('city_idx','city_idx',',','city_zip')),

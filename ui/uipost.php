@@ -24,7 +24,9 @@ if(EST_USERPERM > 0){
   if(isset($_POST['estAdminNewListing'])){
     $sql = e107::getDB();
 		$tp = e107::getParser();
-    
+    $EST_PREF = e107::pref('estate');
+    if(!is_array($EST_PREF['locale'])){$EST_PREF['locale'] = [3,1,'en_US','USD'];}
+        
     $NEWPROP = array();
     $TNOW = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
     $_POST['prop_idx'] = intval(0);
@@ -35,6 +37,10 @@ if(EST_USERPERM > 0){
     $_POST['prop_uidcreate'] = USERID;
     $_POST['prop_uidupdate'] = USERID;
     $_POST['prop_listprice'] = intval($_POST['prop_origprice']);
+    if(isset($_POST['locale'])){
+      $_POST['prop_locale'] = (is_array($_POST['locale']) ? implode(",",$_POST['locale']) : $EST_PREF['locale']);
+      }
+    
     
     $FLDS = $sql->db_FieldList('estate_properties');
     foreach($FLDS as $k=>$v){$NEWPROP[$v] = ($_POST[$v] ? $tp->toDB($_POST[$v]) : '');}
@@ -524,11 +530,14 @@ function estPropDelete($ID){
     if($sql->delete("estate_grouplist", "grouplist_propidx='".$ID."'")){
       $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_SPACE.' '.EST_GEN_GROUP.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
       }
+    if($sql->delete("estate_featurelist", "featurelist_propidx='".$ID."'")){
+      $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_FEATURES.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
+      }
     if($sql->delete("estate_events", "event_propidx='".$ID."'")){
       $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_EVENTS.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
       }
-    if($sql->delete("estate_featurelist", "featurelist_propidx='".$ID."'")){
-      $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_FEATURES.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
+    if($sql->delete("estate_prophist", "prophist_propidx='".$ID."'")){
+      $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_PRICEHIST.' '.EST_GEN_DBRECORDSREMOVED.'</div>';
       }
     if($sql->delete("estate_likes", "like_pid='".$ID."'")){
       $RESLT .= '<div>'.EST_GEN_PROPERTY.' '.EST_GEN_SAVES.' '.EST_GEN_DBRECORDSREMOVED.'</div>';

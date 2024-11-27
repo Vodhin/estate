@@ -37,7 +37,7 @@ class estate_listing_ui extends e_admin_ui{
     EST_GEN_DETAILS,
     EST_GEN_GALLERY,
     EST_GEN_SCHEDULING,
-    EST_GEN_SEO
+    EST_GEN_TEMPLAYOUT
     );
     
     
@@ -136,6 +136,23 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'left',
         'thclass' => 'left',
         ),
+      'prop_sef' => array (
+        'tab'=>0,
+        'title' => EST_PROP_SEF,
+        'type' => 'text',
+        'batch'=>true,
+        'inline'=>true,
+        'noedit'=>false,
+        'data' => 'str',
+        'width' => 'auto',
+        'nolist'=>true,
+        'help' => EST_PROP_SEFHLP,
+        'readParms' => '',
+        'writeParms' =>
+          'sef=prop_name&size=xxlarge',
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
 			'prop_agent'=>array(
         'tab'=>0,
         'title'=>EST_GEN_LISTAGENT,
@@ -148,6 +165,16 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         'filter' => true,
         'batch' => false,
+        ),
+			'prop_agency' => array (
+        'tab'=>0,
+        'type' => 'hidden',
+        'data' => 'int',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array(),
+        'class' => 'left',
+        'thclass' => 'left',
         ),
 			'prop_status'=>array(
         'tab'=>0,
@@ -178,6 +205,12 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         'filter' => true,
         'batch' => false,
+        ),
+      'prop_locale' => array (
+        'tab'=>0,
+        'type' => 'hidden',
+        'data' => 'safestr',
+        'nolist'=>true,
         ),
 			'prop_origprice' => array (
         'tab'=>0,
@@ -287,16 +320,6 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'right',
         'thclass' => 'right',
         ),
-			'prop_agency' => array (
-        'tab'=>0,
-        'type' => 'hidden',
-        'data' => 'int',
-        'nolist'=>true,
-        'readParms' => array(),
-        'writeParms' => array(),
-        'class' => 'left',
-        'thclass' => 'left',
-        ),
 			'prop_leasefreq' => array (
         'tab'=>0,
         'type' => 'hidden',
@@ -331,7 +354,8 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         'filter' => true,
         ),
-			'prop_addr_lookup' => array (
+			
+      'prop_addr_lookup' => array (
         'tab'=>1,
         'type' => 'text',
         'data' => 'safestr',
@@ -466,6 +490,18 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'left',
         'thclass' => 'left',
         ),
+			'prop_citypreview' => array (
+        'tab'=>1,
+        'title'=>EST_GEN_CITYPREVIEW,
+        'type' => 'method',
+        'data' => false,
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array(),//'nolabel'=>1
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
 			'prop_zoom' => array (
         'tab'=>1,
         'type' => 'hidden',
@@ -515,7 +551,7 @@ class estate_listing_ui extends e_admin_ui{
       
 			'prop_subdiv' => array (
         'tab'=>2,
-        'title' => EST_GEN_SUBDIVISION,
+        'title' => EST_GEN_COMMUNITYSUBDIV,
         'type' => 'dropdown', //hidden
         'data' => 'int',
         'nolist'=>true,
@@ -627,13 +663,13 @@ class estate_listing_ui extends e_admin_ui{
       
 			'prop_comminuty' => array (
         'tab'=>2,
-        //'title'=>EST_GEN_COMMUNITYPREVIEW,
+        'title'=>EST_GEN_COMMUNITYPREVIEW,
         'type' => 'method',
         'data' => false,
         'width' => 'auto',
         'nolist'=>true,
         'readParms' => array(),
-        'writeParms' => array('nolabel'=>1),
+        'writeParms' => array(),//'nolabel'=>1
         'class' => 'left',
         'thclass' => 'left',
         ),
@@ -1069,22 +1105,61 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         ),
       
-      'prop_sef' => array (
+      
+      'prop_template_view'=>array(
         'tab'=>7,
-        'title' => EST_PROP_SEF,
-        'type' => 'text',
-        'batch'=>true,
-        'inline'=>true,
-        'noedit'=>false,
-        'data' => 'str',
+        'title'=>EST_PREF_TEMPLATE_VIEW,
+        'type'=>'dropdown',
+        'data'=>'safestr',
         'width' => 'auto',
+        'writeParms' => array('size'=>'xlarge'),
+        'help'=>EST_PREF_TEMPLATE_VIEWHLP,
         'nolist'=>true,
-        'help' => EST_PROP_SEFHLP,
-        'readParms' => '',
-        'writeParms' =>
-          'sef=prop_name&size=xxlarge',
         'class' => 'left',
         'thclass' => 'left',
+        'filter' => false,
+        'batch' => false,
+        ),
+      'prop_template_view_ord'=>array(
+        'tab'=>7,
+        'title'=>EST_PREF_TEMPLATE_VIEWORD,
+        'type'=>'method',
+        'data'=>'array',
+        'width' => 'auto',
+        'help'=>EST_PREF_TEMPLATE_VIEWORDHLP,
+        'nolist'=>true,
+        'class' => 'left',
+        'thclass' => 'left',
+        'filter' => false,
+        'batch' => false,
+        ),
+      
+      'prop_template_menu'=>array(
+        'tab'=>7,
+        'title'=>EST_PREF_TEMPLATE_MENU,
+        'type'=>'dropdown',
+        'data'=>'safestr',
+        'width' => 'auto',
+        'writeParms' => array('size'=>'xlarge'),
+        'help'=>EST_PREF_TEMPLATE_MENUHLP,
+        'nolist'=>true,
+        'class' => 'left',
+        'thclass' => 'left',
+        'filter' => false,
+        'batch' => false,
+        ),
+      'prop_template_menu_ord'=>array(
+        'tab'=>7,
+        'title'=>EST_PREF_TEMPLATE_MENUORD,
+        'type'=>'method',
+        'data'=>'array',
+        'width' => 'auto',
+        'help'=>EST_PREF_TEMPLATE_MENUORDHLP,
+        'nolist'=>true,
+        'class' => 'left',
+        'thclass' => 'left',
+        'filter' => false,
+        'batch' => false,
         ),
 			'options' => array (
         'title' => LAN_OPTIONS,
@@ -1102,16 +1177,7 @@ class estate_listing_ui extends e_admin_ui{
     //protected $fieldset_pre = '<p>Hi There</p>';
     //protected $table_pre = '<p>Hi There</p>';
     
-		protected $fieldpref = array('prop_name','forum_parent','Sort','forum_description','forum_class','forum_postclass','forum_threadclass','forum_order');
-
-
-
-
-
-
-
-
-
+		//protected $fieldpref = array('prop_name','forum_parent','Sort','forum_description','forum_class','forum_postclass','forum_threadclass','forum_order');
 
 		protected $preftabs = array(EST_GEN_GENERAL,EST_PREF_CONTACTFORM,EST_PREF_TEMPLATES,EST_PREF_MENU,EST_GEN_SCHEDULING,EST_GEN_MAP,EST_GEN_NONAGENTLISTINGS);
 		protected $prefs = array(
@@ -1140,16 +1206,15 @@ class estate_listing_ui extends e_admin_ui{
         'readParms' => array (), 
         'writeParms' => array('size'=>'large'),
         ),
-			'currency' => array (
+			'locale' => array (
         'tab'=>0,
         'title' => LAN_DEFAULT.' '.EST_GEN_CURRENCY,
-        'type' => 'dropdown',
-        'data' => 'str',
+        'type' => 'method',
+        'data' => 'array',
         'width' => 'auto',
-        'help' => EST_PREF_DEFCURRENCYHLP,
-        'readParms' => array (), 
-        'writeParms' => array('size'=>'small','optArray'=>EST_CURSYMB),
+        'help' => EST_PREF_DEFLOCALEHLP
         ),
+        
 			'dimu1' => array (
         'tab'=>0,
         'title' => LAN_DEFAULT.' '.EST_PREF_DIMU1,
@@ -1188,6 +1253,15 @@ class estate_listing_ui extends e_admin_ui{
         'type'=>'userclass',
         'data'=>'str',
         'help'=>EST_PREF_LISTINGSAVEHLP,
+        ),
+      
+      'listing_disp'=>array(
+        'tab'=>0,
+        'title'=>EST_PREF_LISTINGDISP1,
+        'type'=>'method',
+        'data'=>'array',
+        'help'=>EST_PREF_LISTINGDISP1HLP,
+        'writeParms' => array('size'=>'small','min'=>2,'max'=>10),
         ),
         
 			'contact_class' => array (
@@ -1282,8 +1356,6 @@ class estate_listing_ui extends e_admin_ui{
         'data'=>'safestr',
         'help'=>EST_PREF_CONTACTTERMSHLP,
         ),
-      
-      
       'template_list'=>array(
         'tab'=>2,
         'title'=>EST_PREF_TEMPLATE_LIST,
@@ -1296,6 +1368,7 @@ class estate_listing_ui extends e_admin_ui{
         'thclass' => 'left',
         'writeParms' => array(),
         ),
+      
       'template_view'=>array(
         'tab'=>2,
         'title'=>EST_PREF_TEMPLATE_VIEW,
@@ -1348,7 +1421,6 @@ class estate_listing_ui extends e_admin_ui{
         'writeParms' => array('size'=>'small','min'=>2,'max'=>10),
         ),
       
-      
       'template_menu'=>array(
         'tab'=>3,
         'title'=>EST_PREF_TEMPLATE_MENU,
@@ -1390,7 +1462,7 @@ class estate_listing_ui extends e_admin_ui{
         'help'=>EST_PREF_DEFPUBHRSHLP,
         ),
       
-      'sched_evt_lengths'=>array(
+      'eventkeys'=>array(
         'tab'=>4,
         'title'=>EST_PREF_DEFEVTLEN,
         'type'=>'method',
@@ -1585,6 +1657,13 @@ class estate_listing_ui extends e_admin_ui{
     
     
     
+    public function newPage(){
+      e107::redirect(SITEURLBASE.e_PLUGIN_ABS."estate/admin_config.php?mode=estate_properties&action=list&tab=1");
+      }
+    
+    //public function createPage(){
+      //e107::redirect(SITEURLBASE.e_PLUGIN_ABS."estate/admin_config.php?mode=estate_properties&action=list&tab=1");
+      //}
     
     public function listPage(){
       $ESTPREF = e107::pref('estate');
@@ -1603,10 +1682,10 @@ class estate_listing_ui extends e_admin_ui{
       
 			$this->fields['prop_country']['writeParms']['default'] = 'blank';
 			$this->fields['prop_country']['writeParms']['optArray'] = $frm->getCountry();
-			$this->fields['prop_country']['writeParms']['default'] = 'blank';
       
       
 			$this->prefs['country']['writeParms']['optArray'] = $frm->getCountry();
+      
       
       $data2 = array();
       if(isset($GLOBALS['EST_PROPSTATUS']) && count($GLOBALS['EST_PROPSTATUS'])){foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){$data2[$k] = $v['opt'];}}
@@ -1664,6 +1743,8 @@ class estate_listing_ui extends e_admin_ui{
       $new_data['prop_uidcreate'] = USERID;
       $new_data['prop_uidupdate'] = USERID;
       
+      $new_data['prop_locale'] = implode(",",e107::pref('estate','locale'));
+      
       if(empty($new_data['prop_name']) || $new_data['prop_name'] = EST_PROP_UNNAMEDPROP){
         if(!empty($new_data['prop_addr1'])){$new_data['prop_name'] = $new_data['prop_addr1'];}
         else{$new_data['prop_name'] = EST_PROP_UNNAMEDPROP;}
@@ -1713,8 +1794,24 @@ class estate_listing_ui extends e_admin_ui{
 		
 		public function beforeUpdate($new_data, $old_data, $id){
       $tp = e107::getParser();
+      $msg = e107::getMessage();
       $new_data['prop_dateupdated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
       $new_data['prop_uidupdate'] = USERID;
+      
+      $ndate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+      $msg->addInfo('['.$old_data['prop_idx'].'] '.$tp->toDate($ndate,'short').' '.$new_data['prop_listprice'].' ('.$new_data['prop_status'].')');
+      
+      $chkHist = estChkPriceHist($old_data['prop_idx'],$ndate,$new_data['prop_listprice'],$new_data['prop_status']);
+      if(count($chkHist) > 0){
+        if($chkHist[0] !== 'noc'){
+          switch($chkHist[0]){
+            case 'err' : $mtx1 = EST_GEN_ERROR; break;
+            case 'upd' : $mtx1 = EST_GEN_UPDATED; break;
+            case 'add' : $mtx1 = EST_GEN_ADDED; break;
+            }
+          $msg->addInfo($mtx1.' '.EST_PROP_UPHIST1.' '.$chkHist[1].' '.EST_GEN_AMOUNT.': '.$chkHist[2].' ');
+          }
+        }
       
       if(empty($old_data['prop_name']) || $old_data['prop_name'] == EST_PROP_UNNAMEDPROP){
         if(!empty($new_data['prop_addr1'])){$new_data['prop_name'] = trim($tp->toText($new_data['prop_addr1']));}
@@ -1754,6 +1851,7 @@ class estate_listing_ui extends e_admin_ui{
           <div id="estEditHelp-0" class="estEditHelpSect">
             <b id="estHlp-list0">'.EST_GEN_LISTING.'</b>
             <p id="estHlp-list1">'.EST_HLPMNU_LISTING1.'</p>
+            <p>'.EST_HLPMNU_SEO1.'</p>
             <p id="estHlp-list2">'.EST_HLPMNU_LISTING2.'</p>
             <p id="estHlp-list3">'.EST_HLPMNU_LISTING3.'</p>
             <p id="estHlp-list4">'.EST_HLPMNU_LISTING4.'</p>
@@ -1820,8 +1918,9 @@ class estate_listing_ui extends e_admin_ui{
             <p id="estHlp-sched7">'.EST_HLPMNU_SCHED6.'</p>
           </div>
           <div id="estEditHelp-7" class="estEditHelpSect">
-            <b>'.EST_GEN_SEO.'</b>
-            <p>'.EST_HLPMNU_SEO1.'</p>
+            <b>'.EST_PREF_TEMPLATES.'</b>
+            <p>'.EST_HLPMNU_PREF_TEMPLATES02.'</p>
+            <p>'.EST_HLPMNU_PREF_TEMPLATES03.'</p>
           </div>
           <div id="estEditHelp-8" class="estEditHelpSect">
           </div>';
@@ -1893,19 +1992,6 @@ class estate_listing_ui extends e_admin_ui{
       //$text = str_replace("[b]","<b>",str_replace("[/b]","</b>",$text));
 			return array('caption'=>$caption,'text'=> $text);
 		  }
-			
-	/*	
-		// optional - a custom page.  
-		public function customPage()
-		{
-			$text = 'Hello World!';
-			$otherField  = $this->getController()->getFieldVar('other_field_name');
-			return $text;
-			
-		}
-		
-	*/
-			
   }
 
 
@@ -1913,8 +1999,61 @@ class estate_listing_ui extends e_admin_ui{
 
 class estate_listing_form_ui extends e_admin_form_ui{
   
+  public function locale($curVal,$mode){
+    $estateCore = new estateCore;
+    
+    if($curVal[0] == ''){$curVal[0] = 3;}
+    if($curVal[1] == ''){$curVal[1] = 1;}
+    if($curVal[2] == ''){$curVal[2] = 'en_US';}
+    if($curVal[3] == ''){$curVal[3] = 'USD';}
+    
+    return $estateCore->estLocalOptsForm($curVal);
+    
+    }
   
-  
+  //helpinfull
+  public function listing_disp($curVal,$mode){
+    $tp = e107::getParser();
+    
+    if(is_array($GLOBALS['EST_PROPSTATUS'])){
+      if(count($GLOBALS['EST_PROPSTATUS']) > 0){
+        $frm = e107::getForm(false, true);
+        $caviats = array(
+          0 => array(' ¹ ',EST_PREF_LISTINGCAVI1),
+          5 => array(' ² ',EST_PREF_LISTINGCAVI2)
+          );
+        //³⁴⁵
+        $txt = '
+        <table class="table estCustomTable1 table-striped">
+          <colgroup style="width:35%;"></colgroup>
+          <colgroup style="width:65%;"></colgroup>
+          <tbody>';
+        foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){
+          $txt .= '
+          <tr>
+            <td>'.$v['opt'].$caviats[$k][0].'</td><td>';
+          $txt .= $frm->flipswitch('listing_disp['.$k.']', intval($curVal[$k]),array('off'=>EST_GEN_HIDDEN,'on'=>EST_GEN_PUBLIC));
+          $txt .= '
+            </td>
+          </tr>';
+          unset($k,$v);
+          }
+        
+        $txt .= '
+          </tbody>
+          <tfoot><tr><td colspan="2">';
+        foreach($caviats as $k=>$v){
+          $txt .= '<div>'.$v[0].$v[1].'</div>';
+          }
+        $txt .= '</td></tr></tfoot>';
+        $txt .= '
+        </table>';
+        }
+      else{$txt = 'No Prop Status settings found';}
+      }
+    else{$txt = 'Prop Status settings are not in array format';}
+    return $txt;
+    }
   
   public function public_mod($curVal,$mode){
     $estateCore = new estateCore;
@@ -1925,7 +2064,6 @@ class estate_listing_form_ui extends e_admin_form_ui{
   public function public_notify($curVal,$mode){
     $estateCore = new estateCore;
     return $estateCore->estModList($curVal,'public_notify');
-    //template_view_ord
     }
   
   
@@ -1959,10 +2097,6 @@ class estate_listing_form_ui extends e_admin_form_ui{
     
     $estateCore = new estateCore;
     //$rows = $estateCore->estGetAgentById($curVal);
-    
-    
-    
-    
     
     switch($mode){
 			case 'read': 
@@ -2024,18 +2158,6 @@ class estate_listing_form_ui extends e_admin_form_ui{
     }
   
   
-  public function prop_hours($curVal,$mode){
-    switch($mode){
-			case 'write' :
-        $estateCore = new estateCore;
-        return $estateCore->estPropHoursForm($curVal);
-        break;
-			case 'read': 
-			case 'filter':
-			case 'batch':
-				break;
-      }
-    }
   
   
   public function prop_listype($curVal,$mode){
@@ -2103,7 +2225,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
         else if(EST_USERPERM >= intval($EST_PREF['public_mod'])){
           return '<select name="prop_appr" value="'.intval($curVal).'">
           <option value=""'.(intval($curVal) == 0 ? ' selected="selected"' : '').'>'.EST_GEN_NOT.' '.EST_GEN_APPROVED.'</option><option value=""'.(intval($curVal) == 1 ? ' selected="selected"' : '').'>'.EST_GEN_APPROVED.'</option></select>
-          <input type="hidden" name="estDefCur" value="'.$EST_PREF['currency'].'" />
+          <input type="hidden" name="estDefCur" value="'.$EST_PREF['locale'][1].'" />
           <input type="hidden" name="estDefDIMU1" value="'.$EST_PREF['dimu1'].'" />
           <input type="hidden" name="estDefDIMU2" value="'.$EST_PREF['dimu2'].'" />';
           }
@@ -2157,12 +2279,30 @@ class estate_listing_form_ui extends e_admin_form_ui{
       }
     }
   
+  
+  
+  public function prop_hours($curVal,$mode){
+    switch($mode){
+			case 'write' :
+        //prop_events
+        $dta = $this->getController()->getModel()->getData();
+        $estateCore = new estateCore;
+        return $estateCore->estPropHoursForm($dta);
+        break;
+			case 'read': 
+			case 'filter':
+			case 'batch':
+				break;
+      }
+    }
+  
+  
   public function prop_events($curVal,$mode){
     switch($mode){
       case 'write':
         parse_str(html_entity_decode(e_QUERY), $URLQ);
         
-        if($URLQ['action'] == 'create'){
+        if($URLQ['action'] == 'create' || $URLQ['action'] == 'new'){
           return '<div id="estNoEvtWarn" class="s-message alert alert-block warning alert-warning" style="display: block;">This Property needs to be saved before scheduling Events</div>';
           }
         
@@ -2170,6 +2310,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
           return '<div id="estNoEvtWarn" class="s-message alert alert-block warning alert-warning" style="display: block;">No Property Index: '.intval($URLQ['id']).'. Cannot Schedule Events!</div>';
           }
         
+        $dta = $this->getController()->getModel()->getData();
         $estateCore = new estateCore;
         $text = '<div id="estEvtBox"><div id="estEvtCalCont">';
         $text .= $estateCore->buildEventCal(intval($URLQ['id']));
@@ -2188,14 +2329,15 @@ class estate_listing_form_ui extends e_admin_form_ui{
   public function sched_agt_times($curVal,$mode){
     switch($mode){
 			case 'write':
+        $locale = e107::pref('estate','locale');
         $estateCore = new estateCore;
         $dta = array('deftime'=>array('n'=>'sched_agt_times','v'=>$curVal,'l'=>EST_GEN_AVAILABLE,'h'=>array(EST_PREF_DEFHRSHINT0,EST_PREF_DEFHRSHINT1)));
-        $text = $estateCore->getCalTbl('start');
-        $text .= $estateCore->getCalTbl('head');
+        $text = $estateCore->getCalTbl('start',$locale);
+        $text .= $estateCore->getCalTbl('head',$locale);
         $text .= '<tbody>';
-        $text .= $estateCore->getCalTbl('tr',$dta);
+        $text .= $estateCore->getCalTbl('tr',$locale,$dta);
         $text .= '</tbody>';
-        $text .= $estateCore->getCalTbl('end');
+        $text .= $estateCore->getCalTbl('end',$locale);
         return $text;
         break;
 			case 'read': 
@@ -2208,14 +2350,15 @@ class estate_listing_form_ui extends e_admin_form_ui{
   public function sched_pub_times($curVal,$mode){
     switch($mode){
 			case 'write':
+        $locale = e107::pref('estate','locale');
         $estateCore = new estateCore;
         $dta = array('deftime'=>array('n'=>'sched_pub_times','v'=>$curVal,'l'=>EST_GEN_AVAILABLE,'h'=>array(EST_PREF_DEFHRSHINT0,EST_PREF_DEFHRSHINT1)));
-        $text = $estateCore->getCalTbl('start');
-        $text .= $estateCore->getCalTbl('head');
+        $text = $estateCore->getCalTbl('start',$locale);
+        $text .= $estateCore->getCalTbl('head',$locale);
         $text .= '<tbody>';
-        $text .= $estateCore->getCalTbl('tr',$dta);
+        $text .= $estateCore->getCalTbl('tr',$locale,$dta);
         $text .= '</tbody>';
-        $text .= $estateCore->getCalTbl('end');
+        $text .= $estateCore->getCalTbl('end',$locale);
         return $text;
         break;
 			case 'read': 
@@ -2225,17 +2368,22 @@ class estate_listing_form_ui extends e_admin_form_ui{
       }
     }
   
-  public function sched_evt_lengths($curVal,$mode){
+  public function eventkeys($curVal,$mode){
     switch($mode){
 			case 'write':
         //$dta = array('defevtlen'=>array('n'=>'sched_evt_lengths','v'=>$curVal,'h'=>array(EST_PREF_DEFHRSHINT0,EST_PREF_DEFHRSHINT1)));
         if(!is_array($curVal) || count($curVal) == 0){
-          $curVal = array();
-          if(isset($GLOBALS['EST_EVENTS']) && count($GLOBALS['EST_EVENTS']) > 0){foreach($GLOBALS['EST_EVENTS'] as $k=>$v){$curVal[$k] = $v['t'];}}
+          $curVal = array(
+            0=>array('l'=>EST_GEN_PRIVATEVIEWING,'t'=>'0:30','ms'=>1800),
+            1=>array('l'=>EST_GEN_OPENHOUSE,'t'=>'4:00','ms'=>14400),
+            2=>array('l'=>EST_GEN_INSPECTION,'t'=>'2:00','ms'=>7200),
+            3=>array('l'=>EST_GEN_MEETING,'t'=>'1:30','ms'=>5400),
+            4=>array('l'=>EST_GEN_CLOSING,'t'=>'2:00','ms'=>7200),
+            );
           }
         
         $text = '
-        <table class="table adminform">
+        <table class="table adminform table-striped estCustomTable1" style="width:unset;">
           <colgroup></colgroup>
           <colgroup></colgroup>
           <colgroup></colgroup>
@@ -2243,30 +2391,56 @@ class estate_listing_form_ui extends e_admin_form_ui{
           <tr>
             <th>'.EST_PREF_EVENTNAME.'</th>
             <th>'.EST_PREF_EVENTLEN.'</th>
-            <th>'.LAN_OPTIONS.'</th>
+            <th class="TAC">'.LAN_OPTIONS.'</th>
           </tr>
           </thead>
-          <tbody>';
+          <tbody id="estEventKeysTB">';
         
-        $text .= '<tbody>';
-        if(isset($GLOBALS['EST_EVENTS']) && count($GLOBALS['EST_EVENTS']) > 0){
-          foreach($GLOBALS['EST_EVENTS'] as $k=>$v){
-            $text .= '<tr>';
-            $text .= '<td>'.$v['l'].'</td>';
-            $text .= '<td>';
-            //$text .= '<input type="time" name="sched_evt_lengths['.$k.']" class="estPrefInptTime" value="'.$curVal[$k].'"/>';
-            $text .= '<select name="sched_evt_lengths['.$k.']" class="form-control input-large ui-state-valid">';
+        $ri=0;
+        foreach($curVal as $k=>$v){
+          if(strlen($v['l']) > 2){
+            if(strlen($v['t']) == 4){$v['t'] = '0'.$v['t'];}
+            $text .= '
+            <tr>
+              <td>
+                <input type="hidden" name="eventkeys['.$ri.'][ms]" value="'.$v['ms'].'" />
+                <input type="text" name="eventkeys['.$ri.'][l]" class="tbox form-control input-large" value="'.$v['l'].'" />
+              </td>
+              <td>
+                <select name="eventkeys['.$ri.'][t]" class="tbox form-control input-medium ui-state-valid estPrefEventSel" value="'.$v['t'].'" data-key="'.$ri.'">';
+          
             for($i = 0.25; $i <= 12; $i = $i + 0.25){
-              $text .= '<option'.($i == $curVal[$k] ? ' selected="selected"' : '').'>'.gmdate('H:i', floor($i * 3600)).'</option>';
+              $ms = floor($i * 3600);
+              $tme = gmdate('H:i',$ms);
+              $text .= '
+                  <option'.($tme == $v['t'] ? ' selected="selected"' : '').' value="'.$tme.'" data-ms="'.$ms.'">'.$tme.'</option>';
+              $EvtKeyOpts .= '<option value="'.$tme.'" data-ms="'.$ms.'">'.$tme.'</option>';
               }
-            $text .= '</select>';
-            
-            $text .= '</td>';
-            $text .= '<td>'.gmdate('H:i', floor($curVal[$k] * 3600)).'</td>';
-            $text .= '</tr>';
+            $text .= '
+                </select>
+              </td>
+              <td class="TAC">
+                <div class="btn-group WSNWRP">
+                  <button type="button" name="eventkey_delete['.$ri.']" class="btn btn-small btn-default estPrefEventDel" title="'.EST_GEN_DELETEEVTKEY.'"'.($ri < 5 ? ' disabled="disabled"' : '').'><i class="fa fa-close"></i></button>
+                </div>
+              </td>
+            </tr>';
+            $ri++;
             }
+            
           }
-        $text .= '</tbody></table>';
+        
+        $text .= '
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="TAC">
+                <button type="button" id="estNewEventKey" class="btn btn-primary" title="'.EST_GEN_NEWEVENTNAME.'"><i class="fa fa-plus"></i> '.EST_GEN_NEWEVENTNAME.'</button>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+        <select id="estEvtKeyOpts" style="display:none;">'.$EvtKeyOpts.'</select>';
         return $text;
         break;
 			case 'read': 
@@ -2539,26 +2713,21 @@ class estate_listing_form_ui extends e_admin_form_ui{
     }
   
   
+  
+  public function prop_citypreview($curVal,$mode){
+    switch($mode){
+			case 'write':
+        $estateCore = new estateCore;
+        return $estateCore->estCitySpaces();
+				break;
+      }
+    }
+  
   public function prop_comminuty($curVal,$mode){
     switch($mode){
 			case 'write':
-        
-        return '
-          <h4 class="WD100">
-            <span class="estCommSpaceName"></span> '.EST_GEN_SPACES.'
-          </h4>
-          <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>
-          <div id="estCommDesc"></div>
-          <hr />
-          <h4 class="WD100">
-            <span class="estCitySpaceName"></span> '.EST_GEN_SPACES.'
-          </h4>
-          <div id="estCitySpaceGrpDiv" class="estSpaceGrpTileCont"></div>
-          <div id="estCityDesc"></div>';
-        break;
-			case 'read': 
-			case 'filter':
-			case 'batch':
+        $estateCore = new estateCore;
+        return $estateCore->estCommunitySpaces();
 				break;
       }
     }
@@ -2591,6 +2760,34 @@ class estate_listing_form_ui extends e_admin_form_ui{
     }
   
   
+  
+  public function prop_template_menu_ord($curVal,$mode){
+    switch($mode){
+			case 'read':
+				break;
+			case 'write': 
+        return '<div id="estprop_menuOrderCont" style="max-width: 312px;"></div>';
+        break;
+			case 'filter':
+			case 'batch':
+				break;
+      }
+    }
+  
+  
+  public function prop_template_view_ord($curVal,$mode){
+    switch($mode){
+			case 'read':
+				break;
+			case 'write': 
+        //$curVal = e107::unserialize($curVal);
+        return '<div id="estprop_viewOrderCont" style="max-width: 312px;"></div>'; //<div>'.$curVal.'</div>
+        break;
+			case 'filter':
+			case 'batch':
+				break;
+      }
+    }
   
   
   public function template_menu_ord($curVal,$mode){

@@ -1,5 +1,10 @@
 <?php
 if (!defined('e107_INIT')) { exit; }
+if(!isset($qs)){
+  if(e_QUERY){$qs = explode(".", e_QUERY);}
+  else{$qs = array('list',0);}
+  $PROPID = intval($qs[1]);
+  }
 
 //Check e107 User Data and Estate Prefs/Classes
 if(intval(USERID) == 0){$err = "Not Allowed";}
@@ -91,6 +96,10 @@ if(!$err && intval($qs[1]) > 0){
     }
   }
 
+require_once(e_HANDLER."form_handler.php");
+require_once(e_PLUGIN.'estate/ui/tabstruct.php');
+require_once(e_PLUGIN.'estate/ui/core.php');
+$estateCore = new estateCore;
 
 // If Listing Loaded, Check current Estate User permissions against Property Listing Owner
 if(intval($DTA['prop']['prop_idx']) > 0){
@@ -145,13 +154,7 @@ if(intval($DTA['prop']['prop_idx']) > 0){
   }
 else{
   if($qs[0] !== 'new'){e107::redirect(e_SELF."?new.0.0");}
-  $DTA['prop']['prop_idx'] = intval(0);
-  $DTA['prop']['prop_agency'] = EST_AGENCYID;
-  $DTA['prop']['prop_agent'] = EST_AGENTID;
-  $DTA['prop']['prop_uidcreate'] = USERID;
-  $DTA['prop']['prop_uidupdate'] = USERID;
-  $DTA['prop']['prop_datecreated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
-  $DTA['prop']['prop_dateupdated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+  $DTA['prop'] = $estateCore->estGetNewProp();
   
   if($DTA['prop']['prop_agent'] > 0){
     if($agt = $sql->retrieve("estate_agents","*","agent_idx='".$DTA['prop']['prop_agent']."' LIMIT 1",true)){
@@ -292,14 +295,37 @@ if($_POST['estPTrig']){
     $PROPIDX = intval($DTA['prop']['prop_idx']);
     foreach($PROP_FLDS as $fld){
       $DTA['prop'][$fld] = $_POST[$fld];
+      $tst5 .= '<div>['.$fld.'] '.$_POST[$fld].'</div>';
       if(!in_array($fld,$PROP_FIXD)){
         $QRY .= ($QRY ? ", " : "").$fld."='".$tp->toDB($_POST[$fld] ? $_POST[$fld] : $DTA['prop'][$fld])."'";
         }
       }
     $QRY .= "WHERE prop_idx='".$PROPIDX."' LIMIT 1";
     
+    //$msg->addInfo($tst5);
+    
     if($sql->update("estate_properties",$QRY)){
       $msg->addSuccess(EST_UPDATED.' '.$tp->toHTML($_POST['prop_name']));
+      
+      if(isset($_POST['prop_status']) && isset($_POST['prop_listprice'])){
+        $ndate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+        $msg->addInfo('['.$PROPIDX.'] '.$tp->toDate($ndate).' '.$_POST['prop_listprice'].' ('.$_POST['prop_status'].')');
+        $chkHist = estChkPriceHist($PROPIDX,$ndate,$_POST['prop_listprice'],$_POST['prop_status']);
+        if(count($chkHist) > 0){
+          if($chkHist[0] !== 'noc'){
+            switch($chkHist[0]){
+              case 'err' : $mtx1 = EST_GEN_ERROR; break;
+              case 'upd' : $mtx1 = EST_GEN_UPDATED; break;
+              case 'add' : $mtx1 = EST_GEN_ADDED; break;
+              }
+            $msg->addInfo($mtx1.' '.EST_PROP_UPHIST1.' '.$chkHist[1].' [Prop ID#'.$PROPIDX.'] '.EST_GEN_AMOUNT.': '.$chkHist[2].' '.$GLOBALS['EST_PROPSTATUS'][$chkHist[3]]['opt'].' ('.$chkHist[3].')');
+            }
+            
+          }
+        }
+      
+      
+      
       if(intval($DTA['prop_appr']) == 0){
         $qs[2] = USERID;
         }
@@ -338,9 +364,6 @@ e107::js('estate','js/Sortable/Sortable.js', 'jquery');
 e107::js('estate','js/adm/shared.js', 'jquery');
 e107::js('estate','js/oa.js', 'jquery');
 
-require_once(e_HANDLER."form_handler.php");
-require_once(e_PLUGIN.'estate/ui/tabstruct.php');
-require_once(e_PLUGIN.'estate/ui/core.php');
 
 include_once('qry.php');
 
@@ -368,7 +391,6 @@ if(isset($_POST['prop_hours'])){
   $DTA['prop']['prop_hours'] = $_POST['prop_hours'];
   }
 
-$estateCore = new estateCore;
 $OATXT = $pretext;
 
 
@@ -505,7 +527,7 @@ foreach($TBS as $k=>$v){$TBS[$k]['text'] = $estateCore->estOAFormTable($k,$DTA['
 $OATXT .= $frm->tabs($TBS, $TBSOPTS);
 
 $OATXT .= '<input type="hidden" name="estPTrig" value="'.USERID.'" />
-<input type="hidden" name="estDefCur" value="'.$EST_PREF['currency'].'" />
+<input type="hidden" name="estDefCur" value="'.$EST_PREF['locale'][1].'" />
 <input type="hidden" name="estDefDIMU1" value="'.$EST_PREF['dimu1'].'" />
 <input type="hidden" name="estDefDIMU2" value="'.$EST_PREF['dimu2'].'" />
 </form>

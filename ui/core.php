@@ -19,6 +19,29 @@ class estateCore{
     $msg = e107::getMessage();
     
 		$this->prefs = e107::getPlugConfig('estate');
+    
+    $sched_evt_lengths = $this->prefs->get('sched_evt_lengths');
+    if(isset($sched_evt_lengths)){
+		  $this->prefs->removePref('sched_evt_lengths');
+      $this->prefs->save();
+      $msg->addSuccess('Old Event Prefs Removed');
+      }
+    
+    $eventkeys = $this->prefs->get('eventkeys');
+    if($eventkeys == ''){
+      $eventkeys = array(
+        0=>array('l'=>EST_GEN_PRIVATEVIEWING,'t'=>'0:30','ms'=>1800),
+        1=>array('l'=>EST_GEN_OPENHOUSE,'t'=>'4:00','ms'=>14400),
+        2=>array('l'=>EST_GEN_INSPECTION,'t'=>'2:00','ms'=>7200),
+        3=>array('l'=>EST_GEN_MEETING,'t'=>'1:30','ms'=>5400),
+        4=>array('l'=>EST_GEN_CLOSING,'t'=>'2:00','ms'=>7200),
+        );
+      $this->prefs->set('eventkeys',$eventkeys);
+      $this->prefs->save();
+      $GLOBALS['EST_EVENTKEYS'] = $eventkeys;
+      $msg->addSuccess('New Event Prefs Added');
+      }
+    
     $setup = $this->prefs->get('firsttime');
     
     if($setup == 2){
@@ -83,6 +106,16 @@ class estateCore{
         $this->prefs->set('dbfix',1);
         $this->prefs->save();
         }
+      if(EST_USERPERM == 4){
+        if($sql->isEmpty('estate_locales')){
+          include_once(e_PLUGIN.'estate/xml/localedb.php');
+          }
+        
+        if($sql->isEmpty('estate_curcodes')){
+          include_once(e_PLUGIN.'estate/xml/curcodedb.php');
+          }
+        }
+      
       }
       
     
@@ -105,9 +138,231 @@ class estateCore{
   
   
   
+  public function estLocaleOpts($curVal,$country){
+    //curcodedb
+    $RES = array();
+    $country = strtoupper($country);
+    $EST_LOCALES = estGetLocales();
+    foreach($EST_LOCALES as $k=>$v){
+      $key = strtoupper(array_pop(explode("_",$k)));
+      if($key == $country){
+        $OPT1 .='<option class="estLocale-'.$key.'" value="'.$k.'"'.($curVal == $k ? ' selected="selected"': '').'>'.$v.'</option>';
+        }
+      else{
+        $OPT2 .='<option class="estLocale-'.$key.'" value="'.$k.'"'.($curVal == $k ? ' selected="selected"': '').'>'.$v.'</option>';
+        }
+      }
+    return array($OPT1,$OPT2);
+    unset($curVal,$country,$EST_LOCALES,$key,$k,$v,$OPT1,$OPT2);
+    }
   
   
+  public function estLocalOptsForm($curVal){
+    
+    $EST_PREF = e107::pref('estate');
+    if($EST_PREF['locale'][0] == ''){$EST_PREF['locale'][0] = 3;}
+    if($EST_PREF['locale'][1] == ''){$EST_PREF['locale'][1] = 1;}
+    if($EST_PREF['locale'][2] == ''){$EST_PREF['locale'][2] = 'en_US';}
+    if($EST_PREF['locale'][3] == ''){$EST_PREF['locale'][3] = 'USD';}
+      
+    if($curVal[0] == ''){$curVal[0] = $EST_PREF['locale'][0];}
+    if($curVal[1] == ''){$curVal[1] = $EST_PREF['locale'][1];}
+    if($curVal[2] == ''){$curVal[2] = $EST_PREF['locale'][2];}
+    if($curVal[3] == ''){$curVal[3] = $EST_PREF['locale'][3];}
   
+    $LOCOPTS = $this->estLocaleOpts($curVal[2],$EST_PREF['country']);
+    
+    $txt = '
+    <div id="estCurrencyCont">
+      <div id="estCurrencyFlds">
+        <div class="WSNWRP">
+          <select name="locale[0]" class="form-control input-large estCurrencySelector" value="'.$curVal[0].'" style="width:70% ;max-width: 256px;">
+            <option value="1"'.($curVal[0] == 1 ? ' selected="selected"': '').'>'.EST_PREF_DEFLOCALE0A.'</option>
+            <option value="2"'.($curVal[0] == 2 ? ' selected="selected"': '').'>'.EST_PREF_DEFLOCALE0B.'</option>
+            <option value="3"'.($curVal[0] == 3 ? ' selected="selected"': '').'>'.EST_PREF_DEFLOCALE1.'</option>
+          </select><select name="locale[1]" class="form-control estCurrencySelector estNoLBord" value="'.$curVal[1].'" style="display:none; max-width:64px;">';
+    foreach(EST_CURSYMB as $k=>$v){
+      $txt .= '<option value="'.$k.'"'.($curVal[1] == $k ? ' selected="selected"': '').'>'.$v.'</option>';
+      }
+    
+    $txt .= '</select>
+        </div>
+        <div id="estNumFormatCont" style="display:none;">
+          <div class="estInptCont" style="display:block; margin-top:6px; margin-bottom:6px;"><select name="locale[2]" class="form-control input-large estSelNoBlank ILBLK estCurrencySelector" value="'.$curVal[2].'"><optgroup id="localeGrp1" label="'.EST_PREF_DEFLOCALE2.'">'.$LOCOPTS[0].'</optgroup><optgroup id="localeGrp2" label="'.EST_PREF_DEFLOCALE3.'">'.$LOCOPTS[1].'</optgroup></select></div>
+          <div class="estInptCont" style="display:block;"><select name="locale[3]" class="form-control input-large estSelNoBlank ILBLK estCurrencySelector" value="'.$curVal[3].'">';
+    
+    $EST_CURCODES = estCurrencyTrans();
+    foreach($EST_CURCODES as $k=>$v){
+      $txt .= '<option value="'.$k.'"'.($curVal[3] == $k ? ' selected="selected"': '').'>'.$v.'</option>';
+      }
+    
+    $txt .= '</select></div>
+        </div>
+      </div>
+      <div id="estCurrencyHlp">
+        <h4 style="margin-bottom:16px;">Sample: <span id="estCurrencySample"></span></h4>
+        <div id="estCurrencyHlp1">
+          <p>'.EST_PREF_DEFLOCALESEL1.'</p>
+        </div>
+        <div id="estCurrencyHlp2">
+          <p>'.EST_PREF_DEFLOCALESEL2.'</p>
+          <p>'.EST_PREF_DEFLOCALESEL3.'</p>
+        </div>
+      </div>
+    </div>';
+    unset($EST_CURCODES,$EST_LOCALES,$LOCOPTS,$OPT2);
+    return $txt;
+    }
+  
+  
+  public function estEditPriceHist($DTA){
+    $tp = e107::getParser();
+    $PID = intval($DTA['propid']);
+    
+    if($PID > 0){
+      
+      $DTODAY = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+      $listd = $DTODAY;
+      $origd = $DTODAY;
+      
+      if(isset($DTA['listd'])){$listd = mktime(0, 0, 0, date("m",intval($DTA['listd'])), date("d",intval($DTA['listd'])), date("Y",intval($DTA['listd'])));}
+      if(isset($DTA['origd'])){$origd = mktime(0, 0, 0, date("m",intval($DTA['origd'])), date("d",intval($DTA['origd'])), date("Y",intval($DTA['origd'])));}
+      
+      $list = intval($DTA['list']);
+      $orig = intval($DTA['orig']);
+      $statn = intval($DTA['statn']);
+      $statp = intval($DTA['statp']);
+    
+    
+    $HTR = array();
+    $i = 0;
+    $histarr = estGetPropHist($PID,$listd,$list,$statn);
+    if(count($histarr['dta']) > 0){
+      foreach($histarr['dta'] as $hk=>$hv){
+        if(!isset($HTR['x']) && intval($hv['prophist_date']) > $DTODAY){
+          $HTR['x'] = $hv;
+          }
+        elseif(!isset($HTR['h']) && intval($hv['prophist_date']) == $DTODAY){
+          $HTR['h'] = $hv;
+          $pctlist = intval($hv['prophist_price']);
+          }
+        elseif(!isset($HTR['f']) && intval($hv['prophist_date']) == $origd){
+          $HTR['f'] = $hv;
+          $pctbase = intval($hv['prophist_price']);
+          }
+        else{$HTR['b'][$i] = $hv; $i++;}
+        }
+      }
+    
+    
+    if(!isset($HTR['h'])){
+      $HTR['h'] = array('prophist_idx'=>0,'prophist_propidx'=>intval($PID),'prophist_date'=>$DTODAY,'prophist_price'=>$list,'prophist_status'=>$statn);
+      $pctlist = intval($list);
+      }
+    
+    if(!isset($HTR['f'])){
+      $nid = $sql->insert("estate_prophist","'0','".intval($PID)."','".$origd."','".intval($orig)."','3'");
+      $HTR['f'] = array('prophist_idx'=>intval($nid),'prophist_propidx'=>intval($PID),'prophist_date'=>$origd,'prophist_price'=>$orig,'prophist_status'=>3);
+      $pctbase = intval($orig);
+      }
+    
+    /*
+    .btn-success
+    .btn-info
+    .btn-warning
+    .btn-danger
+    .btn-link
+    */
+    
+    $frm = e107::getForm(false, true);
+    $curDate = intval($HTR['h']['prophist_date']);
+    $maxYMD = date("Y-m-d",strtotime("+15 days",$curDate));
+    $thtitle = 'title="'.EST_GEN_PRICEHISTFUT0.'"';
+    $txt = '
+      <table id="estPropPriceHistTBL1" data-dateint="'.$DTODAY.'" data-datetxt="'.$tp->toDate($DTODAY).'"data-dateymd="'.date("Y-m-d",$DTODAY).'" class="table adminform table-striped estateSubTable">
+        <thead>';
+        if(isset($HTR['x'])){
+          $xDate = intval($HTR['x']['prophist_date']);
+          $txt .= '<tr id="histTR-2" class="estPricehistTR" data-id="'.intval($HTR['x']['prophist_idx']).'" data-pid="'.intval($HTR['x']['prophist_propidx']).'" data-date="'.$xDate.'" data-ymd="'.date("Y-m-d",$xDate).'" data-maxymd="'.$maxYMD.'" data-amnt="'.intval($HTR['x']['prophist_price']).'" data-stat="'.intval($HTR['h']['prophist_status']).'" data-targ="priceHist[-2]">
+          <td class="TAL"'.$thtitle.'><div class="FL"><a class="estpropHistDtxt">'.$tp->toDate($xDate).'('.EST_GEN_FUTURE.')</a><input type="date" name="prophist_date[-2]" value="'.date("Y-m-d",$xDate).'" class="tbox form-control" style="display:none;" /></div>'.$frm->help(EST_GEN_PRICEHISTFUT1).'</td>
+          <td class="TAC"><div class="estPdropPct"></div></td>
+          <td class="TAL"><input type="text" name="priceHist[-2]" class="tbox form-control WD100 TAR estPriceHist" value="'.intval($HTR['x']['prophist_price']).'"/></td>
+          <td class="TAC"><div style="position: relative; white-space:nowrap;"><select class="tbox form-control input-medium ILBLK estNoRightBord estHistStat" value="'.intval($v['prophist_status']).'">';
+        foreach($GLOBALS['EST_PROPSTATUS'] as $pk=>$pv){
+          $txt .= '<option value="'.$pk.'"'.(intval($pk) == intval($HTR['x']['prophist_status']) ? ' selected="selected"' : '').'>'.$tp->toHTML($pv['alt']).'</option>';
+          }
+       $txt .= '</select><button class="btn btn-default DelPriceHistBtn estNoLeftBord" title="'.EST_GEN_DELETEPRCEHIST.'"><i class="fa fa-close"></i></button></div></td>
+          </tr>';
+          $maxYMD = date("Y-m-d",$curDate);
+          $thtitle = '';
+          $THTD1 = '<div class="FL" title="'.EST_GEN_PRICEHISTFUT2.'">'.$tp->toDate($curDate).' <span class="smalltxt"> ('.(intval($HTR['h']['prophist_idx']) == 0 ? EST_GEN_NEW : EST_PROP_CURPRICE).')</span>';
+          }
+        else{
+          $THTD1 = '<div class="FL"><a class="estpropHistDtxt">'.$tp->toDate($curDate).' <span class="smalltxt"> ('.(intval($HTR['h']['prophist_idx']) == 0 ? EST_GEN_NEW : EST_PROP_CURPRICE).')</span></a>';
+          }
+    $txt .= '
+          <tr id="histTR-1" class="estPricehistTR estPricehistFirstTR" data-id="'.intval($HTR['h']['prophist_idx']).'" data-pid="'.intval($HTR['h']['prophist_propidx']).'" data-date="'.$curDate.'" data-ymd="'.date("Y-m-d",$curDate).'" data-maxymd="'.$maxYMD.'" data-amnt="'.intval($HTR['h']['prophist_price']).'" data-stat="'.intval($HTR['h']['prophist_status']).'" data-targ="prop_listprice">
+            <td class="TAL"'.$thtitle.'>'.$THTD1.'<input type="date" name="prophist_date_new" value="'.date("Y-m-d",$curDate).'" class="tbox form-control" style="display:none;" /></div>'.$frm->help(EST_GEN_PRICEHISTGO).'</td>
+            <td class="TAL" colspan="2">
+              <div style="position: relative; white-space:nowrap;"><button id="propOPpctBtn" class="btn btn-default estNoRightBord" title="'.EST_GEN_PRIPCTINF1.'">↑ ↓</button><input type="text" name="listPrice" class="tbox form-control TAR estNoLeftBord estPriceHist" value="'.intval($HTR['h']['prophist_price']).'"/></div>
+              <div id="estOPpctCont">
+                <div id="estOPpctHead" data-orig="'.$pctbase.'" data-list="'.$pctlist.'"><button class="btn btn-default btn-sm estRoundTo estNoRightBord" title="'.EST_GEN_ROUNDVALSTO.' 50" data-amnt="50">50</button><button class="btn btn-default btn-sm estRoundTo estNoLRBord" title="'.EST_GEN_ROUNDVALSTO.' 100" data-amnt="100">100</button><button class="btn btn-primary btn-sm estRoundTo estNoLRBord" title="'.EST_GEN_ROUNDVALSTO.' 500" data-amnt="500">500</button><button class="btn btn-default btn-sm estRoundTo estNoLRBord" title="'.EST_GEN_ROUNDVALSTO.' 1000" data-amnt="1000">1000</button><button id="propOPpctCls" class="btn btn-danger btn-sm estNoLeftBord" title="'.EST_GEN_CLOSE.'" data-amnt="x"><i class="fa fa-close"></i></button></div>
+                <div id="estOPpctBelt"></div>
+              </div>
+            </td>
+            <td class="TAC"><div style="position: relative; white-space:nowrap;"><select class="tbox form-control input-medium ILBLK estNoRightBord estHistStat" value="'.intval($HTR['h']['prophist_status']).'">';
+      foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){
+        $txt .= '<option value="'.$k.'"'.(intval($k) == intval($HTR['h']['prophist_status']) ? ' selected="selected"' : '').'>'.$tp->toHTML($v['alt']).'</option>';
+        }
+            
+       $txt .= '</select><button class="btn btn-default DelPriceHistBtn estNoLeftBord" title="'.EST_GEN_DELETEPRCEHIST.'"'.(intval($HTR['h']['prophist_idx']) > 0 ? '' : ' disabled="disabled"').'><i class="fa fa-close"></i></button></div></td>
+          </tr>
+          
+        </thead>
+        <tbody id="estPropPriceHistTBDY1">';
+   
+    if(isset($HTR['b'])){
+      foreach($HTR['b'] as $k=>$v){
+        $curDate = intval($v['prophist_date']);
+        $txt .= '
+          <tr id="histTR'.intval($k).'" class="estPricehistTR" data-id="'.intval($v['prophist_idx']).'" data-pid="'.intval($v['prophist_propidx']).'" data-ymd="'.date("Y-m-d",$curDate).'" data-date="'.$curDate.'" data-amnt="'.intval($v['prophist_price']).'" data-stat="'.intval($v['prophist_status']).'" data-targ="priceHist['.$k.']" >
+            <td class="TAL"><div class="FL"><a class="estpropHistDtxt">'.$tp->toDate($curDate).'</a><input type="date" name="prophist_date['.$k.']" value="'.date("Y-m-d",$curDate).'" class="tbox form-control" style="display:none;" /></div>'.$frm->help(EST_GEN_PRICEHISTNOGO).'</td>
+            <td class="TAC"><div class="estPdropPct"></div></td>
+            <td class="TAL">
+              <input type="text" name="priceHist['.$k.']" class="tbox form-control WD100 TAR estPriceHist" value="'.intval($v['prophist_price']).'"/>
+            </td>
+            <td class="TAC"><div style="position: relative; white-space:nowrap;"><select class="tbox form-control input-medium ILBLK estNoRightBord estHistStat" value="'.intval($v['prophist_status']).'">';
+      foreach($GLOBALS['EST_PROPSTATUS'] as $pk=>$pv){
+        $txt .= '<option value="'.$pk.'"'.(intval($pk) == intval($v['prophist_status']) ? ' selected="selected"' : '').'>'.$tp->toHTML($pv['alt']).'</option>';
+        }
+       $txt .= '</select><button class="btn btn-default DelPriceHistBtn estNoLeftBord" title="'.EST_GEN_DELETEPRCEHIST.'"'.(intval($v['prophist_idx']) > 0 ? '' : ' disabled="disabled"').'><i class="fa fa-close"></i></button></div></td>
+          </tr>';
+        }
+      }
+    
+    
+    $txt .= '
+        </tbody>
+        <tfoot>
+          <tr id="histTR-orig" class="estPricehistTR estPricehistLastTR" data-id="'.intval($HTR['f']['prophist_idx']).'" data-pid="'.intval($HTR['f']['prophist_propidx']).'"  data-ymd="'.date("Y-m-d",intval($HTR['f']['prophist_date'])).'" data-date="'.intval($HTR['f']['prophist_date']).'" data-amnt="'.intval($HTR['f']['prophist_price']).'" data-stat="'.intval($HTR['f']['prophist_status']).'" data-targ="prop_origprice">
+            <td class="TAL"><div class="FL">'.$tp->toDate($HTR['f']['prophist_date']).' ('.EST_GEN_ORIGINAL.')</div>'.$frm->help(EST_GEN_PRICEHISTGO1).'</td>
+            <td colspan="2" class="TAL">
+              <div style="position: relative; white-space:nowrap;"><button id="propOPpctSrcBtn" class="btn btn-default estNoRightBord" title="'.EST_GEN_PRIPCTINF0.' '.EST_GEN_PRIPCTINF2.'" data-tit2="'.EST_GEN_PRIPCTINF0.' '.EST_GEN_PRIPCTINF3.'">% →</button><input type="text" name="origPrice" class="tbox form-control TAR estNoLeftBord estPriceHist" value="'.intval($HTR['f']['prophist_price']).'"/></div>
+            </td>
+            <td class="TAC"><div style="position: relative; white-space:nowrap;"><select class="tbox form-control input-medium ILBLK estNoRightBord estHistStat" value="'.intval($HTR['f']['prophist_status']).'">';
+      foreach($GLOBALS['EST_PROPSTATUS'] as $k=>$v){
+        $txt .= '<option value="'.$k.'"'.(intval($k) == intval($HTR['f']['prophist_status']) ? ' selected="selected"' : '').'>'.$tp->toHTML($v['alt']).'</option>';
+        }
+            
+       $txt .= '</select><button class="btn btn-default DelPriceHistBtn estNoLeftBord" title="'.EST_GEN_DELETEPRCEHIST3.'" disabled="disabled"><i class="fa fa-close"></i></button></div></td>
+          </tr>
+        </tfoot>
+      </table>';
+    
+      }
+    unset($locale,$PID,$DTODAY,$maxYMD,$thtitle,$origd,$orig,$statn,$statp,$list,$listd,$pctbtns);
+    return $txt;
+    }
   
   
   
@@ -430,7 +685,7 @@ class estateCore{
   
   public function estSectLevel(){
     return EST_SPEC_LEVS1;
-    //array(EST_GEN_COMMUNITY.'/'.EST_GEN_SUBDIVISION,EST_GEN_PROPERTY,EST_GEN_PROPERTYSPACES,EST_GEN_CITYSPACES.'/'.EST_GEN_TOWN,EST_GEN_COMMUNITYSPACES);
+    //array(EST_GEN_COMMUNITYSUBDIV,EST_GEN_PROPERTY,EST_GEN_PROPERTYSPACES,EST_GEN_CITYSPACES.'/'.EST_GEN_TOWN,EST_GEN_COMMUNITYSPACES);
     }
   
   
@@ -1140,9 +1395,6 @@ class estateCore{
                   <button type="button" id="estPropDBPrev-'.$mode.'" class="btn btn-default estPropDBPrev estNoRBord" title="'.LAN_PREVIOUS.'"><i class="fa-solid fa-chevron-left"></i></button>
                   <button type="button" id="estPropDBLimit-'.$mode.'" class="btn btn-default estNoLRBord" style="min-width:50px" title="'.EST_GEN_NUMBERRESULTS.'">'.$DTA['FLTR']['LIMIT'][1].'</button>
                   <button type="button" id="estPropDBNext-'.$mode.'" class="btn btn-default estPropDBNext estNoLBord" title="'.LAN_NEXT.'"><i class="fa-solid fa-chevron-right"></i></button>
-                  
-                  
-                  
                 </div>
               </th>
             </tr>
@@ -1203,6 +1455,7 @@ class estateCore{
       </tr>';
       }
     else{
+      $dbUpd = array();
       foreach($DTA['TR'] as $k=>$v){
         $dtaStr = $this->estDataStr($v);
         
@@ -1232,10 +1485,22 @@ class estateCore{
           $STATOPTS .= ($STATOPTS ? "," : "").$sv['opt'];
           }
         
+        $opts = explode(",",$v['prop_locale']);
+        if(count($opts) !== 4){
+          $opts = $EST_PREF['locale'];
+          $dbUpd[$v['prop_idx']]['prop_locale'] = implode(",",$opts);
+          }
+        
+        $origprice = estParseCurrency($v['prop_origprice'],$opts);
+        $listprice = estParseCurrency($v['prop_listprice'],$opts);
+        //if($v['prop_thmb']){
+          $thmsty = ' style="background-image:url('.EST_PTHABS_PROPTHM.$v['prop_thmb'].');" data-thm="'.$v['prop_thmb'].'"';
+          //}
+        
         $text .= '
         <tr id="row-'.intval($k).'" '.$dtaStr.'>
           <td class="left noPAD">
-            <div class="estPropThumb" title="'.EST_PROP_RESETHM.'"></div>
+            <div id="estPropListThm-'.intval($v['prop_idx']).'" class="estPropThumb"'.$thmsty.' data-propid="'.intval($v['prop_idx']).'" title="'.EST_PROP_RESETHM.'"></div>
           </td>
           <td class="left">
               <div class="FWB">'.$tp->toHTML($v['prop_name']).'</div>
@@ -1243,8 +1508,8 @@ class estateCore{
           </td>
           <td class="left noPAD">'.$SELLER.'</td>
           <td class="left">
-            <div class="estPropListStat"><a class="estPropListILEdit" data-fld="prop_status" data-type="select" data-opts="'.$STATOPTS.'" data-key="i" data-pid="'.intval($v['prop_idx']).'" data-cval="'.$v['prop_status'].'">'.$GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'].'</a></div>
-            <div class="estPropListStat"><a class="estPropListILEdit" data-fld="prop_appr" data-type="select" data-opts="'.EST_GEN_NOT.' '.EST_GEN_APPROVED.','.EST_GEN_APPROVED.'" data-key="i" data-pid="'.intval($v['prop_idx']).'" data-cval="'.intval($v['prop_appr']).'">'.(intval($v['prop_appr']) > 0 ? EST_GEN_APPROVED : EST_GEN_NOT.' '.EST_GEN_APPROVED).'</a></div>
+            <div class="estPropListStat"><a id="propLstStatEdit-'.intval($v['prop_idx']).'" class="estPropListILEdit" data-fld="prop_listprice" data-type="number" data-pid="'.intval($v['prop_idx']).'" data-stat="'.$v['prop_status'].'" data-origp="'.$v['prop_origprice'].'" data-list="'.$v['prop_listprice'].'" data-mode="2" data-listd="'.$v['prop_dateupdated'].'" data-origd="'.$v['prop_datecreated'].'" data-statn="'.$v['prop_status'].'" data-statp="'.$v['prop_status'].'" data-locale="'.$v['prop_locale'].'">'.$GLOBALS['EST_PROPSTATUS'][$v['prop_status']]['opt'].'</a></div>
+            <div class="estPropListStat"><a class="estPropListILEdit" data-fld="prop_appr" data-type="select" data-opts="'.EST_GEN_NOT.' '.EST_GEN_APPROVED.','.EST_GEN_APPROVED.'" data-key="i" data-pid="'.intval($v['prop_idx']).'" data-cval="'.intval($v['prop_appr']).'" data-mode="1">'.(intval($v['prop_appr']) > 0 ? EST_GEN_APPROVED : EST_GEN_NOT.' '.EST_GEN_APPROVED).'</a></div>
           </td>
           <td class="left">
             <div title="'.EST_PROP_LISTZONE.'">'.$v['prop_zname'].'</div>
@@ -1252,8 +1517,8 @@ class estateCore{
           </td>
           <td class="right">
             <div title="'.EST_PROP_LISTYPE.'">'.$GLOBALS['EST_LISTTYPE1'][$v['prop_listype']].'</div>
-            <div title="'.EST_PROP_ORIGPRICE.'"><i>'.$GLOBALS['EST_CURSYMB'][$v['prop_currency']].' '.$v['prop_origprice'].'</i></div>
-            <div class="estPropListStat" title="'.EST_PROP_LISTPRICE.'">'.$GLOBALS['EST_CURSYMB'][$v['prop_currency']].' <a class="estPropListILEdit" data-fld="prop_listprice" data-type="number" data-pid="'.intval($v['prop_idx']).'" data-cval="'.$v['prop_listprice'].'">'.$v['prop_listprice'].'</a></div>
+            <div title="'.EST_PROP_ORIGPRICE.'"><i id="propLstOrigPrice-'.intval($v['prop_idx']).'">'.$origprice.'</i></div>
+            <div class="estPropListStat" title="'.EST_PROP_LISTPRICE.'"><a id="propLstPriceEdit-'.intval($v['prop_idx']).'" class="estPropListILEdit cursym" data-fld="prop_listprice" data-type="number" data-pid="'.intval($v['prop_idx']).'" data-stat="'.$v['prop_status'].'" data-origp="'.$v['prop_origprice'].'" data-list="'.$v['prop_listprice'].'" data-mode="2" data-listd="'.$v['prop_dateupdated'].'" data-origd="'.$v['prop_datecreated'].'" data-statn="'.$v['prop_status'].'" data-statp="'.$v['prop_status'].'" data-locale="'.$v['prop_locale'].'" >'.$listprice.'</a></div>
           </td>
           <td class="center last">
             <div class="btn-group WSNWRP">
@@ -1263,6 +1528,7 @@ class estateCore{
         
           </td>
         </tr>';
+        unset($thmsty);
         }
       }
     
@@ -1277,7 +1543,25 @@ class estateCore{
     $text .= '
       <tr data-counted="'.$DTA['COUNTED'].'">
         <td colspan="'.$DTA['colsp'].'">'.($RTRWCT < $RLIMIT ? EST_GEN_ENDOF : $RSTART.' '.EST_GEN_TO.' '.$REND.' '.EST_GEN_OF).' '.$COUNTED.' Total Records
-        <div>'.$DTA['REMOVED'].' Removed Results</div>
+          <div>'.$DTA['REMOVED'].' Removed Results</div>';
+        
+    if(count($dbUpd) > 0){
+      $text .= '
+          <div>'.count($dbUpd).' Records Updated <a onclick="$(this).next(\'div\').show()">View</a>
+            <div style="display:none;">';
+      $sql = e107::getDB();
+      foreach($dbUpd as $k=>$flds){
+        foreach($flds as $fk=>$fv){$dbqry .= ($dbqry ? ", " : "").$fk."='".$tp->toDB($fv)."'";}
+        if($sql->update("estate_properties", $dbqry." WHERE prop_idx='".$k."' LIMIT 1")){$dbdone = ' - OK';}
+        //else{$dbdone = 'FAILED';}
+        $text .= '<div>['.$k.'] '.$dbqry.$dbdone.'</div>'; 
+        unset($dbqry,$dbdone);
+        }
+      $text .= '
+            </div>
+          </div>';
+      }
+    $text .= '
         </td>
       </tr>';
     return $text;
@@ -1439,7 +1723,7 @@ class estateCore{
       }
     unset($rows,$zid,$lid);
     
-    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_status","prop_listype","prop_zoning","prop_type","prop_currency","prop_listprice","prop_origprice","prop_thmb","prop_appr","prop_views","prop_saves","city_name AS city","cnty_name AS county","state_name AS state","state_init AS ST","state_country AS nat");
+    $FLDS = array("prop_idx","prop_name","prop_agency","prop_agent","prop_addr1","prop_addr2","prop_country","prop_state","prop_county","prop_city","prop_zip","prop_subdiv","prop_datecreated","prop_dateupdated","prop_uidcreate","prop_uidupdate","prop_status","prop_listype","prop_zoning","prop_type","prop_currency","prop_listprice","prop_origprice","prop_locale","prop_thmb","prop_appr","prop_views","prop_saves","city_name AS city","cnty_name AS county","state_name AS state","state_init AS ST","state_country AS nat");
     
     
     $QRY = "
@@ -1538,7 +1822,6 @@ class estateCore{
       if(is_array($FLTR['WHERE']['prop_status']) && $FLTR['WHERE']['prop_status']){
         if(count($FLTR['WHERE']['prop_status']) == 1){$QRYX .= ($QRYX ? " AND " : "")." prop_status=".$FLTR['WHERE']['prop_status'][0]." ";}
         else{$QRYX .= ($QRYX ? " AND " : "")." prop_status IN(".implode(",",$FLTR['WHERE']['prop_status']).") ";}
-        
         }
         
       if(is_array($FLTR['WHERE']['prop_zoning']) && $FLTR['WHERE']['prop_zoning']){
@@ -1620,6 +1903,16 @@ class estateCore{
         }
       }
     unset($QRY,$QRYX,$QRYZ);
+    
+    if(count($DTA['TR']) > 0){
+      foreach($DTA['TR'] as $dk=>$dv){
+        if(trim($dv['prop_thmb']) == ''){
+          if($mrw = $sql->retrieve('estate_media', '*','media_propidx="'.$dk.'" AND media_galord="1" LIMIT 1',true)){
+            $DTA['TR'][$dk]['prop_thmb'] = $mrw[0]['media_thm'];
+            }
+          }
+        }
+      }
     
     return $DTA;
     }
@@ -1768,18 +2061,17 @@ class estateCore{
       $TBS[0]['text'] = $this->estPropertyListTableSF(1,$DTA);
       }
     
-    $NDTA = array('e-token'=>e_TOKEN,'prop_listype'=>1,'prop_status'=>3,'prop_currency'=>intval($EST_PREF['currency']),'prop_leasedur'=>0,'prop_leasefreq'=>1,'prop_lat'=>$EST_PREF['pref_lat'],'prop_lon'=>$EST_PREF['pref_lon'],'seller_namex'=>EST_AGENTNAME,'prop_appr'=>USERID);
+    $NDTA = array('e-token'=>e_TOKEN,'prop_listype'=>1,'prop_status'=>3,'prop_currency'=>intval($EST_PREF['locale'][1]),'prop_locale'=>implode(",",$EST_PREF['locale']),'prop_leasedur'=>0,'prop_leasefreq'=>1,'prop_lat'=>$EST_PREF['pref_lat'],'prop_lon'=>$EST_PREF['pref_lon'],'prop_country'=>$EST_PREF['country'],'seller_namex'=>EST_AGENTNAME,'prop_appr'=>USERID);
     
     $TBS[2]['caption'] = EST_GEN_NEW.' '.EST_GEN_LISTING;
     $TBS[2]['text'] = '<form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-form" autocomplete="off" data-h5-instanceid="0" novalidate="novalidate">';
     $TBS[2]['text'] .= $this->estOAHidden('e-token',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_locale',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_currency',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_leasefreq',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_lat',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_lon',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_appr',$NDTA);
-    //estate_listypes
-    
     $TBS[2]['text'] .= '
       <table class="table adminform" style="width:100%">
         <colgroup style="width:25%"></colgroup>
@@ -1788,12 +2080,13 @@ class estateCore{
     $TBS[2]['text'] .= $this->estOAFormTR('text','prop_name',$NDTA);
     $TBS[2]['text'] .= $this->estOAFormTR('nofld','seller_namex',$NDTA);
     $TBS[2]['text'] .= $this->estOAFormTR('select','prop_status',$NDTA);
+    $TBS[2]['text'] .= $this->estOAFormTR('select','prop_country',$NDTA);
     $TBS[2]['text'] .= $this->estOAFormTR('select','prop_zoning',$NDTA);
     $TBS[2]['text'] .= $this->estOAFormTR('select','prop_type',$NDTA);
-    
     $TBS[2]['text'] .= $this->estOAFormTR('select','prop_listype',$NDTA);
-    $TBS[2]['text'] .= $this->estOAFormTR('text','prop_origprice',$NDTA);
+    $TBS[2]['text'] .= $this->estOAFormTR('select','prop_newprice',$NDTA);
     $TBS[2]['text'] .= $this->estOAFormTR('select','prop_leasedur',$NDTA);
+    
     $TBS[2]['text'] .= '
         </tbody>
         <tfoot>
@@ -1807,8 +2100,6 @@ class estateCore{
         </tfoot>
       </table>
     </form>';
-    
-    
     
     $text .= e107::getForm(false,true)->tabs($TBS,array('active'=>0,'fade'=>0,'class'=>'estOATabs'));
     unset($NDTA);
@@ -3052,11 +3343,11 @@ class estateCore{
   public function buildEventCal($PROPID,$CALSTART=null){
     $tp = e107::getParser();
     $sql = e107::getDB();
-    $sql->gen('SELECT prop_agent,prop_datecreated,prop_dateprevw,prop_datelive,prop_datepull FROM #estate_properties WHERE prop_idx = '.intval($PROPID));
+    $sql->gen('SELECT prop_agent,prop_datecreated,prop_dateprevw,prop_datelive,prop_datepull,prop_locale FROM #estate_properties WHERE prop_idx = '.intval($PROPID));
     $row = $sql->fetch();
     extract($row);
     
-    $calDays = $this->getCalDays();
+    $calDays = $this->getCalDays($prop_locale);
     
     $PROPSTART = mktime(0,0,0,date("m",$prop_datecreated),date("d",$prop_datecreated),date("Y",$prop_datecreated));
     
@@ -3079,10 +3370,10 @@ class estateCore{
     
     $ESTDAYCT = intval(abs($CALSTART - $CALEND) / 86400);
     
-    $text = $this->getCalTbl('start');
-    $text .= $this->getCalTbl('head',array('curm'=>$THISMONTH,'nextm'=>$NEXTMONTH,'prevm'=>$PREVMONTH));
+    $text = $this->getCalTbl('start',$prop_locale);
+    $text .= $this->getCalTbl('head',$prop_locale,array('curm'=>$THISMONTH,'nextm'=>$NEXTMONTH,'prevm'=>$PREVMONTH));
     $dta = array('id'=>'estEvtCaltb','class'=>'estCheckered','data-calstart'=>$CALSTART);
-    $text .= $this->getCalTbl('body',$dta);
+    $text .= $this->getCalTbl('body',$prop_locale,$dta);
     
     
     $GRSQ = 1;
@@ -3134,7 +3425,7 @@ class estateCore{
       unset($CALTD,$CALACTD);
       }
     
-    $text .= $this->getCalTbl('end',array('tag'=>'tbody'));
+    $text .= $this->getCalTbl('end',$prop_locale,array('tag'=>'tbody'));
     unset($CALSTART,$CALEND,$THISMONTH,$PREVMONTH,$NEXTMONTH,$MSDOW,$MEDOW,$NEXTDAY,$ESTDAYCT);
     
     return $text;
@@ -3143,7 +3434,8 @@ class estateCore{
   
   
   
-  function getCalDays(){
+  function getCalDays($locale){
+    //estGetPHPCalDays($locale);
     return array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
     }
   
@@ -3157,9 +3449,9 @@ class estateCore{
   
   
   
-  function getCalTbl($sect,$dta=null){
-    $calDays = $this->getCalDays();
-    
+  function getCalTbl($sect,$prop_locale,$dta=null){
+    $calDays = $this->getCalDays($prop_locale);
+    //estPropHoursForm
     if($sect == 'start'){
       $TBL = '<table class="estCalTbl">';
       if(count($calDays) > 0){foreach($calDays as $k=>$v){$TBL .= '<colgroup></colgroup>';}}
@@ -3339,6 +3631,8 @@ class estateCore{
         $text .= $this->estOAFormTR('datetime','prop_datepull',$DTA);
         $text .= $this->estOAFormTR('prop_hours','prop_hours',$DTA);
         $text .= $this->estOAFormTR('div','estEventsCont',$DTA);
+        $text .= $this->estOAHidden('prop_datecreated',$DTA);
+        $text .= $this->estOAHidden('prop_dateupdated',$DTA);
         $text .= $this->estOAFormTableEnd($SN,$DTA);
         break;
         
@@ -3368,15 +3662,6 @@ class estateCore{
         break;
         
       case 3 :
-        /*
-            <table class="estOATable1" style="width:100%">
-              <colgroup></colgroup>
-              <colgroup></colgroup>
-              <tbody>';
-        $text .= '
-              </tbody>
-            </table>
-        */
         $text = '
         <div class="estOABlock">
           <h3><div>'.$tp->toHTML(EST_GEN_SPACES).'</div></h3>
@@ -3413,6 +3698,7 @@ class estateCore{
         $text .= $this->estOAFormTR('select','prop_city',$DTA);
         $text .= $this->estOAFormTR('select','prop_zip',$DTA);
         $text .= $this->estMap('prop',$DTA['prop_addr_lookup'],$DTA['prop_lat'],$DTA['prop_lon'],$DTA['prop_geoarea'],$DTA['prop_zoom']);
+        $text .= $this->estOAFormTR('cityPreview','cityPreview',$DTA);
         $text .= $this->estOAFormTableEnd($SN,$DTA);
         break;
         
@@ -3432,6 +3718,7 @@ class estateCore{
         $text .= $this->estOAFormTR('text','prop_lotid',$DTA);
         $text .= $this->estOAFormTableEnd($SN,$DTA);
         $text .= $this->estOAHidden('prop_currency',$DTA);
+        $text .= $this->estOAHidden('prop_locale',$DTA);
         $text .= $this->estOAHidden('prop_leasefreq',$DTA);
         //prop_uidcreate
         
@@ -3446,7 +3733,7 @@ class estateCore{
   private function estOALabels($FLD){
     $TXT = array(
       'seller_namex'=>array('labl'=>EST_GEN_AGENT.' '.EST_GEN_NAME,'cls'=>'WD95'),
-      'prop_name'=>array('labl'=>EST_GEN_PROPERTY.' '.EST_GEN_NAME,'cls'=>'WD95','hlp'=>EST_PROP_NAMEHLP),
+      'prop_name'=>array('labl'=>EST_GEN_PROPERTY.' '.EST_GEN_NAME,'cls'=>'WD95','plch'=>EST_PROP_NAMEPLCH,'hlp'=>EST_PROP_NAMEHLP),
       'prop_status'=>array('labl'=>EST_GEN_STATUS,'cls'=>'WD45','hlp'=>EST_PROP_STATUSHLP),
       'prop_zoning'=>array('labl'=>EST_PROP_LISTZONE,'cls'=>'WD45','hlp'=>EST_PROP_ZONEHLP),
       'prop_type'=>array('labl'=>EST_PROP_TYPE,'cls'=>'WD45','hlp'=>EST_PROP_TYPEHLP),
@@ -3465,7 +3752,7 @@ class estateCore{
       'prop_city'=>array('labl'=>EST_PROP_CITY,'cs'=>2,'cls'=>'estPropAddr WD45','hlp'=>EST_PROP_CITYHLP),
       'prop_zip'=>array('labl'=>EST_PROP_POSTCODE,'cs'=>2,'cls'=>'estPropAddr WD144px','hlp'=>EST_PROP_POSTCODEHLP),
       'prop_timezone'=>array('labl'=>EST_GEN_TIMEZONE,'hlp'=>EST_PROP_TIMEZONEHLP),
-      'prop_subdiv'=>array('labl'=>EST_GEN_SUBDIVISION,'cls'=>'WD45','hlp'=>EST_PROP_SUBDIVHLP),
+      'prop_subdiv'=>array('labl'=>EST_GEN_COMMUNITYSUBDIV,'cls'=>'WD45','hlp'=>EST_PROP_SUBDIVHLP),
       'prop_hoaappr'=>array('labl'=>EST_PROP_HOAAPPR,'hlp'=>EST_PROP_HOAAPPRHLP),
       'prop_hoafee'=>array('labl'=>EST_PROP_HOAFEES,'cls'=>'FL estNoRightBord WD144px','hlp'=>EST_PROP_HOAFEESHLP),
       'prop_hoaland'=>array('labl'=>EST_PROP_HOALAND,'hlp'=>EST_PROP_HOALANDHLP),
@@ -3527,14 +3814,31 @@ class estateCore{
         unset($dbRow);
         break;
       
+      case 'prop_newprice' : 
+        if(!is_array($EST_PREF['locale'])){$EST_PREF['locale'] = [3,1,'en_US','USD'];}
+        if(!is_array($DTA['prop_locale']) && trim($DTA['prop_locale']) == ''){$DTA['prop_locale'] = $EST_PREF['locale'];}
+        $localeForm = $this->estLocalOptsForm(is_array($DTA['prop_locale']) ? $DTA['prop_locale'] : explode(",",$DTA['prop_locale']));
+        return '
+          <tr>
+            <td>'.$frm->help(EST_PROP_LISTPRICEHLP1).EST_PROP_LISTPRICE.'</td>
+            <td>
+              <input type="text" name="prop_origprice" class="tbox form-control WD144px form-control ui-state-valid ILBLK" value="" />
+            </td>
+          </tr>
+          <tr>
+            <td>'.$frm->help(EST_GEN_CURRENCYHLP).EST_GEN_CURRENCY.'</td>
+            <td>'.$localeForm.'</td>
+          </tr>';
+        break;
+      
       case 'prop_bedtot' :
         $options = array('size'=>'small','min'=>'0','step'=>'1');
         return '
         <tr>
           <td>'.EST_GEN_BEDROOMS.'</td>
           <td>
-            <div class="ILMINI">'.EST_GEN_TOTAL.$frm->number('prop_bedtot', intval($DTA['prop_bedtot']), 0, $options).'</div>
-            <div class="ILMINI">'.EST_GEN_MAINLEV.$frm->number('prop_bedmain', intval($DTA['prop_bedmain']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_TOTAL.' '.$frm->number('prop_bedtot', intval($DTA['prop_bedtot']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_MAINLEV.' '.$frm->number('prop_bedmain', intval($DTA['prop_bedmain']), 0, $options).'</div>
           </td>
         </tr>';
         break;
@@ -3545,10 +3849,10 @@ class estateCore{
         <tr>
           <td>'.EST_GEN_BATHROOMS.'</td>
           <td>
-            <div class="ILMINI">'.EST_GEN_FULL.$frm->number('prop_bathfull', intval($DTA['prop_bathfull']), 0, $options).'</div>
-            <div class="ILMINI">'.EST_GEN_HALF.$frm->number('prop_bathhalf', intval($DTA['prop_bathhalf']), 0, $options).'</div>
-            <div class="ILMINI">'.EST_GEN_TOTAL.$frm->number('prop_bathtot', intval($DTA['prop_bathtot']), 0, $options).'</div>
-            <div class="ILMINI">'.EST_GEN_MAINLEV.$frm->number('prop_bathmain', intval($DTA['prop_bathmain']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_FULL.' '.$frm->number('prop_bathfull', intval($DTA['prop_bathfull']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_HALF.' '.$frm->number('prop_bathhalf', intval($DTA['prop_bathhalf']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_TOTAL.' '.$frm->number('prop_bathtot', intval($DTA['prop_bathtot']), 0, $options).'</div>
+            <div class="ILMINI">'.EST_GEN_MAINLEV.' '.$frm->number('prop_bathmain', intval($DTA['prop_bathmain']), 0, $options).'</div>
           </td>
         </tr>';
         break;
@@ -3623,22 +3927,27 @@ class estateCore{
     
     switch($TYPE){
       case 'commumityPreview': 
-        return '
+        $txt = '
         <tr>
-          <td colspan="2" class="noPAD">
-            <h4 class="WD100">
-              <span class="estCommSpaceName"></span> '.EST_GEN_SPACES.'
-            </h4>
-            <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>
-            <div id="estCommDesc"></div>
-            <hr />
-            <h4 class="WD100">
-              <span class="estCitySpaceName"></span> '.EST_GEN_SPACES.'
-            </h4>
-            <div id="estCitySpaceGrpDiv" class="estSpaceGrpTileCont"></div>
-            <div id="estCityDesc" class="estSpaceGrpTileCont">'.$DTA['city_description'].'</div>
+          <td class="VAT">'.EST_GEN_COMMUNITYPREVIEW.'</td>
+          <td class="noPAD">';
+        $txt .= $this->estCommunitySpaces();
+        $txt .= '
           </td>
         </tr>';
+        return $txt;
+        break;
+        
+      case 'cityPreview': 
+        $txt = '
+        <tr>
+          <td class="VAT">'.EST_GEN_CITYPREVIEW.'</td>
+          <td class="noPAD">';
+        $txt .= $this->estCitySpaces();
+        $txt .= '
+          </td>
+        </tr>';
+        return $txt;
         break;
       
       case 'prop_appr' :
@@ -3699,7 +4008,7 @@ class estateCore{
       
       case 'prop_hours' :
         $text = '<tr><td class="VAT">'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td>';
-        $text .= $this->estPropHoursForm($FVALUE);
+        $text .= $this->estPropHoursForm($DTA);
         break;
       
       case 'txtcntr' :
@@ -3749,16 +4058,37 @@ class estateCore{
     return $text.'</td></tr>';
     }
   
+  
+  
+  public function estCitySpaces(){
+    
+    return '
+            <h4 class="WD100"><span class="estCitySpaceName"></span></h4>
+            <div id="estCityDesc" class=""></div>
+            <div id="estCitySpaceGrpDiv" class="estSpaceGrpTileCont"></div>';
+    }
+  
+  public function estCommunitySpaces(){
+    return '
+            <h4 class="WD100"><span class="estCommSpaceName"></span></h4>
+            <div id="estCommDesc"></div>
+            <div id="estCommSpaceGrpDiv" class="estSpaceGrpTileCont"></div>';
+    }
+  
+  
   //getCalTbl
   
   public function estPropHoursForm($DTA){
-    if(!$DTA || count($DTA) == 0){$DTA = $GLOBALS['EST_PREF']['sched_pub_times'];}
-    $text = $this->getCalTbl('start');
-    $text .= $this->getCalTbl('head');
+    $prop_hours = (is_array($DTA['prop_hours']) ? $DTA['prop_hours'] : e107::unserialize($DTA['prop_hours']));
+    $prop_locale = estChkMDlocale($DTA['prop_locale']);
+    
+    if(count($prop_hours) == 0){$prop_hours = $GLOBALS['EST_PREF']['sched_pub_times'];}
+    $text = $this->getCalTbl('start',$prop_locale);
+    $text .= $this->getCalTbl('head',$prop_locale);
     $text .= '<tbody>';
-    $text .= $this->getCalTbl('tr',array('deftime'=>array('n'=>'prop_hours','v'=>$DTA,'l'=>EST_GEN_AVAILABLE)));
+    $text .= $this->getCalTbl('tr',$prop_hours,array('deftime'=>array('n'=>'prop_hours','v'=>$prop_hours,'l'=>EST_GEN_AVAILABLE)));
     $text .= '</tbody>';
-    $text .= $this->getCalTbl('end');
+    $text .= $this->getCalTbl('end',$prop_locale);
     return $text;
     }
   
@@ -3830,6 +4160,9 @@ class estateCore{
       </div>
     </div>';
     }
+  
+  
+  
   
   
   
@@ -4008,7 +4341,89 @@ class estateCore{
     return $res;
     }
   
-  
+  public function estGetNewProp(){
+    $tp = e107::getParser();
+    $RES = array();
+    $pref = e107::pref();
+    $RES['prop_idx'] = intval(0);
+    $RES['prop_mlsno'] = '';
+    $RES['prop_listype'] = intval(1);
+    $RES['prop_name'] = '';
+    $RES['prop_agency'] = EST_AGENCYID;
+    $RES['prop_agent'] = EST_AGENTID;
+    $RES['prop_addr_lookup'] = '';
+    $RES['prop_addr1'] = '';
+    $RES['prop_addr2'] = '';
+    $RES['prop_country'] = $pref['estate']['country'];
+    $RES['prop_state'] = intval(0);
+    $RES['prop_county'] = intval(0);
+    $RES['prop_city'] = intval(0);
+    $RES['prop_subdiv'] = intval(0);
+    $RES['prop_zip'] = '';
+    $RES['prop_features'] = '';
+    $RES['prop_sef'] = '';
+    $RES['prop_timezone'] = $pref['timezone'];
+    $RES['prop_datecreated'] = intval($GLOBALS['STRTIMENOW']);
+    $RES['prop_dateupdated'] = intval($GLOBALS['STRTIMENOW']);
+    $RES['prop_datetease'] = intval($GLOBALS['STRTIMENOW']);
+    $RES['prop_dateprevw'] = intval($GLOBALS['STRTIMENOW']);
+    $RES['prop_datelive'] = intval($GLOBALS['STRTIMENOW']);
+    $RES['prop_datepull'] = intval(0);
+    $RES['prop_hours'] = $pref['estate']['sched_agt_times'];
+    $RES['prop_uidcreate'] = USERID;
+    $RES['prop_uidupdate'] = USERID;
+    $RES['prop_status'] = intval(3);
+    $RES['prop_parcelid'] = '';
+    $RES['prop_lotid'] = '';
+    $RES['prop_lat'] = $pref['estate']['pref_lat'];
+    $RES['prop_lon'] = $pref['estate']['pref_lon'];
+    $RES['prop_zoom'] = intval($pref['estate']['pref_zoom']);
+    $RES['prop_geoarea'] = '';
+    $RES['prop_yearbuilt'] = intval(0);
+    $RES['prop_dimu1'] = intval($pref['estate']['dimu1']);
+    $RES['prop_intsize'] = intval(0);
+    $RES['prop_roofsize'] = intval(0);
+    $RES['prop_dimu2'] = intval($pref['estate']['dimu2']);
+    $RES['prop_landsize'] = '';
+    $RES['prop_zoning'] = intval(1);
+    $RES['prop_type'] = intval(1);
+    $RES['prop_modelname'] = '';
+    $RES['prop_listprice'] = intval(0);
+    $RES['prop_origprice'] = intval(0);
+    $RES['prop_currency'] = intval($pref['estate']['locale'][1]);
+    $RES['prop_locale'] = (is_array($pref['estate']['locale']) ? implode(",",$pref['estate']['locale']) : $pref['estate']['locale']);
+    $RES['prop_leasefreq'] = intval(0);
+    $RES['prop_leasedur'] = intval(0);
+    $RES['prop_landfee'] = '0.00';
+    $RES['prop_landfreq'] = intval(0);
+    $RES['prop_thmb'] = '';
+    $RES['prop_summary'] = '';
+    $RES['prop_description'] = '';
+    $RES['prop_hoafee'] = intval(0);
+    $RES['prop_hoaland'] = intval(0);
+    $RES['prop_hoaappr'] = intval(0);
+    $RES['prop_hoareq'] = intval(0);
+    $RES['prop_hoafrq'] = intval(0);
+    $RES['prop_bathtot'] = intval(0);
+    $RES['prop_bathmain'] = intval(0);
+    $RES['prop_bathhalf'] = intval(0);
+    $RES['prop_bathfull'] = intval(0);
+    $RES['prop_bedtot'] = intval(0);
+    $RES['prop_bedmain'] = intval(0);
+    $RES['prop_floorct'] = intval(0);
+    $RES['prop_floorno'] = intval(0);
+    $RES['prop_bldguc'] = intval(0);
+    $RES['prop_complxuc'] = intval(0);
+    $RES['prop_condit'] = '';
+    $RES['prop_flag'] = '';
+    $RES['prop_views'] = intval(0);
+    $RES['prop_saves'] = intval(0);
+    $RES['prop_template_view'] = $tp->toDB($pref['estate']['template_view']);
+    $RES['prop_template_view_ord'] = $tp->toDB(e107::serialize($pref['estate']['template_view_ord']));
+    $RES['prop_template_menu'] = $tp->toDB($pref['estate']['template_menu']);
+    $RES['prop_template_menu_ord'] = $tp->toDB(e107::serialize($pref['estate']['template_menu_ord']));
+    return $RES;    
+    }
   
   public function estHelpMenu($SECT,$hlpmode,$hlpactn){}
   
