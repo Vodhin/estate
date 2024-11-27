@@ -68,18 +68,23 @@ if($FETCH == 1 || $FETCH == 2){
     $RES = estGetAllDta($PROPID);
     }
   else{
-    $i=0;
-    $RES['thms'] = array();
-    $sql->gen("SELECT * FROM #estate_media WHERE media_galord = 1 ORDER BY media_propidx ASC, media_galord ASC");
-    while($rows = $sql->fetch()){$RES['thms'][$i] = $rows;$i++;}
+    //$i=0;
+    //$RES['thms'] = array();
+    //$sql->gen("SELECT * FROM #estate_media WHERE media_galord = 1 ORDER BY media_propidx ASC, media_galord ASC");
+    //while($rows = $sql->fetch()){$RES['thms'][$i] = $rows;$i++;}
     }
   
   $RES['prefs'] = e107::pref('estate');
   $RES['keys'] = estJSkeys();
   $RES['txt'] = estJStext();
+  $RES['date']['intv'] = $STRDATETODAY;
+  $RES['date']['ymd'] = date("Y-m-d",$STRDATETODAY);
+  $RES['date']['time'] = $STRTIMENOW;
   $RES['propid'] = $PROPID;
   $RES['dir'] = estDirList();
   $RES['tbls']['estate_listypes']['dta'] = $sql->retrieve('estate_listypes', '*', '',true);
+  if($PROPID == 0){$RES['tbls']['estate_properties']['dta'][0] = $estateCore->estGetNewProp();}
+  
   $RES['classes'] = $GLOBALS['EST_CLASSES'];
   $pref = e107::pref();
   $RES['weblogo'] = $tp->thumbUrl($pref['sitelogo'],false,false,true);
@@ -491,6 +496,9 @@ else if($FETCH == 6){
       if($MAINIDX > 0){
         if($sql->update($MAINTBL, $MAINFLD."='".$NEWVAL."' WHERE ".$MAINKEY."='".$MAINIDX."'")){
           $RES['alldta'] = estGetAllDta($PROPID);
+          if($_POST['tdta']['price']){
+            $RES['price'] = estParseCurrency($NEWVAL);
+            }
           }
         }
       }
@@ -791,6 +799,251 @@ else if($FETCH == 81){
   exit;
   }
 
+elseif($FETCH == 91){
+  $orig = intval($_POST['orig']);
+  $list = intval($_POST['list']);
+  $roundto = intval($_POST['roundto']);
+  $opts = $_POST['opts'];
+  echo estPctUDBtns($orig,$list,$roundto,$opts);
+  exit;
+  }
+
+else if($FETCH == 92){
+  $RES = array('db'=>0);
+  $HID = intval($_POST['hid']);
+  $PID = intval($_POST['propid']);
+  if(intval($HID) > 0){
+    $FLD = $_POST['fld'];
+    $NVAL = e107::getParser()->toDB($_POST['nval']);
+    if($sql->update("estate_prophist",$FLD."='".$NVAL."' WHERE prophist_idx='".$HID."' LIMIT 1")){$RES['db'] = 1;}
+    //$RES['hist'] = $sql->retrieve('estate_prophist', '*','prophist_propidx="'.$PID.'"',true);
+    }
+  echo e107::getParser()->toJSON($RES);
+  exit;
+  }
+
+else if($FETCH == 93){
+  $RES = array('db'=>0);
+  $PID = intval($_POST['propid']);
+  $HID = intval($_POST['hid']);
+  $opts = explode(",",$_POST['prop_locale']);
+  
+  if(intval($HID) > 0){
+    if($sql->delete("estate_prophist", "prophist_idx='".$HID."' LIMIT 1")){
+      $RES['db'] = 1;
+      
+      if($PID > 0 && isset($_POST['prop_listprice'])){
+        $prop_dateupdated = intval($_POST['prop_dateupdated']);
+        $prop_listprice = intval($_POST['prop_listprice']);
+        $prop_status = intval($_POST['prop_status']);
+        
+        if($sql->update("estate_properties","prop_dateupdated='".$prop_dateupdated."', prop_listprice='".$prop_listprice."', prop_status='".$prop_status."', prop_uidupdate='".USERID."' WHERE prop_idx='".$PID."' LIMIT 1")){
+        
+          //$opts = array('mode'=>$md[0],'symb'=>$md[1],'loc'=>$md[2],'code'=>$md[3]);
+          $RES['listtxt'] = estParseCurrency($prop_listprice,$opts);
+          $RES['listint'] = $prop_listprice;
+          
+          $RES['statint'] = $prop_status;
+          $RES['statxt'] = $GLOBALS['EST_PROPSTATUS'][$prop_status]['opt'];
+          
+          $RES['updatedint'] = $prop_dateupdated;
+          $RES['updatedtxt'] = $tp->toDate($prop_dateupdated,'short');
+          $RES['prop'] = 'prop updated';
+          }
+        }
+      }
+    }
+  
+  $RES['hist'] = $sql->retrieve('estate_prophist', '*','prophist_propidx="'.$PID.'"',true);
+  
+  echo e107::getParser()->toJSON($RES);
+  exit;
+  }
+
+else if($FETCH == 94){
+  $RES = array();
+  $tp = e107::getParser();
+  
+  $PROPID = intval($_POST['propid']);
+  if($PROPID == 0){
+    $RES['error'] = 'No Prop ID';
+    echo $tp->toJSON($RES);
+    exit;
+    }
+
+  $RES['propid'] = $PROPID;
+  $estateCore = new estateCore;
+  $curDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+  $dbRow = $sql->retrieve("estate_properties", "prop_idx,prop_uidupdate,prop_datecreated,prop_dateupdated,prop_status,prop_listprice,prop_origprice,prop_locale", "prop_idx='".$PROPID."'",true);
+  
+  if(count($dbRow) == 0){
+    $RES['error'] = 'Property ID #'.$PROPID.' Not Found';
+    echo $tp->toJSON($RES);
+    exit;
+    }
+  
+  $RES['propdta'] = $dbRow[0];
+  extract($dbRow[0]);
+  
+  if(isset($_POST['locale'])){
+    $opts = estChkMDlocale($_POST['locale']);
+    }
+  else{
+    $opts = estChkMDlocale($prop_locale);
+    }
+  
+  $newLocale = implode(",",$opts);
+  if($prop_locale !== $newLocale){
+    $prop_locale = $newLocale;
+    $PROPQRY = "prop_locale='".$prop_locale."'";
+    }
+  
+  
+  
+  if(isset($_POST['prop_status'])){
+    $prop_status = intval($_POST['prop_status']);
+    $RES['statint'] = $prop_status;
+    $RES['statxt'] = $GLOBALS['EST_PROPSTATUS'][$prop_status]['opt'];
+    $PROPQRY .= (isset($PROPQRY) ? ", " : "")."prop_status='".$prop_status."'";
+    }
+  
+  $RES['locale'] = $prop_locale;
+  
+  if(isset($_POST['prop_listprice'])){
+    $prop_listprice = intval($_POST['prop_listprice']);
+    $RES['listtxt'] = estParseCurrency($prop_listprice,$opts);
+    $RES['listint'] = $prop_listprice;
+    $PROPQRY .= (isset($PROPQRY) ? ", " : "")."prop_listprice='".$prop_listprice."'";
+    
+    }
+  
+  if(isset($_POST['prop_origprice'])){
+    $prop_origprice = intval($_POST['prop_origprice']);
+    $RES['origtxt'] = estParseCurrency($prop_origprice,$opts);
+    $RES['origint'] = $prop_origprice;
+    $PROPQRY .= (isset($PROPQRY) ? ", " : "")."prop_origprice='".$prop_origprice."'";
+    }
+  
+  $RES['hdta'] = array();
+  if(isset($_POST['hdta']) && is_array($_POST['hdta'])){
+    $HDTA = $_POST['hdta'];
+    if(count($HDTA) > 1){
+      usort($HDTA, function($a,$b){
+        if($a['prophist_date']==$b['prophist_date']){return 0;}
+        return $a['prophist_date'] < $b['prophist_date'] ? 1 : -1;
+        });
+      }
+    
+    $prop_flds = array('prop_origprice'=>0,'prop_listprice'=>0);
+    foreach($HDTA as $k=>$v){
+      $RES['hdta_sent'][$k] = $v;
+      //$RES['hdta'][$k] = estChkPriceHist($v['prophist_propidx'],$v['prophist_date'],$v['prophist_price'],$v['prophist_status']);
+      $prophist_idx = intval($v['prophist_idx']);
+      $prophist_date = intval($v['prophist_date']);
+      $prophist_price = intval($v['prophist_price']);
+      $prophist_status = intval($v['prophist_status']);
+      
+      
+      $RES['hdta'][$k] = array('noc',$prophist_idx,$prophist_date,$prophist_price,$prophist_status);
+      
+      if($prophist_idx > 0){
+        if($v['targ'] == 'prop_origprice'){
+          if(intval($prop_datecreated) > 0 && $prophist_date !== intval($prop_datecreated)){
+            $prophist_date = mktime(0, 0, 0, date("m",intval($prop_datecreated)), date("d",intval($prop_datecreated)), date("Y",intval($prop_datecreated)));
+            }
+          elseif($prophist_date == 0){
+            $prophist_date = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+            }
+          }
+        
+        if(intval($prophist_date) == 0){
+          $prophist_date = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+          }
+          
+        
+        if($sql->update("estate_prophist","prophist_date='".$prophist_date."', prophist_price='".$prophist_price."', prophist_status='".$prophist_status."' WHERE prophist_idx='".$prophist_idx."' LIMIT 1")){
+          $RES['hdta'][$k][0] = 'upd';
+          }
+        }
+      else{
+        $maxDate = strtotime("+15 days",$curDate);
+        
+        if($prophist_date > $maxDate){$prophist_date = $maxDate;}
+        if($v['targ'] == 'prop_origprice' && intval($prop_datecreated) > 0){
+          $prophist_date = mktime(0, 0, 0, date("m",intval($prop_datecreated)), date("d",intval($prop_datecreated)), date("Y",intval($prop_datecreated)));
+          }
+        
+        if($prophist_idx = $sql->insert("estate_prophist","'0','".$PROPID."','".$prophist_date."','".$prophist_price."','".$prophist_status."'")){
+          $RES['hdta'][$k][0] = 'add';
+          $RES['hdta'][$k][1] = $prophist_idx;
+          }
+        
+        }
+      
+      $dberr = $sql->getLastErrorText();
+      if($dberr){
+        $RES['hdta'][$k][0] = 'err';
+        $RES['hdta'][$k][5] = $dberr;
+        unset($dberr);
+        }
+      }
+    }
+  
+        
+  
+  if(isset($PROPQRY)){
+    $prop_dateupdated = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+    $PROPQRY .= ", prop_dateupdated='".$prop_dateupdated."', prop_uidupdate='".USERID."'";
+    if($sql->update("estate_properties",$PROPQRY." WHERE prop_idx='".$PROPID."' LIMIT 1")){
+      $RES['prop_dateupdated'] = $prop_dateupdated;
+      $RES['updatedtxt'] = $tp->toDate($prop_dateupdated,'short');
+      $RES['db'][3] = 'prop updated';
+      }
+    }
+  
+  $RES['propq'] = $PROPQRY;
+  $RES['hist'] = $sql->retrieve('estate_prophist', '*','prophist_propidx="'.$PROPID.'"',true);
+  
+  echo $tp->toJSON($RES);
+  exit;
+  }
+
+
+else if($FETCH == 95){
+  $estateCore = new estateCore;
+  $txt = '<div id="estPropPriceHist1">';
+  $txt .= $estateCore->estEditPriceHist($_POST);
+  $txt .= '</div>';
+  $txt .= $estateCore->estLocalOptsForm($_POST['locale']);
+  echo $txt;
+  unset($locale,$PID,$DTODAY,$maxYMD,$thtitle,$origd,$orig,$statn,$statp,$list,$listd,$pctbtns,$txt);
+  exit;
+  }
+
+else if($FETCH == 96){
+  $RES = array();
+  
+  $opts = estChkMDlocale($_POST['locale']);
+  $RES['locale'] = $_POST['locale'];
+  
+  if($_POST['price']){$RES['price'] = estParseCurrency($_POST['price'],$opts);}
+  if($_POST['orig']){$RES['origtxt'] = estParseCurrency($_POST['orig'],$opts);}
+  if($_POST['list']){
+    $RES['listtxt'] = estParseCurrency($_POST['list'],$opts);
+    $RES['listint'] = intval($_POST['list']);
+    }
+  
+  if(isset($_POST['hist']) && isset($_POST['propid']) && isset($_POST['origd']) && isset($_POST['listd'])){
+    if(intval($_POST['propid']) > 0){
+      $RES['hist'] = propHistory($_POST['propid'],$_POST['origd'],$_POST['orig'],$_POST['listd'],$_POST['list'],$opts);
+      }
+    else{
+      $RES['newp'] = 1;
+      }
+    }
+  echo $tp->toJSON($RES);
+  exit;
+  }
 
 else if($FETCH == 97){
   //$sql = e107::getDB();
@@ -904,6 +1157,79 @@ else{echo $RES;}
 
 
 
+function estPctUDBtns($orig,$list,$roundto,$opts){
+  $pct = ceil(((1 - $orig / $list) * 100) / 5) * 5;
+  $bi = 85;
+  while($bi >= -85){
+    if($bi == 0){$bval = $orig;}
+    elseif($bi < 0){$bval = $orig - ceil(($orig * (($bi * -1) / 100)) / $roundto) * $roundto;}
+    else{$bval = $orig - floor(($orig * (($bi * -1) / 100)) / $roundto) * $roundto;}
+      
+    $btxt =  estParseCurrency($bval,$opts);
+    
+    $pctbtns .= '
+    <button class="btn btn-'.($bi == $pct ? 'primary' : 'default').' btn-sm WD100 WSNWRP" data-pct="'.$bi.'" data-amnt="'.$bval.'">
+      <span class="FR">'.$btxt.'</span>
+      <span class="FL">'.$bi.'%</span>
+    </button>';
+    $bi = $bi-5;
+    unset($bval,$btxt);
+    }
+  unset($orig,$list,$roundto,$opts,$bi);
+  return $pctbtns;
+  }
+
+
+
+function propHistory($PID,$origd,$origp,$listd,$listp,$opts){
+  $RES = array();
+  if(intval($PID) > 0){
+    $RES['newp'] = 0;
+    $sql = e107::getDB();
+    $tp = e107::getParser();
+    $dbRow = $sql->retrieve('estate_prophist', '*', 'prophist_propidx="'.intval($PID).'" ORDER BY prophist_date DESC',true);
+    if(count($dbRow) > 0){
+      foreach($dbRow as $k=>$v){
+        $RES[$k]['id'] = intval($v['prophist_idx']);
+        $RES[$k]['dt'] = intval($v['prophist_date']);
+        $RES[$k]['fld'] = intval($v['prophist_price']);
+        $RES[$k]['stat'] = intval($v['prophist_status']);
+        $RES[$k]['tdt'] = $tp->toDate($v['prophist_date']);
+        $RES[$k]['txt'] = estParseCurrency($v['prophist_price'],$opts);
+        }
+      }
+    else{
+      $k = 0;
+      if($origd > 0 && $origp > 0){
+        $ndate = mktime(0, 0, 0, date("m",$origd), date("d",$origd), date("Y",$origd));
+        if($nid = $sql->insert("estate_prophist","'0','".intval($PID)."','".$ndate."','".intval($origp)."','3'")){
+          $RES[$k]['id'] = $nid;
+          $RES[$k]['dt'] = intval($ndate);
+          $RES[$k]['fld'] = intval($origp);
+          $RES[$k]['stat'] = 3;
+          $RES[$k]['tdt'] = $tp->toDate($ndate);
+          $RES[$k]['txt'] = estParseCurrency($origp,$opts);
+          $k++;
+          }
+        }
+      if($listd > 0 && $listp > 0 && ($listd !== $origd || $listp !== $origp)){
+        $ndate = mktime(0, 0, 0, date("m",$listd), date("d",$listd), date("Y",$listd));
+        if($nid = $sql->insert("estate_prophist","'0','".intval($PID)."','".$ndate."','".intval($listp)."','3'")){
+          $RES[$k]['id'] = $nid;
+          $RES[$k]['dt'] = intval($ndate);
+          $RES[$k]['fld'] = intval($listp);
+          $RES[$k]['stat'] = 3;
+          $RES[$k]['tdt'] = $tp->toDate($ndate);
+          $RES[$k]['txt'] = estParseCurrency($listp,$opts);
+          }
+        }
+      }
+    }
+  else{
+    $RES['newp'] = 1;
+    }
+  return $RES;
+  }
 
 
 
@@ -1161,7 +1487,10 @@ function estGetAllDta($PROPID){
   //estGetContDta estate_contacts
   $ESTTBL = array();
   
-  if($PROPID > 0){$ESTTBL['estate_properties']['dta'] = $sql->retrieve('estate_properties', '*','prop_idx="'.$PROPID.'"',true);}
+  if($PROPID > 0){
+    $ESTTBL['estate_properties']['dta'] = $sql->retrieve('estate_properties', '*','prop_idx="'.$PROPID.'"',true);
+    $ESTTBL['estate_prophist']['dta'] = $sql->retrieve('estate_prophist', '*','prophist_propidx="'.$PROPID.'"',true);
+    }
   else{
     if($_GET['pragtid']){$ESTTBL['estate_properties']['dta'] = $sql->retrieve('estate_properties', '*','prop_agent="'.intval($_GET['pragtid']).'"',true);}
     elseif($_POST['pragtid']){$ESTTBL['estate_properties']['dta'] = $sql->retrieve('estate_properties', '*','prop_agent="'.intval($_POST['pragtid']).'"',true);}
@@ -1178,13 +1507,16 @@ function estGetAllDta($PROPID){
   //$ESTTBL['estate_agencyfull']['dta'] = $estateCore->estGetAgencyFull();
   
   
-  //$tp->toVideo($file, $parm = array())
+  if(count($ESTTBL['estate_properties']['dta']) == 0){
+    $ESTTBL['estate_properties']['dta'][0] = $estateCore->estGetNewProp();
+    }
   
   //$STATEID = intval($ESTTBL['estate_properties']['dta'][0]['prop_state']);
   //$COUNTYID = intval($ESTTBL['estate_properties']['dta'][0]['prop_county']);
   //$CITYID = intval($ESTTBL['estate_properties']['dta'][0]['prop_city']);
   $SUBDID = intval($ESTTBL['estate_properties']['dta'][0]['prop_subdiv']);
   
+  //$tp->toVideo($file, $parm = array())
    //media_lev = 0=subdiv, 1=property, 2=spaces, 3=city space, 4=subdiv space
    
    // OR (media_propidx="0" AND media_lev="4" AND media_levidx=" ??? ") OR (media_propidx="0" AND media_lev="0" AND media_levidx="'.$SUBDID.'")
@@ -1197,7 +1529,10 @@ function estGetAllDta($PROPID){
     'estate_events'=>'event_idx>"0" ORDER BY event_start ASC' //event_propidx event_agt
     );
   
-  $ESTTBL['estate_properties']['dta'][0]['prop_hours'] = e107::unserialize($ESTTBL['estate_properties']['dta'][0]['prop_hours']);
+  if(isset($ESTTBL['estate_properties']['dta'][0]['prop_hours'])){
+    $ESTTBL['estate_properties']['dta'][0]['prop_hours'] = e107::unserialize($ESTTBL['estate_properties']['dta'][0]['prop_hours']);
+    }
+  
       
   if(intval($ESTTBL['estate_properties']['dta'][0]['prop_agency']) > 0){
     
@@ -1217,7 +1552,7 @@ function estGetAllDta($PROPID){
       if($ESTTABDTA[$tbl]){$ESTTBL[$tbl]['dta'] = ($sql->count($tbl) > 0 ? $sql->retrieve($tbl, '*',$ESTTABDTA[$tbl],true) : array());}
       else{$ESTTBL[$tbl]['dta'] = ($sql->count($tbl) > 0 ? $sql->retrieve($tbl, '*','',true) : array());}
       }
-      
+    
     
     $ESTTBL[$tbl]['form'] = estTablForm($TBLS[$tbl],$ESTTBL[$tbl]['flds']);
     }
@@ -1237,7 +1572,9 @@ function estGetAllDta($PROPID){
     $ESTTBL['estate_timezone']['dta'][$i]['tz_name'] = $tzv;
     $i++;
     }
-    
+  
+  $ESTTBL['estate_properties']['dta'][0]['prop_template_view_ord'] = e107::unserialize($ESTTBL['estate_properties']['dta'][0]['prop_template_view_ord']);
+  $ESTTBL['estate_properties']['dta'][0]['prop_template_menu_ord'] = e107::unserialize($ESTTBL['estate_properties']['dta'][0]['prop_template_menu_ord']);
   
   $ESTTBL['estate_sects'] = estSects();
   
@@ -1265,6 +1602,7 @@ function estJStext(){
     'admin'=>EST_GEN_ADMIN,
     'agency'=>EST_GEN_AGENCY,
     'agent'=>EST_GEN_AGENT,
+    'agtconflict1'=>EST_GEN_AGENTCONFLICT1,
     'agtpropic'=>EST_AGT_PROPIC,
     'agtupdta'=>EST_AGT_UPAGTDTA,
     'agtuspropic'=>EST_AGT_USEPROPIC,
@@ -1298,7 +1636,9 @@ function estJStext(){
     'cropbtns'=>array(EST_IMG_MOVEL,EST_IMG_MOVER,EST_IMG_MOVEU,EST_IMG_MOVED,EST_IMG_ZOOMO,EST_IMG_ZOOMI,EST_IMG_ROTL,EST_IMG_ROTR,EST_IMG_FLIPH,EST_IMG_FLIPV,EST_IMG_RESETC,EST_IMG_CROP),
     'custom'=>EST_GEN_CUSTOM,
     'data'=>EST_GEN_DATA,
+    'date1'=>EST_GEN_DATE,
     'datasource'=>EST_GEN_DATASOURCE,
+    'cantbeeqor'=>EST_GEN_CANNOTBEEQOR,
     'deletes'=>LAN_DELETE,
     'description'=>LAN_DESCRIPTION,
     'details'=>EST_GEN_DETAILS,
@@ -1314,6 +1654,7 @@ function estJStext(){
     'error500'=>EST_ERR_500,
     'event'=>EST_GEN_EVENT,
     'events'=>EST_GEN_EVENTS,
+    'eventkeydel'=>EST_GEN_DELETEEVTKEY,
     'feature'=>EST_GEN_FEATURE,
     'features'=>EST_GEN_FEATURES,
     'featurenobelong'=>EST_GEN_FEATURE.' '.EST_GEN_NOTBELONGTO.' '.LAN_CATEGORY,
@@ -1324,6 +1665,7 @@ function estJStext(){
     'form'=>EST_GEN_FORM,
     'fracts'=>array('¼','½','¾'),
     'full'=>EST_GEN_FULL,
+    'greaterthan'=>EST_GEN_GEATERTHAN,
     'group1'=>EST_GEN_GROUP,
     'half'=>EST_GEN_HALF,
     'hoaappr1'=>EST_GEN_HOAAPPR1,
@@ -1337,6 +1679,7 @@ function estJStext(){
     'item'=>EST_GEN_ITEM,
     'javafail'=>EST_ERR_JAVAFAIL,
     'layout'=>EST_GEN_LAYOUT,
+    'lessthan'=>EST_GEN_LESSTHAN,
     'listing'=>EST_GEN_LISTING,
     'listings'=>EST_GEN_LISTINGS,
     'listype'=>EST_PROP_LISTYPE,
@@ -1358,12 +1701,14 @@ function estJStext(){
     'new1'=>EST_NEW,
     'new2'=>EST_SAVEANDNEW,
     'newagt'=>EST_GEN_NEWAGENT,
+    'newevtname'=>EST_GEN_NEWEVENTNAME,
     'nochanges2'=>EST_GEN_DBNOCHANGES,
     'nochangeadmin'=>EST_GEN_NOCHANGEADMIN,
     'none'=>EST_GEN_NONE,
     'nomap'=>EST_ERR_NOMAP,
     'nocontdta'=>EST_ERR_NOCONDATA,
     'nocontype'=>EST_ERR_NOCONTYPE,
+    'notallowed'=>EST_ERR_NOTALLOWED,
     'notavail2'=>EST_GEN_NOTAVAIL2,
     'notdefined'=>EST_GEN_NOTDEFINED,
     'nothing2change'=>EST_GEN_NOTHING2CHANGE,
@@ -1401,7 +1746,9 @@ function estJStext(){
     'tomods'=>EST_GEN_TOMODS,
     'unk'=>EST_GEN_UNK,
     'sqr'=>EST_GEN_SQR,
+    'upcompricech'=>EST_GEN_PRICEHISTFUT3,
     'updated'=>EST_UPDATED,
+    'updatereq'=>EST_ERR_UPDATENEEDED,
     'updatethis'=>EST_GEN_UPDATETHIS,
     'upload'=>EST_UPLOAD,
     'view'=>EST_GEN_VIEW,

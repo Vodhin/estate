@@ -154,6 +154,705 @@ function timeDifference(date1,date2) {
 
 
 
+
+function estConcatDateTime(ele){
+  var targs = $(ele).data('targ');
+  var fnct = $(ele).data('fnct');
+  
+  var dVal = $(targs[1]).val()+ ' '+$(targs[2]).val();
+  console.log(dVal);
+  var d = new Date(dVal) / 1000;
+  $(targs[0]).val(d);
+  console.log(d);
+  
+  if(typeof fnct !== 'undefined'){
+    if(fnct !== null && typeof fnct.name !== 'undefined'){
+      var args = (typeof fnct.args !== 'undefined' ? fnct.args : '');
+      switch (fnct.name){
+        case 'estEvtCalChkTime' : 
+          estEvtCalChkTime(args);
+          break;
+        }
+      }
+    }
+  }
+
+function estEvtCalChkTime(args){
+  //console.log(args);
+  var eS = $('#event_start-time').val().split(':');
+  var eE = $('#event_end-time').val().split(':');
+  if(eE[0] == '' || eS[0] == ''){alert('Start & End times cannot be blank'); return;}
+  if(eE[0] < eS[0]){alert('End time must be later than Start time'); return;}
+  if(eE[0] == eS[0] && eE[1] <= eS[1]){
+    if(eE[1] == eS[1]){alert('Start & End times cannot be the same'); return;}
+    else{alert('End time must be later than Start time'); return;}
+    }
+  
+  var prevEvt = $(args[1]).prevAll('div.evtInUse');
+  if(prevEvt.length > 0){
+    var ct = estJSDate($(prevEvt[0]).data('slot').evt.event_end);
+    var chkStart = [ct.hh,ct.i];
+    //console.log(chkStart);
+    }
+  
+  var nextEvt = $(args[1]).nextAll('div.evtInUse');
+  if(nextEvt.length > 0){
+    var ct = estJSDate($(nextEvt[0]).data('slot').evt.event_start);
+    var chkEnd = [ct.hh,ct.i];
+    //console.log(chkEnd);
+    }
+  }
+
+
+
+
+function estEditCalEvent(popIt,tdta){
+  var defs = $('body').data('defs');
+  
+  popIt.frm[1] = estBuildSlide(1,{'tabs':['main']});
+  $(popIt.frm[1].slide).appendTo(popIt.belt);
+  $(popIt.frm[1].slide).css({'left':'100%'}).hide();
+  
+  var srcTbl = defs.tbls[tdta.tbl];
+  var eSrcFrm = srcTbl.form[tdta.fld];
+  
+  if(eSrcFrm.src == null){
+    $.extend(eSrcFrm,{'src':{'tbl':tdta.tbl,'idx':srcTbl.flds[0]}});
+    console.log(eSrcFrm);
+    }
+  
+  var destTbl = defs.tbls.estate_events;
+  
+  $(popIt.frm[1].form).data('levdta',tdta.defdta.evt).data('destTbl',{'dta':destTbl.dta,'flds':destTbl.flds,'idx':'event_idx','table':'estate_events'});
+  $(popIt.frm[1].form).data('maintbl',null).data('form',{'elem':null,'attr':null,'match':{},'fnct':{'name':'estCalEvtChange','args':tdta.jdate}});
+  
+  $('#estPopCont').data('popit',popIt);
+  console.log(tdta);
+  
+  $(popIt.frm[1].h3).empty().promise().done(function(){
+    
+    var H3txt = $(popIt.frm[0]).data('evtdaytxt')+': '+(Number(tdta.defdta.evt.event_idx) > 0 ? tdta.defdta.evt.event_name : defs.txt.new1+' '+defs.txt.event);
+    
+    $(JQSPAN,{'class':'FL','title':xt.cancelremove}).html(H3txt).on({
+      click : function(){estRemovePopoverAlt();}
+      }).appendTo(popIt.frm[1].h3);
+    
+    var saveBtn = $(JQBTN,{'class':'btn btn-primary btn-sm FR estAltSave'}).html(xt.save).on({
+      click : function(){
+        console.log(popIt.frm[1].form);
+        estPopGo(3,popIt,1);
+        }
+      }).appendTo(popIt.frm[1].h3);
+    
+    popIt.frm[1].savebtns.push(saveBtn);
+    
+    
+    cVal = Number(tdta.defdta.evt.event_idx);
+    
+    var idx = eSrcFrm.src.idx;
+    var sectDta = estGetSectDta(idx,cVal,destTbl,tdta.defdta.evt);
+    console.log(idx,cVal);
+    
+    if(Number(cVal) > 0){
+      var delBtn = $(JQBTN,{'class':'btn btn-danger btn-sm FR estAltSave'}).html(xt.deletes).on({
+      click : function(){
+        console.log(popIt.frm[1].form);
+        if(jsconfirm(xt.deletes+' '+xt.event+' ID#'+cVal+' '+xt.areyousure)){
+          
+          var propId = Number($('body').data('propid'));
+          var xDta = sectDta;
+          var sDta = {'fetch':3,'propid': Number(propId),'rt':'js','tdta':[{'tbl':'estate_events','key':'event_idx','fdta':xDta,'del':-1}]};
+            console.log(sDta);
+            $.ajax({
+              url: vreFeud+'?3||0',
+              type:'post',
+              data:sDta,
+              dataType:'json',
+              cache:false,
+              processData:true,
+              success: function(ret, textStatus, jqXHR){
+                ret = ret[0];
+                console.log(ret);
+                if(typeof ret.error !== 'undefined'){
+                  estAlertLog(ret.error);
+                  $('#estPopContRes'+0).html(ret.error).fadeIn(200,function(){estPopHeight(1)});
+                  }
+                else{
+                  $('#estEvent-'+cVal).remove();
+                  estRemovePopover();
+                  }
+                },
+              error: function(jqXHR, textStatus, errorThrown){
+                $(tFoot).fadeIn(200);
+                console.log('ERRORS: '+textStatus+' '+errorThrown);
+                estAlertLog(jqXHR.responseText);
+                }
+              });
+          }
+        }
+      }).appendTo(popIt.frm[1].h3);
+    
+      popIt.frm[1].savebtns.push(delBtn);
+      
+      }
+    
+    
+    var reqMatch = null;
+    var frmTRs = estFormEles(destTbl.form,sectDta,reqMatch);
+    var tripIt = [];
+    $(frmTRs).each(function(ei,trEle){
+      estFormTr(trEle,popIt.frm[1].tabs.tab[0].tDiv,popIt.frm[1].tabs.tab[0].tbody);
+      //if(trEle.trip !== null){tripIt.push(trEle.trip)}
+      }).promise().done(function(){
+        //$(tripIt).each(function(tpi,trpEle){$(trpEle).change();});
+        
+        $('#event_start-date').hide();//.prop('disabled',true);
+        $('#event_end-date').hide();//.prop('disabled',true);
+        $('#event_start-time').data('fnct',{'name':'estEvtCalChkTime','args':[tdta.jdate,tdta.targ]}).prop('step',900);
+        $('#event_end-time').data('fnct',{'name':'estEvtCalChkTime','args':[tdta.jdate,tdta.targ]}).prop('step',900);
+        
+        
+        var prevEvt = $(tdta.targ).prevAll('div.evtInUse');
+        if(prevEvt.length > 0){
+          var pEnd = estJSDate($(prevEvt[0]).data('slot').evt.event_end);
+          $('#event_start-time').prop('min',pEnd.hh+':'+pEnd.i);
+          $('#event_end-time').prop('min',pEnd.hh+':'+pEnd.i);
+          }
+        
+        var nextEvt = $(tdta.targ).nextAll('div.evtInUse');
+        if(nextEvt.length > 0){
+          var nSt = estJSDate($(nextEvt[0]).data('slot').evt.event_start);
+          $('#event_end-time').prop('max',nSt.hh+':'+nSt.i);
+          $('#event_start-time').prop('max',nSt.hh+':'+nSt.i);
+          }
+        
+        $(popIt.frm[1].slide).show().animate({'left':'0px'});
+        $(popIt.frm[0].slide).animate({'left':'-100%'}).promise().done(function(){
+          $(popIt.frm[0].slide).hide();
+          estPopHeight(1);
+          });
+        });
+    });
+  }
+
+
+
+function estEvtEditBtn(mode,ele){
+  var defs = $('body').data('defs');
+  $('.mediaEditBox').remove().promise().done(function(){
+    if(mode == 1){
+      var mediaEditBox = $(JQDIV,{'id':'mediaEditBox','class':'mediaEditBox'}).appendTo(ele);
+      var editBtn = $(JQBTN,{'class':'btn btn-default btn-sm'}).appendTo(mediaEditBox);
+      
+      if($(ele).hasClass('estCalEvts')){
+        $(editBtn).prop('title',defs.txt.edit+' '+defs.txt.event);
+        $(JQSPAN,{'class':'fa fa-pencil-square-o'}).appendTo(editBtn);
+        }
+      else{
+        $(editBtn).prop('title',defs.txt.add1+' '+defs.txt.event);
+        $(JQSPAN,{'class':'fa fa-plus'}).appendTo(editBtn);
+        }
+      
+      $(editBtn).on({
+        click : function(e){
+          e.preventDefault();
+          var jDate = $(this).closest('td').find('div.estCalDtaCont').data('ud');
+          estCalOpenDay(1,jDate);
+          //estCalDta-
+          }
+        });
+      }
+    else if(mode == 0){
+      var nEle = [].slice.call(document.querySelectorAll(':hover')).pop();
+      if($(nEle).hasClass('estCalDtaCont') || $(nEle).hasClass('estCalDayNo')){estEvtEditBtn(1,$(nEle).parent());}
+      }
+    });
+  }
+
+
+
+function estChangeEvtCalMonth(nMnth){
+  var defs = $('body').data('defs');
+  $.ajax({
+    url: vreFeud+'?35||0',
+    type:'post',
+    data:{'fetch':35,'rt':'html','propid':Number($('body').data('propid')),'mnth':nMnth},
+    dataType:'text',
+    cache:false,
+    processData:true,
+    success: function(ret, textStatus, jqXHR){
+      console.log(ret);
+      $('#estEvtCalCont').empty().promise().done(function(){
+        $('#estEvtCalCont').html(ret);
+        estBuildEvtTab();
+        });
+      },
+    error: function(jqXHR, textStatus, errorThrown){
+      console.log('ERRORS: '+textStatus+' '+errorThrown);
+      estAlertLog(jqXHR.responseText);
+      }
+    });
+  }
+
+function estBuildEvtTab(){
+  var defs = $('body').data('defs');
+  var propId = Number($('body').data('propid'));
+  
+  if(propId == 0){
+    $(JQDIV,{'class':'s-message alert alert-block warning alert-warning'}).html(defs.txt.needsave+' '+defs.txt.addevent).prependTo('#estEventsCont');
+    return;
+    }
+  
+  var agtId = Number(defs.tbls.estate_properties.dta[0].prop_agent);
+  var propEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_propidx == propId;});
+  var agtEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_agt == agtId && element.event_propidx !== propId;});
+  
+  Array.prototype.push.apply(propEvts,agtEvts);
+  var evtDiv = [];
+  
+  
+  $('#estEvtNavBar button').each(function(i,btn){
+    $(btn).on({
+      click : function(e){
+        e.preventDefault();
+        estChangeEvtCalMonth($(this).data('month'));
+        }
+      })
+    });
+  
+  
+  $('#estEvtCaltb td.estCalDay div.estCalDtaCont').empty().promise().done(function(){
+    $(propEvts).each(function(ei,evt){
+      var evX = estEvtBtn(evt);
+      evtDiv[ei] = $(JQDIV,{'id':'estEvent-'+evt.event_idx,'class':'estCalEvts slot-'+evt.event_type}).data('evt',evt);
+      $(JQDIV).html(evX[0].h+':'+evX[0].i+' '+evX[0].ap+'<br>'+evX[1].h+':'+evX[1].i+' '+evX[1].ap).appendTo(evtDiv[ei]);
+      $(JQDIV).html(defs.keys.eventkeys[evt.event_type]['l']+'<br>'+evt.event_name).appendTo(evtDiv[ei]);
+      $(evtDiv[ei]).appendTo('#estCalDta-'+evX[0].ud1);
+      if(evt.event_propidx !== propId){
+        $(evtDiv[ei]).addClass('evtConflict').attr('title',defs.txt.agtconflict1).on({
+          click : function(e){
+            e.stopPropagation();
+            alert(defs.txt.agtconflict1);
+            }
+          });
+        }
+      else{
+        $(evtDiv[ei]).attr('title',evX[3]+' min');
+        }
+      
+      $(evtDiv[ei]).on({
+        mouseenter : function(e){estEvtEditBtn(1,this)},
+        mouseleave :function(e){estEvtEditBtn(0,this)}
+        });
+      
+      }).promise().done(function(){
+      
+      $('#estEvtCaltb td.estLive div.estCalDayBox').on({
+        mouseenter : function(e){estEvtEditBtn(1,this)},
+        mouseleave :function(e){estEvtEditBtn(-1,this)}
+        });                
+        
+        $('#estEvtCaltb td.estCalDay div.estCalDtaCont').each(function(ci,oele){
+          var oeleId = $(oele).attr('id');
+          var itemGrpCont = document.getElementById(oeleId);
+          
+          Sortable.create(itemGrpCont,{
+            group: 'estSortTD', 
+            draggable: '.estCalEvts',
+            sort: true,
+            animation: 450,
+            pull: true,
+            put: true,
+            ghostClass: 'sortTR-ghost',
+            chosenClass: 'sortTR-chosen', 
+            dragClass: 'sortTR-drag',
+            onChoose: function(evt){},
+            onEnd: function(evt){estEventReorder(evt);}
+            });
+          });
+        });
+    });
+  }
+
+
+function estEvtBtn(evt){
+  var d0 = estJSDate(evt.event_start);
+  var d1 = estJSDate(evt.event_end);
+  var d2 = timeDifference(evt.event_start,evt.event_end);
+  var d3 = (d2[2] + (d2[1] * 60) + (d2[0] * 60 * 24));
+  var d4 = (d2[0] > 0 ? d2[0]+' d ' : '')+(d2[1] > 0 ? d2[1]+' h ' : '')+(d2[2] > 0 ? d2[2]+' m' : '');
+  return [d0,d1,d2,d3,d4];
+  }
+
+
+function estEventReorder(mActn){
+  var defs = $('body').data('defs');
+  var propId = Number($('body').data('propid'));
+  var agtId = Number(defs.tbls.estate_properties.dta[0].prop_agent);
+  
+  var ele = $('#'+mActn.item.id);
+  var evt = $(ele).data('evt');
+  var evtDta = defs.tbls.estate_events.dta.find(x => Number(x.event_idx) == Number(evt.event_idx));
+  var evtIx = (typeof evtDta !== 'undefined' ? defs.tbls.estate_events.dta.indexOf(evtDta) : -1); 
+  
+  
+  var srcDiv = $('#'+mActn.from.id);
+  var targDiv = $('#'+mActn.to.id);
+  
+  var newIx = mActn.newIndex;
+  var oldIx = mActn.oldIndex;
+  
+  var dbEles = [], tDta = [];
+  
+  if(targDiv !== srcDiv){
+    var ud = Number($(srcDiv).data('ud'));
+    var nud = Number($(targDiv).data('ud'));
+    var d3 = timeDifference(ud,nud);
+    evt.event_start = Number(evt.event_start) + d3[3];
+    evt.event_end = Number(evt.event_end) + d3[3];
+    }
+  
+  if($(targDiv).find('div.estCalEvts').length > 1){
+    var elePre = $(ele).prev('div.estCalEvts');
+    var eleNxt = $(ele).next('div.estCalEvts');
+    var evtDiff = timeDifference(Number(evt.event_start),Number(evt.event_end));
+    
+    var evtLen = Number(evtDiff[3]), preEnd = -1, nxtStart = -1;
+    if(typeof elePre[0] !== 'undefined'){preEnd = Number($(elePre).data('evt').event_end);}
+    if(typeof eleNxt[0] !== 'undefined'){nxtStart = Number($(eleNxt).data('evt').event_start);}
+    
+    if(preEnd > -1 && nxtStart > -1){
+      if(Number(evt.event_start) >= preEnd && Number(evt.event_end) <= nxtStart){
+        console.log('Middle Event OK');
+        }
+      else{
+        var space = timeDifference(preEnd,nxtStart);
+        space = Number(space[3]);
+        if(evtLen <= space){
+          console.log('Event Can Fit Between');
+          var tRoom = ((space - evtLen) / 900);
+          console.log(tRoom);
+          evt.event_start = preEnd;
+          evt.event_end = (preEnd + evtLen);
+          }
+        else{
+          alert('Event Will NOT Fit Between other events');
+          return;
+          }
+        }
+      }
+    else if(preEnd > -1 && preEnd > Number(evt.event_start)){
+      evt.event_start = preEnd;
+      evt.event_end = (preEnd + evtLen);
+      }
+    else if(nxtStart > -1 && nxtStart < Number(evt.event_end)){
+      evt.event_end = nxtStart;
+      evt.event_start = (nxtStart - evtLen);
+      }
+    }
+  
+  
+  defs.tbls.estate_events.dta[evtIx] = evt;
+  
+  tDta.push({'tbl':'estate_events','key':'event_idx','fdta':evt,'del':0});
+  
+  console.log(tDta);
+  if(tDta.length > 0){
+    var propId = Number($('body').data('propid'));
+    var sDta = {'fetch':3,'propid':propId,'rt':'js','tdta':tDta};
+    $.ajax({
+      url: vreFeud+'?5||0',
+      type:'post',
+      data:sDta,
+      dataType:'json',
+      cache:false,
+      processData:true,
+      success: function(ret, textStatus, jqXHR){
+        var kx = tDta.length-1;
+        if(typeof ret[kx].error !== 'undefined'){
+          estAlertLog(ret[kx].error);
+          }
+        else{
+          if(typeof ret[kx].alldta !== 'undefined'){
+            estProcDefDta(ret[kx].alldta.tbls);
+            }
+          
+          $(ele).empty();
+          var evX = estEvtBtn(evt);
+          $(ele).data('evt',evt);
+          $(JQDIV).html(evX[0].h+':'+evX[0].i+' '+evX[0].ap+'<br>'+evX[1].h+':'+evX[1].i+' '+evX[1].ap).appendTo(ele);
+          $(JQDIV).html(defs.keys.eventkeys[evt.event_type]['l']+'<br>'+evt.event_name).appendTo(ele);
+          
+          
+          }
+        },
+      error: function(jqXHR, textStatus, errorThrown){
+        console.log('ERRORS: '+textStatus+' '+errorThrown);
+        estAlertLog(jqXHR.responseText);
+        }
+      });
+    }
+  }
+
+
+
+
+
+
+//estCalEvtChange
+function estEvtTimeSlots(jDate){
+  var defs = $('body').data('defs');
+  var propId = Number($('body').data('propid'));
+  var agtId = Number(defs.tbls.estate_properties.dta[0].prop_agent);
+  
+  var d = estJSDate(jDate);
+  console.log(d);
+  
+  var pubHrs = defs.tbls.estate_properties.dta[0].prop_hours[d.dno];
+  if($('input[name="prop_hours['+d.dno+'][1]"').length == 0){
+    estAlertLog('Property Viewing Hours Form Is Missing.');
+    $('#estBlackout').remove();
+    return;
+    }
+  
+  var tF = $('input[name="prop_hours['+d.dno+'][1]"').val().split(':');
+  var tL = $('input[name="prop_hours['+d.dno+'][2]"').val().split(':');
+  
+  if(Number(tF[0]) == 0 && Number(tL[0]) == 0 || Number(tL[0]) == Number(tF[0])){
+    $('#estCalEvtSlotCont').html('Error: No Hours available');
+    estPosPopover();
+    return;
+    }
+  else if(Number(tL[0]) < Number(tF[0])){
+    $('#estCalEvtSlotCont').html('Error: Last Hour is less than First Hour');
+    estPosPopover();
+    return;
+    }
+  
+  
+  var propEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_propidx == propId && element.event_start >= jDate;});
+  var agtEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_agt == agtId && element.event_propidx !== propId && element.event_start >= jDate;});
+  
+  Array.prototype.push.apply(propEvts,agtEvts);
+  console.log(propEvts);
+  
+  var slots = [];
+  var si = 0;
+  var tStart = jDate;
+  var inUse = 0;
+      
+  for(i=0; i<=23; i++){
+    var tm = i;
+    var ap = ' a';
+    if(i == 0){tm = 12;}
+    else if(tm >= 12){
+      tm = (tm == 12 ? 12 : tm - 12);
+      ap = ' p';
+      }
+                      
+    $([':00',':15',':30',':45']).each(function(mi,mv){
+      tEnd = Number(tStart) + 900;
+      var evt = null;
+      var evtF = propEvts.find(x => Number(x.event_start) === tStart);
+      if(typeof evtF !== 'undefined'){
+        evt = propEvts[propEvts.indexOf(evtF)];
+        inUse = Number(evt.event_end);
+        }
+      
+      if(inUse > 0 && tStart >= inUse){inUse = 0;}
+      slots[si] = {'s':tStart,'e':tEnd,'h':i,'hm':tm+mv,'ap':tm+mv+ap,'u':inUse,'evt':evt};
+      tStart = tEnd;
+      si++;
+      });
+    }
+  
+  
+  $('#estCalEvtSlotCont').empty().promise().done(function(){
+    var bi = 0, di = 2, eHt=0, evtTrg = null, estSched60 = [];
+    $(slots).each(function(si,slot){
+      if(bi > 3){bi = 0; di++;}
+      
+      var tmRw = $(JQDIV,{'id':'editEvtSlot-'+si,'class':'estSched15'}).data({'slot':slot,'si':si}).appendTo('#estCalEvtSlotCont');
+      var tmTm =$(JQDIV,{'class':'estSched15b'}).html(bi == 0 ? slot.ap : slot.hm).appendTo(tmRw);
+      
+      var tmEvt = $(JQDIV,{'class':'estSched15c'}).on({
+        click : function(e){
+          e.stopPropagation();
+          var slotx = $(this).parent().data('slot');
+          if(slotx.evt == null){
+            slotx.evt = estDefDta('estate_events');
+            slotx.evt.event_agt = agtId;
+            slotx.evt.event_propidx = propId;
+            slotx.evt.event_type = 1;
+            slotx.evt.event_start = slotx.s;
+            slotx.evt.event_end = Number(slotx.s) + Number(defs.keys.eventkeys[1]['ms']);
+            }
+          estPopoverAlt(1,{'tbl':'estate_events','fld':'event_idx','targ':tmRw,'jdate':jDate,'defdta':slotx,'fnct':{'name':'estCalEvtChange'}});
+          //estEditCalEvent
+          }
+        }).appendTo(tmRw);
+      
+      if(slot.evt !== null){
+        var evX = estEvtBtn(slot.evt);
+        $(tmEvt).addClass('evtInUse slot-'+slot.evt.event_type);
+        var evtH4 = $('<h4></h4>').html(defs.keys.eventkeys[slot.evt.event_type]['l']).appendTo(tmEvt);
+        $('<span></span>',{'class':'FR'}).html(evX[4]).prependTo(evtH4);
+        if(slot.evt.event_propidx !== propId){
+          $('<span></span>').html(' (At a different property)').appendTo(evtH4);
+          $(tmEvt).addClass('evtConflict');
+          }
+        $('<p></p>').html('<b>'+slot.evt.event_name+'</b> '+slot.evt.event_text).appendTo(tmEvt);
+        
+        $(tmRw).addClass('evtInUse');
+        evtTrg = tmEvt;
+        }
+      
+      
+      if(slot.u > 0){eHt = eHt + 23;}
+      else{
+        if(evtTrg !== null){
+          $(evtTrg).css({'height':eHt+'px'});
+          evtTrg = null;
+          eHt = 0;
+          }
+        }
+      
+      if(Number(slot.h) < Number(tF[0])){$(tmRw).addClass('estSchedPreHrs');}
+      if(Number(slot.h) > Number(tL[0])){$(tmRw).addClass('estSchedAftHrs');}
+      bi++;
+      }).promise().done(function(){
+        estPosPopover();
+        });
+    });
+  }
+
+
+
+
+function estCalOpenDay(mode,jDate){
+  if(mode < 0){
+    $('#estPopCont').animate({'left':'-100vw'},750,'swing',function(){
+      $('#estPopCont').remove();
+      if(mode == -2){estCalOpenDay(1,jDate);}
+      });
+    }
+  else if(mode == 1){
+    if(document.getElementById('estPopCont')){
+      estCalOpenDay(-2,jDate);
+      return;
+      }
+    
+    var defs = $('body').data('defs');
+    var propId = Number($('body').data('propid'));
+    var xt = defs.txt;
+    
+    var d = estJSDate(jDate);
+    var evtDayTxt = d.w +' ' + d.m + '/' + d.d + '/' + d.y;
+    
+    var popIt = estBuildPopover([{'tabs':['Morning']}]);
+    $(popIt.frm[0]).data('evtdaytxt',evtDayTxt);
+    
+    
+    $(JQSPAN,{'class':'FL','title':xt.cancelremove}).html(evtDayTxt).on({
+      click : function(){estRemovePopover()}
+      }).appendTo(popIt.frm[0].h3);
+    
+    var aftBtn = $(JQBTN,{'id':'estSchedPreHrs','class':'btn btn-primary btn-sm FR'}).data('oc',0).html('After Hrs').on({
+      click : function(e){
+        e.preventDefault();
+        if($(this).data('oc') == 1){
+          $(this).data('oc',0);
+          $('.estSchedAftHrs').fadeOut(200,function(){estPopHeight();});
+          }
+        else{
+          $(this).data('oc',1);
+          $('.estSchedAftHrs').fadeIn(200,function(){estPopHeight();});
+          }
+        }
+      }).appendTo(popIt.frm[0].h3);
+    
+    var preBtn = $(JQBTN,{'id':'estSchedPreHrs','class':'btn btn-primary btn-sm FR'}).data('oc',0).html('Pre Hours').on({
+      click : function(e){
+        e.preventDefault();
+        if($(this).data('oc') == 1){
+          $(this).data('oc',0);
+          $('.estSchedPreHrs').fadeOut(200,function(){estPopHeight();});
+          }
+        else{
+          $(this).data('oc',1);
+          $('.estSchedPreHrs').fadeIn(200,function(){estPopHeight();});
+          }
+        }
+      }).appendTo(popIt.frm[0].h3);
+    
+    popIt.frm[0].savebtns.push(preBtn,aftBtn);
+    
+    $(popIt.frm[0].tabs.tab[0].tabl).addClass('estSchedHrs');
+    
+    
+    var tabx = 0;
+    var tri = 0;
+    var tabtr = popIt.frm[0].tabs.tab;
+    
+    tabtr[tabx].tr[tri] = [];
+    tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
+    tabtr[tabx].tr[tri][1] = $(JQTD,{'colspan':2}).appendTo(tabtr[tabx].tr[tri][0]);
+    
+    
+    $(JQDIV,{'id':'estCalEvtSlotCont'}).appendTo(tabtr[tabx].tr[tri][1]).promise().done(function(){
+      estEvtTimeSlots(jDate);
+      });
+    }
+  }
+
+
+function estJSDate(jDate){
+    var defs = $('body').data('defs');
+    var locale = estPropLocale(1);
+    
+    var d1 = new Date(jDate * 1000), // Convert the passed timestamp to milliseconds
+      yyyy = d1.getFullYear(),
+      mm = ('0' + (d1.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
+      dd = ('0' + d1.getDate()).slice(-2),         // Add leading 0.
+      hh = ('0' + d1.getHours()).slice(-2),
+      h = d1.getHours(),
+      min = ('0' + d1.getMinutes()).slice(-2),     // Add leading 0.
+      ampm = 'AM',
+      ap = 'a';
+
+      if (hh > 12) {
+        h = hh - 12;
+        ampm = 'PM';
+        ap = 'p';
+        }
+      else if (hh === 12) {
+        h = 12;
+        ampm = 'PM';
+        ap = 'p';
+        }
+      else if (hh == 0) {
+        h = 12;
+        }
+  
+  var ud = new Date(yyyy+'-'+mm+'-'+dd);
+  var ud1 = new Date(yyyy+'-'+mm+'-'+dd+' 00:00:00');
+  var dno = d1.getDay();
+  
+  if(locale[2].indexOf('-') < 0){
+    if(locale[2].indexOf('_') > -1){locale[2] = locale[2].replace('_','-');}
+    }
+  
+  var wt = d1.toLocaleString(locale[2],{weekday: 'long'});
+  var mn = d1.toLocaleString(locale[2],{month: 'short'});
+  console.log(wt,mn);
+  
+  return {'y':yyyy,'m':mm,'mn':mn,'d':dd,'h':h,'hh':hh,'i':min,'ampm':ampm,'ap':ap,'dno':dno,'w':wt,'ud1':(ud1 / 1000),'ud':(ud / 1000)};
+  }
+
+
+
+
+
 function estFormSetCity(ele){
   var targ = document.getElementById($(ele).attr('data-targ'));
   console.log(targ);
@@ -388,7 +1087,8 @@ function estSetFormEles(mainTbl,cForm,cSave){
   
   $('select[name="prop_status"]').on({
     change : function(){
-      if(this.value == 2){$('.estDateSched').closest('tr').show();}
+      var nVal = Number($(this).val());
+      if(nVal == 2){$('.estDateSched').closest('tr').show();}
       else{$('.estDateSched').closest('tr').hide();}
       }
     }).change();
@@ -438,13 +1138,13 @@ function estSetSubDivEdtBtn(){
 
 function estResetSubDivs(){
   var defs = $('body').data('defs');
-  var cid = 0;
-  if(typeof defs.tbls.estate_properties.dta[0].prop_city !== 'undefined'){
-    cid = defs.tbls.estate_properties.dta[0].prop_city;
-    }
-  var ncid = Number($('select[name="prop_city"]').val());
+  var cid = Number($('select[name="prop_city"]').data('pval'));
+  var sVal = $('select[name="prop_city"]').find('option:selected');
+  if(typeof sVal !== 'undefined' && sVal.length > 0){var ncid = Number($(sVal).val());}
+  else{var ncid = Number($('select[name="prop_city"]').val());}
   if(ncid !== cid){
-    //console.log('prop_city -> estResetSubDivs: '+cid+' > '+ncid);
+    console.log('prop_city -> estResetSubDivs: '+cid+' > '+ncid);
+    $('select[name="prop_city"]').data('pval',ncid);
     defs.tbls.estate_properties.dta[0].prop_city = ncid;
     defs.tbls.estate_properties.dta[0].prop_subdiv = Number(0);
     $('select[name="prop_subdiv"]').val(Number(0)).change();
@@ -558,6 +1258,7 @@ function estGetSubDivs(mode=1){
   var selCityEle = $('select[name="prop_city"]');
   var selCityOptEle = $(selCityEle).find('option:selected');
   var cityIdx = Number(selCityOptEle.length > 0 ? $(selCityOptEle).val() : $(selCityEle).val());
+  $('select[name="prop_city"]').data('pval',cityIdx);
   
   var subdivSelEle = $('select[name="prop_subdiv"]');
   var subdivOptEle = $(subdivSelEle).find('option:selected');
@@ -583,7 +1284,7 @@ function estGetSubDivs(mode=1){
       processData:true,
       success: function(ret, textStatus, jqXHR){
         ret.subd_title = (subdIdx > 0 ? ret.subd_name : defs.txt.community);
-        $('#subdWebTarg').html('<a href="'+ret.subd_hoaweb+'" target="_BLANK">'+ret.subd_hoaweb+'</a>');
+        $('#subdWebTarg').html('<a href="'+ret.subd_url+'" target="_BLANK">'+ret.subd_url+'</a>');
         
         if(cityIdx > 0 && typeof selCityOptEle !== 'undefined'){ret.city_title = $(selCityOptEle).text();}
         else{ret.city_title = defs.txt.city;}
@@ -727,17 +1428,38 @@ function estGetSubDivs(mode=1){
 
 
 
+function estGetPHPPrice(price,locale,targ){
+  $(targ).addClass('estFlipIt');
+  $.ajax({
+    url: vreFeud+'?0||0',
+    type:'post',
+    data:{'fetch':96,'propid':0,'rt':'html','price':price,'locale':locale},
+    dataType:'json',
+    cache:false,
+    processData:true,
+    success: function(ret, textStatus, jqXHR){
+      //console.log(ret);
+      if(typeof ret !== 'undefined' && ret !== null){
+        $(targ).html(ret.price).removeClass('estFlipIt');
+        }
+      },
+    error: function(jqXHR, textStatus, errorThrown){
+      console.log('ERRORS: '+textStatus+' '+errorThrown);
+      estAlertLog(jqXHR.responseText);
+      }
+    });
+  }
+
+
 
 function estBuildSubdivSpaces(ret){
   var defs = $('body').data('defs');
   
-  //console.log(ret);
   
+  $('.estCommSpaceName').html(ret.subd_title);
   $('#estCommDesc').html(ret.subd_description);
   
   $('#estCityDesc').html(ret.city_description);
-  
-  $('.estCommSpaceName').html(ret.subd_title);
   $('.estCitySpaceName').html(ret.city_title);
   
   $('#estCommSpaceGrpDiv').empty().promise().done(function(){
@@ -1524,16 +2246,22 @@ function prepareUpload(e,upFile,pvwTarg,destTarg=0){
     $('#fileSlipBtn').prop('disabled',1);
     $(upFile).data('filex',fCount);
     
-    if(pvwTarg == null){
-      if(document.getElementById('estMediaMgrCont')){var uplTarg = $('#estMediaMgrCont')}
-      else{var uplTarg = $('#estGalleryBelt');}
-      }
       
     var fileMx = files.length - 1;
     var fileord = 1;
     if(destTarg == 0){
       fileord = $(uplTarg).children('.upldPvwBtn').length;
       }
+    
+    if(pvwTarg == null){
+      if(document.getElementById('estMediaMgrCont')){var uplTarg = $('#estMediaMgrCont')}
+      else{
+        //var uplTarg = $('#estGalleryBelt');
+        var uplTarg = $('#estGalleryUsed');
+        fileord = $(uplTarg).children('.upldPvwBtn').length;
+        }
+      }
+    
     var ulbtn = [];
     var upload = [];
     
@@ -1543,6 +2271,7 @@ function prepareUpload(e,upFile,pvwTarg,destTarg=0){
       ulbtn[k] = [];
       if(pvwTarg !== null){ulbtn[k][0] = pvwTarg;}
       else{ulbtn[k][0] = $(JQDIV,{'class':'upldPvwBtn'}).appendTo(uplTarg);}
+      
       
       ulbtn[k][1] = $(JQDIV).appendTo(ulbtn[k][0]);
       ulbtn[k][2] = $('<img />').appendTo(ulbtn[k][0]);
@@ -1565,13 +2294,20 @@ function prepareUpload(e,upFile,pvwTarg,destTarg=0){
           var fDta = estMediaFldClean(mediaDta);
           fDta.media_asp = 1;
           fDta.media_levord = (Number(fDta.media_levord) == 0 ? fileord : fDta.media_levord);
+          if($(uplTarg).attr('id') == 'estGalleryUsed'){
+            fDta.media_galord = (Number(fDta.media_galord) == 0 ? fileord : fDta.media_galord);
+            }
           break;
         default :
           var fDta = estMediaFldClean(mediaDta);
           fDta.media_asp = 1;
           fDta.media_levord = (Number(fDta.media_levord) == 0 ? fileord : fDta.media_levord);
+          if($(uplTarg).attr('id') == 'estGalleryUsed'){
+            fDta.media_galord = (Number(fDta.media_galord) == 0 ? fileord : fDta.media_galord);
+            }
           break;
         }
+      
       
       $.extend(fDta,{'natw':0,'nath':0,'targ':ulbtn[k],'desttarg':destTarg,'propid':propId});
       
@@ -1886,6 +2622,17 @@ function estPosPopover(w=0){
         lightordark = lightOrDark(bgColor);
         $('#estPopCont').find('div.estInptCont').addClass(lightordark);
         }
+      
+      $('#estPopCont i.admin-ui-help-tip').on({
+        mouseenter : function(e){
+          $('#estPopCont div.field-help').hide().promise().done(function(){
+            $(e.target).next('div.field-help').fadeIn(200);
+            });
+          },
+        mouseleave : function(e){
+          $('#estPropPriceHistTBL1 div.field-help').fadeOut(200);
+          }
+        });
       });
     });
   }
@@ -2171,8 +2918,8 @@ function estPopGo(mode,popIt,frmn=0){
             cache:false,
             processData:true,
             success: function(ret, textStatus, jqXHR){
-              console.log(mode,ret);
               ret = ret[0];
+              console.log(mode,ret);
               $('#estPopCover').remove();
               if(typeof ret.error !== 'undefined'){
                 estAlertLog(ret.error);
@@ -2195,12 +2942,21 @@ function estPopGo(mode,popIt,frmn=0){
                   }
                 
                 var fnct = pDta.form.fnct;
-                console.log(fnct);
                 
                 if(typeof fnct !== 'undefined'){
+                  console.log(fnct);
                   if(fnct !== null && typeof fnct.name !== 'undefined'){
                     var args = (typeof fnct.args !== 'undefined' ? fnct.args : '');
                     switch (fnct.name){
+                      case 'estChngCityDesc' :
+                        var kx = ret.kf.indexOf('city_idx');
+                        var ky = ret.kf.indexOf('city_name');
+                        var kz = ret.kf.indexOf('city_description');
+                        $('select[name="prop_city"]').find('option[value="'+ret.kv[kx]+'"]').html(ret.kv[ky]);
+                        $('.estCitySpaceName').html(ret.kv[ky]);
+                        $('#estCityDesc').html(ret.kv[kz]);
+                        //mapReset-est_prop_Map
+                        break;
                       case 'estBuildCategoryList' : 
                         estBuildCategoryList(args);
                         break;
@@ -2272,7 +3028,6 @@ function estPopGo(mode,popIt,frmn=0){
                           estAgentParOpts(Number(ret.kv[0]));
                           $('input[name="prop_agency"]').val(Number(ret.kv[0]));
                           estBuildAgencyList();
-                          
                           }
                         
                         if(ret.dbmde== 'new'){
@@ -2920,7 +3675,6 @@ function estProcPdta(pDta,fldmap,ret){
   
 
 function estMediaDeepReorder(){
-  console.log('estMediaDeepReorder()');
   var defs = $('body').data('defs');
   var propId = Number($('body').data('propid'));
   //NEEDS COMPLETE RECODING
@@ -3163,10 +3917,16 @@ function estPrepCropper(){
     
     var mediaThm = tdta.mediaThm;
     var mediaDta = defs.tbls.estate_media.dta.find(x => Number(x.media_idx) === Number(tdta.defdta.media_idx));
-    var mediaKey = defs.tbls.estate_media.dta.indexOf(mediaDta);
     
+    if(typeof mediaDta === 'undefined'){
+      defs.tbls.estate_media.dta.push(tdta.defdta);
+      mediaDta = defs.tbls.estate_media.dta.find(x => Number(x.media_idx) === Number(tdta.defdta.media_idx));
+      }
+
+    var mediaKey = defs.tbls.estate_media.dta.indexOf(mediaDta);
     if(typeof mediaDta === 'undefined' || mediaKey < 0){
       estAlertLog('Media data not found');
+      //cropImage
       return;
       }
     
@@ -3202,7 +3962,7 @@ function estPrepCropper(){
                 }
               }).appendTo(popIt.frm[slide].h3);
             
-            console.log(popIt.frm[slide]);
+            //console.log(popIt.frm[slide]);
             
             
             var cBtnBar = $(JQDIV,{'id':'cropBtnBar'}).prependTo(popIt.frm[slide].popCont);
@@ -3291,15 +4051,23 @@ function estPrepCropper(){
                 change : function(){
                   var curDta = $(this).data();
                   var newDta = $(this).find('option:selected').data();
+                  if(typeof newDta == 'undefined'){
+                    console.log('curDta',curDta);
+                    console.log('newDta',newDta);
+                    return;
+                    }
                   var mURL1 = estMediaPath(curDta,2);
                   var mURL2 = estMediaPath(newDta,2);
-                  console.log(curDta,newDta);
-                  alert('function not ready yet');
+                  if(curDta.media_levidx !== newDta.media_levidx){
+                    console.log('curDta',curDta);
+                    console.log('newDta',newDta);
+                    alert('function not ready yet');
+                    }
                   }
                 }).appendTo(tabtr[tabx].tr[tri][2]);
               
               var dDta = estRedoMedia(mediaDta,1,Number(0));
-              var opt = $(JQOPT).data(dDta).val(0).html(dDta.media_name).appendTo(estRmSel);
+              var optDef = $(JQOPT).data(dDta).val(0).html(dDta.media_name).appendTo(estRmSel);
               
               
               var spaceDta = $.grep(defs.tbls.estate_spaces.dta, function (element, index) {return element.space_lev == 1;});
@@ -3307,8 +4075,16 @@ function estPrepCropper(){
                 var dDta = estRedoMedia(mediaDta,2,rmdta.space_idx,rmdta.space_name);
                 var opt = $(JQOPT).data(dDta).val(rmdta.space_idx).html(dDta.media_name).appendTo(estRmSel);
                 }).promise().done(function(){
-                  $(estRmSel).find('option[value="'+Number(mediaDta.media_levidx)+'"]').prop('selected','selected').append('*');
-                  $(estRmSel).val(Number(mediaDta.media_levidx)).change();
+                  var selOpt = $(estRmSel).find('option[value="'+Number(mediaDta.media_levidx)+'"]');
+                  if(selOpt.length > 0){
+                    $(selOpt).prop('selected','selected').append('*');
+                    $(estRmSel).val(Number(mediaDta.media_levidx));
+                    }
+                  else{
+                    $(estRmSel).find('option').eq(0).prop('selected','selected').append('†');
+                    $(estRmSel).val(Number($(estRmSel).find('option').eq(0).val()));//.change();
+                    }
+                  
                   });
               
               tri++;
@@ -3390,7 +4166,7 @@ function estRedoMedia(mediaDta,lev,levidx,levname=''){
   
   
   var srcMedia = $.grep(defs.tbls.estate_media.dta, function (element, index) {return element.media_propidx == Number(mediaDta.media_propidx);});
-  console.log(srcMedia);
+  //console.log(srcMedia);
   
   //var othMedia = $.grep(srcMedia, function (element, index) {return Number(element.media_lev) == dDta.media_lev;});
   
@@ -3401,7 +4177,7 @@ function estRedoMedia(mediaDta,lev,levidx,levname=''){
       dDta.media_name = levname+' #'+dDta.media_levord;
       }
     }
-  console.log(dDta);
+  //console.log(dDta);
   return dDta;
   }
 
@@ -3731,6 +4507,7 @@ function estMediaEditBtns(mode,mediaThm){
         $(uplBtn).remove();
         
         var mediaDta = $(mediaThm).data();
+        
         $(mediaEditBox).data('mediadta',mediaDta);
         var mediaTitle = estMediaTitle(mediaDta,'edit media btns');
         
@@ -3845,7 +4622,10 @@ function estSetMediaMgrSorting(imgDiv=null){
 function estMediaPath(mediaDta,mode=0){
   var defs = $('body').data('defs');
   // media_lev = 0 Subdivision, 1 Property, 2 Property Spaces , 3 = city, 4 = subd space, 5 = agency, 6 = agent
-  
+  if(typeof mediaDta == 'undefined'){
+    estAlertLog('thumbnail media data is missing. mode:'+mode);
+    return;
+    }
   if(mediaDta.media_type !== 1){
     return '';
     }
@@ -4115,6 +4895,7 @@ function estBuildMap(actn){
       $(zoomFld).data('pval',zoom).val(zoom);
       
       estSetMap(mapId);
+      //.find('.nav-item')
       });
   }
 
@@ -6419,16 +7200,154 @@ function estSetDIMUbtns(mode,btn,nVal=-1){
   }
 
 
-function estateSetOpLp(){
-  $('#propOPpctBtn').data('oplp',0).html('↑ ↓');
-  if(Number($('input[name="prop_listprice"]').val()) > 0 && Number($('input[name="prop_origprice"]').val()) > 0){
-    var oplp = parseFloat((1 -(Number($('input[name="prop_listprice"]').val()) / Number($('input[name="prop_origprice"]').val()))) * 100).toFixed(1);
-    if(oplp[oplp.length - 1] == 0){oplp = Math.round(oplp);}
-    if(oplp > 0){$('#propOPpctBtn').data('oplp',(oplp * -1)).html('↓'+oplp+'%');}
-    else if(oplp < 0){$('#propOPpctBtn').data('oplp',(oplp * -1)).html('↑'+(oplp * -1)+'%');}
-    }
-  }
+
+
+
+
+
+function estPrepLocaleForm(){
+  $(JQBTN,{'class':'btn btn-default'}).html('<i class="fa fa-pencil-square-o"></i>').on({
+    click : function(e){
+      e.preventDefault();
+      }
+    }).appendTo($('select[name="locale[2]"]').parent());
   
+  $(JQBTN,{'class':'btn btn-default'}).html('<i class="fa fa-pencil-square-o"></i>').on({
+    click : function(e){
+      e.preventDefault();
+      }
+    }).appendTo($('select[name="locale[3]"]').parent());
+  
+
+  $('.estCurrencySelector').on({
+    change : function(){
+      var md = [];
+      $('.estCurrencySelector').each(function(i,ele){
+        md[i] = $(ele).find('option:selected').val();
+        }).promise().done(function(){
+          estGetPHPPrice('1234567.89',md.join(','),'#estCurrencySample');
+          estGetPctRound();
+          });
+      }
+    });
+  
+  $('select[name="locale[0]"]').on({
+    change : function(){
+      if(this.value == 3){
+        $('select[name="locale[0]').removeClass('estNoRBord');
+        $('select[name="locale[1]"]').hide();
+        $('#estCurrencyHlp1').hide();
+        $('#estCurrencyHlp2').show();
+        $('#estNumFormatCont').show();
+        }
+      else{
+        $('select[name="locale[0]').addClass('estNoRBord');
+        $('select[name="locale[1]"]').show();
+        $('#estCurrencyHlp1').show();
+        $('#estCurrencyHlp2').hide();
+        $('#estNumFormatCont').hide();
+        }
+      if($('select[name="locale[0]"]').closest('table').hasClass('estPopTbl')){
+        estPopHeight();
+        }
+      }
+    }).change();
+  }
+
+
+
+function estPropLocale(mode,nval=-1){
+  if(mode == 2){
+    var pLocVal = nval;
+    }
+  else{var pLocVal = $('input[name="prop_locale"]').val();}
+  
+  if(pLocVal.length < 2){
+    pLocVal = $('body').data('defs').prefs.locale.join(',');
+    $('input[name="prop_locale"]').val(pLocVal);
+    console.log('Loaded PREFS[locale]:'+pLocVal);
+    }
+  
+  var ret = [];
+  if(pLocVal.indexOf(',') > -1 ){
+    ret = pLocVal.split(',');
+    ret[0] = Number(ret[0]);
+    ret[1] = Number(ret[1]);
+    }
+  
+  if(ret.length !== 4){
+    ret = [3,1,'en_US','USD'];
+    alert('Please check the default currency settings in your Estate Plugin Preferences');
+    }
+  
+  return ret;
+  }
+
+
+                
+function estPropListPriceHist(){
+  var defs = $('body').data('defs');
+  $('#estPriceHistComing').empty().promise().done(function(){
+    if(typeof defs.tbls.estate_prophist !== 'undefined'){
+      $(defs.tbls.estate_prophist.dta).each(function(pi,pv){
+        if(Number(pv.prophist_date) > Number(defs.date.intv)){
+          jd = estJSDate(pv.prophist_date);
+          $('#estPriceHistComing').html(defs.txt.upcompricech+': '+jd.w+' '+jd.d+' '+jd.mn+' '+jd.y);
+          }
+        });
+      }
+    });
+  }
+
+function estateSetOpLp(){
+  //propOPpct
+  var mode = $('#propOPpctSrcBtn').data('mode');
+  var orig = $('input[name="origPrice"]');
+  //var sumPct = 0;
+  $('#estPropPriceHistTBL1').find('tr.estPricehistTR').each(function(i,trEle){
+    if(!$(trEle).hasClass('estPricehistLastTR')){
+      var dta = $(trEle).data();
+      var prcEle = $(trEle).find('input[type="text"].estPriceHist');
+      if(mode == 1){
+        orig = $(trEle).next('tr').find('input[type="text"].estPriceHist');
+        if($(trEle).is(':last-child')){
+          if($(trEle).parent().is('thead')){
+            orig = $('#estPropPriceHistTBL1 tbody').find('tr:first-child').find('input[type="text"].estPriceHist');
+            }
+          else if($(trEle).parent().is('tbody')){
+            orig = $('input[name="origPrice"]');
+            }
+          }
+        }
+      
+      if($(trEle).hasClass('estPricehistFirstTR')){
+        var targ = $('#propOPpctBtn');
+        $(targ).data('oplp',0).html('↑ ↓');
+        }
+      else{
+        var targ = $(trEle).find('div.estPdropPct');
+        $(targ).data('oplp',0).html('- -');
+        }
+      if(Number($(prcEle).val()) > 0 && Number($(orig).val()) > 0){
+        var oplp = parseFloat((1 -(Number($(prcEle).val()) / Number($(orig).val()))) * 100).toFixed(1);
+        //if(mode == 1){sumPct = parseFloat(Number(sumPct) + Number(oplp)).toFixed(1);}
+        if(oplp[oplp.length - 1] == 0){oplp = Math.round(oplp);}
+        if(oplp > 0){$(targ).data('oplp',(oplp * -1)).html('↓'+oplp+'%');}
+        else if(oplp < 0){$(targ).data('oplp',(oplp * -1)).html('↑'+(oplp * -1)+'%');}
+        }
+      }
+    }).promise().done(function(){
+      //if(mode == 0){sumPct = $('#propOPpctBtn').data('oplp');}
+      var txt = ['% →','%  ↕'];
+      var tit1 = $('#propOPpctSrcBtn').attr('title');
+      var tit2 = $('#propOPpctSrcBtn').data('tit2');
+      //sumPct = (Number(sumPct) !== 0 ? (Number(sumPct) < 0 ? '↓'+(Number(sumPct) * -1) : '↑'+sumPct) : '');
+      $('#propOPpctSrcBtn').html(txt[mode]).attr('title',tit2).data({'mode':mode,'tit2':tit1});
+      });
+  }
+
+
+
 function estateSetOrigPrice(mode){
   if(mode == 2){
     if(Number($('input[name="prop_listprice"]').data('pval')) < 1){
@@ -6443,56 +7362,666 @@ function estateSetOrigPrice(mode){
         }
       }
     }
-  estateSetOpLp();
   }
-
-
-
 
   
 function propOPpct(mode=0){
-  if(mode == -1){
-    $('#estClearkCover').remove();
-    $('#propOPpctDiv').remove();
+  $('#estOPpctBelt').scrollTop(0);
+  if(mode == -1 || $('#estOPpctCont').is(':visible')){
+    $('#estOPpctCont').hide();
     }
   else{
-    var targ = $('#propLPdiv');//.parent();
-    var xTarg = $('input[name="prop_listprice"]');
-    var xVal = Number($('input[name="prop_origprice"]').val());
-    var oplp = Number($('#propOPpctBtn').data('oplp'));
-    
-    $(JQDIV,{'id':'estClearkCover'}).on({click : function(){propOPpct(-1)}}).appendTo('body');
-    var propOPpctDiv = $(JQDIV,{'id':'propOPpctDiv'}).css({'top':Number(-176)+'px','left': Number(-72)+'px'}).appendTo(targ);
-    
-    $(xTarg).data('cVal',Number($(xTarg).val()));
-    var vals = [];
-    for(i = -85; i <= 85; i = i+5){vals.push(i)}
-    
-    $(vals).each(function(bi,bval){
-      var cVal = (bval == 0 ? xVal : xVal+ ( bval< 0 ? Math.ceil(xVal * (bval/100)) : Math.floor(xVal * (bval/100))));
-      $(JQBTN,{'id':'xPxtBtn'+bval,'class':'btn btn-default btn-sm'}).data('cVal',cVal).html(bval+'%').on({
-        mouseenter : function(){
-          $(xTarg).val($(this).data('cVal'));
-          },
-        mouseleave : function(){
-          $(xTarg).val($(xTarg).data('cVal'));
-          },
-        click : function(e){
-          e.preventDefault();
-          e.stopPropagation();
-          $(xTarg).data('cVal',Number($(this).data('cVal'))).val($(this).data('cVal'));
-          estateSetOpLp();
-          propOPpct(-1);
-          }
-        }).appendTo(propOPpctDiv);
-      }).promise().done(function(){
-        if(document.getElementById('xPxtBtn'+oplp)){
-          $(propOPpctDiv).scrollTop($('#xPxtBtn'+oplp).position().top + Math.floor($(targ).parent().height() / 2) - 200);
-          }
-        });
+    var cH = $('#estPropPriceHistTBL1').outerHeight();
+    $('#estOPpctCont').css({'height':cH}).show().promise().done(function(){
+      var curBtn = $('#estOPpctBelt').find('button.btn-primary');
+      if(curBtn.length > 0){
+        $('#estOPpctBelt').scrollTop(Math.floor($(curBtn).position().top));
+        }
+      });
     }
   }
 
+
+function estGetPctRound(){
+  var list = Number($('input[name="listPrice"]').val());
+  var orig = Number($('input[name="origPrice"]').val());
+  var rndto = $('#estOPpctHead').find('button.btn-primary').data('amnt');
+  var opts = estGetEditPriceLocale();
+  //var opts = {'mode':md[0],'symb':md[1],'loc':md[2],'code':md[3]};
+  
+  $.ajax({
+    url: vreFeud+'?91||0',
+    type:'post',
+    data:{'fetch':91,'propid':0,'rt':'html','orig':orig,'list':list,'roundto':rndto,'opts':opts},
+    dataType:'text',
+    cache:false,
+    processData:true,
+    success: function(ret, textStatus, jqXHR){
+      $('#estOPpctBelt').empty().promise().done(function(){
+        $('#estOPpctBelt').html(ret).promise().done(function(){
+          if($('#estOPpctCont').is(':visible')){
+            $('#estOPpctBelt').scrollTop(0);
+            var curBtn = $('#estOPpctBelt').find('button.btn-primary');
+            if(curBtn.length > 0){
+              $('#estOPpctBelt').scrollTop(Math.floor($(curBtn).position().top));
+              }
+            }
+          $('#estOPpctBelt > button').on({
+            click : function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              var dta = $(this).data();
+              $('#estOPpctBelt > button').removeClass('btn-primary').addClass('btn-default').promise().done(function(){
+                $(e.target).removeClass('btn-default').addClass('btn-primary');
+                $('input[name="listPrice"]').val(dta.amnt);
+                estateSetOpLp();
+                propOPpct(-1);
+                });
+              }
+            });
+          });
+        });
+      },
+    error: function(jqXHR, textStatus, errorThrown){
+      console.log('ERRORS: '+textStatus+' '+errorThrown);
+      estAlertLog(jqXHR.responseText);
+      }
+    });
+  }
+
+
+function estSetPctRound(ele){
+  $('#estOPpctHead').find('button.estRoundTo').addClass('btn-default').removeClass('btn-primary').promise().done(function(){
+    $(ele).removeClass('btn-default').addClass('btn-primary').promise().done(function(){
+      estGetPctRound();
+      });
+    });
+  }
+
+
+function estGetEditPriceLocale(){
+  var md = [];
+  md[0] = Number($('select[name="locale[0]"]').find('option:selected').val());
+  md[1] = Number($('select[name="locale[1]"]').find('option:selected').val());
+  md[2] = $('select[name="locale[2]"]').find('option:selected').val();
+  md[3] =  $('select[name="locale[3]"]').find('option:selected').val();
+  return md
+  }
+
+
+function estChkPriceHistDates(ele){
+  var defs = $('body').data('defs');
+  var trDta = $(ele).closest('tr').data();
+  $(trDta.flds.date).removeClass('estFrmErr');
+  
+  var curDateYMD = $(trDta.flds.date).val();
+  var cd = new Date(curDateYMD);
+  var curDateInt = parseInt((cd.getTime() / 1000).toFixed(0)) + (cd.getTimezoneOffset() * 60);
+  
+  var chkDateYMD = (typeof trDta.maxymd !== 'undefined' ? trDta.maxymd : trDta.ymd);
+  if(trDta.ptr !== null){
+    var ptrDta = $(trDta.ptr).data();
+    chkDateYMD = $(ptrDta.flds.date).val();
+    }
+  
+  var cxd = new Date(chkDateYMD);
+  var chkDateInt = parseInt((cxd.getTime() / 1000).toFixed(0)) + (cxd.getTimezoneOffset() * 60);
+  
+  if(curDateInt >= chkDateInt){
+    $(trDta.flds.date).addClass('estFrmErr');
+    alert(defs.txt.date1+' '+defs.txt.cantbeeqor+' '+defs.txt.greaterthan+' '+chkDateYMD);
+    $(ele).val(trDta.ymd).focus();
+    }
+  
+  if(trDta.ntr !== null){
+    var ntrDta = $(trDta.ntr).data();
+    if(ntrDta.flds.date.length > 0){chkDateYMD = $(ntrDta.flds.date).val();}
+    else{chkDateYMD = ntrDta.ymd;}
+    
+    var cxd = new Date(chkDateYMD);
+    var chkDateInt = parseInt((cxd.getTime() / 1000).toFixed(0)) + (cxd.getTimezoneOffset() * 60);
+    if(curDateInt <= chkDateInt){
+      $(trDta.flds.date).addClass('estFrmErr');
+      alert(defs.txt.date1+' '+defs.txt.cantbeeqor+' '+defs.txt.lessthan+' '+chkDateYMD);
+      $(ele).val(trDta.ymd).focus();
+      }
+    }
+  }
+
+
+function estEditPricing(mode,eleTarg=null){
+  var defs = $('body').data('defs');
+  var xt = defs.txt;
+  
+  if(mode == 2){
+    var dta = $(eleTarg).data();
+    console.log(dta);
+    
+    var propId = Number(dta.pid);
+    
+    var listd = Number(dta.listd);
+    var listPrice = Number(dta.list);
+    
+    var origd = Number(dta.origd);
+    var origPrice = Number(dta.origp);
+    
+    var statEle = $('#propLstStatEdit-'+propId);
+    var statN = Number(dta.statn);
+    var statP = Number(dta.statp);
+    var locale = estPropLocale(2,dta.locale);
+    
+    }
+  else{
+    var propId = Number($('body').data('propid'));
+    var listd = Number($('input[name="prop_dateupdated"]').val());
+    var listPrice = $('input[name="prop_listprice"]').val();
+    var origd = Number($('input[name="prop_datecreated"]').val());
+    var origPrice = $('input[name="prop_origprice"]').val();
+    var statN = Number($('select[name="prop_status"]').find('option:selected').val());
+    var statP = Number($('select[name="prop_status"]').data('pval'));
+    var locale = estPropLocale(1);
+    }
+  
+  
+  var popIt = estBuildPopover([{'tabs':['Pricing','Currency Format']}]); //,'fnct':{'name':'estSHUploadBtn','args':3} (fnct acts on tab click)
+  var popFrm = popIt.frm[0];
+  
+  var titSpan = $(JQSPAN,{'class':'FL','title':xt.cancelremove}).html('Edit Pricing').on({
+    click : function(){estRemovePopover()}
+    }).appendTo(popFrm.h3);
+  
+  
+  var saveBtn1 = $(JQBTN,{'id':'estPriceHist1','class':'btn btn-primary btn-sm FR'}).html(xt.save2).on({
+    click : function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      estEditPriceDone(mode,eleTarg); // mode 2 eleTarg used for inline edit in property list table
+      }
+    });
+  
+  $(saveBtn1).appendTo(popFrm.h3);
+  popFrm.savebtns.push(saveBtn1);
+  
+  var tabx = 0;
+  var tri = 0;
+  var tabtr = popFrm.tabs.tab;
+  
+  // TAB 0
+  
+  
+  $.ajax({
+    url: vreFeud+'?95||0',
+    type:'post',
+    data:{'fetch':95,'propid':propId,'rt':'html','orig':origPrice,'statn':statN,'list':listPrice,'origd':origd,'listd':listd,'locale':locale},
+    dataType:'text',
+    cache:false,
+    processData:true,
+    success: function(ret, textStatus, jqXHR){
+      if(typeof ret !== 'undefined' && ret !== null){
+        tabtr[tabx].tr[tri] = [];
+        tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
+        tabtr[tabx].tr[tri][1] = $(JQTD,{'colspan':2}).html(ret).appendTo(tabtr[tabx].tr[tri][0]).promise().done(function(){
+          estPosPopover();
+          
+          var td2W = $('#propOPpctBtn').outerWidth();
+          $('input[name="listPrice"]').css({'width':'calc(100% - '+td2W+'px)'});
+          $('input[name="origPrice"]').css({'width':'calc(100% - '+td2W+'px)'});
+          
+          $('div.estPdropPct').css({'width':td2W+'px'});
+          
+          $('#estOPpctHead').find('button.estRoundTo').on({
+            click :function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              estSetPctRound(this);
+              }
+            });
+          
+          
+          var pTrows = $('#estPropPriceHistTBL1').find('tr.estPricehistTR');
+          //estPricehistFirstTR
+          $(pTrows).each(function(tri,tr){
+            var trDta = $(tr).data();
+            $.each(trDta,function(k,v){$(tr).removeAttr('data-'+k);});
+            if($(tr).parent().is('thead') && tri == 0){var ptr = null;}
+            else{var ptr = $(pTrows).eq(tri-1);}
+            
+            if((tri+1) < pTrows.length){var ntr = $(pTrows).eq(tri+1);}
+            else{var ntr = null;}
+            
+            $.extend(trDta,{'flds':{'amnt':$(tr).find('input[type="text"].estPriceHist'),'datetxt':$(tr).find('a.estpropHistDtxt'),'date':$(tr).find('input[type="date"]'),'del':$(tr).find('button.DelPriceHistBtn'),'stat':$(tr).find('select.estHistStat')},'ntr':ntr,'ptr':ptr});
+            
+            if(trDta.flds.date.length > 0){
+              $(trDta.flds.date).on({
+                blur : function(e){estChkPriceHistDates(this);}
+                });
+              }
+            });
+          
+          $('a.estpropHistDtxt').on({
+            click : function(e){
+              $(this).hide();
+              $(this).closest('tr').find('input[type="date"]').show();
+              }
+            });
+          
+          $('#propOPpctBtn').on({
+            click : function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              propOPpct();
+              }
+            });
+          
+          $('#propOPpctSrcBtn').data('mode',0).on({
+            click : function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              $(this).data('mode',($(this).data('mode') == 1 ? 0 : 1));
+              estateSetOpLp();
+              }
+            });
+          
+          
+          $('#propOPpctCls').on({
+            click : function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              propOPpct(-1);
+              }
+            });
+              
+          $('button.DelPriceHistBtn').on({
+            click : function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              estEditPriceDoDel(mode,this,eleTarg);
+              }
+            });
+          
+          $('#estPropPriceHistTBL1').find('input[type="text"].estPriceHist').on({
+            change : function(){estateSetOpLp();}
+            });
+          
+          estEditPriceChkCurStat(mode,eleTarg);
+          estateSetOpLp();
+          
+          
+          tabx++;
+          tri = 0;
+          tabtr[tabx].tr[tri] = [];
+          tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
+          tabtr[tabx].tr[tri][1] = $(JQTD,{'colspan':2}).appendTo(tabtr[tabx].tr[tri][0]);
+          $('#estCurrencyCont').appendTo(tabtr[tabx].tr[tri][1]).promise().done(function(){
+            estPrepLocaleForm();
+            });
+          });
+        }
+      },
+    error: function(jqXHR, textStatus, errorThrown){
+      console.log('ERRORS: '+textStatus+' '+errorThrown);
+      estAlertLog(jqXHR.responseText);
+      }
+    });
+  }
+
+
+function estEditPriceDone(mode,eleTarg=null){
+  var defs = $('body').data('defs');
+  var md = estGetEditPriceLocale();
+  var locale = md.join(',');
+  
+  if(mode == 2){ // List inline edit
+    if(eleTarg == null){
+      alert('Inline Edit Target Element missing');
+      return;
+      }
+    
+    //var targ = $(eleTarg).parent();
+    var dta = $(eleTarg).data();
+    console.log(dta);
+    
+    var propId = Number(dta.pid);
+    var priceEle = $('#propLstPriceEdit-'+propId);
+    var statN = Number(dta.statn);
+    var statP = Number(dta.statp);
+    var origd = Number(dta.origd);
+    var orig = Number(dta.origp);
+    var list = Number(dta.list);
+    var curlocale = dta.locale;
+    }
+  else{ //Property Edit
+    
+    var propId = Number($('body').data('propid'));
+    var priceEle = $('#curDispBtn');
+    var statN = Number($('select[name="prop_status"]').find('option:selected').val());
+    var statP = Number($('select[name="prop_status"]').data('pval'));
+    var origd = Number($('input[name="prop_datecreated"]').val());
+    var orig = Number($('input[name="origPrice"]').val());
+    var list = Number($('input[name="listPrice"]').val());
+    var curlocale = $('input[name="prop_locale"]').val();
+    }
+  
+  var dToday = $('#estPropPriceHistTBL1').data('dateint');
+  
+  var tDta = {'fetch':94,'rt':'js','propid':propId,'statp':statP,'statn':statN,'locale':locale,'md':md,'hdta':[]}; //
+  
+  $('#estPropPriceHistTBL1').find('tr.estPricehistTR').each(function(tri,tr){
+    var trDta = $(tr).data();
+    var id = Number(trDta.id);
+    var pid = Number(trDta.pid);
+    var targ = trDta.targ;
+    var dd = new Date(trDta.ymd);
+    var curDateInt = parseInt((dd.getTime() / 1000).toFixed(0)) + (dd.getTimezoneOffset() * 60);
+    if(trDta.flds.date.length > 0){dd = new Date($(trDta.flds.date).val());}
+    var newDateInt = parseInt((dd.getTime() / 1000).toFixed(0)) + (dd.getTimezoneOffset() * 60);
+    var curAmnt = Number(trDta.amnt);
+    var newAmnt = Number($(trDta.flds.amnt).val());
+    var curStat = Number(trDta.stat);
+    var newStat = Number($(trDta.flds.stat).find('option:selected').val());
+    
+    if(newDateInt !== curDateInt || newAmnt !== curAmnt || newStat !== curStat){
+      tDta.hdta.push({'targ':targ,'prophist_idx':id, 'prophist_propidx':pid,'prophist_date':newDateInt,'prophist_price':newAmnt,'prophist_status':newStat});
+      
+      if(newDateInt <= dToday && targ == 'prop_listprice'){
+        if(typeof tDta.prop_listprice == 'undefined'){
+          $.extend(tDta,{'prop_listprice':newAmnt});
+          if(mode == 1){$('input[name="prop_listprice"]').val(newAmnt);} // mode 1= prop edit, 2 = inline List edit
+          }
+          
+        if(typeof tDta.prop_status == 'undefined'){
+          $.extend(tDta,{'prop_status':newStat});
+          if(mode == 1){$('select[name="prop_status"]').val(newStat).change();}
+          }
+        }
+      
+      if(targ == 'prop_origprice' && typeof tDta.prop_origprice == 'undefined'){
+        $.extend(tDta,{'prop_origprice':newAmnt});
+        if(mode == 1){$('input[name="prop_origprice"]').val(newAmnt);}
+        }
+      }
+      
+    }).promise().done(function(){
+      console.log(tDta);
+      
+      $.ajax({
+        url: vreFeud+'?94||0',
+        type:'post',
+        data:tDta,
+        dataType:'json',
+        cache:false,
+        processData:true,
+        success: function(ret, textStatus, jqXHR){
+          console.log('UPFORM',ret);
+          if(typeof ret !== 'undefined' && ret !== null){
+            $(priceEle).html(ret.listtxt);
+            if(typeof defs.tbls.estate_prophist !== 'undefined'){
+              defs.tbls.estate_prophist.dta = ret.hist;
+              $('body').data('defs',defs).promise().done(function(){
+                estPropListPriceHist();
+                });
+              }
+            
+            if(mode == 2){
+              dta.statn = Number(ret.statint);
+              dta.list = Number(ret.listint);
+              dta.locale = ret.locale;
+              console.log(dta);
+              $(eleTarg).data(dta);
+              
+              
+              if(typeof ret.origtxt !== 'undefined'){
+                $('#propLstOrigPrice-'+propId).html(ret.origtxt);
+                }
+              
+              if(typeof ret.statxt !== 'undefined'){
+                $('#propLstStatEdit-'+propId).html(ret.statxt);
+                }
+              }
+            else{
+              $('#propLPdiv').data(ret);
+              $('input[name="prop_locale"]').val(locale);
+              var md = estPropLocale(1);
+              $('input[name="prop_currency"]').val(md[1]);
+              $('select[name="prop_listype"]').change();
+              if(typeof ret.updatedtxt !== 'undefined'){$('#propUpdateTxtSpan').html(ret.updatedtxt);}
+              if(typeof ret.prop_dateupdated !== 'undefined'){$('input[name="prop_dateupdated"]').val(ret.prop_dateupdated);}
+              }
+            estRemovePopover();
+            
+            }
+          },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log('ERRORS: '+textStatus+' '+errorThrown);
+          estAlertLog(jqXHR.responseText);
+          }
+        });
+      });
+  }
+
+
+
+function estEditPriceDoDel(mode,ele,eleTarg=null){
+  var defs = $('body').data('defs');
+  
+  var md = estGetEditPriceLocale();
+  var locale = md.join(',');
+  
+  var tr = $(ele).closest('tr');
+  var trDta = $(tr).data();
+  var hid = Number($(tr).data('id'));
+  if($(tr).data('fld') == 'prop_origprice' || hid == 0){
+    estAlertLog(defs.txt.notallowed);
+    return;
+    }
+  
+  console.log(mode,trDta);
+    
+  var sDta = {'fetch':93,'rt':'js','propid':trDta.pid,'hid':hid,'prop_locale':locale};
+  
+  if(jsconfirm($(ele).attr('title')+' ID#'+hid+'?')){
+    
+    if(trDta.targ == 'prop_listprice'){
+      
+      if(trDta.ntr !== null){
+        var ntrDta = $(trDta.ntr).data();
+        trDta.amnt = ntrDta.amnt;
+        trDta.date = ntrDta.date;//$('#estPropPriceHistTBL1').data('dateint');
+        trDta.id = 0;
+        trDta.stat = ntrDta.stat;
+        trDta.ymd = ntrDta.ymd;//$('#estPropPriceHistTBL1').data('dateymd');
+        $(tr).data(trDta);
+        
+        $.extend(sDta,{'prop_dateupdated':trDta.date,'prop_listprice':trDta.amnt,'prop_status':trDta.stat}); //,'prop_locale':locale
+        
+        if(mode == 2){
+          if(eleTarg == null){
+            alert('Inline Edit Target Element missing');
+            return;
+            }
+          var ilDta = $(eleTarg).data();
+          console.log(ilDta);
+          }
+        }
+      }
+    
+    console.log(sDta);
+    
+    
+    $.ajax({
+      url: vreFeud+'?93||0',
+      type:'post',
+      data:sDta,
+      dataType:'json',
+      cache:false,
+      processData:true,
+      success: function(ret, textStatus, jqXHR){
+        console.log('delete res',ret);
+        if(ret.db == 1){
+          if(typeof defs.tbls.estate_prophist !== 'undefined'){
+            defs.tbls.estate_prophist.dta = ret.hist;
+            $('body').data('defs',defs).promise().done(function(){
+              estPropListPriceHist();
+              });
+            }
+          
+            
+          
+          if(trDta.targ == 'prop_listprice'){
+            $(trDta.flds.datetxt).html($('#estPropPriceHistTBL1').data('datetxt')+' ('+defs.txt.new1+')').show();
+            $(trDta.flds.date).val(trDta.ymd).hide();
+            $(trDta.flds.amnt).val(trDta.amnt);
+            $(trDta.flds.stat).val(trDta.stat).change();
+            $(trDta.flds.del).prop('disabled',true);
+            estateSetOpLp();
+            
+            if(mode == 2){
+              ilDta.listd = ret.updatedint;
+              ilDta.list = ret.listint;
+              ilDta.statn = ret.statint;
+              ilDta.statp = ret.statint;
+              $(eleTarg).data(ilDta);
+              if(typeof ret.listtxt !== 'undefined'){$('#propLstPriceEdit-'+trDta.pid).html(ret.listtxt);}
+              if(typeof ret.statxt !== 'undefined'){$('#propLstStatEdit-'+trDta.pid).html(ret.statxt);}
+              }
+            else{
+              $('input[name="prop_listprice"]').val(ret.listint);
+              $('input[name="prop_dateupdated"]').val(ret.updatedint);
+              $('select[name="prop_status"]').val(ret.statint).change();
+              
+              if(typeof ret.updatedtxt !== 'undefined'){$('#propUpdateTxtSpan').html(ret.updatedtxt);}
+              if(typeof ret.updatedint !== 'undefined'){$('input[name="prop_dateupdated"]').val(ret.updatedint);}
+              if(typeof ret.listtxt !== 'undefined'){$('#curDispBtn').html(ret.listtxt);}
+              if(typeof ret.statxt !== 'undefined'){}
+              $('select[name="prop_listype"]').change();
+              }
+            }
+          else{
+            $(tr).fadeOut(250).remove().promise().done(function(){estPopHeight();});
+            }
+          }
+        },
+      error: function(jqXHR, textStatus, errorThrown){
+        console.log('ERRORS: '+textStatus+' '+errorThrown);
+        estAlertLog(jqXHR.responseText);
+        }
+      });
+    }
+  }
+
+
+function estEditPriceChkCurStat(mode,eleTarg){
+  var defs = $('body').data('defs');
+  var curStatFld = $('input[name="listPrice"]').closest('tr').find('select.estHistStat');
+  var curStatVal = Number($(curStatFld).find('option:selected').val());
+  
+  if(mode == 2){
+    if(eleTarg == null){
+      alert('Inline Edit Target Element missing');
+      return;
+      }
+    var propId = Number($(eleTarg).data('pid'));
+    var propStatVal = Number($(eleTarg).data('statn'));
+    }
+  else{
+    var propId = Number($('body').data('propid'));
+    var propStatVal = Number($('select[name="prop_status"]').find('option:selected').val());
+    }
+  
+  if(curStatVal !== propStatVal){
+    var hid = Number($('input[name="listPrice"]').closest('tr').data('id'));
+    $(curStatFld).val(propStatVal).change();
+    console.log(hid,curStatFld,propStatVal);
+    if(hid > 0){
+      $.ajax({
+        url: vreFeud+'?92||0',
+        type:'post',
+        data:{'fetch':92,'rt':'js','pr0pid':propId,'hid':hid,'fld':'prophist_status','nval':propStatVal},
+        dataType:'json',
+        cache:false,
+        processData:true,
+        success: function(ret, textStatus, jqXHR){
+          console.log('Updated Current Price Status: '+ret.db);
+          },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log('ERRORS: '+textStatus+' '+errorThrown);
+          estAlertLog(jqXHR.responseText);
+          }
+        });
+      }
+    }
+  }
+
+
+function estBuildPriceBtns(){
+  var defs = $('body').data('defs');
+  var propId = Number($('body').data('propid'));
+  
+  $('select[name="prop_leasedur"]').data('pval',$('select[name="prop_leasedur"]').find('option:selected').val());
+  $('input[name="prop_origprice"]').data('pval',Number($('input[name="prop_origprice"]').val()));
+  
+  var origd = Number($('input[name="prop_datecreated"]').val());
+  var orig = Number($('input[name="prop_origprice"]').val());
+  
+  var listd = Number($('input[name="prop_dateupdated"]').val()); 
+  var list = Number($('input[name="prop_listprice"]').val());
+  
+  var statN = Number($('select[name="prop_status"]').find('option:selected').val());
+  var statP = Number($('select[name="prop_status"]').data('pval'));
+  
+  //if(propId == 0){return;}
+  
+  var tr1 = $('input[name="prop_origprice"]').closest('tr');
+  var tr2 = $('input[name="prop_listprice"]').closest('tr');
+  
+  var md = estPropLocale(1);
+  var locale = md.join(',');
+  
+  $.ajax({
+    url: vreFeud+'?96||0',
+    type:'post',
+    data:{'fetch':96,'propid':propId,'rt':'js','hist':1,'origd':origd,'orig':orig,'statn':statN,'listd':listd,'list':list,'locale':locale},
+    dataType:'json',
+    cache:false,
+    processData:true,
+    success: function(ret, textStatus, jqXHR){
+      //console.log('GET',ret);
+      $('#propLPdiv').data(ret);
+      
+      if(typeof ret !== 'undefined' && ret !== null){
+        if(ret.newp == 1){
+          //new property listing
+          }
+        else{
+          $('input[name="prop_origprice"]').closest('tr').hide();
+          $('input[name="prop_listprice"]').hide();
+          if(document.getElementById('propLPdiv')){
+            $(JQBTN,{'id':'curDispBtn','class':'btn btn-default'}).html(ret.listtxt).on({
+              click : function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                estEditPricing(1);
+                }
+              }).appendTo('#propLPdiv').promise().done(function(){
+                $('#estPropLeaseFrqBtn').appendTo('#propLPdiv');
+                $(JQDIV,{'id':'estPriceHistComing'}).appendTo('#propLPdiv').promise().done(function(){
+                  estPropListPriceHist();
+                  });
+                
+                var md = estPropLocale(1);
+                $('input[name="prop_currency"]').val(md[1]);
+                $('select[name="prop_listype"]').change();
+                });
+            }
+          }
+        }
+      },
+    error: function(jqXHR, textStatus, errorThrown){
+      console.log('ERRORS: '+textStatus+' '+errorThrown);
+      estAlertLog(jqXHR.responseText);
+      }
+    });
+  }
 
 
 function estateBuildDIMUbtns(){
@@ -6503,14 +8032,18 @@ function estateBuildDIMUbtns(){
   var lightordark = ''; 
   if(typeof bgColor !== 'undefined'){lightordark = ' '+lightOrDark(bgColor);}
   
+  
+  $('select[name="prop_status"]').data('pval',$('select[name="prop_status"]').find('option:selected').val());
+  
   $('select[name="prop_listype"]').on({
     change : function(){
+      var prevEle = $('#estPropLeaseFrqBtn').prev();
       if(this.value > 0){
         $('select[name="prop_leasedur"]').val(0).change();
         $('select[name="prop_leasedur"]').closest('tr').fadeOut();
         $('input[name="prop_landfee"]').closest('tr').fadeIn();
         $('input[name="prop_landfee"]').val($('input[name="prop_landfee"]').data('pval')).change();
-        $('input[name="prop_origprice"]').removeClass('estNoRightBord');
+        $(prevEle).removeClass('estNoRightBord');
         $('#estPropLeaseFrqBtn').fadeOut();
         }
       else{
@@ -6518,29 +8051,19 @@ function estateBuildDIMUbtns(){
         $('select[name="prop_leasedur"]').val($('select[name="prop_leasedur"]').data('pval')).change();
         $('input[name="prop_landfee"]').val(0).change();
         $('input[name="prop_landfee"]').closest('tr').fadeOut();
-        $('input[name="prop_origprice"]').addClass('estNoRightBord');
+        $(prevEle).addClass('estNoRightBord');
         $('#estPropLeaseFrqBtn').fadeIn();
         }
       }
     });
   
   
-  
-  $('input[name="prop_origprice"]').data('pval',Number($('input[name="prop_origprice"]').val())).on({
-    change : function(){estateSetOrigPrice(1)},
-    keyup : function(){estateSetOrigPrice(0)}
-    });
-  
-  
-  $('input[name="prop_listprice"]').data('pval',Number($('input[name="prop_listprice"]').val())).on({
-    change : function(){estateSetOrigPrice(2)},
-    keyup : function(){estateSetOpLp()}
-    });
-  
-  
-  $('select[name="prop_leasedur"]').data('pval',$('select[name="prop_leasedur"]').val());
+  //prop_country
+  estBuildPriceBtns();
   
   var LeaseFrqDiv = $(JQDIV,{'class':'WSNWRP'}).appendTo($('input[name="prop_origprice"]').parent());
+  
+  /*
   var currencyBtn = $(JQBTN,{'id':'estPropCurrBtn','class':'btn btn-default estNoRightBord'}).on({
     click : function(e){
       e.preventDefault();
@@ -6548,8 +8071,9 @@ function estateBuildDIMUbtns(){
       estSetDIMUbtns(3,this);
       }
     }).appendTo(LeaseFrqDiv);
-  $('input[name="prop_origprice"]').appendTo(LeaseFrqDiv);
+  */
   
+  $('input[name="prop_origprice"]').appendTo(LeaseFrqDiv);
   
   var LeaseFrqBtn = $(JQBTN,{'id':'estPropLeaseFrqBtn','class':'btn btn-default estNoLeftBord'}).on({
     click : function(e){
@@ -6560,22 +8084,28 @@ function estateBuildDIMUbtns(){
     }).appendTo(LeaseFrqDiv);
   
   
-  var propLPdiv = $(JQDIV,{'id':'propLPdiv'}).appendTo($('input[name="prop_listprice"]').parent());
-  $(JQBTN,{'id':'propOPpctBtn','class':'btn btn-default estNoRightBord'}).on({
-    click : function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      propOPpct();
-      }
-    }).appendTo(propLPdiv);
+  $('input[name="prop_origprice"]').on({
+    change : function(){estateSetOrigPrice(1)},
+    keyup : function(){estateSetOrigPrice(0)}
+    });
   
+  
+  $('input[name="prop_listprice"]').data('pval',Number($('input[name="prop_listprice"]').val())).on({
+    change : function(){},//estateSetOrigPrice(2)},
+    keyup : function(){}
+    });
+  
+  
+  
+  
+  
+  var propLPdiv = $(JQDIV,{'id':'propLPdiv'}).appendTo($('input[name="prop_listprice"]').parent());
   $('input[name="prop_listprice"]').appendTo(propLPdiv);
   
   if(Number($('input[name="prop_idx"]').val()) > 0){var csymId = Number($('input[name="prop_currency"]').val());}
   else{var csymId = Number($('input[name="estDefCur"]').val());}
   
-  estSetDIMUbtns(3,currencyBtn,csymId);
-  estateSetOpLp();
+  //estSetDIMUbtns(3,currencyBtn,csymId);
   
   estSetDIMUbtns(4,LeaseFrqBtn,Number($('input[name="prop_leasefreq"]').val()));
   
@@ -6973,7 +8503,12 @@ function selectEdit(mainTbl,targ,frmn=0){
     }
   
   
-    
+  
+  
+  if(targName == 'prop_city'){
+    $.extend(tdta,{'fnct':{'name':'estChngCityDesc'}});
+    console.log(tdta,tdta.fnct);
+    }
   
   var tbdy = popFrm.tabs.tab[0].tbody;
   if(typeof tdta !== 'undefined' && typeof tdta.fnct !== 'undefined'){fnct = tdta.fnct;}
@@ -7138,6 +8673,10 @@ function estBedBath(mode=0){
   
 function estBuildGallery(){
   //console.log('estBuildGallery');
+  if(!$('#estGalleryUsed').hasClass('estEleCSS')){
+    var mw3 = $('#admin-ui-edit').width() - 24;
+    $('#estGalleryUsed').css({'min-width':mw3+'px'}).addClass('estEleCSS');
+    }
   
   var defs = $('body').data('defs');
   var propId = Number($('body').data('propid'));
@@ -7166,6 +8705,7 @@ function estBuildGallery(){
             var mediaTitle = estMediaTitle(mediaDta,'build gallery');
             var fDta = estMediaFldClean(mediaDta);
             $.extend(fDta,{'natw':0,'nath':0,'targ':ulbtn[k]});
+            //if(Number(mediaDta.media_galord) == 0){console.log(fDta);}
             
             estPrepMediaEditCapt(mediaDta,mediaTitle,ulbtn[k][0]);
             $(ulbtn[k][0]).data(fDta).on({
@@ -7192,3 +8732,18 @@ function estBuildGallery(){
     });
   }
 
+function estLocaleEdit(mode,name){
+  var targ = $('select[name="'+name+'"]');
+  var optSel = $(targ).find('option:selected');
+  var curVal = $(optSel).val();
+  var curTxt = $(optSel).text();
+  console.log(mode,curVal,curTxt);
+  var defs = $('body').data('defs');
+  
+  if(mode == 2){
+    
+    }
+  else{
+    
+    }
+  }

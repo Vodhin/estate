@@ -5,156 +5,6 @@
 (function ($) {
   // All your code here.
   
-  
-  
-  
-  function estEditCalEvent(popIt,tdta){
-    var defs = $('body').data('defs');
-    
-    popIt.frm[1] = estBuildSlide(1,{'tabs':['main']});
-    $(popIt.frm[1].slide).appendTo(popIt.belt);
-    $(popIt.frm[1].slide).css({'left':'100%'}).hide();
-    
-    var srcTbl = defs.tbls[tdta.tbl];
-    var eSrcFrm = srcTbl.form[tdta.fld];
-    
-    
-    
-    if(eSrcFrm.src == null){
-      $.extend(eSrcFrm,{'src':{'tbl':tdta.tbl,'idx':srcTbl.flds[0]}});
-      console.log(eSrcFrm);
-      }
-    
-    var destTbl = defs.tbls.estate_events;
-    
-    $(popIt.frm[1].form).data('levdta',tdta.defdta.evt).data('destTbl',{'dta':destTbl.dta,'flds':destTbl.flds,'idx':'event_idx','table':'estate_events'});
-    $(popIt.frm[1].form).data('maintbl',null).data('form',{'elem':null,'attr':null,'match':{},'fnct':{'name':'estCalEvtChange','args':tdta.jdate}});
-    
-    $('#estPopCont').data('popit',popIt);
-    console.log(tdta);
-    
-    $(popIt.frm[1].h3).empty().promise().done(function(){
-      
-      var H3txt = $(popIt.frm[0]).data('evtdaytxt')+': '+(Number(tdta.defdta.evt.event_idx) > 0 ? tdta.defdta.evt.event_name : defs.txt.new1+' '+defs.txt.event);
-      
-      $(JQSPAN,{'class':'FL','title':xt.cancelremove}).html(H3txt).on({
-        click : function(){estRemovePopoverAlt();}
-        }).appendTo(popIt.frm[1].h3);
-      var saveBtn = $(JQBTN,{'class':'btn btn-primary btn-sm FR estAltSave'}).html(xt.save).on({
-        click : function(){
-          console.log(popIt.frm[1].form);
-          estPopGo(3,popIt,1);
-          //
-          }
-        }).appendTo(popIt.frm[1].h3);
-      
-      popIt.frm[1].savebtns.push(saveBtn);
-      
-      
-      //var evtDta = defs.tbls.estate_events.dta.find(x => Number(x.event_idx) === Number(tdta.defdta.evt.event_idx));
-      //var evtKey = defs.tbls.estate_events.dta.indexOf(evtDta);
-      //console.log(evtKey,evtDta);
-      
-      cVal = Number(tdta.defdta.evt.event_idx);
-      
-      var idx = eSrcFrm.src.idx;
-      var sectDta = estGetSectDta(idx,cVal,destTbl,tdta.defdta.evt);
-      //console.log(sectDta);
-      
-      
-      var reqMatch = null;
-      var frmTRs = estFormEles(destTbl.form,sectDta,reqMatch);
-      var tripIt = [];
-      $(frmTRs).each(function(ei,trEle){
-        estFormTr(trEle,popIt.frm[1].tabs.tab[0].tDiv,popIt.frm[1].tabs.tab[0].tbody);
-        //if(trEle.trip !== null){tripIt.push(trEle.trip)}
-        }).promise().done(function(){
-          //$(tripIt).each(function(tpi,trpEle){$(trpEle).change();});
-          
-          $('#event_start-date').hide();//.prop('disabled',true);
-          $('#event_end-date').hide();//.prop('disabled',true);
-          $('#event_start-time').data('fnct',{'name':'estEvtCalChkTime','args':[tdta.jdate,tdta.targ]}).prop('step',900);
-          $('#event_end-time').data('fnct',{'name':'estEvtCalChkTime','args':[tdta.jdate,tdta.targ]}).prop('step',900);
-          
-          
-          var prevEvt = $(tdta.targ).prevAll('div.evtInUse');
-          if(prevEvt.length > 0){
-            var pEnd = estJSDate($(prevEvt[0]).data('slot').evt.event_end);
-            $('#event_start-time').prop('min',pEnd.hh+':'+pEnd.i);
-            $('#event_end-time').prop('min',pEnd.hh+':'+pEnd.i);
-            }
-          
-          var nextEvt = $(tdta.targ).nextAll('div.evtInUse');
-          if(nextEvt.length > 0){
-            var nSt = estJSDate($(nextEvt[0]).data('slot').evt.event_start);
-            $('#event_end-time').prop('max',nSt.hh+':'+nSt.i);
-            $('#event_start-time').prop('max',nSt.hh+':'+nSt.i);
-            }
-          
-          $(popIt.frm[1].slide).show().animate({'left':'0px'});
-          $(popIt.frm[0].slide).animate({'left':'-100%'}).promise().done(function(){
-            $(popIt.frm[0].slide).hide();
-            estPopHeight(1);
-            });
-          });
-      });
-    }
-  
-  
-  
-  
-  function estConcatDateTime(ele){
-    var targs = $(ele).data('targ');
-    var fnct = $(ele).data('fnct');
-    
-    var dVal = $(targs[1]).val()+ ' '+$(targs[2]).val();
-    console.log(dVal);
-    var d = new Date(dVal) / 1000;
-    $(targs[0]).val(d);
-    console.log(d);
-    
-    if(typeof fnct !== 'undefined'){
-      if(fnct !== null && typeof fnct.name !== 'undefined'){
-        var args = (typeof fnct.args !== 'undefined' ? fnct.args : '');
-        switch (fnct.name){
-          case 'estEvtCalChkTime' : 
-            estEvtCalChkTime(args);
-            break;
-          }
-        }
-      }
-    }
-  
-  function estEvtCalChkTime(args){
-    //console.log(args);
-    var eS = $('#event_start-time').val().split(':');
-    var eE = $('#event_end-time').val().split(':');
-    if(eE[0] == '' || eS[0] == ''){alert('Start & End times cannot be blank'); return;}
-    if(eE[0] < eS[0]){alert('End time must be later than Start time'); return;}
-    if(eE[0] == eS[0] && eE[1] <= eS[1]){
-      if(eE[1] == eS[1]){alert('Start & End times cannot be the same'); return;}
-      else{alert('End time must be later than Start time'); return;}
-      }
-    
-    var prevEvt = $(args[1]).prevAll('div.evtInUse');
-    if(prevEvt.length > 0){
-      var ct = estJSDate($(prevEvt[0]).data('slot').evt.event_end);
-      var chkStart = [ct.hh,ct.i];
-      //console.log(chkStart);
-      }
-    
-    var nextEvt = $(args[1]).nextAll('div.evtInUse');
-    if(nextEvt.length > 0){
-      var ct = estJSDate($(nextEvt[0]).data('slot').evt.event_start);
-      var chkEnd = [ct.hh,ct.i];
-      //console.log(chkEnd);
-      }
-    }
-  
-  
-  
-  
-  
   function estUpUserTR(tr,dta,agtDel=0){
     console.log('estUpUserTR');
     var defs = $('body').data('defs');
@@ -390,9 +240,6 @@
         return;
         }
       
-      //var opp = {'yourperm':defs.user.perm,'yourclass':defs.user.user_class,'xrm':defs.user.xrm,'xro':defs.user.xro};
-      //console.log(opp);
-    
       var dta = $(tr).data();
       $.each(dta,function(k,v){$(tr).removeAttr('data-'+k);});
       $(tr).removeData();
@@ -526,12 +373,6 @@
                 });
               }
             estSetUsrAdmnCB(tr);
-            
-            //if($(admcb).is(':disabled')){
-              //$(dta.eles.admcb).off('click');
-              //if($(dta.eles.selEle).is(':disabled')){$(dta.eles.selEle).off('change');}
-              //}
-            
             if(upGo > 0){
               estSetUserTR(tr);
               console.log(dta.user_name,dta.user_perms,dta.user_class);
@@ -540,9 +381,6 @@
           });
       }
     }
-  
-  
-  
   
   
   function estPrepUserListTable(){
@@ -663,8 +501,6 @@
     $.each(fDta,function(k,v){$(estAgentForm).removeAttr('data-'+k);});
     $(estAgentForm).data('levdta',levdta);
     
-    //console.log($(estAgentForm).data()); 
-    
     $(eImg).on({load : function(e){estAvatarWH(e.target);}});
     
     $.ajax({
@@ -701,518 +537,6 @@
     }
   
 
-  
-  
-  
-  function estEvtEditBtn(mode,ele){
-    var defs = $('body').data('defs');
-    $('.mediaEditBox').remove().promise().done(function(){
-      if(mode == 1){
-        var mediaEditBox = $(JQDIV,{'id':'mediaEditBox','class':'mediaEditBox'}).appendTo(ele);
-        var editBtn = $(JQBTN,{'class':'btn btn-default btn-sm'}).appendTo(mediaEditBox);
-        
-        if($(ele).hasClass('estCalEvts')){
-          $(editBtn).prop('title',defs.txt.edit+' '+defs.txt.event);
-          $(JQSPAN,{'class':'fa fa-pencil-square-o'}).appendTo(editBtn);
-          }
-        else{
-          $(editBtn).prop('title',defs.txt.add1+' '+defs.txt.event);
-          $(JQSPAN,{'class':'fa fa-plus'}).appendTo(editBtn);
-          }
-        
-        $(editBtn).on({
-          click : function(e){
-            e.preventDefault();
-            var jDate = $(this).closest('td').find('div.estCalDtaCont').data('ud');
-            estCalOpenDay(1,jDate);
-            //estCalDta-
-            }
-          });
-        }
-      else if(mode == 0){
-        var nEle = [].slice.call(document.querySelectorAll(':hover')).pop();
-        if($(nEle).hasClass('estCalDtaCont') || $(nEle).hasClass('estCalDayNo')){estEvtEditBtn(1,$(nEle).parent());}
-        }
-      });
-    }
-  
-  
-  
-  function estChangeEvtCalMonth(nMnth){
-    var defs = $('body').data('defs');
-    $.ajax({
-      url: vreFeud+'?35||0',
-      type:'post',
-      data:{'fetch':35,'rt':'html','propid':Number($('body').data('propid')),'mnth':nMnth},
-      dataType:'text',
-      cache:false,
-      processData:true,
-      success: function(ret, textStatus, jqXHR){
-        console.log(ret);
-        $('#estEvtCalCont').empty().promise().done(function(){
-          $('#estEvtCalCont').html(ret);
-          estBuildEvtTab();
-          });
-        },
-      error: function(jqXHR, textStatus, errorThrown){
-        console.log('ERRORS: '+textStatus+' '+errorThrown);
-        estAlertLog(jqXHR.responseText);
-        }
-      });
-    }
-  
-  function estBuildEvtTab(){
-    var defs = $('body').data('defs');
-    var propId = Number($('body').data('propid'));
-    
-    if(propId == 0){
-      $(JQDIV,{'class':'s-message alert alert-block warning alert-warning'}).html(defs.txt.needsave+' '+defs.txt.addevent).prependTo('#estEventsCont');
-      return;
-      }
-    
-    var agtId = Number(defs.tbls.estate_properties.dta[0].prop_agent);
-    var propEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_propidx == propId;});
-    var agtEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_agt == agtId && element.event_propidx !== propId;});
-    
-    Array.prototype.push.apply(propEvts,agtEvts);
-    var evtDiv = [];
-    
-    
-    $('#estEvtNavBar button').each(function(i,btn){
-      $(btn).on({
-        click : function(e){
-          e.preventDefault();
-          estChangeEvtCalMonth($(this).data('month'));
-          }
-        })
-      });
-    
-    
-    $('#estEvtCaltb td.estCalDay div.estCalDtaCont').empty().promise().done(function(){
-      $(propEvts).each(function(ei,evt){
-        var evX = estEvtBtn(evt);
-        evtDiv[ei] = $(JQDIV,{'id':'estEvent-'+evt.event_idx,'class':'estCalEvts slot-'+evt.event_type}).data('evt',evt);
-        $(JQDIV).html(evX[0].h+':'+evX[0].i+' '+evX[0].ap+'<br>'+evX[1].h+':'+evX[1].i+' '+evX[1].ap).appendTo(evtDiv[ei]);
-        $(JQDIV).html(defs.keys.eventkeys[evt.event_type]['l']+'<br>'+evt.event_name).appendTo(evtDiv[ei]);
-        $(evtDiv[ei]).appendTo('#estCalDta-'+evX[0].ud1);
-        if(evt.event_propidx !== propId){
-          $(evtDiv[ei]).addClass('evtConflict').attr('title','The Assigned Agent has an Event for a different property at this time').on({
-            click : function(e){
-              e.stopPropagation();
-              }
-            });
-          }
-        else{
-          $(evtDiv[ei]).attr('title',evX[3]+' min');
-          }
-        
-        $(evtDiv[ei]).on({
-          mouseenter : function(e){estEvtEditBtn(1,this)},
-          mouseleave :function(e){estEvtEditBtn(0,this)}
-          });
-        
-        }).promise().done(function(){
-        
-        $('#estEvtCaltb td.estLive div.estCalDayBox').on({
-          mouseenter : function(e){estEvtEditBtn(1,this)},
-          mouseleave :function(e){estEvtEditBtn(-1,this)}
-          });                
-          
-          $('#estEvtCaltb td.estCalDay div.estCalDtaCont').each(function(ci,oele){
-            var oeleId = $(oele).attr('id');
-            var itemGrpCont = document.getElementById(oeleId);
-            
-            Sortable.create(itemGrpCont,{
-              group: 'estSortTD', 
-              draggable: '.estCalEvts',
-              sort: true,
-              animation: 450,
-              pull: true,
-              put: true,
-              ghostClass: 'sortTR-ghost',
-              chosenClass: 'sortTR-chosen', 
-              dragClass: 'sortTR-drag',
-              onChoose: function(evt){},
-              onEnd: function(evt){estEventReorder(evt);}
-              });
-            });
-          });
-      });
-    }
-  
-  
-  function estEvtBtn(evt){
-    var d0 = estJSDate(evt.event_start);
-    var d1 = estJSDate(evt.event_end);
-    var d2 = timeDifference(evt.event_start,evt.event_end);
-    var d3 = (d2[2] + (d2[1] * 60) + (d2[0] * 60 * 24));
-    var d4 = (d2[0] > 0 ? d2[0]+' d ' : '')+(d2[1] > 0 ? d2[1]+' h ' : '')+(d2[2] > 0 ? d2[2]+' m' : '');
-    return [d0,d1,d2,d3,d4];
-    }
-  
-  
-  function estEventReorder(mActn){
-    var defs = $('body').data('defs');
-    var propId = Number($('body').data('propid'));
-    var agtId = Number(defs.tbls.estate_properties.dta[0].prop_agent);
-    
-    var ele = $('#'+mActn.item.id);
-    var evt = $(ele).data('evt');
-    var evtDta = defs.tbls.estate_events.dta.find(x => Number(x.event_idx) == Number(evt.event_idx));
-    var evtIx = (typeof evtDta !== 'undefined' ? defs.tbls.estate_events.dta.indexOf(evtDta) : -1); 
-    
-    
-    var srcDiv = $('#'+mActn.from.id);
-    var targDiv = $('#'+mActn.to.id);
-    
-    var newIx = mActn.newIndex;
-    var oldIx = mActn.oldIndex;
-    
-    var dbEles = [], tDta = [];
-    
-    if(targDiv !== srcDiv){
-      var ud = Number($(srcDiv).data('ud'));
-      var nud = Number($(targDiv).data('ud'));
-      var d3 = timeDifference(ud,nud);
-      evt.event_start = Number(evt.event_start) + d3[3];
-      evt.event_end = Number(evt.event_end) + d3[3];
-      }
-    
-    if($(targDiv).find('div.estCalEvts').length > 1){
-      var elePre = $(ele).prev('div.estCalEvts');
-      var eleNxt = $(ele).next('div.estCalEvts');
-      var evtDiff = timeDifference(Number(evt.event_start),Number(evt.event_end));
-      
-      var evtLen = Number(evtDiff[3]), preEnd = -1, nxtStart = -1;
-      if(typeof elePre[0] !== 'undefined'){preEnd = Number($(elePre).data('evt').event_end);}
-      if(typeof eleNxt[0] !== 'undefined'){nxtStart = Number($(eleNxt).data('evt').event_start);}
-      
-      if(preEnd > -1 && nxtStart > -1){
-        if(Number(evt.event_start) >= preEnd && Number(evt.event_end) <= nxtStart){
-          console.log('Middle Event OK');
-          }
-        else{
-          var space = timeDifference(preEnd,nxtStart);
-          space = Number(space[3]);
-          if(evtLen <= space){
-            console.log('Event Can Fit Between');
-            var tRoom = ((space - evtLen) / 900);
-            console.log(tRoom);
-            evt.event_start = preEnd;
-            evt.event_end = (preEnd + evtLen);
-            }
-          else{
-            alert('Event Will NOT Fit Between other events');
-            return;
-            }
-          }
-        }
-      else if(preEnd > -1 && preEnd > Number(evt.event_start)){
-        evt.event_start = preEnd;
-        evt.event_end = (preEnd + evtLen);
-        }
-      else if(nxtStart > -1 && nxtStart < Number(evt.event_end)){
-        evt.event_end = nxtStart;
-        evt.event_start = (nxtStart - evtLen);
-        }
-      }
-    
-    
-    defs.tbls.estate_events.dta[evtIx] = evt;
-    
-    tDta.push({'tbl':'estate_events','key':'event_idx','fdta':evt,'del':0});
-    
-    console.log(tDta);
-    if(tDta.length > 0){
-      var propId = Number($('body').data('propid'));
-      var sDta = {'fetch':3,'propid':propId,'rt':'js','tdta':tDta};
-      $.ajax({
-        url: vreFeud+'?5||0',
-        type:'post',
-        data:sDta,
-        dataType:'json',
-        cache:false,
-        processData:true,
-        success: function(ret, textStatus, jqXHR){
-          var kx = tDta.length-1;
-          if(typeof ret[kx].error !== 'undefined'){
-            estAlertLog(ret[kx].error);
-            }
-          else{
-            if(typeof ret[kx].alldta !== 'undefined'){
-              estProcDefDta(ret[kx].alldta.tbls);
-              }
-            
-            $(ele).empty();
-            var evX = estEvtBtn(evt);
-            $(ele).data('evt',evt);
-            $(JQDIV).html(evX[0].h+':'+evX[0].i+' '+evX[0].ap+'<br>'+evX[1].h+':'+evX[1].i+' '+evX[1].ap).appendTo(ele);
-            $(JQDIV).html(defs.keys.eventkeys[evt.event_type]['l']+'<br>'+evt.event_name).appendTo(ele);
-            
-            
-            }
-          },
-        error: function(jqXHR, textStatus, errorThrown){
-          console.log('ERRORS: '+textStatus+' '+errorThrown);
-          estAlertLog(jqXHR.responseText);
-          }
-        });
-      }
-    }
-  
-  
-  
-  
-  
-  
-  //estCalEvtChange
-  function estEvtTimeSlots(jDate){
-    var defs = $('body').data('defs');
-    var propId = Number($('body').data('propid'));
-    var agtId = Number(defs.tbls.estate_properties.dta[0].prop_agent);
-    
-    var d = estJSDate(jDate);
-    console.log(d);
-    
-    var pubHrs = defs.tbls.estate_properties.dta[0].prop_hours[d.dno];
-      
-    var tF = $('input[name="prop_hours['+d.dno+'][1]"').val().split(':');
-    var tL = $('input[name="prop_hours['+d.dno+'][2]"').val().split(':');
-    
-    if(Number(tF[0]) == 0 && Number(tL[0]) == 0 || Number(tL[0]) == Number(tF[0])){
-      $('#estCalEvtSlotCont').html('Error: No Hours available');
-      estPosPopover();
-      return;
-      }
-    else if(Number(tL[0]) < Number(tF[0])){
-      $('#estCalEvtSlotCont').html('Error: Last Hour is less than First Hour');
-      estPosPopover();
-      return;
-      }
-    
-    
-    var propEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_propidx == propId && element.event_start >= jDate;});
-    var agtEvts = $.grep(defs.tbls.estate_events.dta, function (element, index) {return  element.event_agt == agtId && element.event_propidx !== propId && element.event_start >= jDate;});
-    
-    Array.prototype.push.apply(propEvts,agtEvts);
-    console.log(propEvts);
-    
-    var slots = [];
-    var si = 0;
-    var tStart = jDate;
-    var inUse = 0;
-        
-    for(i=0; i<=23; i++){
-      var tm = i;
-      var ap = ' a';
-      if(i == 0){tm = 12;}
-      else if(tm >= 12){
-        tm = (tm == 12 ? 12 : tm - 12);
-        ap = ' p';
-        }
-                        
-      $([':00',':15',':30',':45']).each(function(mi,mv){
-        tEnd = Number(tStart) + 900;
-        var evt = null;
-        var evtF = propEvts.find(x => Number(x.event_start) === tStart);
-        if(typeof evtF !== 'undefined'){
-          evt = propEvts[propEvts.indexOf(evtF)];
-          inUse = Number(evt.event_end);
-          }
-        
-        if(inUse > 0 && tStart >= inUse){inUse = 0;}
-        slots[si] = {'s':tStart,'e':tEnd,'h':i,'hm':tm+mv,'ap':tm+mv+ap,'u':inUse,'evt':evt};
-        tStart = tEnd;
-        si++;
-        });
-      }
-    
-    
-    $('#estCalEvtSlotCont').empty().promise().done(function(){
-      var bi = 0, di = 2, eHt=0, evtTrg = null, estSched60 = [];
-      $(slots).each(function(si,slot){
-        if(bi > 3){bi = 0; di++;}
-        
-        var tmRw = $(JQDIV,{'id':'editEvtSlot-'+si,'class':'estSched15'}).data({'slot':slot,'si':si}).appendTo('#estCalEvtSlotCont');
-        var tmTm =$(JQDIV,{'class':'estSched15b'}).html(bi == 0 ? slot.ap : slot.hm).appendTo(tmRw);
-        
-        var tmEvt = $(JQDIV,{'class':'estSched15c'}).on({
-          click : function(e){
-            e.stopPropagation();
-            var slotx = $(this).parent().data('slot');
-            if(slotx.evt == null){
-              slotx.evt = estDefDta('estate_events');
-              slotx.evt.event_agt = agtId;
-              slotx.evt.event_propidx = propId;
-              slotx.evt.event_type = 1;
-              slotx.evt.event_start = slotx.s;
-              slotx.evt.event_end = Number(slotx.s) + Number(defs.keys.eventkeys[1]['ms']);
-              }
-            estPopoverAlt(1,{'tbl':'estate_events','fld':'event_idx','targ':tmRw,'jdate':jDate,'defdta':slotx,'fnct':{'name':'estCalEvtChange'}});
-            //estEditCalEvent
-            }
-          }).appendTo(tmRw);
-        
-        if(slot.evt !== null){
-          var evX = estEvtBtn(slot.evt);
-          $(tmEvt).addClass('evtInUse slot-'+slot.evt.event_type);
-          var evtH4 = $('<h4></h4>').html(defs.keys.eventkeys[slot.evt.event_type]['l']).appendTo(tmEvt);
-          $('<span></span>',{'class':'FR'}).html(evX[4]).prependTo(evtH4);
-          if(slot.evt.event_propidx !== propId){
-            $('<span></span>').html(' (At a different property)').appendTo(evtH4);
-            $(tmEvt).addClass('evtConflict');
-            }
-          $('<p></p>').html('<b>'+slot.evt.event_name+'</b> '+slot.evt.event_text).appendTo(tmEvt);
-          
-          $(tmRw).addClass('evtInUse');
-          evtTrg = tmEvt;
-          }
-        
-        
-        if(slot.u > 0){eHt = eHt + 23;}
-        else{
-          if(evtTrg !== null){
-            $(evtTrg).css({'height':eHt+'px'});
-            evtTrg = null;
-            eHt = 0;
-            }
-          }
-        
-        if(Number(slot.h) < Number(tF[0])){$(tmRw).addClass('estSchedPreHrs');}
-        if(Number(slot.h) > Number(tL[0])){$(tmRw).addClass('estSchedAftHrs');}
-        bi++;
-        }).promise().done(function(){
-          estPosPopover();
-          });
-      });
-    }
-  
-  
-  
-  
-  function estCalOpenDay(mode,jDate){
-    if(mode < 0){
-      $('#estPopCont').animate({'left':'-100vw'},750,'swing',function(){
-        $('#estPopCont').remove();
-        if(mode == -2){estCalOpenDay(1,jDate);}
-        });
-      }
-    else if(mode == 1){
-      if(document.getElementById('estPopCont')){
-        estCalOpenDay(-2,jDate);
-        return;
-        }
-      
-      var defs = $('body').data('defs');
-      var propId = Number($('body').data('propid'));
-      var xt = defs.txt;
-      
-      var d = estJSDate(jDate);
-      var evtDayTxt = d.w +' ' + d.m + '/' + d.d + '/' + d.y;
-      
-      var popIt = estBuildPopover([{'tabs':['Morning']}]);
-      $(popIt.frm[0]).data('evtdaytxt',evtDayTxt);
-      
-      
-      $(JQSPAN,{'class':'FL','title':xt.cancelremove}).html(evtDayTxt).on({
-        click : function(){estRemovePopover()}
-        }).appendTo(popIt.frm[0].h3);
-      
-      var aftBtn = $(JQBTN,{'id':'estSchedPreHrs','class':'btn btn-primary btn-sm FR'}).data('oc',0).html('After Hrs').on({
-        click : function(e){
-          e.preventDefault();
-          if($(this).data('oc') == 1){
-            $(this).data('oc',0);
-            $('.estSchedAftHrs').fadeOut(200,function(){estPopHeight();});
-            }
-          else{
-            $(this).data('oc',1);
-            $('.estSchedAftHrs').fadeIn(200,function(){estPopHeight();});
-            }
-          }
-        }).appendTo(popIt.frm[0].h3);
-      
-      var preBtn = $(JQBTN,{'id':'estSchedPreHrs','class':'btn btn-primary btn-sm FR'}).data('oc',0).html('Pre Hours').on({
-        click : function(e){
-          e.preventDefault();
-          if($(this).data('oc') == 1){
-            $(this).data('oc',0);
-            $('.estSchedPreHrs').fadeOut(200,function(){estPopHeight();});
-            }
-          else{
-            $(this).data('oc',1);
-            $('.estSchedPreHrs').fadeIn(200,function(){estPopHeight();});
-            }
-          }
-        }).appendTo(popIt.frm[0].h3);
-      
-      popIt.frm[0].savebtns.push(preBtn,aftBtn);
-      
-      $(popIt.frm[0].tabs.tab[0].tabl).addClass('estSchedHrs');
-      
-      
-      var tabx = 0;
-      var tri = 0;
-      var tabtr = popIt.frm[0].tabs.tab;
-      
-      tabtr[tabx].tr[tri] = [];
-      tabtr[tabx].tr[tri][0] = $(JQTR).appendTo(tabtr[tabx].tbody);
-      tabtr[tabx].tr[tri][1] = $(JQTD,{'colspan':2}).appendTo(tabtr[tabx].tr[tri][0]);
-      
-      
-      $(JQDIV,{'id':'estCalEvtSlotCont'}).appendTo(tabtr[tabx].tr[tri][1]).promise().done(function(){
-        estEvtTimeSlots(jDate);
-        });
-      }
-    }
-  
-  
-  function estJSDate(jDate){
-      var wkday = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-      var d1 = new Date(jDate * 1000), // Convert the passed timestamp to milliseconds
-        yyyy = d1.getFullYear(),
-        mm = ('0' + (d1.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
-        dd = ('0' + d1.getDate()).slice(-2),         // Add leading 0.
-        hh = ('0' + d1.getHours()).slice(-2),
-        h = d1.getHours(),
-        min = ('0' + d1.getMinutes()).slice(-2),     // Add leading 0.
-        ampm = 'AM',
-        ap = 'a';
-
-        if (hh > 12) {
-          h = hh - 12;
-          ampm = 'PM';
-          ap = 'p';
-          }
-        else if (hh === 12) {
-          h = 12;
-          ampm = 'PM';
-          ap = 'p';
-          }
-        else if (hh == 0) {
-          h = 12;
-          }
-    
-    var ud = new Date(yyyy+'-'+mm+'-'+dd);
-    var ud1 = new Date(yyyy+'-'+mm+'-'+dd+' 00:00:00');
-    var dno = d1.getDay();
-    
-    return {'y':yyyy,'m':mm,'d':dd,'h':h,'hh':hh,'i':min,'ampm':ampm,'ap':ap,'dno':dno,'w':wkday[dno],'ud1':(ud1 / 1000),'ud':(ud / 1000)};
-    }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
-  
-  
-  
 
   
   
@@ -2502,11 +1826,16 @@
         $('.estHideDataTr').closest('tr').hide();
         
         if(typeof $('div.admin-main-content h4.caption') !== 'undefined'){
-          if(propId > 0){
-            $('div.admin-main-content h4.caption').prepend(' <span class="FR">'+defs.txt.updated+' '+$('input[name="prop_dateupdated"]').parent().html()+'</span>');
-            }
           $('input[name="prop_datecreated"]').closest('tr').hide();
           $('input[name="prop_dateupdated"]').closest('tr').hide();
+          if(propId > 0){
+            
+            var dateUpDiv = $(JQDIV,{'class':'ILBLK FR'}).prependTo('div.admin-main-content h4.caption');
+            var dateUpPar = $('input[name="prop_dateupdated"]').parent();
+            $('input[name="prop_dateupdated"]').appendTo(dateUpDiv);
+            $('<span></span>').html(defs.txt.updated+' ').appendTo(dateUpDiv);
+            $('<span></span>',{'id':'propUpdateTxtSpan'}).html($(dateUpPar).html()).appendTo(dateUpDiv);
+            }
           
           var viewCtDiv = $(JQDIV,{'id':'propViewCtDiv'}).prependTo('div.admin-main-content h4.caption');
           var viewCtCont = $(JQDIV,{'id':'propViewCtCont','class':'propViewCtCont'}).html(defs.txt.views+': ').appendTo(viewCtDiv);
@@ -2559,6 +1888,11 @@
           $('#estGalleryH4').on({mouseenter : function(){estScrollHlp('#estHlp-gal5')}});
           }
         
+        
+        $('select[name="prop_city"]').data('pval',Number($('select[name="prop_city"]').val())).on({
+          change : function(){estResetSubDivs();}
+          });
+        
         $('#prop-bldguc').parent().appendTo('#propUnitCont');
         $('#prop-complxuc').parent().appendTo('#propUnitCont');
         $('#prop-bedtot').parent().prependTo('#propBedsCont');
@@ -2575,6 +1909,7 @@
         estBuildEvtTab();
         estBuildMap('prop');
         //estInitSetupUpl 
+        estBindTemplateSel(2);
         
         var mediaDta = estNewMediaDta(1,'CORE estatePrepForm');
         estFileUplFld(mediaDta,1,null,1);
@@ -2585,7 +1920,6 @@
             $('#fileSlip').click();
             }
           });
-        
         
         estTestEles(cForm,cSave);
         }
@@ -2704,27 +2038,7 @@
   
   function estThmsForList(ret){
     var helpInFull = (typeof ret.prefs.helpinfull !== 'undefined' ? Number(ret.prefs.helpinfull) : 0);
-    $('.estPropThumb').each(function(i,thmEle){
-      var trID = Number($(thmEle).parent().parent().attr('id').toLowerCase().replace('row-',''));
-      var mDta = ret.thms.find(x => Number(x.media_propidx) === Number(trID));
-      
-      $(thmEle).attr('id','estPropListThm-'+trID).data('propid',trID).on({
-        click : function(e){estSetThmsForList(1,this)},
-        dblclick : function(e){
-          e.stopPropagation();
-          e.preventDefault();
-          estSetThmsForList(2,this)
-          }
-        });
-      if(typeof mDta !== 'undefined'){$(thmEle).css({'background-image':'url('+ret.dir.prop.thm+mDta.media_thm+')'});}
-      
-      if(helpInFull == 0){
-        $(thmEle).on({
-          mouseenter : function(){estScrollHlp('#estHlp-proplist6')},
-          mouseleave : function(){estScrollHlp('#estHlp-proplist3')}
-          });
-        }
-      });
+    
     }
   
   
@@ -2783,7 +2097,7 @@
   
   
   
-  function estTemplateOrdCont(sect){
+  function estTemplateOrdCont(mode,sect){
     var defs = $('body').data('defs');
     if(typeof defs.prefs.templates == 'undefined'){
       estAlertLog('No Templates!');
@@ -2795,16 +2109,29 @@
       return;
       }
     
+    var spfx = '';
+    var dbSrc = defs.prefs;
+    if(mode == 2){
+      spfx = 'prop_';
+      dbSrc = defs.tbls.estate_properties.dta[0];
+      if(dbSrc['prop_template_'+sect] == ''){dbSrc['prop_template_'+sect] = defs.prefs['template_'+sect];}
+      if(dbSrc['prop_template_'+sect+'_ord'] == ''){dbSrc['prop_template_'+sect+'_ord'] = defs.prefs['template_'+sect+'_ord'];}
+      }
+    
+    var tKey = spfx+'template_'+sect;
+    
     $.each(defs.prefs.templates[sect], function(tname,tdta){
       //console.log(sect,tname,tdta);
-      var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="template_'+sect+'"]');
-      var scont = $(JQDIV,{'id':'est'+sect+'TemplateSect-'+tname,'class':'estTemplateSectCont est'+sect+'TemplateSectCont'}).appendTo('#est'+sect+'OrderCont');
-      var tKey = 'template_'+sect;
       
-      if(tname == defs.prefs[tKey]){
+      var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="'+spfx+'template_'+sect+'"]');
+      var scont = $(JQDIV,{'id':'est'+spfx+sect+'TemplateSect-'+tname,'class':'estTemplateSectCont est'+spfx+sect+'TemplateSectCont'}).appendTo('#est'+spfx+sect+'OrderCont');
+      
+      
+      if(tname == dbSrc[tKey]){
         $(selectOpt).prop('selected','selected');
         $(scont).show();
         }
+        
       
       if(typeof tdta.ord === 'undefined' || tdta.ord === null){
         $(JQDIV,{'class':'TAL'}).html(defs.txt.templnoopt).appendTo(scont);
@@ -2812,32 +2139,33 @@
       else{
         $(selectOpt).data(tdta.ord);
         var preford = Object.keys(tdta.ord);
-        
-        if(typeof defs.prefs['template_'+sect+'_ord'] == 'undefined' || defs.prefs['template_'+sect+'_ord'] == ''){
-          defs.prefs['template_'+sect+'_ord'] = 'default';
+        var tmplK1 = spfx+'template_'+sect;
+        if(typeof dbSrc[tmplK1] == 'undefined' || dbSrc[tmplK1] == ''){
+          dbSrc[tmplK1] = 'default';
           }
         
-        //console.log(defs.prefs['template_'+sect+'_ord'][tname]);
-        if(typeof defs.prefs['template_'+sect+'_ord'][tname] !== 'undefined' && defs.prefs['template_'+sect+'_ord'][tname] !== null){
-          preford = Object.keys(defs.prefs['template_'+sect+'_ord'][tname]);
+        var tmplK2 = spfx+'template_'+sect+'_ord';
+        if(typeof dbSrc[tmplK2][tname] !== 'undefined' && dbSrc[tmplK2][tname] !== null){
+          preford = Object.keys(dbSrc[tmplK2][tname]);
           }
         
         //this dummy is needed to save the Order Array if only the order has changed
-        var dmy = $(JQNPT,{'type':'checkbox','name':'template_'+sect+'_ord['+tname+'][dummy]'}).val(1).appendTo(scont).hide();
+        var dmy = $(JQNPT,{'type':'checkbox','name':spfx+'template_'+sect+'_ord['+tname+'][dummy]'}).val(1).appendTo(scont).hide();
         if(preford.indexOf('dummy') == -1){$(dmy).prop('checked','checked');}
         
         var xi = preford.length;
         $(tdta.ord).each(function(bi,bname){
+          
           var btn = $(JQDIV,{'class':'btn btn-default btn-sm TAL','title':defs.txt.reorder+' '+defs.txt.layout});
-          var cb = $(JQNPT,{'type':'checkbox','id':'template-'+sect+'-ord['+tname+']['+bname+']','name':'template_'+sect+'_ord['+tname+']['+bname+']','title':defs.txt.enabdisab+' '+bname}).val(1).appendTo(btn);
-          var lab = $('<label></label>',{'title':defs.txt.enabdisab+' '+bname}).prop('for','template-'+sect+'-ord['+tname+']['+bname+']').html(bname).appendTo(btn);
+          var cb = $(JQNPT,{'type':'checkbox','id':spfx+'template-'+sect+'-ord['+tname+']['+bname+']','name':spfx+'template_'+sect+'_ord['+tname+']['+bname+']','title':defs.txt.enabdisab+' '+bname}).val(1).appendTo(btn);
+          var lab = $('<label></label>',{'title':defs.txt.enabdisab+' '+bname}).prop('for',spfx+'template-'+sect+'-ord['+tname+']['+bname+']').html(bname).appendTo(btn);
           
           var bord = preford.indexOf(bname);
           if(bord > -1){$(cb).prop('checked','checked');}
           else{bord = xi; xi++;}
           $(btn).data('ord',bord).appendTo(scont);
           }).promise().done(function(){
-            var btnCont = document.getElementById('est'+sect+'TemplateSect-'+tname);
+            var btnCont = document.getElementById('est'+spfx+sect+'TemplateSect-'+tname);
             $(btnCont).children('div.btn').sort(function (a, b) {
               var cA = $(a).data('ord'); var cB = $(b).data('ord');
               return (cA > cB) ? 1 : (cA < cB) ? -1 : 0;
@@ -2861,39 +2189,46 @@
   
   
   
-  function estBindTemplateSel(){
+  function estBindTemplateSel(mode){
     var defs = $('body').data('defs');
-    console.log(defs.prefs.templates);
+    //console.log(defs.prefs.templates);
     
-    $('select[name="template_list"]').closest('tr').addClass('estTmplTR');
-    $('select[name="template_list"]').prop('name','template_list').on({
-      change : function(){}
-      }).empty().promise().done(function(){
-        $.each(defs.prefs.templates.list, function(tname,tdta){
-          var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="template_list"]');
+    if(mode == 2){
+      var spfx = 'prop_';
+      }
+    else{
+      var spfx = '';
+      $('select[name="template_list"]').closest('tr').addClass('estTmplTR');
+      $('select[name="template_list"]').prop('name','template_list').on({
+        change : function(){}
+        }).empty().promise().done(function(){
+          $.each(defs.prefs.templates.list, function(tname,tdta){
+            var selectOpt = $(JQOPT).val(tname).html(tdta.name).appendTo('select[name="template_list"]');
+            });
           });
-        });
+      }
+      
     
-    $('#estviewOrderCont').closest('tr').addClass('estTmplTR');
-    $('select[name="template_view"]').closest('tr').addClass('estTmplTR');
-    $('select[name="template_view"]').prop('name','template_view').on({
+    $('#est'+spfx+'viewOrderCont').closest('tr').addClass('estTmplTR');
+    $('select[name="'+spfx+'template_view"]').closest('tr').addClass('estTmplTR');
+    $('select[name="'+spfx+'template_view"]').prop('name',spfx+'template_view').on({
       change : function(){
-        $('.estviewTemplateSectCont').hide();
-        $('#estviewTemplateSect-'+this.value).show();
+        $('.est'+spfx+'viewTemplateSectCont').hide();
+        $('#est'+spfx+'viewTemplateSect-'+this.value).show();
         }
       }).empty().promise().done(function(){
-        estTemplateOrdCont('view');
+        estTemplateOrdCont(mode,'view');
         });
     
-    $('#estmenuOrderCont').closest('tr').addClass('estTmplTR');
-    $('select[name="template_menu"]').closest('tr').addClass('estTmplTR');
-    $('select[name="template_menu"]').prop('name','template_menu').on({
+    $('#est'+spfx+'menuOrderCont').closest('tr').addClass('estTmplTR');
+    $('select[name="'+spfx+'template_menu"]').closest('tr').addClass('estTmplTR');
+    $('select[name="'+spfx+'template_menu"]').prop('name',spfx+'template_menu').on({
       change : function(){
-        $('.estmenuTemplateSectCont').hide();
-        $('#estmenuTemplateSect-'+this.value).show();
+        $('.est'+spfx+'menuTemplateSectCont').hide();
+        $('#est'+spfx+'menuTemplateSect-'+this.value).show();
         }
       }).empty().promise().done(function(){
-        estTemplateOrdCont('menu');
+        estTemplateOrdCont(mode,'menu');
         });
     }
   
@@ -2934,23 +2269,23 @@
   
   
   function estPrefs(){
-      
-      $('#prefSetDefTerms').on({
-        click : function(e){
-          e.preventDefault();
-          if($('#contact-terms-def').is(':visible')){
-            $('#prefSetDefTerms').html($('#prefSetDefTerms').data('t1'));
-            $('#contact-terms-def').fadeOut(200);
-            $('#contact-terms').fadeIn(200);
-            }
-          else{
-            $('#prefSetDefTerms').html($('#prefSetDefTerms').data('t2'));
-            $('#contact-terms').val('').fadeOut(200);
-            $('#contact-terms-def').fadeIn(200);
-            }
+    
+    $('#prefSetDefTerms').on({
+      click : function(e){
+        e.preventDefault();
+        if($('#contact-terms-def').is(':visible')){
+          $('#prefSetDefTerms').html($('#prefSetDefTerms').data('t1'));
+          $('#contact-terms-def').fadeOut(200);
+          $('#contact-terms').fadeIn(200);
           }
-        }).appendTo('#prefSetDefTermsTarg');
-      
+        else{
+          $('#prefSetDefTerms').html($('#prefSetDefTerms').data('t2'));
+          $('#contact-terms').val('').fadeOut(200);
+          $('#contact-terms-def').fadeIn(200);
+          }
+        }
+      }).appendTo('#prefSetDefTermsTarg');
+    
     
     $.ajax({
       url: vreFeud+'?0||0',
@@ -2966,7 +2301,7 @@
           else{
             $('body').data({'defs':ret,'propid':0}).promise().done(function(){
               estSetHelpInFull();
-              estBindTemplateSel();
+              estBindTemplateSel(1);
               estBuildMap('pref');
               
               $('select[name="public_mod"]').on({
@@ -3020,13 +2355,69 @@
                 });
               
               
-              $('#estPrefPropSel').on({
-                change : function(){
-                  }
-                }).change();
+              $('#estPrefPropSel').on({change : function(){}}); // needed???
               
-          
+              
+              $('input[name="listing_disp[0]"]').on({
+                change : function(){
+                  if(this.value == 1){$('input[name="listing_disp[0]"]').parent().find('div.bootstrap-switch-wrapper').find('span').eq(0).click();}
+                  }
+                });
+              
+              
+              estPrepLocaleForm();
+              
               estInitDefHrs();
+              
+              $('select.estPrefEventSel').on({
+                change : function(){
+                  $('input[name="eventkeys['+$(this).data('key')+'][ms]"]').val($(this).find('option:selected').data('ms'));
+                  }
+                });
+              
+              $('button.estPrefEventDel').on({
+                click : function(e){
+                  e.preventDefault();
+                  var defs = $('body').data('defs');
+                  if(jsconfirm(defs.txt.eventkeydel)){
+                    $(e.target).closest('tr').remove();
+                    alert(defs.txt.updatereq);
+                    }
+                  }
+                });
+              
+               $('#estNewEventKey').on({
+                click : function(e){
+                  e.preventDefault();
+                  var defs = $('body').data('defs');
+                  var key = $('#estEventKeysTB').find('tr').length;
+                  var tr = $(JQTR).appendTo('#estEventKeysTB');
+                  var td1 = $(JQTD).appendTo(tr);
+                  var td2 = $(JQTD).appendTo(tr);
+                  var td3 = $(JQTD,{'class':'TAC'}).appendTo(tr);
+                  
+                  $(JQNPT,{'type':'hidden','name':'eventkeys['+key+'][ms]'}).appendTo(td1);
+                  $(JQNPT,{'type':'text','name':'eventkeys['+key+'][l]','class':'tbox form-control input-large','placeholder':defs.txt.newevtname}).appendTo(td1);
+                  
+                  var sel = $(JQSEL,{'name':'eventkeys['+key+'][t]','class':'tbox form-control input-medium ui-state-valid estPrefEventSel'}).data('key',key).on({
+                    change : function(){
+                      $('input[name="eventkeys['+$(this).data('key')+'][ms]"]').val($(this).find('option:selected').data('ms'));
+                      }
+                    }).html($('#estEvtKeyOpts').find('option').clone()).appendTo(td2);
+                  
+                  //$('#estEvtKeyOpts').find('option').clone().appendTo(sel);
+                  $(JQBTN,{'type':'button','name':'eventkey_delete['+key+']','class':'btn btn-small btn-default'}).html('<i class="fa fa-close"></i>').on({
+                    click : function(e){
+                      e.preventDefault();
+                      if(jsconfirm(defs.txt.eventkeydel)){
+                        $(e.target).closest('tr').remove();
+                        alert(defs.txt.updatereq);
+                        }
+                      }
+                    }).appendTo(td3);
+                  }
+                });
+              
               estSetMap('est_pref_Map');
               });
             }
@@ -3268,6 +2659,9 @@
     
     if(nVal == $(ele).data('cval')){$('#estILEditDiv').remove(); return;}
     var tdta = {'maintbl':'estate_properties','mainkey':'prop_idx','mainkx':'int','mainidx':Number(dta.pid),'mainfld':dta.fld,'nval':nVal};
+    if($(ele).hasClass('cursym')){
+      $.extend(tdta,{'price':1});
+      }
     $(ele).closest('tr').addClass('estFlipIt');
           
     $.ajax({
@@ -3279,7 +2673,8 @@
       processData:true,
       success: function(ret, textStatus, jqXHR){
         $(ele).closest('tr').removeClass('estFlipIt');
-        $(ele).data('cval',nVal).html(nTxt);
+        if(typeof ret.price !== 'undefined'){$(ele).data('cval',nVal).html(ret.price);}
+        else{$(ele).data('cval',nVal).html(nTxt);}
         },
       error: function(jqXHR, textStatus, errorThrown){
         $(ele).closest('tr').removeClass('estFlipIt');
@@ -3293,15 +2688,24 @@
   
   function estPrepPropILEdits(){
     $('.estPropListILEdit').each(function(i,ele){
-      $(ele).on({
+      var bDta = $(ele).data();
+      $.each(bDta,function(k,v){$(ele).removeAttr('data-'+k);});
+      $(ele).data(bDta).addClass('estBound').on({
         click : function(e){
           e.preventDefault();
           e.stopPropagation();
-          var defs = $('body').data('defs');
-          var dta = $(ele).data();
-          var targ = $(ele).parent();
-          var pid = dta.pid;
           $('#estILEditDiv').remove().promise().done(function(){
+            var dta = $(ele).data();
+            
+            if(Number(dta.mode) == 2){
+              estEditPricing(2,ele);
+              return;
+              }
+            
+            var defs = $('body').data('defs');
+            var targ = $(ele).parent();
+            var pid = dta.pid;
+          
             var cont = $(JQDIV,{'id':'estILEditDiv','class':'popover fade in editable-container editable-popup'}).appendTo(targ).fadeIn(250);
             if(dta.type == 'select'){
               var fld = $(JQSEL,{'name':dta.fld,'id':dta.fld,'class':'tbox form-control'});
@@ -3329,18 +2733,19 @@
   
   function estPrepPropListNewForm(){
     var defs = $('body').data('defs');
-    $('select[name="prop_leasedur"]').data('pval',$('select[name="prop_leasedur"]').val());
-    $('input[name="prop_origprice"]').data('pval',Number($('input[name="prop_origprice"]').val()));
     
     
     var LeaseFrqDiv = $(JQDIV,{'class':'WSNWRP'}).appendTo($('input[name="prop_origprice"]').parent());
+    /*
     var currencyBtn = $(JQBTN,{'id':'estPropCurrBtn','class':'btn btn-default estNoRightBord'}).html(defs.keys.cursymb[$('input[name="prop_currency"]').val()]).on({
       click : function(e){
         e.preventDefault();
         e.stopPropagation();
         estSetDIMUbtns(3,this);
         }
-      }).appendTo(LeaseFrqDiv);
+      }).appendTo(LeaseFrqDiv);//.hide();
+      */
+    
     $('input[name="prop_origprice"]').appendTo(LeaseFrqDiv);
     
     var LeaseFrqBtn = $(JQBTN,{'id':'estPropLeaseFrqBtn','class':'btn btn-default estNoLeftBord'}).on({
@@ -3351,14 +2756,21 @@
         }
       }).appendTo(LeaseFrqDiv);
     
+    //estateBuildDIMUbtns();
+    estBuildPriceBtns();
+    
     estSetDIMUbtns(4,LeaseFrqBtn,Number($('input[name="prop_leasefreq"]').val()));
+    
+    //estCurrencyCont
+    estPrepLocaleForm(3);
+    
     
     $('select[name="prop_zoning"]').on({
       change : function(){
         var propZone = Number($(this).val());
         var zoneDta = $.grep(defs.tbls.estate_listypes.dta, function (element, index) {return Number(element.listype_zone) == propZone;});
         $('select[name="prop_type"]').empty().promise().done(function(){
-          $(JQOPT,{'value':'0'}).html('- '+defs.txt.other+' '+defs.txt.option+' -').appendTo('select[name="prop_type"]');
+          //$(JQOPT,{'value':'0'}).html('- '+defs.txt.select1+' '+defs.txt.option+' -').appendTo('select[name="prop_type"]');
           $(zoneDta).each(function(i,opt){
             $(JQOPT,{'value':opt.listype_idx}).html(opt.listype_name).appendTo('select[name="prop_type"]');
             }).promise().done(function(){
@@ -3414,6 +2826,10 @@
       return;
       }
     
+    if(mainTbl == 'estate_properties' && (actn == 'new' || actn == 'create')){
+      window.location.assign(vrePath+'?mode=estate_properties&action=list&tab=1');
+      return;
+      }
     
     $('.estDBshowLnk').each(function(i,ele){
       $(ele).on({
@@ -3468,6 +2884,9 @@
                 if(i == 0){$(btnBar).show();}
                 else{$(btnBar).hide();}
                 }
+              if(i == 1 && document.getElementById('est_prop_Map')){
+                estSetMap('est_prop_Map');
+                }
               $('.estEditHelpSect').hide().promise().done(function(){
                 $('#estEditHelp-'+i).show();
                 $('#estHelpBlock').stop().scrollTop('0px');
@@ -3477,38 +2896,37 @@
           });
         }
         
-        var btnBar = $('#admin-ui-edit').find('div.buttons-bar');
-        
-        if(mainTbl == 'estate_agencies'){
-          if(actn == 'edit' || actn == 'create'){
-            estPrepAgencyForm(mainId);
-            }
-          else if(actn == 'inbox'){}
-          else{
-            estPrepAgencyListTable();
-            estPrepUserListTable();
-            if(document.getElementById('estNewUserFormTable')){
-              estPrepAgentProfile($('#estNewUserFormTable'));
-              }
-            if(tabNo > 0){
-              if(tabNo > 1 && Number($('input[name="estNewUserPost"]').val()) === 0){tabNo = 1;}
-              if(Number($('input[name="estNewUserPost"]').val()) < 0){tabNo = 2;}
-              $(navUL).find('li').eq(tabNo).find('a').click();
-              }
-            }
-          return;
+      var btnBar = $('#admin-ui-edit').find('div.buttons-bar');
+      
+      
+      if(mainTbl == 'estate_agencies'){
+        if(actn == 'edit' || actn == 'create'){
+          estPrepAgencyForm(mainId);
           }
+        else if(actn == 'inbox'){}
+        else{
+          estPrepAgencyListTable();
+          estPrepUserListTable();
+          if(document.getElementById('estNewUserFormTable')){
+            estPrepAgentProfile($('#estNewUserFormTable'));
+            }
+          if(tabNo > 0){
+            if(tabNo > 1 && Number($('input[name="estNewUserPost"]').val()) === 0){tabNo = 1;}
+            if(Number($('input[name="estNewUserPost"]').val()) < 0){tabNo = 2;}
+            $(navUL).find('li').eq(tabNo).find('a').click();
+            }
+          }
+        return;
+        }
       }
     else{
       alert('WARNING: This plugin has interactive elements that do not work with your current Theme and/or Layout. Missing "<div class="admin-main-content">');
       }
     
-    
     if(actn == 'prefs'){
       estPrefs();
       return;
       }
-    
     
     if(mainTbl == 'estate_presets'){
       estPrepPresetsForm();
@@ -3516,6 +2934,10 @@
       }
     
     if(mainTbl == 'estate_properties'){
+      
+      $('select[name="prop_city"]').data('pval',Number($('select[name="prop_city"]').val()));
+        
+      
       sDta = {'fetch':(actn == 'list' ? 1 : 2),'propid':mainId,'rt':'js','tbl':''};
       $.ajax({
         url: vreFeud+'?0||0',
@@ -3542,6 +2964,9 @@
                   estPrepPropILEdits();
                   estPrepPropListFilters();
                   estPrepPropListNewForm();
+                  if(typeof vreQry.tab !== 'undefined'){
+                    $('div.admin-main-content').find('li.nav-item').eq(0).closest('ul').find('li').eq(Number(vreQry.tab)).find('a').click();
+                    }
                   }
                 
                 if(!document.getElementById('estPropCreate')){
@@ -3553,15 +2978,25 @@
                 
                 if(helpInFull == 0){
                   $('#plugin-estate-list-table thead').on({mouseenter : function(){estScrollHlp('#estHlp-proplist3')}});
+                  $('.estPropThumb').on({
+                    mouseenter : function(){estScrollHlp('#estHlp-proplist6')},
+                    mouseleave : function(){estScrollHlp('#estHlp-proplist3')}
+                    });
                   }
                 
-                if(typeof ret.thms !== 'undefined'){
-                  estThmsForList(ret);
-                  }
+                $('.estPropThumb').on({
+                  click : function(e){estSetThmsForList(1,this)},
+                  dblclick : function(e){
+                    e.stopPropagation();
+                    e.preventDefault();
+                    estSetThmsForList(2,this)
+                    }
+                  });
                 }
               else{
-                if(actn == 'edit' || actn == 'create'){
+                if(actn == 'edit'){
                   $('body').data('propid',mainId).data('defs',ret).promise().done(function(){
+                    
                     estatePrepForm(mainTbl);
                     });
                   }
