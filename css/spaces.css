@@ -114,6 +114,7 @@ div.estTableGroupTile{
   flex: 32%;
   flex-direction: column;
   max-width: 33%;
+  min-width: 192px;
   }
 
 
@@ -121,6 +122,7 @@ div.estTableGroupTile div.estImgSlide{
   display:block;
   width: 98%;
   height:192px;
+  min-width: 188px;
   background-clip: content-box;
   background-origin: padding-box;
   border: 0.35em solid transparent;

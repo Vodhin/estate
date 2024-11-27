@@ -107,7 +107,8 @@ input[type="number"]{
 #estPopCont input[type="text"],
 #estPopCont input[type="number"],
 #estPopCont select,
-#estPopCont button{
+#estPopCont button,
+#estPopCont div.estPdropPct{
   height: 38px;
   min-width: 38px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -210,47 +211,6 @@ table.estOATable1 colgroup:last-child{
   }
 
 
-div.field-help{
-  position:absolute;
-  top:4px;
-  left:unset;
-  right: 32px;
-  min-width: 132px;
-  min-height: 42px;
-  background-color:rgb(64,64,64);
-  color:#FFFFFF;
-  font-size:9pt;
-  text-align: left;
-  line-height:1.15em;
-  padding: 6px;
-  border-radius: 3px 3px 3px 3px;
-  z-index:1500;
-  box-shadow: 1px 1px 2px #0000009C;
-  -webkit-box-shadow: 1px 1px 2px #0000009C;
-  -moz-box-shadow: 1px 1px 2px #0000009C;
-  }
-
-div.field-help::after{
-  content:"";
-  position:absolute;
-  top: 13px;
-  left: unset;
-  right: -8px;
-  width: 16px;
-  height: 16px;
-  background-color:rgb(64,64,64);
-  transform:rotate(45deg);
-  z-index: 1498;
-  }
-
-div.field-help ul{
-  padding-inline-start: 14px;
-  font-size: 0.9em;
-  }
-div.field-help ul li{
-  
-  }
-
 
 table.estOAMap{
   width: 100%;
@@ -338,22 +298,6 @@ table.estOAMap tr:first-child{
     }
   
   
-  div.field-help {
-    top: -10px;
-    left: unset;
-    right: -200px;
-    width: 200px;
-    }
-  
-  .estMapCont{
-    max-width: 90vw;
-    }
-  .estMap{
-    max-width: 90vw;
-    }
-  .estMapBtnCont {
-    height: unset;
-    }
   
   .upldPvwBtn {
     display: inline-block;

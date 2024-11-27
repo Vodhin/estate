@@ -51,6 +51,19 @@
   display:none;
   }
 #estMiniNav{
+  /*
+  display: block;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  font-size: 1.75em;
+  background-color: inherit;
+  padding: 8px 16px 0px 8px;
+  z-index: 201000;
+  box-shadow: 1px -1px 4px #0000009C;
+  -webkit-box-shadow: 1px -1px 4px #0000009C;
+  -moz-box-shadow: 1px -1px 4px #0000009C;
+  */
   display:inline-block;
   position:relative;
   float:right;
@@ -1050,6 +1063,106 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   position: relative;
   width: 100%;
   padding: 0px 6px 0px 6px;
+  }
+
+
+.estPropMenuSchedCont{
+  display:block;
+  position:relative;
+  width:100%;
+  }
+
+.estPropMenuSchedCont div{
+  display:block;
+  position:relative;
+  width:100%;
+  }
+
+.estPropMenuSchedCont div.estPropSchedDay div{
+  display:inline-block;
+  position:relative;
+  width:32%;
+  text-align:left;
+  }
+
+
+.estPropViewSchedCont{
+  width:100%;
+  flex:100%;
+  }
+
+
+.estPropViewSchedCont div.estPropSchedDay{
+  width:14%;
+  flex:14%;
+  }
+  
+.estPropViewSchedCont div.estPropSchedDay div{
+  display:block;
+  position:relative;
+  width:96%;
+  margin:6px auto 6px auto;
+  text-align:center;
+  white-space:nowrap;
+  overflow:hidden;
+  }
+
+.estPropViewSchedCont div.estPropSchedDay div:first-child{
+  width:98%;
+  font-weight:bold;
+  margin:0px auto 6px auto;
+  padding:4px 0px 4px 0px;
+  background-color:rgba(0,0,0,0.125);
+  }
+
+.estPropViewSchedNote1{
+  display:block;
+  position:relative;
+  width:100%;
+  margin-bottom: 8px;
+  font-size:0.95em;
+  font-style:italic;
+  text-align:left;
+  line-height: 1.1em;
+  }
+
+
+.estPropHistory{
+  display:block;
+  position:relative;
+  width:100%;
+  }
+.estPropHistory hr{
+  margin-top:0px;
+  margin-bottom:16px;
+  }
+
+.estPropHistory div.estViewHistDiv{
+  display:block;
+  position:relative;
+  width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  margin-top: 6px;
+  margin-bottom:6px;
+  }
+
+.estPropHistory div.estViewHistDiv div{
+  display:inline-block;
+  position:relative;
+  /*font-size: 0.9em;*/
+  margin:0px 0px;
+  }
+div.estViewHistDiv div:nth-child(1){
+  width:28%;
+  }
+div.estViewHistDiv div:nth-child(2){
+  width:40%;
+  }
+div.estViewHistDiv div:nth-child(3){
+  position: absolute !important;
+  right: 0px;
+  text-align:right;
   }
 
 
