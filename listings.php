@@ -294,6 +294,7 @@ unset($dberr);
         if(is_array($PROPDTA[0]['prop_template_view_ord'])){$VIEWTMPL = $PROPDTA[0]['prop_template_view_ord'];}
         elseif(trim($PROPDTA[0]['prop_template_view_ord']) !== ''){$VIEWTMPL = e107::unserialize($PROPDTA[0]['prop_template_view_ord']);}
         }
+      
       if(!is_array($VIEWTMPL) && isset($EST_PREF['template_view_ord'])){
         if(is_array($EST_PREF['template_view_ord'])){$VIEWTMPL = $EST_PREF['template_view_ord'];}
         elseif(trim($EST_PREF['template_view_ord']) !== ''){$VIEWTMPL = e107::unserialize($EST_PREF['template_view_ord']);}
@@ -317,7 +318,7 @@ unset($dberr);
             unset($NEWK,$ok,$dta);
             }
           else{
-            foreach($VIEWTMPL as $ok=>$ov){
+            foreach($VIEWTMPL[$tkey] as $ok=>$ov){
               if(isset($TEMPLATE['txt'][$ok]) && $ov == 1){
                 $estText .= $tp->parseTemplate($TEMPLATE['txt'][$ok], false, $sc);
                 }
