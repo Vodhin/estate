@@ -799,6 +799,98 @@ else if($FETCH == 81){
   exit;
   }
 
+else if($FETCH == 82){
+  $RES = array();
+  $PROPID = intval($_POST['propid']);
+  $subd_idx = intval($_POST['idx']);
+  
+  if($subd_idx > 0){
+    $RES['media'][0][0] = $sql->retrieve('estate_media', '*','media_lev="0" AND media_levidx="'.$subd_idx.'"',true);
+    
+    if($RES['spaces'] = $sql->retrieve('estate_subdiv_spaces', '*','space_lev="4" AND space_levidx="'.$subd_idx.'"',true)){
+      foreach($RES['spaces'] as $k=>$v){
+        $RES['media'][1][$k] = $sql->retrieve('estate_media', '*','media_lev="4" AND media_levidx="'.intval($v['space_idx']).'"',true);
+        }
+      }
+    
+    if($sql->delete("estate_subdiv", "subd_idx='".$subd_idx."'")){
+      $RES['subdiv'] = 'Subdivision Deleted';
+      $RES['prop'] = $sql->update("estate_properties","prop_subdiv='0' WHERE prop_subdiv='".$subd_idx."'");
+      
+      if($sql->delete("estate_subdiv_spaces", "space_lev='4' AND space_levidx='".$subd_idx."'")){
+        $RES['subspaces'] = 'Subdivision Deleted';
+        }
+    
+      $i=0;
+      foreach($RES['media'] as $k=>$v){
+        foreach($v as $sk=>$sv){
+          foreach($sv as $mk=>$mv){
+            $MRES = estMediaRemove($mv,"../../media/subdiv/thm","../../media/subdiv/full","../../media/subdiv/vid",1);
+            if($MRES['error']){$RES['files'][$i]['e'] = $MRES['error'];}
+            else{
+              if(intval($MRES['vid']) !== -1){$RES['files'][$i]['v'] = $MRES['vid'];}
+              if(intval($MRES['full']) !== -1){$RES['files'][$i]['f'] = $MRES['full'];}
+              if(intval($MRES['thm']) !== -1){$RES['files'][$i]['t'] = $MRES['thm'];}
+              }
+            $i++;
+            }
+          }
+        }
+      
+      $RES['alldta'] = estGetAllDta($PROPID);
+      }
+    
+    
+    $dberr = $sql->getLastErrorText();
+    if($dberr){$RES['error'] = $dberr;}
+    
+    
+    }
+  echo e107::getParser()->toJSON($RES);
+  exit;
+  }
+
+
+else if($FETCH == 83){
+  //Delete City, step 1: find other cities to replace it with
+  $RES = array('cities'=>array(),'county'=>array(),'media'=>array(),'prop'=>array(),'spaces'=>array());
+  $PROPID = intval($_POST['propid']);
+  $city_county = intval($_POST['county']);
+  $city_idx = intval($_POST['idx']);
+  
+  if($city_county > 0){
+    if($RES['county'] = $sql->retrieve('estate_county', '*','cnty_idx="'.$city_county.'"',true)){
+      if($city_idx > 0){
+        $RES['prop'] = $sql->retrieve('estate_properties', '*','prop_city="'.$city_idx.'" AND NOT prop_idx="'.$PROPID.'"',true);
+        
+        
+        if($RES['cities'] = $sql->retrieve('estate_city', '*','city_county="'.$city_county.'" AND NOT city_idx="'.$city_idx.'"',true)){
+          $RES['media'][0] = $sql->retrieve('estate_media', '*','media_lev="3" AND media_levidx="'.$city_idx.'"',true);
+          
+          if($RES['spaces'] = $sql->retrieve('estate_subdiv_spaces', '*','space_lev="3" AND space_levidx="'.$city_idx.'"',true)){
+            foreach($RES['spaces'] as $k=>$v){
+              $RES['media'][1][$k] = $sql->retrieve('estate_media', '*','media_lev="3" AND media_levidx="'.intval($v['space_idx']).'"',true);
+              }
+            }
+          }
+        else{
+          $RES['error'] = 'There are no other cities in '.$RES['county'][0]['cnty_name'].' County';
+          }
+        }
+      }
+    else{
+      $RES['error'] = 'County ID# '.$city_county.' Not Found';
+      }
+    
+      
+    }
+  echo e107::getParser()->toJSON($RES);
+  exit;
+  }
+
+
+
+
 elseif($FETCH == 91){
   $orig = intval($_POST['orig']);
   $list = intval($_POST['list']);
@@ -1594,6 +1686,7 @@ function estJStext(){
   return array(
     'add1'=>EST_GEN_ADD1,
     'addevent'=>EST_PROP_MSG_ADDEVENTS,
+    'addnewfeat'=>LAN_EST_ADDNEWFEAT,
     'addnewspace'=>EST_GEN_ADDNEWSPACE,
     'addrnotfound'=>EST_MSG_ADDRNOTFOUND,
     'addrtooshort'=>EST_MSG_ADDRTOOSHORT,
@@ -1746,6 +1839,7 @@ function estJStext(){
     'tomods'=>EST_GEN_TOMODS,
     'unk'=>EST_GEN_UNK,
     'sqr'=>EST_GEN_SQR,
+    'subdtypereq'=>EST_GEN_SUBDIVTYPREQ,
     'upcompricech'=>EST_GEN_PRICEHISTFUT3,
     'updated'=>EST_UPDATED,
     'updatereq'=>EST_ERR_UPDATENEEDED,

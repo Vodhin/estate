@@ -972,6 +972,7 @@ function estSetFormEles(mainTbl,cForm,cSave){
       //estNoData
       if(typeof fldta.fltrs !== 'undefined'){
         if(fldta.fltrs !== null){
+          //console.log(fldta.fltrs);
           $(elem).on({
             change : function(){
               var defs = $('body').data('defs');
@@ -1164,7 +1165,6 @@ function estSetHOAchks(kv,chks=[],flds=[]){
     if(flds.length > 0){
       $(flds).each(function(i,fld){
         if(chks[fld][0] > 0){
-          console.log(fld,chks[fld]);
           if(fld == 'prop_hoaappr'){estHOAautoTog(chks[fld][1][kv],'hoaappr');}
           else if(fld == 'prop_hoaland'){estHOAautoTog(chks[fld][1][kv],'hoaland');}
           else{
@@ -1283,6 +1283,8 @@ function estGetSubDivs(mode=1){
       cache:false,
       processData:true,
       success: function(ret, textStatus, jqXHR){
+        //console.log(ret);
+        
         ret.subd_title = (subdIdx > 0 ? ret.subd_name : defs.txt.community);
         $('#subdWebTarg').html('<a href="'+ret.subd_url+'" target="_BLANK">'+ret.subd_url+'</a>');
         
@@ -1884,7 +1886,7 @@ function estSaveElemOrder(tDta,sect=0){
       cache:false,
       processData:true,
       success: function(ret, textStatus, jqXHR){
-        //console.log(ret);
+        console.log(ret);
         var kx = tDta.length-1;
         if(typeof ret[kx].error !== 'undefined'){
           estAlertLog(ret[kx].error);
@@ -1965,16 +1967,16 @@ function estPrepMediaEditCapt(mediaDta,mediaTitle,targ){
 
 
 function estGetFeatCatInfo(lev=1){
-  if(lev > 0){
-    var ele = $('select[name="space_catid"]');
+  var txt = $('body').data('defs').txt;
+  if(lev == 0){
+    var ele = $('select[name="subd_type"]');
     var opt = $(ele).find('option[value="'+$(ele).val()+'"]');
-    return {'ele':ele,'evlu':$(ele).val(),'txt':$(opt).text(),'cvlu':$(opt).val()};
+    return {'ele':ele,'evlu':$(ele).val(),'txt':(typeof opt !== 'undefined' ? $(opt).text() : txt.subdiv),'cvlu':$(ele).val()};
     }
   else{
-    var txt = $('body').data('defs').txt;
-    var ele = $('select[name="subd_type"]');
-    //optTxt = txt.subdiv;//$('input[name="subd_name"]').val();
-    return {'ele':null,'evlu':0,'txt':txt.subdiv,'cvlu':0};
+    var ele = $('select[name="space_catid"]');
+    var opt = $(ele).find('option[value="'+$(ele).val()+'"]');
+    return {'ele':ele,'evlu':$(ele).val(),'txt':(typeof opt !== 'undefined' ? $(opt).text() : txt.category),'cvlu':$(opt).val()};
     }
   }
 
@@ -2524,11 +2526,13 @@ function estDoFnct(fnct,ele){
         $('#fileSlipBtn2').show();
         $('#estSaveSpace1').hide();
         $('#estSaveSpace2').hide();
+        $('#estPopDelBtn1').hide();
         }
       else{
         $('#fileSlipBtn2').hide();
         $('#estSaveSpace1').show();
         $('#estSaveSpace2').show();
+        $('#estPopDelBtn1').show();
         }
       break;
     }
@@ -2856,6 +2860,7 @@ function estGetSectDta(idx,cVal,destTbl,defdta=null){
         else{sectDta[dk] = '';}
         }
       });
+    console.log('New:',sectDta);
     }
   return sectDta;
   }
@@ -2949,6 +2954,7 @@ function estPopGo(mode,popIt,frmn=0){
                     var args = (typeof fnct.args !== 'undefined' ? fnct.args : '');
                     switch (fnct.name){
                       case 'estChngCityDesc' :
+                        estProcPdta(pDta,fldmap,ret);
                         var kx = ret.kf.indexOf('city_idx');
                         var ky = ret.kf.indexOf('city_name');
                         var kz = ret.kf.indexOf('city_description');
@@ -2966,20 +2972,22 @@ function estPopGo(mode,popIt,frmn=0){
                         var popFrm = popIt.frm[0];
                         if(Number(ret.newid) > 0){
                           $('input[name="subd_idx"]').val(Number(ret.newid));
-                                                    
+                          
+                          var nlevdta = defs.tbls.estate_subdiv.dta.find(x => Number(x.subd_idx) == Number(ret.newid));
+                          $(popIt.frm[frmn].form).data('levdta',nlevdta);
+                          //mediaPvwCapt estMediaTitle estPrepMediaEditCapt
+                          console.log($(popIt.frm[frmn].form).data());
+                          //fileSlipBtn2
                           $('select[name="prop_subdiv"]').val(ret.newid).change();
                           if(mode == 4){
-                            $('#fileSlipBtn2').prop('disabled',false).removeProp('disabled');
-                            $('#estMediaNoGo').hide();
                             $('#estFeatureNoGo').hide();
-                            $('#estMediaMgrCont').show();
                             $('#estFeatureMgrCont').show();
                             $('#estFeatureMgrCont').parent().addClass('estDark65');
+                            estBuildCategoryList(0);
+                            estBuildMediaList(0);
                             estPopHeight();
                             //estBuildSpaceTile(mode,tDta,mDta=null)
-                            //estBuildCategoryList(0)
                             //$('#estSaveSpace1').remove();
-                             //prop_subdiv
                             }
                           }
                         else{
@@ -3145,7 +3153,10 @@ function estPopoverAlt(altNo,tdta=null){
   
   var cVal = '';
   if(typeof tdta.eidx !== 'undefined' && tdta.eidx !== null){cVal = tdta.eidx}
-  else if($(targEle).is('select')){cVal = $(targEle).find('option:selected').val();}
+  else if($(targEle).is('select')){
+    if($(targEle).find('option:selected')){cVal = $(targEle).find('option:selected').val();}
+    else{cVal = $(targEle).val();}
+    }
   else if($(targEle).is('input')){cVal = $(targEle).val();}
   
   if(typeof popIt.frm[1] !== 'undefined'){
@@ -3176,7 +3187,6 @@ function estPopoverAlt(altNo,tdta=null){
   
   var srcTbl = defs.tbls[tdta.tbl];
   var eSrcFrm = srcTbl.form[tdta.fld];
-  
   if(eSrcFrm.src == null){
     $.extend(eSrcFrm,{'src':{'tbl':tdta.tbl,'idx':srcTbl.flds[0]}});
     }
@@ -3188,8 +3198,14 @@ function estPopoverAlt(altNo,tdta=null){
   if(uperm >= 3 ||(typeof eSrcFrm.src.perm !== 'undefined' && uperm >= Number(eSrcFrm.src.perm[1]))){}
   else{cVal = '';}
   
+  var lev = 2;
+  if(typeof tdta.fnct !== 'undefined'){
+    if(tdta.fnct['name'] == 'estBuildCategoryList'){lev = Number(tdta.fnct['args']);}
+    }
+  
   var idx = eSrcFrm.src.idx;
   var sectDta = estGetSectDta(idx,cVal,destTbl,tdta.defdta);
+  
   
   var reqMatch = null;
   var reqVal = null;
@@ -3198,7 +3214,10 @@ function estPopoverAlt(altNo,tdta=null){
     else{reqMatch = srcTbl.form[tdta.fld].src.req;}
     $reqFld = $('[name="'+reqMatch[0]+'"]');
     if(typeof $reqFld !== 'undefined'){
-      if($reqFld.is('select')){reqVal = $reqFld.find('option:selected').val();}
+      if($reqFld.is('select')){
+        if(typeof $reqFld.find('option:selected') !== 'undefined'){reqVal = $reqFld.find('option:selected').val();}
+        else{reqVal = $reqFld.val();}
+        }
       else{reqVal = $reqFld.val();}
       if(!reqVal || reqVal === '0'){
         estAlertLog(reqMatch[2]);
@@ -3251,7 +3270,6 @@ function estPopoverAlt(altNo,tdta=null){
     
     $(popFrm.form).data({'destTbl':{'dta':destTbl.dta,'flds':destTbl.flds,'idx':idx,'table':eSrcFrm.src.tbl},'maintbl':tdta.tbl,'form':{'elem':targEle,'attr':srcTbl.form[tdta.fld],'match':{},'fnct':fnct}});
     
-    //console.log($(popFrm.form).data());
     
     if(eSrcFrm.src.tbl == 'estate_agencies'){
       estAgncyForm(tdta.adta,popIt,1);
@@ -3263,10 +3281,6 @@ function estPopoverAlt(altNo,tdta=null){
       return;
       }
     
-    var lev = 2;
-    if(typeof tdta.fnct !== 'undefined'){
-      if(tdta.fnct['name'] == 'estBuildCategoryList'){lev = Number(tdta.fnct['args']);}
-      }
     
       
     var frmTRs = estFormEles(destTbl.form,sectDta,reqMatch,lev);
@@ -3276,6 +3290,16 @@ function estPopoverAlt(altNo,tdta=null){
       if(trEle.trip !== null){tripIt.push(trEle.trip)}
       }).promise().done(function(){
         $(tripIt).each(function(tpi,trpEle){$(trpEle).change();});
+        
+        if(typeof tdta.catInf !== 'undefined'){
+          //console.log(tdta.catInf.evlu);
+          $('select[name="feature_cat"]').find('option[value="'+tdta.catInf.evlu+'"]').prop('selected','selected');
+          $('select[name="feature_cat"]').val(tdta.catInf.evlu).change();
+          }
+        if(typeof tdta.eledta !== 'undefined'){
+          //console.log(tdta.eledta);
+          //tdta.eledta.feature_cat
+          }
         });
     
     $(popIt.frm[1].slide).show().animate({'left':'0px'});
@@ -3376,7 +3400,7 @@ function estFormEles(eleForm,sectDta,reqMatch,lev=2){
       if(ele.inf !== null){
         var inf1 = $(JQDIV,{'class':'field-help estToolTip'}).attr('data-placement','left').html(ele.inf);
         trs[tri].label[1] = inf1;
-        trs[tri].label[2] = $('<i></i>',{'class':'admin-ui-help-tip far fa-question-circle'}).css({'color':'#000000'}).on({
+        trs[tri].label[2] = $('<i></i>',{'class':'admin-ui-help-tip far fa-question-circle'}).on({
           mouseenter : function(){$(inf1).fadeIn();},
           mouseleave : function(){$(inf1).fadeOut();}
           });
@@ -3407,7 +3431,9 @@ function estFormEles(eleForm,sectDta,reqMatch,lev=2){
       eleAddCls += ' estNoClear';
       }
     else{
+      var eleVal = (sectDta[eli] !== null ? sectDta[eli] : '');
       if(ele.type == 'selfselect' || ele.type == 'eselect'  || ele.type == 'select'){
+        
         if(typeof ele.src.opts !== 'undefined'){
           $(ele.src.opts).each(function(oi,otxt){eleOpts[oi] = $(JQOPT,{'value':oi}).html(otxt);});
           }
@@ -3415,19 +3441,19 @@ function estFormEles(eleForm,sectDta,reqMatch,lev=2){
           var optArr = defs.tbls[ele.src.tbl].dta;
           if(typeof ele.src.grep !== 'undefined'){
             if(ele.src.grep[0] == 'featcat_lev'){
-              optArr = $.grep(optArr, function(element, index) {return  element['featcat_lev'] == lev;});
-              console.log(labelTxt,optArr);
+              var zone = Number($('select[name="prop_zoning"]').find('option:selected').val());
+              optArr = $.grep(optArr, function(el, ix) {return Number(el['featcat_zone']) == zone && Number(el['featcat_lev']) == Number(lev);});
+              console.log(optArr); //name="subd_type" name="space_catid"
               }
             }
           var xi=0;
           if(typeof ele.src.zero !== 'undefined'){eleOpts[xi] = $(JQOPT,{'value':0}).html(ele.src.zero);xi++;}
           $(optArr).each(function(oi,opt){
-            eleOpts[oi+xi] = $(JQOPT,{'value':opt[ele.src.map[0]]}).data(opt).html(opt[ele.src.map[1]]);
+            if(opt[ele.src.map[0]] == eleVal){eleOpts[oi+xi] = $(JQOPT,{'value':opt[ele.src.map[0]],'selected':'selected'}).data(opt).html(opt[ele.src.map[1]]);}
+            else{eleOpts[oi+xi] = $(JQOPT,{'value':opt[ele.src.map[0]]}).data(opt).html(opt[ele.src.map[1]]);}
             });
           }
         }
-      
-      var eleVal = (sectDta[eli] !== null ? sectDta[eli] : '');
       }
     
     var hideTarg = null;
@@ -3635,7 +3661,7 @@ function estBuildMediaMgr(){
 
 function estProcPdta(pDta,fldmap,ret){
   if(pDta.form.elem == null){return;}
-  console.log(pDta);
+  //console.log(pDta);
   var defs = $('body').data('defs');
   if($(pDta.form.elem).is('select')){
     if(fldmap == null){estAlertLog(defs.txt.nomap);}
@@ -5346,6 +5372,7 @@ function estSubDivForm(mainTbl,targ,frmn=0){
   }
 
 
+
 function estBuildSubDivForm(popIt){
   var defs = $('body').data('defs');
   var mainIdx = Number($('body').data('propid'));
@@ -5353,9 +5380,13 @@ function estBuildSubDivForm(popIt){
   var levdta = $(popFrm.form).data('levdta');
   console.log(levdta);
   
+  if(Number(levdta.subd_type) == 0){
+    var zone = Number($('select[name="prop_zoning"]').find('option:selected').val());
+    var grpGrepX = $.grep(defs.tbls.estate_featcats.dta, function (el,i) {return Number(el['featcat_lev']) == 0 && Number(el['featcat_zone']) == zone;});
+    if(grpGrepX.length > 0){levdta.subd_type = grpGrepX[0].featcat_idx;}
+    }
   
-  var subdDta = $('#estCommSpaceGrpDiv').data();
-  console.log(subdDta);
+  $('select[name="subd_type"]').on({change : function(){estBuildCategoryList(0);}});
   
   var tabtr =  popFrm.tabs.tab;
   
@@ -5369,12 +5400,11 @@ function estBuildSubDivForm(popIt){
   
   fBox1a = $(JQDIV,{'id':'estFeatureMgrLcol'}).appendTo(fBox0);
   fBox1b = $(JQDIV,{'id':'estFeatureListHead'}).appendTo(fBox1a);
-  $(JQBTN,{'class':'btn btn-primary btn-sm'}).html(xt.new1+' '+xt.feature).on({
+  $(JQBTN,{'class':'btn btn-primary btn-sm'}).html(xt.addnewfeat).on({
     click : function(e){e.preventDefault(); estAddEditFeature(0);}
     }).appendTo(fBox1b);
   $(JQNPT,{'type':'hidden','name':'feature_name','value':''}).appendTo(fBox1b);
   fBox1c = $(JQDIV,{'id':'estFeatureListCont','class':'estFeatNotUsed estFeatureListSort'}).appendTo(fBox1a);
-  
   
   fBox2a = $(JQDIV,{'id':'estFeatureMgrRcol'}).appendTo(fBox0);
   fBox2b = $(JQDIV,{'id':'estFeatureUsedHead'}).appendTo(fBox2a);
@@ -5410,8 +5440,8 @@ function estBuildSubDivForm(popIt){
       $('select[name="subd_landfreq"]').addClass('ILBLK estNoLBord').appendTo($('input[name="subd_landfee"]').closest('td')).promise().done(function(){
         $(remtrs[1]).remove();
         });
-      
-      estBuildMediaList(0,subdDta.media);
+      //ele.inf
+      estBuildMediaList(0,$('#estCommSpaceGrpDiv').data('media'));
       estTestEles(popFrm.form,popFrm.savebtns);
       });
   }
@@ -5474,10 +5504,7 @@ function estBuildSpaceOptns(sTep=0){
         });
     });
   
-  //residential, commercial...
-  var zoneCatX = $.grep(defs.tbls.estate_featcats.dta, function (element, index) {return element.featcat_zone == propZone;});
-   // above groups only for 'spaces'
-  var zoneCats = $.grep(zoneCatX, function (element, index) {return element.featcat_lev == mode;});
+  var zoneCats = $.grep(defs.tbls.estate_featcats.dta, function(el,ix){return Number(el.featcat_lev) == Number(mode) && Number(el.featcat_zone) == Number(propZone);});
   
   $(targ[1]).empty().promise().done(function(){
     $(zoneCats).each(function(i,opt){
@@ -5576,14 +5603,11 @@ function estBuildSpace(mode,ele){
   var zoneDta = defs.tbls.estate_zoning.dta.find(x => Number(x.zoning_idx) === Number($('select[name="prop_zoning"]').val()));
   var zoneName = (typeof zoneDta !== 'undefined' ? zoneDta.zoning_name : defs.txt.unk);
   
-  
   var spaceLev = Number(SPDTA.space_lev); // 1 for Property Spaces, 3 & 4 for City & Subdiv
   var spaceLevIdx = Number(SPDTA.space_levidx);
   
-  
   var TBX = $(ele).closest('div.estSpaceGrpTileCont').data();
-  console.log(TBX);
-  
+  //console.log(TBX);
   
   var destTbl = defs.tbls[DTA.keys[0]];
   //console.log(destTbl);
@@ -5602,6 +5626,7 @@ function estBuildSpace(mode,ele){
   */
   
   //estMediaMgrCont
+  console.log(levDta);
   
   if(typeof levDta == 'undefined'){
     var levDta = estDefDta(DTA.keys[0]);
@@ -5822,7 +5847,7 @@ function estBuildSpace(mode,ele){
   
   fBox1a = $(JQDIV,{'id':'estFeatureMgrLcol'}).appendTo(fBox0);
   fBox1b = $(JQDIV,{'id':'estFeatureListHead'}).appendTo(fBox1a);
-  $(JQBTN,{'class':'btn btn-primary btn-sm'}).html(xt.new1+' '+xt.feature).on({
+  $(JQBTN,{'class':'btn btn-primary btn-sm'}).html(xt.addnewfeat).on({
     click : function(e){e.preventDefault(); estAddEditFeature(mode);}
     }).appendTo(fBox1b);
   $(JQNPT,{'type':'hidden','name':'feature_name','value':''}).appendTo(fBox1b);
@@ -5885,8 +5910,8 @@ function estBuildFeatBtn(lev,btnDta){
     }
   
   bDiv.btn[0] = $(JQBTN,{'class':'btn btn-default btn-sm'}).on({
-  click : function(e){e.preventDefault(); estAddEditFeature(lev,this);}
-  }).appendTo(bDiv.cont);
+    click : function(e){e.preventDefault(); estAddEditFeature(lev,this);}
+    }).appendTo(bDiv.cont);
   $(JQSPAN,{'class':'fa fa-pencil-square-o'}).appendTo(bDiv.btn[0]);
   
   bDiv.btn[1] = $(JQBTN,{'class':'btn btn-default btn-sm'}).html(btnDta.src.dta.feature_name).data('btndta',btnDta).on({
@@ -5902,8 +5927,8 @@ function estBuildFeatBtn(lev,btnDta){
   
   
   bDiv.btn[3] = $(JQBTN,{'class':'btn btn-default btn-sm'}).on({
-  click : function(e){e.preventDefault(); estAddEditFeature(lev,this);}
-  }).appendTo(bDiv.cont);
+    click : function(e){e.preventDefault(); estAddEditFeature(lev,this);}
+    }).appendTo(bDiv.cont);
   $(JQSPAN,{'class':'fa fa-pencil-square-o'}).appendTo(bDiv.btn[3]);
   
   $(bDiv.cont).data('btnDta',btnDta);
@@ -5977,13 +6002,13 @@ function estFeatOptMenu(eBtn){
 
 function estSaveFeature(delX,mainBtn){
   var defs = $('body').data('defs');
-  var propId = Number($('body').data('propid'));
   var popDta = $('#estPopCont').data();
   var btnDta = $(mainBtn).data('btnDta');
   var defDta = defs.tbls[btnDta.act.tbl].dta;
   var defFlds = defs.tbls[btnDta.act.tbl].flds;
   
   var lev = Number(btnDta.lev);
+  var propId = Number(lev == 1 || lev == 2 ? $('body').data('propid') : 0);
   
   if(defDta.length > 0){
     var exDta = defDta.find(x => Number(x.featurelist_key) === Number(btnDta.src.dta.feature_idx));
@@ -5998,10 +6023,10 @@ function estSaveFeature(delX,mainBtn){
     inpts[fi][fele] = btnDta.act.dta[fele];
     }).promise().done(function(){
       var sDta = {'fetch':3,'propid':propId,'rt':'js','tdta':[{'tbl':'estate_featurelist','key':'featurelist_idx','del':delX,'fdta':inpts}]};
-      //console.log(sDta);
+      console.log(sDta);
       
       $.ajax({
-        url: vreFeud+'?5||0',
+        url: vreFeud+'?3||0',
         type:'post',
         data:sDta,
         dataType:'json',
@@ -6009,6 +6034,8 @@ function estSaveFeature(delX,mainBtn){
         processData:true,
         success: function(ret, textStatus, jqXHR){
           ret = ret[0];
+          console.log(ret);
+          //featurelist_propidx
           $(mainBtn).removeClass('estFlipIt');
           if(typeof ret.error !== 'undefined'){
             estAlertLog(ret.error);
@@ -6065,22 +6092,23 @@ function estAddRemFeat(eBtn){
 function estAddEditFeature(lev=1,eBtn=null){
   var defs = $('body').data('defs');
   var propId = Number($('body').data('propid'));
-  var catInf = estGetFeatCatInfo(lev);
   var fTarg = $('#estPopCont').data('ftarg');
   
-  if(eBtn == null){
-    var fLabl = defs.txt.new1+' '+catInf.txt+' '+defs.txt.feature;
-    var eledta = estDefDta('estate_features');
-    eledta.feature_cat = Number(catInf.evlu);
-    }
-  else{
+  var catInf = estGetFeatCatInfo(lev);
+  if(eBtn !== null){
     var eledta = $(eBtn).parent().data('btnDta').src.dta;
     var fLabl = catInf.txt+': '+eledta.feature_name;
     }
-  var tDta = {'tbl':'estate_features','fld':'feature_name','frmlabl':fLabl,'eidx':eledta.feature_idx,'fnct':{'name':'estBuildCategoryList','args':lev}};
-  if(lev > 0){
-    $.extend('tDta',{'req':['space_catid','feature_cat',defs.txt.category+' '+defs.txt.required,1]});
+  else{
+    var eledta = estDefDta('estate_features');
+    eledta.feature_cat = Number(catInf.evlu);
+    var fLabl = catInf.txt+': '+defs.txt.new1+' '+defs.txt.feature;
     }
+  
+  var tDta = {'tbl':'estate_features','fld':'feature_name','frmlabl':fLabl,'catInf':catInf,'eledta':eledta,'eidx':eledta.feature_idx,'fnct':{'name':'estBuildCategoryList','args':lev}};
+  if(lev == 0){$.extend('tDta',{'req':['subd_type','feature_cat',defs.txt.subdtypereq,1]});}
+  else{$.extend('tDta',{'req':['space_catid','feature_cat',defs.txt.category+' '+defs.txt.required,1]});}  
+  
   estPopoverAlt(1,tDta);
   }
 
@@ -6095,19 +6123,21 @@ function estBuildCategoryList(lev=1){
   var levDta = $(popDta.popit.frm[0].form).data('levdta');
   var sectKey = defs.tbls.estate_sects[lev][1];
   
-  //console.log(levDta,sectKey);
+  console.log('estBuildCategoryList('+lev+')');
   
-  if(levDta[sectKey] == 0){
+  var secId = Number(levDta[sectKey]);
+  
+  if(secId == 0){
     $('#estFeatureMgrCont').hide();
     $('#estFeatureNoGo').html(defs.txt.savefirst+' '+defs.txt.features).show();
     }
   else{
     var catInf = estGetFeatCatInfo(lev);
-    //console.log(lev,catInf);
     
-    /*
+    /* levels
+    //subd_type
     array(
-    0=>'Community/Subdivision: General',
+    0=>'Community/Subdivision Types',
     1=>'Property: General',
     2=>'Property Spaces/Rooms',
     3=>'City/Town Individual Amenities',
@@ -6121,16 +6151,13 @@ function estBuildCategoryList(lev=1){
         $(popDta.popit.frm[0].form).data('levdta').space_catid = Number(catInf.evlu);
         break;
         
-      case 0 : //Community/Subdivision: General
-        //console.log(defs.tbls.estate_features.dta);
-        //featcat_name[1][0][13]
+      default : //Community/Subdivision: General
+        propId = 0;
+        //$(popDta.popit.frm[0].form).data('levdta').subd_type = Number(catInf.evlu);
         break;
       }
     
-    
-    
-    
-    if(catInf.ele !== null && catInf.evlu == 0){
+    if(catInf.evlu == 0){
       $('#estFeatureMgrCont').hide();
       $('#estFeatureNoGo').html(defs.txt.spacecatzero).show();
       }
@@ -6139,12 +6166,8 @@ function estBuildCategoryList(lev=1){
       $('#estFeatureNoGo').hide();
       $(popDta.ftarg.label).html(catInf.txt+' '+defs.txt.features);
       
-      grpGrepX = $.grep(defs.tbls.estate_featurelist.dta, function (element, index) {return element['featurelist_lev'] == lev;});
-      grpGrep1 = $.grep(grpGrepX, function (element, index) {return element['featurelist_levidx'] == levDta[sectKey];});
+      grpGrep1 = $.grep(defs.tbls.estate_featurelist.dta, function(el,i) {return Number(el['featurelist_lev']) == lev && Number(el['featurelist_levidx']) == secId;});
       grpGrep2 = $.grep(defs.tbls.estate_features.dta, function (element, index) {return Number(element['feature_cat']) == Number(catInf.evlu);});
-      
-      //console.log(grpGrep1);
-      //console.log(grpGrep2);
       
       $(popDta.ftarg.targ[1]).empty().promise().done(function(){
         $(popDta.ftarg.targ[0]).empty().promise().done(function(){
@@ -6158,7 +6181,7 @@ function estBuildCategoryList(lev=1){
               actDta = estDefDta('estate_featurelist');
               actDta.featurelist_propidx = propId;
               actDta.featurelist_lev = lev;
-              actDta.featurelist_levidx = levDta[sectKey];
+              actDta.featurelist_levidx = secId;
               actDta.featurelist_key = ele.feature_idx;
               }
             var btnDta = {'act':{'tbl':'estate_featurelist','key':'featurelist_key','opt':{'type':1,'fld':'featurelist_dta'},'dta':actDta},'grp':[Number(ele.feature_ele),Number(ele.feature_cat),Number(catInf.evlu)],'lev':lev,'src':{'tbl':'estate_features','key':'feature_idx','dta':ele,'opt':{'type':1,'fld':'feature_opts'}},'targ':popDta.ftarg.targ};
@@ -6169,14 +6192,12 @@ function estBuildCategoryList(lev=1){
             }).promise().done(function(){
               $(grpGrep1).each(function(i,ele){
                 var remDta = defs.tbls.estate_features.dta.find(x => x.feature_idx === ele.featurelist_key);
-                console.log(remDta,ele);
                 if(typeof remDta !== 'undefined'){
                   var btnDta = {'act':{'tbl':'estate_featurelist','key':'featurelist_key','opt':{'type':1,'fld':'featurelist_dta'},'dta':ele},'grp':[Number(remDta.feature_ele),Number(remDta.feature_cat),Number(catInf.evlu)],'lev':lev,'src':{'tbl':'estate_features','key':'feature_idx','dta':remDta,'opt':{'type':1,'fld':'feature_opts'}},'targ':popDta.ftarg.targ};
                   bDivs[i] = estBuildFeatBtn(lev,btnDta);
                   if(Number(ele.featurelist_idx) > 0){$(bDivs[i].cont).appendTo(popDta.ftarg.targ[1]);}
                   else{$(bDivs[i].cont).appendTo(popDta.ftarg.targ[0]);}
                   }
-                  
                 }).promise().done(function(){
                   estFeatureSort();
                   });
@@ -7175,6 +7196,8 @@ function estSetDIMUbtns(mode,btn,nVal=-1){
   $(btn).html(txts[cv]);
   $('input[name="'+flds[mode]+'"]').val(cv);
   
+  //input[name="prop_landfee"]
+  
   $('input[name="prop_hoaland"]').change();
   
   if(cv > 0){
@@ -7196,6 +7219,10 @@ function estSetDIMUbtns(mode,btn,nVal=-1){
       if(Number(nVal) > -1){$('input[name="prop_landfee"]').data('pval',$('input[name="prop_landfee"]').val());}
       $('input[name="prop_landfee"]').val(Number(0));
       }
+    }
+  if(mode == 0){
+    if(Number($('input[name="prop_landfee"]').val()) > 0){$('#LandLeaseBtn').prop('disabled',false).removeProp('disabled');}
+    //else{$('#LandLeaseBtn').prop('disabled',true);}
     }
   }
 
@@ -8027,11 +8054,9 @@ function estBuildPriceBtns(){
 function estateBuildDIMUbtns(){
   //console.log('estateBuildDIMUbtns');
   var defs = $('body').data('defs');
-  //Number($('select[name="prop_subdiv"]').val())
   var bgColor = $('body').css('background-color');
   var lightordark = ''; 
   if(typeof bgColor !== 'undefined'){lightordark = ' '+lightOrDark(bgColor);}
-  
   
   $('select[name="prop_status"]').data('pval',$('select[name="prop_status"]').find('option:selected').val());
   
@@ -8058,20 +8083,9 @@ function estateBuildDIMUbtns(){
     });
   
   
-  //prop_country
   estBuildPriceBtns();
   
   var LeaseFrqDiv = $(JQDIV,{'class':'WSNWRP'}).appendTo($('input[name="prop_origprice"]').parent());
-  
-  /*
-  var currencyBtn = $(JQBTN,{'id':'estPropCurrBtn','class':'btn btn-default estNoRightBord'}).on({
-    click : function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      estSetDIMUbtns(3,this);
-      }
-    }).appendTo(LeaseFrqDiv);
-  */
   
   $('input[name="prop_origprice"]').appendTo(LeaseFrqDiv);
   
@@ -8110,8 +8124,9 @@ function estateBuildDIMUbtns(){
   estSetDIMUbtns(4,LeaseFrqBtn,Number($('input[name="prop_leasefreq"]').val()));
   
   
-  
-  
+  $('select[name="prop_city"]').data('pval',-1).on({
+    change : function(){estGetSubDivs(4)}
+    });
   
   
   // start of subdivision fields
@@ -8180,11 +8195,8 @@ function estateBuildDIMUbtns(){
       },
     change : function(){
       estSHHOAResetBtn(1,this);
-      if(Number(this.value) > 0){$('#LandLeaseBtn').prop('disabled',false).removeProp('disabled');}
-      else{
-        estSetDIMUbtns(0,$('#LandLeaseBtn'),0);
-        $('#LandLeaseBtn').prop('disabled',true);
-        }
+      if(Number(this.value) == 0){estSetDIMUbtns(0,$('#LandLeaseBtn'),0);}
+      else{$('#LandLeaseBtn').prop('disabled',false).removeProp('disabled');}
       }
     }).prependTo(selContA);
   
@@ -8375,6 +8387,89 @@ function estateBuildDIMUbtns(){
 
 
 
+
+function estDelSubDiv(popIt){
+  var defs = $('body').data('defs');
+  var propId = Number($('body').data('propid'));
+  var popFrm = popIt.frm[0];
+  var formDta = $(popFrm.form).data();
+  var subIdx = Number(formDta.levdta.subd_idx);
+  if(subIdx > 0){
+    if(jsconfirm(defs.txt.deletes+' "'+formDta.levdta.subd_name+'" '+defs.txt.areyousure)){
+      $.ajax({
+        url: vreFeud+'?82||0',
+        type:'post',
+        data:{'fetch':82,'propid':propId,'rt':'js','idx':subIdx},
+        dataType:'json',
+        cache:false,
+        processData:true,
+        success: function(ret, textStatus, jqXHR){
+          console.log(ret);
+          if(typeof ret !== 'undefined'){
+            if(typeof ret.error !== 'undefined'){estAlertLog(ret.error);}
+            if(typeof ret.alldta !== 'undefined'){estProcDefDta(ret.alldta.tbls);}
+            $('select[name="prop_subdiv"]').find('option[value="'+subIdx+'"]').remove();
+            $('select[name="prop_subdiv"]').val($('select[name="prop_subdiv"]').find('option').eq(0).val()).change();
+            estRemovePopover();
+            //estHOAup4
+            }
+          },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log('ERRORS: '+textStatus+' '+errorThrown);
+          estAlertLog(jqXHR.responseText);
+          }
+        });
+      }
+    }
+  }
+
+
+function estDelCity(popIt){
+  var defs = $('body').data('defs');
+  var propId = Number($('body').data('propid'));
+  var popFrm = popIt.frm[0];
+  var formDta = $(popFrm.form).data();
+  var cityIdx = Number(formDta.levdta.city_idx);
+  var countyIdx = Number(formDta.levdta.city_county);
+  
+  console.log(popIt);
+  
+  if(cityIdx > 0){
+    if(jsconfirm(defs.txt.deletes+' "'+formDta.levdta.city_name+'" '+defs.txt.areyousure)){
+      $.ajax({
+        url: vreFeud+'?83||0',
+        type:'post',
+        data:{'fetch':83,'propid':propId,'rt':'js','idx':cityIdx,'county':countyIdx},
+        dataType:'json',
+        cache:false,
+        processData:true,
+        success: function(ret, textStatus, jqXHR){
+          console.log(ret);
+          if(typeof ret !== 'undefined'){
+            if(typeof ret.error !== 'undefined'){estAlertLog(ret.error);}
+            else{
+              //name="prop_city"
+              //name="prop_subdiv"
+              }
+            //if(typeof ret.alldta !== 'undefined'){estProcDefDta(ret.alldta.tbls);}
+            
+            //estRemovePopover();
+            //estHOAup4
+            }
+          },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log('ERRORS: '+textStatus+' '+errorThrown);
+          estAlertLog(jqXHR.responseText);
+          }
+        });
+      
+      }
+    }
+  }
+
+
+
+
 function selectEdit(mainTbl,targ,frmn=0){
   var defs = $('body').data('defs');
   var mainIdx = Number($('body').data('propid'));
@@ -8399,6 +8494,7 @@ function selectEdit(mainTbl,targ,frmn=0){
   if(typeof destTbl == 'undefined'){return;}
   if(typeof destTbl.dta == 'undefined'){return;}
   
+  var lev = 2;
   var sectDta = estGetSectDta(idx,cVal,destTbl);
   
   var reqMatch = null;
@@ -8430,7 +8526,11 @@ function selectEdit(mainTbl,targ,frmn=0){
   var frmLabel = $(targ).closest('tr').find('td:first-child').html().toUpperCase();
   var fnct = null;
   
+  
+  //'fetch':81
+  
   if(targName == 'prop_subdiv'){
+    lev = 0;
     var popIt = estBuildPopover([{'tabs':fTabs,'fnct':{'name':'estSHUploadBtn','args':4}}]);
     var popFrm = popIt.frm[0];
     $(popFrm.form).prop('enctype','multipart/form-data');
@@ -8443,27 +8543,46 @@ function selectEdit(mainTbl,targ,frmn=0){
         }
       });
     
+    if(sectDta[idx] > 0 && Number(defs.user.perm) > 2){
+      var delBtn = $(JQBTN,{'id':'estPopDelBtn1','class':'btn btn-danger btn-sm FR'}).html(xt.deletes).on({
+        click : function(e){
+          e.stopPropagation();
+          e.preventDefault();
+          estDelSubDiv(popIt);
+          }
+        }).appendTo(popFrm.h3);
+      popFrm.savebtns.push(delBtn);
+      }
+      
     
-    var saveBtn2 = $(JQBTN,{'id':'estSaveSpace2','class':'btn btn-primary btn-sm FR'}).html(xt.save2).on({click : function(){
-      estPopGo(1,popIt,0);
-      }});
+    var saveBtn2 = $(JQBTN,{'id':'estSaveSpace2','class':'btn btn-primary btn-sm FR'}).html(xt.save2).on({
+      click : function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        $('#estPopDelBtn1').remove();
+        estPopGo(1,popIt,0);
+        }
+      });
   
-    var saveBtn1 = $(JQBTN,{'id':'estSaveSpace1','class':'btn btn-primary btn-sm FR'}).html(xt.save).on({click : function(){
-      estPopGo(4,popIt,0); //prop_subdiv
-      }});
+    var saveBtn1 = $(JQBTN,{'id':'estSaveSpace1','class':'btn btn-primary btn-sm FR'}).html(xt.save).on({
+      click : function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        $('#estPopDelBtn1').remove();
+        estPopGo(4,popIt,0);
+        }
+      });
     
     $(saveBtn2).appendTo(popFrm.h3);
     $(saveBtn1).appendTo(popFrm.h3);
     $(fileSlipBtn).appendTo(popFrm.h3).hide();
+    
     popFrm.savebtns.push(saveBtn1);
     popFrm.savebtns.push(saveBtn2);
     popFrm.savebtns.push(fileSlipBtn);
     
     if(sectDta[idx] == 0){$(saveBtn2).hide();}
     //if(levDta.subd_idx == 0){$(saveBtn2).hide();}
-    popFrm.savebtns.push(saveBtn1);
-    popFrm.savebtns.push(saveBtn2);
-    popFrm.savebtns.push(fileSlipBtn);
     fnct = {'name':'estUDSubdivision'};
     
     $(JQSPAN,{'class':'FL','title':defs.txt.cancelremove}).html(frmLabel).on({
@@ -8477,11 +8596,33 @@ function selectEdit(mainTbl,targ,frmn=0){
     var popIt = estBuildPopover([{'tabs':fTabs}]);
     var popFrm = popIt.frm[0];
     
-    var saveBtn = $(JQBTN,{'class':'btn btn-primary btn-sm FR'}).html(defs.txt.save).on({click : function(){estPopGo(1,popIt);}}).appendTo(popFrm.h3);
+    if(sectDta[idx] > 0 && Number(defs.user.perm) > 2){
+      var delBtn = $(JQBTN,{'id':'estPopDelBtn1','class':'btn btn-danger btn-sm FR'}).html(xt.deletes).on({
+        click : function(e){
+          e.stopPropagation();
+          e.preventDefault();
+          if(targName == 'prop_city'){estDelCity(popIt);}
+          else{alert('Function not created yet');}
+          }
+        }).appendTo(popFrm.h3);
+      popFrm.savebtns.push(delBtn);
+      }
+    
+    var saveBtn = $(JQBTN,{'class':'btn btn-primary btn-sm FR'}).html(defs.txt.save).on({
+      click : function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        $('#estPopDelBtn1').remove();
+        estPopGo(1,popIt);
+        }
+      }).appendTo(popFrm.h3);
     popFrm.savebtns.push(saveBtn);
     
     var newBtn = $(JQBTN,{'class':'btn btn-primary btn-sm FR'}).data('step',1).html(defs.txt.new1).on({
-      click : function(){
+      click : function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        $('#estPopDelBtn1').remove();
         if($(this).data('step') == 2){estPopGo(2,popIt);}
         else{
           $(this).data('step',2).html(defs.txt.new2); estPopGo(-1,popIt);
@@ -8506,8 +8647,8 @@ function selectEdit(mainTbl,targ,frmn=0){
   
   
   if(targName == 'prop_city'){
-    $.extend(tdta,{'fnct':{'name':'estChngCityDesc'}});
-    console.log(tdta,tdta.fnct);
+    if(typeof tdta == 'undefined'){var tdta = {'fnct':{'name':'estChngCityDesc'}};}
+    else{$.extend(tdta,{'fnct':{'name':'estChngCityDesc'}});}
     }
   
   var tbdy = popFrm.tabs.tab[0].tbody;
@@ -8515,8 +8656,9 @@ function selectEdit(mainTbl,targ,frmn=0){
   
   $(popFrm.form).data('levdta',sectDta).data('destTbl',{'dta':destTbl.dta,'flds':destTbl.flds,'idx':idx,'table':tbl});
   $(popFrm.form).data('maintbl',mainTbl).data('form',{'elem':targ,'attr':srcTbl.form[targName],'match':{},'fnct':fnct});
+  //console.log($(popFrm.form).data()); //estChngCityDesc
   
-  var frmTRs = estFormEles(destTbl.form,sectDta,reqMatch);
+  var frmTRs = estFormEles(destTbl.form,sectDta,reqMatch,lev);
   $(frmTRs).each(function(ei,trEle){
     estFormTr(trEle, popFrm.tabs.tab[trEle.tab].tDiv, popFrm.tabs.tab[trEle.tab].tbody);
     }).promise().done(function(){
