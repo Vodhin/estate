@@ -394,6 +394,7 @@ define("EST_GEN_SQRMI","Sq Miles");
 define("EST_GEN_STATUS","Status");
 define("EST_GEN_STORY","Story");
 define("EST_GEN_SUBDIVISION", "Subdivision");
+define("EST_GEN_SUBDIVTYPREQ", "Subdivision Type Required");
 define("EST_GEN_SUBDIVTYPE", array("Neighbourhood","Village","Incorporated Village","Town","Township","Parish","Hamlet","Gated Community","Housing Estate","55+ Retirement Community"));
 define("EST_GEN_SUBDIVISIONNONE", "Select or Add New Subdivision Above");
 define("EST_GEN_SUBMITTLISTING", "Submit New Listing");
@@ -651,7 +652,7 @@ define("EST_PROPLIST", "Property List");
 
 
 
-define("EST_SPCAT_ZERO","Please select a Category on the Main Tab");
+define("EST_SPCAT_ZERO","Please select a Type/Category on the Main Tab");
 define("EST_SPCID_ZERO","This Space must be Saved in order to add ");
 
 
@@ -683,7 +684,7 @@ define("EST_MEDIAREPLACE","Upload Replacement Media");
 define("EST_MEDIA_ZOOMCROP","Zoom & Crop");
 
 
-define("EST_SPEC_LEVS1",array("Community/Subdivision: General","Property: General","Property Spaces/Rooms","City/Town Individual Amenities","Community/Subdivision Individual Amenities"));
+define("EST_SPEC_LEVS1",array("Community/Subdivision","Property: General","Property Spaces/Rooms","City/Town Individual Amenities","Community/Subdivision Individual Amenities"));
 
 
 define("EST_UPL_FILEFULLREM","Removed Full Size Version");
@@ -837,11 +838,18 @@ define("EST_INSTRHEAD12a","Admins - User List Tab");
 define("EST_INSTRHEAD12b","Managers - User List Tab");
 define("EST_INSTRHEAD13a","Admins - Add New User Tab");
 
-
-
 define("EST_INSTRHEAD61","The Spaces Form - Main Tab");
 define("EST_INSTRHEAD62","The Spaces Form - Features Tab");
 define("EST_INSTRHEAD63","The Spaces Form - Description Tab");
 define("EST_INSTRHEAD64","The Spaces Form - Media Tab");
 
 
+
+define("LAN_EST_ADDNEWFEAT","Add New Feature");
+define("LAN_EST_ADDNEWCAT","Add New Category");
+define("LAN_EST_FEATURECAT","Feature Category");
+
+
+define("LAN_EST_USER01","User Display Name");
+define("LAN_EST_USER02","User Login Name");
+define("LAN_EST_USER03","User Signature");
