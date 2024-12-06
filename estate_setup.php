@@ -52,9 +52,19 @@ if(!class_exists("estate_setup")){
       else{$msg->addWarning('<div>'.EST_INST_INITSETUP.': '.EST_GEN_AGENT.' '.EST_GEN_PROFILES.'<ul><li>'.EST_INST_FISRTAGENTFAIL.'</li></ul></div>');}
       
       
+      //load Preset Data
+      /** inserts some preset data into the following tables:
+      * estate_zoning
+      * estate_listypes
+      * estate_states
+      * estate_featcats
+      * estate_features
+      * estate_subdivcats
+      * estate_group
+      **/
       
       if($sql->isEmpty('estate_features')){
-        $ret3 = e107::getXml(true)->e107Import(e_PLUGIN."estate/xml/features.xml");
+        $ret3 = e107::getXml(true)->e107Import(e_PLUGIN."estate/xml/presets.xml");
         if(!empty($ret3['success'])){
           $msg->addSuccess(EST_INST_FEATURES1);
           }
@@ -65,21 +75,10 @@ if(!class_exists("estate_setup")){
         }
       
       
-      if($sql->isEmpty('estate_states')){
-        $ret3 = e107::getXml(true)->e107Import(e_PLUGIN."estate/xml/states.xml");
-        if(!empty($ret3['success'])){
-          $msg->addSuccess(EST_INST_STATES1);
-          }
-        if(!empty($ret3['failed'])){
-          $msg->addError(EST_INST_STATES2);
-          $msg->addDebug(print_a($ret3['failed'],true));
-          }
-        }
-      
+      //load Sample Property
       if($sql->isEmpty('estate_properties')){
         $ret3 = e107::getXml(true)->e107Import(e_PLUGIN."estate/xml/sample_prop.xml");
         if(!empty($ret3['success'])){
-          
           $propMSG = EST_INST_SAMPLEPROP1;
           if(intval($MAINAGTID) > 0){
             if($sql->update("estate_properties","prop_agent='".$MAINAGTID."', prop_agency='1' WHERE prop_idx='1' LIMIT 1")){

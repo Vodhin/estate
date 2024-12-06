@@ -38,6 +38,8 @@ if(e107::isInstalled('estate')){
     }
   unset($ESTPLUG,$k,$v);
   
+  //getperms('P') --> is now --> e_user_model::checkPluginAdminPerms()
+  
   // define current user's premissions
   if(ADMINPERMS === '0'){
     define("EST_USERPERM", 4);

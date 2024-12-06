@@ -719,6 +719,7 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
   $media = estGetMediaRows($subd_idx,0);
   if($dbRow1 = $sql->retrieve('estate_subdiv', '*', 'subd_idx="'.$subd_idx.'"',true)){
     $RET = array_merge($dbRow1[0],$media);
+    //$RET['features']['sub'] = $sql->retrieve('estate_featurelist', '*', 'featurelist_lev="0" AND featurelist_levidx="'.$subd_idx.'"',true);
     }
   else{
     $RET = array('subd_idx'=>0,'subd_city'=>0,'subd_name'=>'','subd_type'=>2,'subd_url'=>'','subd_hoaname'=>'','subd_hoaweb'=>'','subd_hoareq'=>0,'subd_hoafee'=>0,'subd_hoafrq'=>0,'subd_hoaappr'=>0,'subd_hoaland'=>0,'subd_landfee'=>0,'subd_landfreq'=>0,'subd_description'=>'');
@@ -727,6 +728,7 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
   if($subd_city == 0 && intval($RET['subd_city']) > 0){$subd_city = intval($RET['subd_city']);}
   if($dbRow1b = $sql->retrieve('estate_city', '*', 'city_idx="'.$subd_city.'"',true)){
     $RET = array_merge($RET,$dbRow1b[0]);
+    //$RET['features']['city'] = $sql->retrieve('estate_featurelist', '*', 'featurelist_lev="3" ',true); //AND featurelist_levidx="'.$subd_city.'"
     }
   else{
     $RET['city_idx'] = 0;
@@ -738,6 +740,27 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
     $RET['city_description'] = '';
     }
   
+  
+  /*
+  if($fcats = $sql->retrieve('estate_featcats', '*', 'WHERE NOT featcat_lev = "2"',true)){
+    foreach($fcats as $fk=>$fv){
+      if(!is_array($RET['fcat'][$fv['featcat_lev']])){$RET['fcat'][$fv['featcat_lev']] = array();}
+      array_push($RET['fcat'][$fv['featcat_lev']],$fv);
+      }
+    }
+    */
+  //$RET['fcat'] = $sql->retrieve('estate_featcats', '*', 'WHERE NOT featcat_lev = "2" ORDER BY featcat_lev ASC',true);
+  
+  /*
+  $TQRY = "SELECT #estate_features.*, #estate_featcats.* FROM #estate_features LEFT JOIN #estate_featcats ON feature_cat = featcat_idx WHERE NOT featcat_lev = '2'";
+  if($sql->gen($TQRY)){
+    $fi = 0;
+    while($rows = $sql->fetch()){
+      $RET['fcat'][$fi] = $rows;
+      $fi++;
+      }
+    }
+  */
   
   $RET['spaces'] = array('city'=>array(),'subd'=>array());
   

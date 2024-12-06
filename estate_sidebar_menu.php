@@ -60,7 +60,6 @@ if(e_PAGE == 'listings.php'){
       }
     
     if(!is_array($MENUTMPL) && isset($EST_PREF['template_menu_ord'])){
-      echo '<div>Pref Menu Loaded</div>';
       if(is_array($EST_PREF['template_menu_ord'])){$MENUTMPL = $EST_PREF['template_menu_ord'];}
       elseif(trim($EST_PREF['template_menu_ord']) !== ''){$MENUTMPL = e107::unserialize($EST_PREF['template_menu_ord']);}
       }
