@@ -1255,7 +1255,7 @@ class estateCore{
       1=>array('AGENTFLTR',EST_GEN_LISTAGENT,'prop_agent','agents','seller_name','seller_aid'),
       2=>array('USERS',EST_GEN_LISTING.' '.EST_GEN_MEMBER,'prop_uidcreate',null,'seller_name','seller_aid'),
       3=>array('EST_PROPSTATUS',EST_GEN_STATUS,'prop_status',null,'opt',null),
-      4=>array('ZONES',EST_GEN_CATEGORY,'prop_type','types',null,null),
+      4=>array('ZONES',LAN_CATEGORY,'prop_type','types',null,null),
       );
     
     //estPropertyListTable
@@ -2339,9 +2339,9 @@ class estateCore{
       $HELES .= $frm->hidden('estNewUserKey',1);
       $HELES .= $frm->hidden('estProfileKey',6);
       //estNewUserPost
-      $TRS[0][0] = LAN_USER_02.'*'; //user_loginname
+      $TRS[0][0] = LAN_EST_USER01.'*'; //user_loginname
       $TRS[0][1] = $frm->text('user_loginname', $user_loginname, varset($pref['loginname_maxlength'], 30), array('size'=>'xlarge', 'required'=>1));
-      $TRS[1][0] = LAN_USER_03; //user_login
+      $TRS[1][0] = LAN_EST_USER02; //user_login
       $TRS[1][1] = $frm->text('user_login',$user_login, 30, array('size'=>'xlarge'));
       $TRS[2][0] = LAN_PASSWORD.'*';
       $TRS[2][1] = $frm->password('password', '', 128, array('size' => 'xlarge', 'class' => 'tbox e-password', 'generate' => 1, 'strength' => 1, 'autocomplete' => 'new-password'));
@@ -2372,7 +2372,7 @@ class estateCore{
       </thead>
       <tbody>
         <tr>
-          <td>'.(isset($ANU) ? LAN_USER.' '.LAN_USER_01.'<br />' : '').EST_GEN_AGENT.' '.EST_GEN_NAME.'*</td>
+          <td>'.(isset($ANU) ? LAN_EST_USER01.'<br />' : '').EST_GEN_AGENT.' '.EST_GEN_NAME.'*</td>
           <td>'.$frm->text('agent_name', $tp->toTEXT($agent_name), 100, array('size' => 'xxlarge','placeholder'=>EST_GEN_AGENT.' '.EST_GEN_NAME)).'</td>
           <td rowspan="'.(count($TRS) > 1 ? 5 : 4).'" class="TAC">
             <div id="agtAvatar" class="estAgentAvatar'.(isset($ANU) ? ' estNUAvatar' : '').'" style="background-image:url(\''.$AGENTIMAGE.'?'.rand(99,99999).'\')">
@@ -2448,7 +2448,7 @@ class estateCore{
       
       $text .= '
         <tr>
-          <td>'.(isset($ANU) ? LAN_USER.' '.LAN_USER_09.'<br />' : '').EST_GEN_AGENT.' '.EST_GEN_INFO.'</td>
+          <td>'.(isset($ANU) ? LAN_EST_USER03.'<br />' : '').EST_GEN_AGENT.' '.EST_GEN_INFO.'</td>
           <td>'.$frm->textarea('agent_txt1',$tp->toFORM($agent_txt1),3,80,array('size' => 'xxlarge','placeholder'=>EST_PLCH75),true).'</td>
         </tr>';
     
@@ -2659,7 +2659,7 @@ class estateCore{
     $dtaset = $this->estGetCompFeatures($zi);
     $zoning = $this->estGetZoning();
     
-    $lev = EST_SPEC_LEVS1;//$this->estSectLevel();
+    $lev = EST_SPEC_LEVS1;
     //krsort($lev);
     
     $mct = 8;
@@ -2787,7 +2787,13 @@ class estateCore{
       $text .= '
             <tr>
               <td>
-                <div class="estHlpFLeft"><i class="admin-ui-help-tip fa fa-question-circle" data-original-title="" title=""></i><div class="field-help TAL" data-placement="left" style="display:none"><p>'.EST_HLP_FEATURES0.'</p><p>'.EST_HLP_FEATURES1.'</p><p>'.EST_HLP_FEATURES2.'</p><p>'.EST_HLP_FEATURES3.'</p></div></div>'.EST_GEN_FEATURESFOR.' '.$lv.' <button class="btn btn-primary btn-sm estPresetsNewBtn" title="'.EST_GEN_ADDNEW.' '.$lv.' '.EST_GEN_FEATURE.' '.EST_GEN_CATEGORY.'" data-zi="'.$zi.'" data-lk="'.$lk.'" data-mx="'.$mct.'">'.EST_GEN_NEWFEATURE.'</button>
+                <div class="estHlpFLeft">
+                  <i class="admin-ui-help-tip fa fa-question-circle" data-original-title="" title=""></i>
+                  <div class="field-help TAL" data-placement="left" style="display:none">
+                    <p>'.EST_HLP_FEATURES0.'</p><p>'.EST_HLP_FEATURES1.'</p>
+                    <p>'.EST_HLP_FEATURES2.'</p><p>'.EST_HLP_FEATURES3.'</p>
+                  </div>
+                </div>'.($lk < 2 ? EST_GEN_FEATURESFOR1 : EST_GEN_FEATURESFOR).' '.$lv.' <button class="btn btn-primary btn-sm estPresetsNewBtn" title="'.EST_GEN_ADDNEW.' '.$lv.' '.LAN_EST_FEATURECAT.'" data-zi="'.$zi.'" data-lk="'.$lk.'" data-mx="'.$mct.'">'.($lk < 2 ? EST_GEN_NEWCAT : EST_GEN_NEWFEATURE).'</button>
               </td>
             </tr>
             <tr>

@@ -401,21 +401,21 @@ function estTablStruct(){
     
     'estate_subdiv'=>array(
       'subd_idx'=>array('type'=>'idx','tab'=>0),
+      'subd_name'=>array('type'=>'text','tab'=>0,'cls'=>'xlarge','chks'=>array('noblank')),
+      'subd_type'=>array(
+        'type'=>'eselect',
+        'tab'=>0,
+        'labl'=>EST_GEN_CATEGORY,
+        'str'=>'int',
+        'cls'=>'xlarge',
+        'src'=>array('tbl'=>'estate_featcats','idx'=>'featcat_idx','map'=>array('featcat_idx','featcat_name'),'grep'=>array('featcat_lev'))
+        ),
       'subd_city'=>array(
         'type'=>'eselect',
         'tab'=>0,
         'str'=>'int',
         'cls'=>'xlarge',
         'src'=>array('tbl'=>'estate_city','idx'=>'city_idx','map'=>array('cnty_idx','cnty_name'))
-        ),
-      'subd_name'=>array('type'=>'text','tab'=>0,'cls'=>'xlarge','chks'=>array('noblank')),
-      'subd_type'=>array(
-        'type'=>'select',
-        'tab'=>0,
-        'labl'=>EST_GEN_TYPE,
-        'str'=>'int',
-        'cls'=>'xlarge',
-        'src'=>array('tbl'=>'self','idx'=>'key','map'=>null,'opts'=>EST_GEN_SUBDIVTYPE)
         ),
       'subd_url'=>array('type'=>'text','tab'=>0,'cls'=>'xlarge','labl'=>LAN_WEBSITE,'plch'=>'www.somesite.com'),
       'subd_description'=>array(
@@ -473,17 +473,6 @@ function estTablStruct(){
         ),
       ),
     
-    'estate_subdivcats'=>array(
-      'subdivcat_idx'=>array('type'=>'idx','str'=>'int'),
-      'subdivcat_zone'=>array(
-        'type'=>'select',
-        'str'=>'int',
-        'cls'=>'xlarge',
-        'labl'=>EST_GEN_ZONING,
-        'src'=>array('tbl'=>'estate_zoning','idx'=>'zoning_idx','map'=>array('zoning_idx','zoning_name')),
-        ),
-      'subdivcat_name'=>array('type'=>'text','cls'=>'xlarge','chks'=>array('noblank')),
-      ),
     
     'estate_subdiv_spaces'=>array(
       'space_idx'=>array('type'=>'idx','str'=>'int'),
