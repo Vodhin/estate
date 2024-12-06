@@ -3270,6 +3270,9 @@ div.upldPvwBtn div.mediaPvwCapt:focus{
   height:164px;
   }
 
+#estPopCont i.admin-ui-help-tip{
+  color:rgba(0, 0, 0, 0.55);
+  }
 
 #cropContainer{
   display:block;
