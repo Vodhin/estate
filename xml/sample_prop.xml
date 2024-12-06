@@ -35,7 +35,7 @@
   			<field name="city_url"></field>
   		</item>
   	</dbTable>
-    <dbTable name="estate_grouplist">
+  	<dbTable name="estate_grouplist">
   		<item>
   			<field name="grouplist_idx">1</field>
   			<field name="grouplist_propidx">1</field>
@@ -46,10 +46,10 @@
   			<field name="grouplist_idx">2</field>
   			<field name="grouplist_propidx">1</field>
   			<field name="grouplist_groupidx">2</field>
-  			<field name="grouplist_ord">1</field>
+  			<field name="grouplist_ord">2</field>
   		</item>
   	</dbTable>
-    <dbTable name="estate_featurelist">
+  	<dbTable name="estate_featurelist">
   		<item>
   			<field name="featurelist_idx">1</field>
   			<field name="featurelist_propidx">1</field>
@@ -123,14 +123,6 @@
   			<field name="featurelist_dta">Den</field>
   		</item>
   		<item>
-  			<field name="featurelist_idx">10</field>
-  			<field name="featurelist_propidx">1</field>
-  			<field name="featurelist_lev">2</field>
-  			<field name="featurelist_levidx">3</field>
-  			<field name="featurelist_key">1</field>
-  			<field name="featurelist_dta">Walk In</field>
-  		</item>
-  		<item>
   			<field name="featurelist_idx">11</field>
   			<field name="featurelist_propidx">1</field>
   			<field name="featurelist_lev">2</field>
@@ -170,7 +162,91 @@
   			<field name="featurelist_key">4</field>
   			<field name="featurelist_dta">2 sided</field>
   		</item>
+  		<item>
+  			<field name="featurelist_idx">17</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">4</field>
+  			<field name="featurelist_levidx">10</field>
+  			<field name="featurelist_key">34</field>
+  			<field name="featurelist_dta"></field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">37</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">5</field>
+  			<field name="featurelist_key">30</field>
+  			<field name="featurelist_dta">Main Patio,Private Patio</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">38</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">3</field>
+  			<field name="featurelist_key">2</field>
+  			<field name="featurelist_dta">Double Sink,Shower,Tub</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">39</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">4</field>
+  			<field name="featurelist_levidx">9</field>
+  			<field name="featurelist_key">38</field>
+  			<field name="featurelist_dta"></field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">48</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">3</field>
+  			<field name="featurelist_key">1</field>
+  			<field name="featurelist_dta"></field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">52</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">4</field>
+  			<field name="featurelist_levidx">9</field>
+  			<field name="featurelist_key">39</field>
+  			<field name="featurelist_dta"></field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">53</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">4</field>
+  			<field name="featurelist_levidx">9</field>
+  			<field name="featurelist_key">36</field>
+  			<field name="featurelist_dta"></field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">59</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">7</field>
+  			<field name="featurelist_key">27</field>
+  			<field name="featurelist_dta">Lower closets,Shelves</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">60</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">7</field>
+  			<field name="featurelist_key">28</field>
+  			<field name="featurelist_dta">Upper Glass Doors</field>
+  		</item>
+  		<item>
+  			<field name="featurelist_idx">62</field>
+  			<field name="featurelist_propidx">1</field>
+  			<field name="featurelist_lev">2</field>
+  			<field name="featurelist_levidx">6</field>
+  			<field name="featurelist_key">28</field>
+  			<field name="featurelist_dta">Lighting,Upper Glass Doors</field>
+  		</item>
   	</dbTable>
+        
+    
+    
+    
     <dbTable name="estate_properties">
   		<item>
   			<field name="prop_idx">1</field>

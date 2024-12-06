@@ -1,0 +1,984 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<e107Export version="2.3.3" timestamp="1733068690" >
+	<database>
+  	<dbTable name="estate_zoning">
+  		<item>
+  			<field name="zoning_idx">1</field>
+  			<field name="zoning_name">Residential</field>
+  		</item>
+  		<item>
+  			<field name="zoning_idx">2</field>
+  			<field name="zoning_name">Commercial</field>
+  		</item>
+  		<item>
+  			<field name="zoning_idx">3</field>
+  			<field name="zoning_name">Industrial</field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_listypes">
+  		<item>
+  			<field name="listype_idx">1</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Apartment</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">2</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Condominimum</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">3</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Duplex</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">4</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Land</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">5</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Mobile/Manufactured</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">6</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Multi-Family</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">7</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Single Family</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">8</field>
+  			<field name="listype_zone">1</field>
+  			<field name="listype_name">Single Family Detached</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">9</field>
+  			<field name="listype_zone">2</field>
+  			<field name="listype_name">Office Space</field>
+  		</item>
+  		<item>
+  			<field name="listype_idx">10</field>
+  			<field name="listype_zone">2</field>
+  			<field name="listype_name">Retail Space</field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_states">
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Alabama</field>
+  			<field name="state_init">AL</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Alaska</field>
+  			<field name="state_init">AK</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Arazona</field>
+  			<field name="state_init">AZ</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Arkansas</field>
+  			<field name="state_init">AR</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">California</field>
+  			<field name="state_init">CA</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Colorado</field>
+  			<field name="state_init">CO</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Connecticut</field>
+  			<field name="state_init">CT</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Delaware</field>
+  			<field name="state_init">DE</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">District Of Columbia</field>
+  			<field name="state_init">DC</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Florida</field>
+  			<field name="state_init">FL</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Georgia</field>
+  			<field name="state_init">GA</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Hawaii</field>
+  			<field name="state_init">HI</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Idaho</field>
+  			<field name="state_init">ID</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Illinois</field>
+  			<field name="state_init">IL</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Indiana</field>
+  			<field name="state_init">IN</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Iowa</field>
+  			<field name="state_init">IA</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Kansas</field>
+  			<field name="state_init">KS</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Kentucky</field>
+  			<field name="state_init">KY</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Louisiana</field>
+  			<field name="state_init">LA</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Maine</field>
+  			<field name="state_init">ME</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Maryland</field>
+  			<field name="state_init">MD</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Massachusetts</field>
+  			<field name="state_init">MA</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Michigan</field>
+  			<field name="state_init">MI</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Minnesota</field>
+  			<field name="state_init">MN</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Mississippi</field>
+  			<field name="state_init">MS</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Missouri</field>
+  			<field name="state_init">MO</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Montana</field>
+  			<field name="state_init">MT</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Nebraska</field>
+  			<field name="state_init">NE</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Nevada</field>
+  			<field name="state_init">NV</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">New Hampshire</field>
+  			<field name="state_init">NH</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">New Jersey</field>
+  			<field name="state_init">NJ</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">New Mexico</field>
+  			<field name="state_init">NM</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">New York</field>
+  			<field name="state_init">NY</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">North Carolina</field>
+  			<field name="state_init">NC</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">North Dakota</field>
+  			<field name="state_init">ND</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Ohio</field>
+  			<field name="state_init">OH</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Oklahoma</field>
+  			<field name="state_init">OK</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Oregon</field>
+  			<field name="state_init">OR</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Pennsylvania</field>
+  			<field name="state_init">PA</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Rhode Island</field>
+  			<field name="state_init">RI</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">South Carolina</field>
+  			<field name="state_init">SC</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">South Dakota</field>
+  			<field name="state_init">SD</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Tennessee</field>
+  			<field name="state_init">TN</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Texas</field>
+  			<field name="state_init">TX</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Utah</field>
+  			<field name="state_init">UT</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Vermont</field>
+  			<field name="state_init">VT</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Virginia</field>
+  			<field name="state_init">VA</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Washington</field>
+  			<field name="state_init">WA</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">West Virginia</field>
+  			<field name="state_init">WV</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Wisconsin</field>
+  			<field name="state_init">WI</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  		<item>
+  			<field name="state_idx">0</field>
+  			<field name="state_name">Wyoming</field>
+  			<field name="state_init">WY</field>
+  			<field name="state_country">us</field>
+  			<field name="state_url"></field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_featcats">
+  		<item>
+  			<field name="featcat_idx">1</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Exterior</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">2</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Bedroom</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">3</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Living Space</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">4</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Kitchen</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">5</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Tomb</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">6</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Laundry</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">7</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Parking</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">8</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Bathroom</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">9</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Yard</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">10</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">2</field>
+  			<field name="featcat_name">Back Yard</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">11</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">4</field>
+  			<field name="featcat_name">Sports</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">12</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">3</field>
+  			<field name="featcat_name">Shopping</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">13</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">3</field>
+  			<field name="featcat_name">Entertainment</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">14</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">0</field>
+  			<field name="featcat_name">Hamlet</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">15</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">4</field>
+  			<field name="featcat_name">Recreation</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">16</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">0</field>
+  			<field name="featcat_name">Village</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">17</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">0</field>
+  			<field name="featcat_name">Town</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">18</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">0</field>
+  			<field name="featcat_name">Gated Community</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">19</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">0</field>
+  			<field name="featcat_name">Retirement Community</field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_features">
+  		<item>
+  			<field name="feature_idx">1</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">2</field>
+  			<field name="feature_name">Closets</field>
+  			<field name="feature_opts">Walk In,Standard</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">2</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">2</field>
+  			<field name="feature_name">Ensuite</field>
+  			<field name="feature_opts">Tub,Shower,Single Sink,Double Sink,Spa,Bidet</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">3</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Ceiling</field>
+  			<field name="feature_opts">cathedral,vaulted</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">4</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Fireplace</field>
+  			<field name="feature_opts">wood stove,pellet stove,corner,2 sided,large,small</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">5</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Play Area</field>
+  			<field name="feature_opts">enclosed,fenced in</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">6</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">5</field>
+  			<field name="feature_name">Locking Gate</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">7</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">5</field>
+  			<field name="feature_name">False Burial Alarm</field>
+  			<field name="feature_opts">Bellpull,Buzzer,Strobe</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">8</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">8</field>
+  			<field name="feature_name">Ensuite</field>
+  			<field name="feature_opts">Tub/Shower Combo,Tub,Walk-in Shower,Single Sink,Double Sink,Makeup Vanity,Bidet,Dressing Room</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">9</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Refrigerator</field>
+  			<field name="feature_opts">French Door,Ice Maker</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">10</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Dishwasher</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">11</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Range</field>
+  			<field name="feature_opts">Gas,Electric</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">12</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Microwave</field>
+  			<field name="feature_opts">Countertop,Wall,Over Range</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">13</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Appliances</field>
+  			<field name="feature_opts">Refrigerator,Range,Dishwasher,Disposal,Compactor,Microwave</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">14</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">10</field>
+  			<field name="feature_name">Pool</field>
+  			<field name="feature_opts">Spa,Waterfall,Fountain,Lanai</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">15</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">1</field>
+  			<field name="feature_name">Dock</field>
+  			<field name="feature_opts">Water,Electric,Tiki,Private,Community</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">16</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Washer</field>
+  			<field name="feature_opts">Top Load,Front Load</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">17</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Dryer</field>
+  			<field name="feature_opts">Gas,Electric</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">18</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Cabinets</field>
+  			<field name="feature_opts">Upper,Lower</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">19</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Counter</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">20</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">6</field>
+  			<field name="feature_name">Sink</field>
+  			<field name="feature_opts">Utility,Sink</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">21</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">8</field>
+  			<field name="feature_name">Shower</field>
+  			<field name="feature_opts">Tub/Shower Combination,Walk in,Rain Head</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">22</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">8</field>
+  			<field name="feature_name">Hamper</field>
+  			<field name="feature_opts">Built-in,Storage Area</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">23</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">10</field>
+  			<field name="feature_name">Screened Porch</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">24</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">1</field>
+  			<field name="feature_name">Carport</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">25</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Wet Bar</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">26</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Eat-in Dining Area</field>
+  			<field name="feature_opts">Counter Seating,Kitchen table</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">27</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Built-in Book Case</field>
+  			<field name="feature_opts">Lower closets,Shelves,Lighting</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">28</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Built-in Cabinets</field>
+  			<field name="feature_opts">Upper Glass Doors,Lower Cabinets,Lighting</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">29</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">3</field>
+  			<field name="feature_name">Sunroom</field>
+  			<field name="feature_opts">Wall Air-Conditioner,Glass Windows,Roll Shades,Exterior Door</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">30</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">2</field>
+  			<field name="feature_name">Pool/Patio access</field>
+  			<field name="feature_opts">Main Patio,Private Patio</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">31</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Oven</field>
+  			<field name="feature_opts">Single,Double,Built-In,Wall Mounted</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">32</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">4</field>
+  			<field name="feature_name">Passepartout</field>
+  			<field name="feature_opts">Den,Dining Area,Patio/Pool</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">33</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">14</field>
+  			<field name="feature_name">Gate House</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">34</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">11</field>
+  			<field name="feature_name">Base Ball</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">35</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">14</field>
+  			<field name="feature_name">Transit</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">36</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">15</field>
+  			<field name="feature_name">Canoeing</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">37</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">15</field>
+  			<field name="feature_name">Water Skiing</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">38</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">15</field>
+  			<field name="feature_name">Hiking</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">39</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">15</field>
+  			<field name="feature_name">Beach</field>
+  			<field name="feature_opts">Private,Public</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">40</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">11</field>
+  			<field name="feature_name">Tennis</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">41</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">11</field>
+  			<field name="feature_name">Raquet Ball</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">42</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">11</field>
+  			<field name="feature_name">Soccer</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">43</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">11</field>
+  			<field name="feature_name">Pickle Ball</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">44</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">16</field>
+  			<field name="feature_name">Village Green</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">45</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">16</field>
+  			<field name="feature_name">Public House</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">46</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">17</field>
+  			<field name="feature_name">Town Square</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">47</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">17</field>
+  			<field name="feature_name">Public Water</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">48</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">17</field>
+  			<field name="feature_name">Public Sewer</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">49</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">18</field>
+  			<field name="feature_name">Security Patrol</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">50</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">18</field>
+  			<field name="feature_name">Guard House</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">51</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">19</field>
+  			<field name="feature_name">Age Restricted</field>
+  			<field name="feature_opts">Residents  must be 55 or older ,No Children</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">52</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">19</field>
+  			<field name="feature_name">Pet Restrictions</field>
+  			<field name="feature_opts">None,Pet Section,Small Dogs Allowed</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">53</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">19</field>
+  			<field name="feature_name">Gate House</field>
+  			<field name="feature_opts">Guard On Duty,Automatic Entry,Daytime Guard</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">54</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">13</field>
+  			<field name="feature_name">Auditorium</field>
+  			<field name="feature_opts">Shows Movies,Shows Plays,Concerts</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">55</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">13</field>
+  			<field name="feature_name">Parking</field>
+  			<field name="feature_opts">On Site,On Street</field>
+  		</item>
+  	</dbTable>
+  	<dbTable name="estate_group">
+  		<item>
+  			<field name="group_idx">1</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Main Floor</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">2</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Second Floor</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">3</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Third Floor</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">4</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Basement</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">5</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">2</field>
+  			<field name="group_name">Exterior</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">6</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">4</field>
+  			<field name="group_name">Community Center</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">7</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">3</field>
+  			<field name="group_name">Town Square</field>
+  		</item>
+  		<item>
+  			<field name="group_idx">8</field>
+  			<field name="group_zone">1</field>
+  			<field name="group_lev">3</field>
+  			<field name="group_name">Down Town</field>
+  		</item>
+  	</dbTable>
+    
+	</database>
+</e107Export>
