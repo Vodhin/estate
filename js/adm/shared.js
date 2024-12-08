@@ -1015,9 +1015,10 @@ function estSetFormEles(mainTbl,cForm,cSave){
   $('select[name="prop_zoning"]').on({change : function(){estBuildSpaceList('prop_zoning');}});
   
   var chk1 = $('select[name="prop_country"]').find('option:selected').val();
-  if(!chk1 || chk1 === '0'){
-    $('#prop-country').find('option[value="'+defs.prefs.country+'"]').prop('selected','selected');
-    $('#prop-country').change();
+  if(propId == 0 && chk1 !== defs.prefs.country){
+    $('select[name="prop_country"]').find('option[value="'+defs.prefs.country+'"]').prop('selected','selected');
+    $('select[name="prop_country"]').change();
+    console.log('Pref Country Loaded');
     }
 
   $('input[name="prop_bedtot"]').on({change : function(){estBedBath()}});
@@ -1283,7 +1284,7 @@ function estGetSubDivs(mode=1){
       cache:false,
       processData:true,
       success: function(ret, textStatus, jqXHR){
-        //console.log(ret);
+        console.log(ret);
         
         ret.subd_title = (subdIdx > 0 ? ret.subd_name : defs.txt.community);
         $('#subdWebTarg').html('<a href="'+ret.subd_url+'" target="_BLANK">'+ret.subd_url+'</a>');

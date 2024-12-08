@@ -799,7 +799,7 @@ else if($FETCH == 81){
   exit;
   }
 
-else if($FETCH == 82){
+else if($FETCH == 82){ // Delete Subdiv Spaces
   $RES = array();
   $PROPID = intval($_POST['propid']);
   $subd_idx = intval($_POST['idx']);
@@ -836,10 +836,8 @@ else if($FETCH == 82){
             }
           }
         }
-      
       $RES['alldta'] = estGetAllDta($PROPID);
       }
-    
     
     $dberr = $sql->getLastErrorText();
     if($dberr){$RES['error'] = $dberr;}

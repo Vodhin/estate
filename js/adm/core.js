@@ -2967,6 +2967,11 @@
                   if(typeof vreQry.tab !== 'undefined'){
                     $('div.admin-main-content').find('li.nav-item').eq(0).closest('ul').find('li').eq(Number(vreQry.tab)).find('a').click();
                     }
+                  
+                  
+                  $('select[name="prop_country"]').find('option[value="'+ret.prefs.country+'"]').prop('selected','selected');
+                  $('select[name="prop_country"]').change();
+                    console.log('Pref Country Loaded');
                   }
                 
                 if(!document.getElementById('estPropCreate')){
