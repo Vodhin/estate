@@ -264,7 +264,7 @@ if($_POST['estPTrig']){
   $_POST['prop_uidcreate'] = intval($DTA['prop']['prop_uidcreate']);
   $_POST['prop_uidupdate'] = intval(USERID);
   $_POST['prop_dateupdated'] = mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));;
-  $_POST['prop_hours'] = e107::serialize($_POST['prop_hours']);
+  //$_POST['prop_hours'] = $tp->toDB(e107::serialize($_POST['prop_hours']));
   $_POST['prop_views'] = intval($DTA['prop']['prop_views']);
   
   //check to see if Author has been upgraded to an Agent

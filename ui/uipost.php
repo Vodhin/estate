@@ -34,6 +34,7 @@ if(EST_USERPERM > 0){
     $_POST['prop_agent'] = EST_AGENTID;
     $_POST['prop_datecreated'] = $TNOW;
     $_POST['prop_dateupdated'] = $TNOW;
+    $_POST['prop_hours'] = e107::serialize($_POST['prop_hours']);
     $_POST['prop_uidcreate'] = USERID;
     $_POST['prop_uidupdate'] = USERID;
     $_POST['prop_listprice'] = intval($_POST['prop_origprice']);

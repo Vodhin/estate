@@ -2590,7 +2590,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
 				break;
 
 			case 'write': // Edit Page
-        return '<div id="propBathsCont" class="estInptCont"><div class="ILBLK">'.EST_GEN_MAINLEV.'<input type="number" name="prop_bathmain" value="'.intval($curVal).'" min="0" step="1" id="prop-bathmain" class="tbox number e-spinner input-small form-control ui-state-valid" pattern="^[0-9]*" data-original-title="" title=""></div></div>';
+        return '<div id="propBathsCont" class="estInptCont"><div class="ILMINI"><i>'.EST_GEN_MAINLEV.'</i><input type="number" name="prop_bathmain" value="'.intval($curVal).'" min="0" step="1" id="prop-bathmain" class="tbox number e-spinner input-small form-control ui-state-valid" pattern="^[0-9]*" data-original-title="" title=""></div></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2605,7 +2605,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
         return $curVal;
 				break;
 			case 'write': // Edit Page
-        return '<div class="estSpaceTRrem"></div><div class="ILMINI">'.EST_GEN_FULL.'<input type="number" name="prop_bathfull" value="'.intval($curVal).'" min="0" step="1" id="prop-bathfull" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
+        return '<div class="estSpaceTRrem"></div><div class="ILMINI"><i>'.EST_GEN_FULL.'</i><input type="number" name="prop_bathfull" value="'.intval($curVal).'" min="0" step="1" id="prop-bathfull" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2619,7 +2619,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
         return $curVal;
 				break;
 			case 'write': // Edit Page
-        return '<div class="estSpaceTRrem"></div><div class="ILMINI">'.EST_GEN_HALF.'<input type="number" name="prop_bathhalf" value="'.intval($curVal).'" min="0" step="1" id="prop-bathhalf" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
+        return '<div class="estSpaceTRrem"></div><div class="ILMINI"><i>'.EST_GEN_HALF.'</i><input type="number" name="prop_bathhalf" value="'.intval($curVal).'" min="0" step="1" id="prop-bathhalf" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2632,7 +2632,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
         return $curVal;
 				break;
 			case 'write': // Edit Page
-        return '<div class="estSpaceTRrem"></div><div class="ILMINI">'.EST_GEN_TOTAL.'<input type="number" name="prop_bathtot" value="'.intval($curVal).'" min="0" step="1" id="prop-bathtot" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
+        return '<div class="estSpaceTRrem"></div><div class="ILMINI"><i>'.EST_GEN_TOTAL.'</i><input type="number" name="prop_bathtot" value="'.intval($curVal).'" min="0" step="1" id="prop-bathtot" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2648,7 +2648,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
 				break;
 
 			case 'write': // Edit Page
-        return '<div id="propBedsCont" class="estInptCont"><div class="ILMINI">'.EST_GEN_MAINLEV.'<input type="number" name="prop_bedmain" value="'.intval($curVal).'" min="0" step="1" id="prop-bedmain" class="tbox number e-spinner input-small form-control ui-state-valid" pattern="^[0-9]*" data-original-title="" title=""></div></div>';
+        return '<div id="propBedsCont" class="estInptCont"><div class="ILMINI"><i>'.EST_GEN_MAINLEV.'</i><input type="number" name="prop_bedmain" value="'.intval($curVal).'" min="0" step="1" id="prop-bedmain" class="tbox number e-spinner input-small form-control ui-state-valid" pattern="^[0-9]*" data-original-title="" title=""></div></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2662,7 +2662,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
         return $curVal;
 				break;
 			case 'write': // Edit Page
-        return '<div class="estSpaceTRrem"></div><div class="ILMINI">'.EST_GEN_TOTAL.'<input type="number" name="prop_bedtot" value="'.intval($curVal).'" min="0" step="1" id="prop-bedtot" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
+        return '<div class="estSpaceTRrem"></div><div class="ILMINI"><i>'.EST_GEN_TOTAL.'</i><input type="number" name="prop_bedtot" value="'.intval($curVal).'" min="0" step="1" id="prop-bedtot" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2677,7 +2677,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
         return $curVal;
 				break;
 			case 'write': // Edit Page 
-        return '<div id="propUnitCont" class="estInptCont"><div class="ILMINI">'.EST_GEN_FLOORNO.'<input type="number" name="prop_floorno" value="'.intval($curVal).'" min="0" step="1" id="prop-floorno" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div></div>';
+        return '<div id="propUnitCont" class="estInptCont"><div class="ILMINI"><i>'.EST_GEN_FLOORNO.'</i><input type="number" name="prop_floorno" value="'.intval($curVal).'" min="0" step="1" id="prop-floorno" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2691,7 +2691,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
         return $curVal;
 				break;
 			case 'write': // Edit Page 
-        return '<div class="estSpaceTRrem"></div><div class="ILMINI">'.EST_GEN_UNITSBLDG.'<input type="number" name="prop_bldguc" value="'.intval($curVal).'" min="0" step="1" id="prop-bldguc" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
+        return '<div class="estSpaceTRrem"></div><div class="ILMINI"><i>'.EST_GEN_UNITSBLDG.'</i><input type="number" name="prop_bldguc" value="'.intval($curVal).'" min="0" step="1" id="prop-bldguc" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
         break;
 			case 'filter':
 			case 'batch':
@@ -2704,7 +2704,7 @@ class estate_listing_form_ui extends e_admin_form_ui{
         return $curVal;
 				break;
 			case 'write': // Edit Page 
-        return '<div class="estSpaceTRrem"></div><div class="ILMINI">'.EST_GEN_UNITSCOMPLX.'<input type="number" name="prop_complxuc" value="'.intval($curVal).'" min="0" step="1" id="prop-complxuc" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
+        return '<div class="estSpaceTRrem"></div><div class="ILMINI"><i>'.EST_GEN_UNITSCOMPLX.'</i><input type="number" name="prop_complxuc" value="'.intval($curVal).'" min="0" step="1" id="prop-complxuc" class="tbox number e-spinner input-small form-control ui-state-valid " pattern="^[0-9]*" data-original-title="" title=""></div>';
         break;
 			case 'filter':
 			case 'batch':

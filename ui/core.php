@@ -81,13 +81,11 @@ class estateCore{
       $sql->gen("SELECT user_id,user_name,user_class FROM #user WHERE user_admin='1' AND user_perms='0'");
       while($row = $sql->fetch()){array_push($FUSERS,$row);}
       
-      if(count($FUSERS)){
-        foreach($FUSERS as $k=>$v){
-          $user_class = explode(',',$v['user_class']);
-          if(!in_array(ESTATE_ADMIN,$user_class)){array_push($user_class,ESTATE_ADMIN);}
-          if($sql->update("user","user_class='".implode(',',array_map("trim",array_filter($user_class)))."' WHERE user_id='".intval($v['user_id'])."' LIMIT 1")){
-            $msg->addSuccess($v['user_name'].' '.EST_INSTADDEDMAINADMIN);
-            }
+      foreach($FUSERS as $k=>$v){
+        $user_class = explode(',',$v['user_class']);
+        if(!in_array(ESTATE_ADMIN,$user_class)){array_push($user_class,ESTATE_ADMIN);}
+        if($sql->update("user","user_class='".implode(',',array_map("trim",array_filter($user_class)))."' WHERE user_id='".intval($v['user_id'])."' LIMIT 1")){
+          $msg->addSuccess($v['user_name'].' '.EST_INSTADDEDMAINADMIN);
           }
         }
       }
@@ -237,7 +235,7 @@ class estateCore{
     $HTR = array();
     $i = 0;
     $histarr = estGetPropHist($PID,$listd,$list,$statn);
-    if(count($histarr['dta']) > 0){
+    if(is_array($histarr['dta'])){
       foreach($histarr['dta'] as $hk=>$hv){
         if(!isset($HTR['x']) && intval($hv['prophist_date']) > $DTODAY){
           $HTR['x'] = $hv;
@@ -491,7 +489,7 @@ class estateCore{
     while($rows = $sql->fetch()){
       $rows['logo'] = $this->estAgecnyThmUrl($rows);
       $rows['agents'] = array();
-      if(count($agents[$rows['agency_idx']])){
+      if(is_array($agents[$rows['agency_idx']])){
         $ai = 0;
         foreach($agents[$rows['agency_idx']] as $k=>$v){
           $rows['agents'][$ai] = $v;
@@ -745,7 +743,7 @@ class estateCore{
     unset($dtaStr);
     
     $locs = $this->estGetCompLocs(0);
-    if(count($locs)){
+    if(is_array($locs)){
       foreach($locs as $k=>$v){
         $dtaStr = $this->estDataStr($v);
         $image = $this->estCompThmUrl($company_imgsrc,$company_image,$v);
@@ -791,63 +789,62 @@ class estateCore{
     $locs = $this->estGetCompLocs(0);
     $agents = $this->getAllAgents();
     
-    
-    
-    if(count($agents) == 0){
-      return EST_ERR_NOUSERSINCLASS;
-      }
-    
-    $OCCT = 0;
-    if(count($agents)){
-      foreach($agents as $k=>$v){
-        $agtimg = $tp->toAvatar($v,array('type'=>'url'));
-        $dtaStr = $this->estDataStr($v);
-        if($v['agency_idx']){
-          if($v['agent_imgsrc'] == 1 && trim($v['agent_image'] !== '')){$agtimg = EST_PTHABS_AGENT.$tp->toHTML($v['agent_image']);}
-          
-          if($v['agent_agcy'] == $agency_idx){
-            $AGENTBTNS .= '
-              <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
-                <div class="estAgntUserDta">
-                  <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
-                  <h4 class="agentName">'.$tp->toHTML($v['agent_name']).'</h4>
-                  <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
-                  <div>
-                    <span class="agency">'.$tp->toHTML($v['agency_name']).'</span>
+    if(is_array($agents)){
+      if(count($agents) == 0){
+        return EST_ERR_NOUSERSINCLASS;
+        }
+      else{
+        foreach($agents as $k=>$v){
+          $agtimg = $tp->toAvatar($v,array('type'=>'url'));
+          $dtaStr = $this->estDataStr($v);
+          if($v['agency_idx']){
+            if($v['agent_imgsrc'] == 1 && trim($v['agent_image'] !== '')){$agtimg = EST_PTHABS_AGENT.$tp->toHTML($v['agent_image']);}
+            
+            if($v['agent_agcy'] == $agency_idx){
+              $AGENTBTNS .= '
+                <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
+                  <div class="estAgntUserDta">
+                    <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
+                    <h4 class="agentName">'.$tp->toHTML($v['agent_name']).'</h4>
+                    <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
+                    <div>
+                      <span class="agency">'.$tp->toHTML($v['agency_name']).'</span>
+                    </div>
                   </div>
-                </div>
-              </button>';
+                </button>';
+              }
+            else{
+              $USERBTNS .= '
+                <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
+                  <div class="estAgntUserDta">
+                    <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
+                    <h4 class="agentName">'.$tp->toHTML($v['agent_name']).'</h4>
+                    <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
+                    <div>
+                      <span class="agency">'.$tp->toHTML($v['agency_name']).'</span>
+                    </div>
+                  </div>
+                </button>';
+              }
             }
           else{
             $USERBTNS .= '
-              <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
-                <div class="estAgntUserDta">
-                  <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
-                  <h4 class="agentName">'.$tp->toHTML($v['agent_name']).'</h4>
-                  <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
-                  <div>
-                    <span class="agency">'.$tp->toHTML($v['agency_name']).'</span>
+                <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
+                  <div class="estAgntUserDta">
+                    <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
+                    <h4 class="agentName"></h4>
+                    <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
+                    <div>
+                      <span class="agency"></span>
+                    </div>
                   </div>
-                </div>
-              </button>';
+                </button>';
             }
+          unset($dtaStr);
           }
-        else{
-          $USERBTNS .= '
-              <button class="btn btn-default btn-sm estAgntUserBtn" style="background-image:url(\''.$agtimg.'\')"'.$dtaStr.'>
-                <div class="estAgntUserDta">
-                  <h4 class="userName">'.$tp->toHTML($v['user_name']).'</h4>
-                  <h4 class="agentName"></h4>
-                  <div class="logon"><span class="userName">'.$tp->toHTML($v['user_name']).'</span> '.$tp->toHTML($v['user_email']).'</div>
-                  <div>
-                    <span class="agency"></span>
-                  </div>
-                </div>
-              </button>';
-          }
-        unset($dtaStr);
         }
       }
+    
     
     $text .= '
     <table id="estUserAgentTab" class="table">
@@ -1545,9 +1542,9 @@ class estateCore{
         <td colspan="'.$DTA['colsp'].'">'.($RTRWCT < $RLIMIT ? EST_GEN_ENDOF : $RSTART.' '.EST_GEN_TO.' '.$REND.' '.EST_GEN_OF).' '.$COUNTED.' Total Records
           <div>'.$DTA['REMOVED'].' Removed Results</div>';
         
-    if(count($dbUpd) > 0){
+    if(is_array($dbUpd) && count($dbUpd) > 0){
       $text .= '
-          <div>'.count($dbUpd).' Records Updated <a onclick="$(this).next(\'div\').show()">View</a>
+          <div>'.count($dbUpd).' '.EST_GEN_RECORDSUPD.' <a onclick="$(this).next(\'div\').show()">View</a>
             <div style="display:none;">';
       $sql = e107::getDB();
       foreach($dbUpd as $k=>$flds){
@@ -1759,8 +1756,10 @@ class estateCore{
       else{$FLTR['WHERE']['prop_agent'] = " prop_agent = ".$FLTR['WHERE']['prop_agent']." ";}
       }
     elseif(isset($DTA['AGTIDS']) && count($DTA['AGTIDS']) > 0){
-      if(count($DTA['AGTIDS']) == 1){$AGTIDS = " prop_agent ='".$DTA['AGTIDS'][0]."'";}
-      else{$AGTIDS = " prop_agent IN(".implode(",",$DTA['AGTIDS']).")";}
+      if(is_array($DTA['AGTIDS'])){
+        if(count($DTA['AGTIDS']) == 1){$AGTIDS = " prop_agent ='".$DTA['AGTIDS'][0]."'";}
+        else{$AGTIDS = " prop_agent IN(".implode(",",$DTA['AGTIDS']).")";}
+        }
       }
     
     // SPLIT TABLE DISPLAY
@@ -1811,8 +1810,6 @@ class estateCore{
           }
         }
       }
-    
-    
     
     if($FLTR['WHERE']){
       if($FLTR['WHERE']['prop_agent']){
@@ -2061,7 +2058,17 @@ class estateCore{
       $TBS[0]['text'] = $this->estPropertyListTableSF(1,$DTA);
       }
     
-    $NDTA = array('e-token'=>e_TOKEN,'prop_listype'=>1,'prop_status'=>3,'prop_currency'=>intval($EST_PREF['locale'][1]),'prop_locale'=>implode(",",$EST_PREF['locale']),'prop_leasedur'=>0,'prop_leasefreq'=>1,'prop_lat'=>$EST_PREF['pref_lat'],'prop_lon'=>$EST_PREF['pref_lon'],'prop_country'=>$EST_PREF['country'],'seller_namex'=>EST_AGENTNAME,'prop_appr'=>USERID);
+    
+    $propLat = $EST_PREF['pref_lat'];
+    $propLon = $EST_PREF['pref_lon'];
+    $propALU = $EST_PREF['pref_addr_lookup'];
+    
+    /*
+    $NDTA = array('e-token'=>e_TOKEN,'prop_listype'=>1,'prop_status'=>3,'prop_currency'=>intval($EST_PREF['locale'][1]),'prop_locale'=>implode(",",$EST_PREF['locale']),'prop_leasedur'=>0,'prop_leasefreq'=>1,'prop_dimu1'=>$EST_PREF['dimu1'],'prop_dimu2'=>$EST_PREF['dimu2'],'prop_lat'=>$propLat,'prop_lon'=>$propLon,'prop_country'=>$EST_PREF['country'],'seller_namex'=>EST_AGENTNAME,'prop_appr'=>USERID,'prop_addr_lookup'=>$propALU,'prop_template_view'=>$EST_PREF['template_view'],'prop_template_view_ord'=>$EST_PREF['template_view_ord'],'prop_template_menu'=>$EST_PREF['template_menu'],'prop_template_menu_ord'=>$EST_PREF['template_menu_ord']);
+    */
+    $NDTA = $this->estGetNewProp();
+    
+    unset($propLat,$propLon,$propALU);
     
     $TBS[2]['caption'] = EST_GEN_NEW.' '.EST_GEN_LISTING;
     $TBS[2]['text'] = '<form method="post" action="'.e_SELF.'?'.e_QUERY.'" id="plugin-estate-form" autocomplete="off" data-h5-instanceid="0" novalidate="novalidate">';
@@ -2072,6 +2079,13 @@ class estateCore{
     $TBS[2]['text'] .= $this->estOAHidden('prop_lat',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_lon',$NDTA);
     $TBS[2]['text'] .= $this->estOAHidden('prop_appr',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_dimu1',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_dimu2',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_addr_lookup',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_template_view',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_template_view_ord',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_template_menu',$NDTA);
+    $TBS[2]['text'] .= $this->estOAHidden('prop_template_menu_ord',$NDTA);
     $TBS[2]['text'] .= '
       <table class="table adminform" style="width:100%">
         <colgroup style="width:25%"></colgroup>
@@ -3794,7 +3808,7 @@ class estateCore{
     $sql = e107::getDB();
     
     //`prop_landfee` decimal(10,2) unsigned NOT NULL,
-    $SERL = array('prop_hours');
+    //$SERL = array('prop_hours');
     $INTS = array('prop_listype','prop_state','prop_county','prop_city','prop_subdiv','prop_status','prop_zoom','prop_yearbuilt','prop_dimu1','prop_intsize','prop_roofsize','prop_dimu2','prop_zoning','prop_type','prop_listprice','prop_origprice','prop_leasefreq','prop_leasedur','prop_currency','prop_hoafee','prop_hoaland','prop_hoaappr','prop_hoareq','prop_hoafrq','prop_bathtot','prop_bathmain','prop_bathhalf','prop_bathfull','prop_bedtot','prop_bedmain','prop_floorct','prop_floorno','prop_bldguc','prop_complxuc');
     
     $LABS = $this->estOALabels($FLD);
@@ -3806,8 +3820,8 @@ class estateCore{
     
     $text = '<tr><td'.$CLS1.'>'.$INFICO.$tp->toHTML($LABS['labl']).'</td><td'.($LABS['cs'] ? ' colspan="'.$LABS['cs'].'"': '').'>';
     
-    if(in_array($FLD,$SERL)){$FVALUE = e107::unserialize($DTA[$FLD]);}
-    elseif(in_array($FLD,$INTS)){$FVALUE = intval($DTA[$FLD]);}
+    //if(in_array($FLD,$SERL)){$FVALUE = e107::unserialize($DTA[$FLD]);}
+    if(in_array($FLD,$INTS)){$FVALUE = intval($DTA[$FLD]);}
     else{$FVALUE = $DTA[$FLD];}
     
     $OPTARR = array();
@@ -3843,8 +3857,8 @@ class estateCore{
         <tr>
           <td>'.EST_GEN_BEDROOMS.'</td>
           <td>
-            <div class="ILMINI">'.EST_GEN_TOTAL.' '.$frm->number('prop_bedtot', intval($DTA['prop_bedtot']), 0, $options).'</div>
-            <div class="ILMINI">'.EST_GEN_MAINLEV.' '.$frm->number('prop_bedmain', intval($DTA['prop_bedmain']), 0, $options).'</div>
+            <div class="ILMINI"><i>'.EST_GEN_TOTAL.'<i>'.$frm->number('prop_bedtot', intval($DTA['prop_bedtot']), 0, $options).'</div>
+            <div class="ILMINI"><i>'.EST_GEN_MAINLEV.'</i>'.$frm->number('prop_bedmain', intval($DTA['prop_bedmain']), 0, $options).'</div>
           </td>
         </tr>';
         break;
@@ -3855,10 +3869,10 @@ class estateCore{
         <tr>
           <td>'.EST_GEN_BATHROOMS.'</td>
           <td>
-            <div class="ILMINI">'.EST_GEN_FULL.' '.$frm->number('prop_bathfull', intval($DTA['prop_bathfull']), 0, $options).'</div>
-            <div class="ILMINI">'.EST_GEN_HALF.' '.$frm->number('prop_bathhalf', intval($DTA['prop_bathhalf']), 0, $options).'</div>
-            <div class="ILMINI">'.EST_GEN_TOTAL.' '.$frm->number('prop_bathtot', intval($DTA['prop_bathtot']), 0, $options).'</div>
-            <div class="ILMINI">'.EST_GEN_MAINLEV.' '.$frm->number('prop_bathmain', intval($DTA['prop_bathmain']), 0, $options).'</div>
+            <div class="ILMINI"><i>'.EST_GEN_FULL.'</i>'.$frm->number('prop_bathfull', intval($DTA['prop_bathfull']), 0, $options).'</div>
+            <div class="ILMINI"><i>'.EST_GEN_HALF.'</i>'.$frm->number('prop_bathhalf', intval($DTA['prop_bathhalf']), 0, $options).'</div>
+            <div class="ILMINI"><i>'.EST_GEN_TOTAL.'</i>'.$frm->number('prop_bathtot', intval($DTA['prop_bathtot']), 0, $options).'</div>
+            <div class="ILMINI"><i>'.EST_GEN_MAINLEV.'</i>'.$frm->number('prop_bathmain', intval($DTA['prop_bathmain']), 0, $options).'</div>
           </td>
         </tr>';
         break;
@@ -4000,13 +4014,13 @@ class estateCore{
       case 'prop_floorno' :
         $text .= '
         <div id="propUnitCont" class="estInptCont">
-          <div class="ILMINI">'.EST_GEN_FLOORNO.'
+          <div class="ILMINI"><i>'.EST_GEN_FLOORNO.'</i>
             <input type="number" name="prop_floorno" value="'.intval($DTA['prop_floorno']).'" min="0" step="1" id="prop-floorno" class="tbox number e-spinner input-small form-control ui-state-valid WD144px" pattern="^[0-9]*" data-original-title="" title="">
           </div>
-          <div class="ILMINI">'.EST_GEN_UNITSBLDG.'
+          <div class="ILMINI"><i>'.EST_GEN_UNITSBLDG.'</i>
             <input type="number" name="prop_bldguc" value="'.intval($DTA['prop_bldguc']).'" min="0" step="1" id="prop-bldguc" class="tbox number e-spinner input-small form-control ui-state-valid WD144px" pattern="^[0-9]*" data-original-title="" title="">
           </div>
-          <div class="ILMINI">'.EST_GEN_UNITSCOMPLX.'
+          <div class="ILMINI"><i>'.EST_GEN_UNITSCOMPLX.'</i>
             <input type="number" name="prop_complxuc" value="'.intval($DTA['prop_complxuc']).'" min="0" step="1" id="prop-complxuc" class="tbox number e-spinner input-small form-control ui-state-valid WD144px" pattern="^[0-9]*" data-original-title="" title="">
           </div>
         </div>';
@@ -4351,13 +4365,41 @@ class estateCore{
     $tp = e107::getParser();
     $RES = array();
     $pref = e107::pref();
+    
+    $propLat = $pref['estate']['pref_lat'];
+    $propLon = $pref['estate']['pref_lon'];
+    $propADRLU = $pref['estate']['pref_addr_lookup'];
+    
+    $LOCADDR = array();
+        
+    if(intval(EST_AGENCYID) > 0){
+      $sql = e107::getDB();
+      if($sql->gen("SELECT * FROM #estate_agencies WHERE agency_idx='".intval(EST_AGENCYID)."' LIMIT 1")){
+        $row = $sql->fetch();
+        if(trim($row['agency_lat']) !== ''){$propLat = $row['agency_lat'];}
+        if(trim($row['agency_lon']) !== ''){$propLon = $row['agency_lon'];}
+        if(trim($row['agency_addr_lookup']) !== ''){$propADRLU = $row['agency_addr_lookup'];}
+        if(trim($row['agency_addr']) !== ''){
+          $adr1 = explode("\n",$row['agency_addr']);
+          $adr2 = explode(" ",str_replace(",","",$adr1[(count($adr1) - 1)]));
+          $eky = $adr2[(count($adr2) - 2)];
+          foreach($adr2 as $k=>$v){if($k < (count($adr2) - 1)){$addrKey .= ($addrKey ? ' ' : '').$v;}}
+          if(!$LOCADDR[$eky]){$LOCADDR[$eky] = array($addrKey);}
+          elseif(!in_array($addrKey,$LOCADDR[$eky])){array_push($LOCADDR[$eky],$addrKey);}
+          }
+        }
+      unset($LOCADDR,$adr1,$adr2,$eky);
+      }
+    
+    $RES['e-token'] = e_TOKEN;
     $RES['prop_idx'] = intval(0);
     $RES['prop_mlsno'] = '';
     $RES['prop_listype'] = intval(1);
+    $RES['prop_appr'] = USERID;
     $RES['prop_name'] = '';
     $RES['prop_agency'] = EST_AGENCYID;
     $RES['prop_agent'] = EST_AGENTID;
-    $RES['prop_addr_lookup'] = '';
+    $RES['prop_addr_lookup'] = $propADRLU; 
     $RES['prop_addr1'] = '';
     $RES['prop_addr2'] = '';
     $RES['prop_country'] = $pref['estate']['country'];
@@ -4381,11 +4423,11 @@ class estateCore{
     $RES['prop_status'] = intval(3);
     $RES['prop_parcelid'] = '';
     $RES['prop_lotid'] = '';
-    $RES['prop_lat'] = $pref['estate']['pref_lat'];
-    $RES['prop_lon'] = $pref['estate']['pref_lon'];
+    $RES['prop_lat'] = $propLat;
+    $RES['prop_lon'] = $propLon;
     $RES['prop_zoom'] = intval($pref['estate']['pref_zoom']);
     $RES['prop_geoarea'] = '';
-    $RES['prop_yearbuilt'] = intval(0);
+    $RES['prop_yearbuilt'] = intval(2000);
     $RES['prop_dimu1'] = intval($pref['estate']['dimu1']);
     $RES['prop_intsize'] = intval(0);
     $RES['prop_roofsize'] = intval(0);
@@ -4398,7 +4440,7 @@ class estateCore{
     $RES['prop_origprice'] = intval(0);
     $RES['prop_currency'] = intval($pref['estate']['locale'][1]);
     $RES['prop_locale'] = (is_array($pref['estate']['locale']) ? implode(",",$pref['estate']['locale']) : $pref['estate']['locale']);
-    $RES['prop_leasefreq'] = intval(0);
+    $RES['prop_leasefreq'] = intval(1);
     $RES['prop_leasedur'] = intval(0);
     $RES['prop_landfee'] = '0.00';
     $RES['prop_landfreq'] = intval(0);
@@ -4428,7 +4470,10 @@ class estateCore{
     $RES['prop_template_view_ord'] = $tp->toDB(e107::serialize($pref['estate']['template_view_ord']));
     $RES['prop_template_menu'] = $tp->toDB($pref['estate']['template_menu']);
     $RES['prop_template_menu_ord'] = $tp->toDB(e107::serialize($pref['estate']['template_menu_ord']));
-    return $RES;    
+    $RES['seller_namex'] = (defined("EST_AGENTNAME") ? EST_AGENTNAME.' ('.EST_GEN_AGENT.')' : USERNAME.' ('.EST_GEN_PRIVATESELLER.')');
+    
+    unset($propADRLU,$propLat,$propLon,$LOCADDR);
+    return $RES;
     }
   
   public function estHelpMenu($SECT,$hlpmode,$hlpactn){}
