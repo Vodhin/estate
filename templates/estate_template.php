@@ -165,6 +165,7 @@ if(!isset($EST_VIEW_COMMUNITY)){
   <div id="estCityInfoCont">
     <h3 class="WD100">{PROP_CITYSTATE}</h3>
     <div class="estFLEX100">{CITY_DESC}</div>
+    <div>{CITY_FEATURES}</div>
     <div class="estCommSpaces">
       <div class="estTableGroupWrapper WD100">{COMMUNITY_SPACES:for=city}</div>
     </div>
