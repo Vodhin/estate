@@ -1,13 +1,37 @@
 # estate
 A plugin for the e107 Content management System to manage Real Estate Agencies, Agents, and Listings. This plugin started as a way for an individual Real Estate agent to easily list their properties for sale and has evolved into one that can handle multiple agents and agencies. 
 
-The _Estate_ plugin is not ready yet. I have a lot to do before it can be published. The Current repository should be mostly usable if anyone wants to try it out. A live production site using this plugin can be viewed here https://www.sandpiperhome.org
+A live production site using this plugin can be viewed here https://www.sandpiperhome.org
 
 
 
 MANUAL UPDATING ON YOUR WEBSITE DURING DEVELOPMENT:
 
-Download ALL files and replace all existing files on your website with current. Run your Check Database Validity on the Estate tables and fix any entries that are found. Then go to the Preference section of the Estate Plugin and Save your preferences.
+Download ALL files and replace all existing files on your website with current. You can find them here https://github.com/Vodhin/estate/releases
+
+
+Please replace all **files** in 
+
+estate/css
+
+estate/js/adm
+
+estate/js (just files, not other folders)
+
+estate/languages/English
+
+estate/templates
+
+estate/ui
+
+estate/xml (not sample folder)
+
+estate/ all main files (not .gitattributes or README.md).
+
+
+Run e107 Database Checks. 
+View and Save Preferences in the Estate Admin section.
+Clear Cache and check pages.
 
 
 DEVELOPMENT/REVISION HISTORY:
