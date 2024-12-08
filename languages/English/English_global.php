@@ -361,6 +361,7 @@ define("EST_GEN_QUARTERLY","Quarterly");
 define("EST_GEN_QUICKADDLIST","Quick Add Listing");
 define("EST_GEN_QUICKEDIT","Quick Edit");
 define("EST_GEN_REASSIGN","Reassign");
+define("EST_GEN_RECORDSUPD","Records Updated");
 define("EST_GEN_RECREATION","Recreation");
 define("EST_GEN_REQUIRED","Required");
 define("EST_GEN_ROOM","Room");
