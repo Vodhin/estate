@@ -242,6 +242,18 @@ class estate_shortcodes extends e_shortcode{
     return e107::getParser()->toHTML($this->var['city_description'],true);
     }
   
+  function sc_city_features($parm){
+    $txt = '<div>Feature list here</div>';
+    if(isset($this->var['city_description'])){
+      //estCommSpaces
+      //COMMUNITY_SPACES
+      $tp= e107::getParser();
+      
+      }
+    //$tp->toHTML($this->var['city_description'],true);
+    return $txt;
+    }
+  
   
   function sc_prop_thmsty($parm){
     if(trim($this->var['img'][1]['t']) !== ''){
@@ -749,7 +761,7 @@ class estate_shortcodes extends e_shortcode{
   function sc_prop_hours($parm){
     if(trim($this->var['prop_hours']) !== ''){
       $tp = e107::getParser();
-      $hoursAry = e107::unserialize($this->var['prop_hours']);
+      $hoursAry = (is_array($this->var['prop_hours']) ? $this->var['prop_hours'] : e107::unserialize($this->var['prop_hours']));
       if(is_array($hoursAry)){
         $wkdays = estGetPHPCalDays($locale);
         if(is_array($wkdays)){
@@ -769,10 +781,9 @@ class estate_shortcodes extends e_shortcode{
             $txt .= '
             </div>';
             }
-          
-          
           }
         }
+      
       $AGENT = $this->estGetSeller();
       $vars = array('x'=>$AGENT['agent_name']);
       $note = '<div class="estPropViewSchedNote1">'.$tp->lanVars(EST_PROP_HRS1,$vars,false).'</div>';
@@ -856,6 +867,24 @@ class estate_shortcodes extends e_shortcode{
     return $txt;
     }
   
+  function minifeatures($v){
+    if(is_array($v['features']) && count($v['features']) > 0){
+      foreach($v['features']['txt'] as $k=>$v){
+        $txt .= '<div class="estViewSpTxt"><span class="FWB">'.$k.'</span>';
+        if(is_array($v)){
+          $txt .= '<ul class="estULOutside">';
+          foreach($v as $sk=>$sv){
+            if(trim($sv) !== ''){$txt .= '<li class="WSYWRP">'.$sk.': '.str_replace(',',', ',$sv).'</li>';} //· • 
+            else{$txt .= '<li>'.$sk.'</li>';}
+            }
+          $txt .= '</ul>';
+          }
+        else{$txt .= ': '.$v;}
+        $txt .= '</div>';
+        }
+      }
+    return e107::getParser()->toHTML($txt);
+    }
   
   function minithumb($v){
     if(is_array($v['media']) && count($v['media']) > 0){
@@ -926,9 +955,11 @@ class estate_shortcodes extends e_shortcode{
           $txt .= '
           <div class="estViewSpaceBtn estTableGroupTile">
             <div class="estSpTtl">'.$tp->toHTML($v['space_name'],true).'</div>';
-          $txt .=  $this->minithumb($v);
+          $txt .= $this->minithumb($v);
+          $txt .= $this->minifeatures($v);
           $txt .= '
-            <p class="DTH128">'.$tp->toHTML($v['space_description'],true).'</p>
+            <p class="DTH128">'.$tp->toHTML($v['space_description'],true).'</p>';
+          $txt .= '
           </div>';
           }
         return $txt;
@@ -938,6 +969,7 @@ class estate_shortcodes extends e_shortcode{
     }
   
   function sc_community_props($parm){
+    //NOT APPARENTLY USED
     $key = ($parm['for'] == 'city' ? 'city' : 'subd');
     if(is_array($this->var['subdiv']['props'][$key])){
       if(count($this->var['subdiv']['props'][$key]) > 0){
@@ -946,7 +978,8 @@ class estate_shortcodes extends e_shortcode{
           $txt .= '
           <div class="estViewSpaceBtn estTableGroupTile">
             <div class="estSpTtl">'.$tp->toHTML($v['prop_name'],true).'</div>';
-          $txt .=  $this->minithumb($v);
+          $txt .= $this->minithumb($v);
+          $txt .= $this->minifeatures($v);
           $txt .= '
             <p class="DTH128">'.$tp->toHTML($v['prop_summary'],true).'</p>
           </div>';

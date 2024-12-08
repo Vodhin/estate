@@ -555,11 +555,8 @@ function estMediaArr($row){
 function estGetSpaces($DTA,$PSTAT=0){
   $sql = e107::getDb();
   $RET = array();
-  $PROPID = intval($DTA['prop_idx']);
-  $CITYID = intval($DTA['prop_city']);
-  $SUBDIVID = intval($DTA['prop_subdiv']);
   
-  $MQRY = "SELECT #estate_media.* FROM #estate_media WHERE media_propidx=".$PROPID." ";
+  $MQRY = "SELECT #estate_media.* FROM #estate_media WHERE media_propidx=".intval($DTA['prop_idx'])." ";
   if($PSTAT == 1){$MQRY .= "AND media_galord='1' LIMIT 1";}
   else{$MQRY .= "AND media_type='1' ORDER BY media_galord ASC";}
   
@@ -586,7 +583,7 @@ function estGetSpaces($DTA,$PSTAT=0){
   ON feature_idx = featurelist_key
   LEFT JOIN #estate_grouplist
   ON grouplist_groupidx = space_grpid
-  WHERE space_lev=1 AND space_levidx=".$PROPID."
+  WHERE space_lev=1 AND space_levidx=".intval($DTA['prop_idx'])."
   ORDER BY grouplist_ord ASC, space_ord ASC";
   
   if($data3 = $sql->retrieve($query3,true)){
@@ -596,8 +593,10 @@ function estGetSpaces($DTA,$PSTAT=0){
       $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['n'] = $row['space_name'];
       $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['d'] = $row['space_description'];
       $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['l'] = $row['space_loc'];
-      $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['f'][$row['featurelist_idx']]['n'] = $row['feature_name'];
-      $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['f'][$row['featurelist_idx']]['d'] = $row['featurelist_dta'];
+      if($row['featurelist_lev'] == 2){
+        $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['f'][$row['featurelist_idx']]['n'] = $row['feature_name'];
+        $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['f'][$row['featurelist_idx']]['d'] = $row['featurelist_dta'];
+        }
       $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['m'] = $SPMEDIA[$row['space_idx']];
       if(intval($row['space_dimxy']) !== 0){
         $RET[1][$row['space_grpid']]['sp'][$row['space_ord']][$row['space_idx']]['xy'] = $row['space_dimxy']." ".$GLOBALS['EST_DIM1UNITS'][$row['space_dimu']][0];
@@ -605,8 +604,8 @@ function estGetSpaces($DTA,$PSTAT=0){
       }
     }
   
-  if($CITYID > 0 || $SUBDIVID > 0){
-    $SUBDIVDTA = estGetSubDivDta($SUBDIVID,$CITYID);
+  if(intval($DTA['prop_city']) > 0 || intval($DTA['prop_subdiv']) > 0){
+    $SUBDIVDTA = estGetSubDivDta(intval($DTA['prop_subdiv']),intval($DTA['prop_city']));
     if(isset($SUBDIVDTA)){$RET[2] = $SUBDIVDTA;}
     }
   
@@ -666,7 +665,9 @@ function estGetCitySpaces($city_idx){
   if($dbRow1 = $sql->retrieve('estate_subdiv_spaces', '*', 'space_lev="3" AND space_levidx="'.$city_idx.'"',true)){
     foreach($dbRow1 as $k=>$v){
       $v['media'] = estGetMediaRows($v['space_idx'],3);
+      $v['feats'] = estGetSubFeatures(3,$city_idx);
       $RET[$v['space_idx']] = $v;
+      
       }
     }
   
@@ -711,24 +712,52 @@ function propArrayTest($PROPDTA){
   }
 
 
+function estGetSubFeatures($lev,$idx){
+  $RES = array();
+  if(intval($idx) > 0){
+    $sql = e107::getDb();
+    $tp = e107::getParser();
+    
+    $query3 = "
+    SELECT #estate_featurelist.*, #estate_features.feature_idx, #estate_features.feature_cat, #estate_features.feature_name, #estate_featcats.featcat_name
+    FROM #estate_featurelist
+    LEFT JOIN #estate_features
+    ON feature_idx = featurelist_key
+    LEFT JOIN #estate_featcats
+    ON featcat_idx = feature_cat
+    WHERE featurelist_lev='".intval($lev)."' AND featurelist_levidx='".$idx."'
+    ORDER BY featcat_name ASC, feature_name ASC";
+    
+    if($data3 = $sql->retrieve($query3,true)){
+      foreach($data3 as $row){
+        $RES['txt'][$row['featcat_name']][$row['feature_name']] = $row['featurelist_dta'];//[$row['featurelist_levidx']]
+        $RES['dta'][$row['featurelist_levidx']][$row['featurelist_idx']] = $row;
+        }
+      }
+    
+    }
+  return $RES;
+  }
+
 
 function estGetSubDivDta($subd_idx,$subd_city=0){
   $sql = e107::getDb();
   $tp = e107::getParser();
   $RET = array();
+  
   $media = estGetMediaRows($subd_idx,0);
-  if($dbRow1 = $sql->retrieve('estate_subdiv', '*', 'subd_idx="'.$subd_idx.'"',true)){
-    $RET = array_merge($dbRow1[0],$media);
-    //$RET['features']['sub'] = $sql->retrieve('estate_featurelist', '*', 'featurelist_lev="0" AND featurelist_levidx="'.$subd_idx.'"',true);
+  if($dbRow0 = $sql->retrieve('estate_subdiv', '*', 'subd_idx="'.$subd_idx.'"',true)){
+    $dbRow0[0]['subd_features'] = estGetSubFeatures(0,$subd_idx);
+    $RET = array_merge($dbRow0[0],$media);
     }
   else{
     $RET = array('subd_idx'=>0,'subd_city'=>0,'subd_name'=>'','subd_type'=>2,'subd_url'=>'','subd_hoaname'=>'','subd_hoaweb'=>'','subd_hoareq'=>0,'subd_hoafee'=>0,'subd_hoafrq'=>0,'subd_hoaappr'=>0,'subd_hoaland'=>0,'subd_landfee'=>0,'subd_landfreq'=>0,'subd_description'=>'');
     }
   
   if($subd_city == 0 && intval($RET['subd_city']) > 0){$subd_city = intval($RET['subd_city']);}
-  if($dbRow1b = $sql->retrieve('estate_city', '*', 'city_idx="'.$subd_city.'"',true)){
-    $RET = array_merge($RET,$dbRow1b[0]);
-    //$RET['features']['city'] = $sql->retrieve('estate_featurelist', '*', 'featurelist_lev="3" ',true); //AND featurelist_levidx="'.$subd_city.'"
+  if($dbRow1 = $sql->retrieve('estate_city', '*', 'city_idx="'.$subd_city.'"',true)){
+    $dbRow1[0]['city_features'] = estGetSubFeatures(3,$subd_idx);
+    $RET = array_merge($RET,$dbRow1[0]);
     }
   else{
     $RET['city_idx'] = 0;
@@ -740,47 +769,37 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
     $RET['city_description'] = '';
     }
   
-  
-  /*
-  if($fcats = $sql->retrieve('estate_featcats', '*', 'WHERE NOT featcat_lev = "2"',true)){
-    foreach($fcats as $fk=>$fv){
-      if(!is_array($RET['fcat'][$fv['featcat_lev']])){$RET['fcat'][$fv['featcat_lev']] = array();}
-      array_push($RET['fcat'][$fv['featcat_lev']],$fv);
-      }
-    }
-    */
-  //$RET['fcat'] = $sql->retrieve('estate_featcats', '*', 'WHERE NOT featcat_lev = "2" ORDER BY featcat_lev ASC',true);
-  
-  /*
-  $TQRY = "SELECT #estate_features.*, #estate_featcats.* FROM #estate_features LEFT JOIN #estate_featcats ON feature_cat = featcat_idx WHERE NOT featcat_lev = '2'";
-  if($sql->gen($TQRY)){
-    $fi = 0;
-    while($rows = $sql->fetch()){
-      $RET['fcat'][$fi] = $rows;
-      $fi++;
-      }
-    }
-  */
-  
   $RET['spaces'] = array('city'=>array(),'subd'=>array());
   
   
-  if($dbRow2 = $sql->retrieve('estate_subdiv_spaces', '*', 'space_lev="4" AND space_levidx="'.$subd_idx.'"',true)){
-    foreach($dbRow2 as $k=>$v){
-      $media = estGetMediaRows($v['space_idx'],4);
-      $RET['spaces']['subd'][$k] = array_merge($v,$media);
-      }
-    }
   
-  if($dbRow3 = $sql->retrieve('estate_subdiv_spaces', '*', 'space_lev="3" AND space_levidx="'.$subd_city.'"',true)){
-    foreach($dbRow3 as $k=>$v){
+  if($dbRow2 = $sql->retrieve('estate_subdiv_spaces', '*', 'space_lev="3" AND space_levidx="'.$subd_city.'"',true)){
+    foreach($dbRow2 as $k=>$v){
       $media = estGetMediaRows($v['space_idx'],3);
+      $v['features'] = estGetSubFeatures(3,$v['space_idx']);
+      //$RET['features']['city']['spaces'] = estGetSubFeatures(3,$v['space_idx']);
       $RET['spaces']['city'][$k] = array_merge($v,$media);
       }
     }
   
-  $RET['props'] = array('city'=>array(),'subd'=>array());
+  if($dbRow3 = $sql->retrieve('estate_subdiv_spaces', '*', 'space_lev="4" AND space_levidx="'.$subd_idx.'"',true)){
+    foreach($dbRow3 as $k=>$v){
+      $media = estGetMediaRows($v['space_idx'],4);
+      $v['features'] = estGetSubFeatures(4,$v['space_idx']);
+      //$RET['features']['subd']['spaces'] = estGetSubFeatures(4,$v['space_idx']);
+      $RET['spaces']['subd'][$k] = array_merge($v,$media);
+      }
+    }
+  
+  
+  
+  
+  
+  
+  
+  
   /*
+  $RET['props'] = array('city'=>array(),'subd'=>array());
   if($dbRow2 = $sql->retrieve('estate_properties', 'prop_idx,prop_name,prop_thmb,prop_summary', 'prop_subdiv="'.$subd_idx.'"',true)){
     foreach($dbRow2 as $k=>$v){
       $media = estGetMediaRows($v['prop_idx'],1);
@@ -796,7 +815,7 @@ function estGetSubDivDta($subd_idx,$subd_city=0){
     }
   */
   
-  unset($dbRow1,$dbRow2,$dbRow3,$k,$v);
+  unset($media,$dbRow0,$dbRow1,$dbRow2,$dbRow3,$k,$v);
   return $RET;
   }
 
