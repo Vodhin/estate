@@ -563,7 +563,17 @@ h3.sumCapt{
 
 
 
+ul.estULOutside{
+  list-style-position: outside !important;
+  padding-left: 12px !important;
+  }
 
+ul.estULOutside li{
+  list-style-position: outside !important;
+  white-space: unset !important;
+  overflow: visible !important;
+  }
+  
 ul.estDet2Cont{
   text-indent: 0px;
   padding: 0px 0px 0px 22px;
@@ -1277,6 +1287,12 @@ div.estViewHistDiv div:nth-child(3){
   overflow:hidden;
   text-overflow:ellipsis;
   }
+.WSYWRP{
+  white-space:normal !important;
+  overflow:unset;
+  text-overflow:unset;
+  }
+
 
 .FWB{font-weight:bold !important;}
 .TAL{text-align:left !important;}

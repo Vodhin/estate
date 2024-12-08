@@ -42,12 +42,18 @@ label{cursor:pointer;}
   margin-right: 4px;
   }
 
+
 .ILMINI{
   display:inline-block !important; 
   position:relative !important; 
   vertical-align:top;
   margin-right:6px;
   }
+.ILMINI i{
+  display:block;
+  position:relative;  
+  }
+
 
 .NODISP{display:none;}
 .WSNWRP{width:auto; white-space:nowrap; overflow:hidden;}
@@ -3273,6 +3279,7 @@ div.upldPvwBtn div.mediaPvwCapt:focus{
 #estPopCont i.admin-ui-help-tip{
   color:rgba(0, 0, 0, 0.55);
   }
+
 
 #cropContainer{
   display:block;
