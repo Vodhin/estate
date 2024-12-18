@@ -259,7 +259,7 @@ class estateCore{
       }
     
     if(!isset($HTR['f'])){
-      $nid = $sql->insert("estate_prophist","'0','".intval($PID)."','".$origd."','".intval($orig)."','3'");
+      $nid = e107::getDB()->insert("estate_prophist","'0','".intval($PID)."','".$origd."','".intval($orig)."','3'");
       $HTR['f'] = array('prophist_idx'=>intval($nid),'prophist_propidx'=>intval($PID),'prophist_date'=>$origd,'prophist_price'=>$orig,'prophist_status'=>3);
       $pctbase = intval($orig);
       }
