@@ -541,6 +541,60 @@
   			<field name="featcat_lev">0</field>
   			<field name="featcat_name">Retirement Community</field>
   		</item>
+  		<item>
+  			<field name="featcat_idx">21</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">Water Source</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">22</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">Septic System</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">23</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">Electric</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">24</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">Irrigation</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">25</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">Construction</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">26</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">Parking</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">27</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">Lot/Land</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">28</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">Other Structures</field>
+  		</item>
+  		<item>
+  			<field name="featcat_idx">29</field>
+  			<field name="featcat_zone">1</field>
+  			<field name="featcat_lev">1</field>
+  			<field name="featcat_name">ADU (Additional Dwelling Unit)</field>
+  		</item>
   	</dbTable>
   	<dbTable name="estate_features">
   		<item>
@@ -927,6 +981,377 @@
   			<field name="feature_cat">13</field>
   			<field name="feature_name">Parking</field>
   			<field name="feature_opts">On Site,On Street</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">56</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">12</field>
+  			<field name="feature_name">test 33</field>
+  			<field name="feature_opts">opt1,opt 2,opt 3</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">57</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">21</field>
+  			<field name="feature_name">Public Supply</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">58</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">21</field>
+  			<field name="feature_name">Well</field>
+  			<field name="feature_opts">Powered Pump,Artisan Well</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">59</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">21</field>
+  			<field name="feature_name">Resevoir</field>
+  			<field name="feature_opts">Private Source,Communal Source</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">60</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">21</field>
+  			<field name="feature_name">River or Stream</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">61</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">22</field>
+  			<field name="feature_name">Public Sewer</field>
+  			<field name="feature_opts">Connected,Available - Not Connected</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">62</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">22</field>
+  			<field name="feature_name">Septic Tank</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">63</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">22</field>
+  			<field name="feature_name">Leaching Field</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">64</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">22</field>
+  			<field name="feature_name">Cesspool</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">65</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">23</field>
+  			<field name="feature_name">Grid Supplied</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">66</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">23</field>
+  			<field name="feature_name">Solar</field>
+  			<field name="feature_opts">Battery Storage,Net Metering</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">67</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">23</field>
+  			<field name="feature_name">Backup Power</field>
+  			<field name="feature_opts">Battery Backup,Diesel Generator,Gas Generator,Natural Gas Generator,Propane Generator</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">68</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">23</field>
+  			<field name="feature_name">Hydro</field>
+  			<field name="feature_opts">Private Hydro,Communal Hydro</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">69</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">23</field>
+  			<field name="feature_name">Wind</field>
+  			<field name="feature_opts">Private Wind Turbine(s),Communal Wind Turbines</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">70</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">23</field>
+  			<field name="feature_name">EV Charging</field>
+  			<field name="feature_opts">Connected Solar,Battery Backup,1 Car,2 Car,3+ Cars,Connected Grid</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">71</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">24</field>
+  			<field name="feature_name">Water Source</field>
+  			<field name="feature_opts">Private Well,Public Utility,Rain Barrel</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">72</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">24</field>
+  			<field name="feature_name">Controler</field>
+  			<field name="feature_opts">Automatic Timer,Smart - WiFi,Rain Sensors,Weather Station</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">73</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">24</field>
+  			<field name="feature_name">Coverage</field>
+  			<field name="feature_opts">Lawn,Garden,Shrubbery</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">74</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">25</field>
+  			<field name="feature_name">Exterior Walls</field>
+  			<field name="feature_opts">Wood Frame,Concrete Block,Stone,Concrete Poured,Log,Wattle and Daub,Earthen</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">75</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">25</field>
+  			<field name="feature_name">Roof Type</field>
+  			<field name="feature_opts">Flat,Gabled,Hip Roof,Butterfly</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">76</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">25</field>
+  			<field name="feature_name">Roof Material</field>
+  			<field name="feature_opts">Asphalt Shingle,Slate,Wood Shingle,Metal,Thatch,Gravel,Sod</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">77</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">25</field>
+  			<field name="feature_name">Foundation</field>
+  			<field name="feature_opts">Concrete Slab,Cellar Hole,Concrete Poured,Mobile,Stone,Brick,Concrete Block,Pylons (Lifted)</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">78</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">26</field>
+  			<field name="feature_name">Attached Garage</field>
+  			<field name="feature_opts">1 Space,2 Space,3+ Spaces,Boat,Recreational Vehicle</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">79</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">26</field>
+  			<field name="feature_name">Carport</field>
+  			<field name="feature_opts">1 Space,2 Space,3+ Spaces</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">80</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">26</field>
+  			<field name="feature_name">Driveway</field>
+  			<field name="feature_opts">Single Wide,Double Wide,U Shaped,Circular,Side Offset,Boat or RV Offset</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">81</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">26</field>
+  			<field name="feature_name">Other</field>
+  			<field name="feature_opts">On Street,Parking Garage,Parking Lot</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">82</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">27</field>
+  			<field name="feature_name">Terrain</field>
+  			<field name="feature_opts">Flat,Hillside,Elevated</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">83</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">27</field>
+  			<field name="feature_name">Foliage</field>
+  			<field name="feature_opts">Open/Sunny,Partial Shade,Wooded,Forrested</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">84</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">27</field>
+  			<field name="feature_name">Views</field>
+  			<field name="feature_opts">Ocean View,Mountain View,Lake View,River View,Valley View</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">85</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">27</field>
+  			<field name="feature_name">Frontage</field>
+  			<field name="feature_opts">Lake Front,Ocean Front,Boat Access,Ski-In Ski-Out,New Option</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">86</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">27</field>
+  			<field name="feature_name">Property Access</field>
+  			<field name="feature_opts">Private Road,Public Street,Horse Trail,Snowmobile/ATV Trail,Foot Path</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">87</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">27</field>
+  			<field name="feature_name">Farming</field>
+  			<field name="feature_opts">Mixed Use,Fields,Paddocks,Pastures,Small Livestock,Large Livestock</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">88</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">27</field>
+  			<field name="feature_name">Gardens</field>
+  			<field name="feature_opts">Vegetable,Flowers,Manicured</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">89</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">26</field>
+  			<field name="feature_name">Detached Garage</field>
+  			<field name="feature_opts">1 Space,2 Space,3+ Space,Boat,Recreational Vehicle</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">90</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Barn</field>
+  			<field name="feature_opts">Livestock,Feed Storage</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">91</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Grain Cilos</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">92</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Garden Shed</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">93</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Gazebo</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">94</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Crypt</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">95</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Tool Shed</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">96</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Workshop</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">97</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Radio Shack</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">98</field>
+  			<field name="feature_ele">0</field>
+  			<field name="feature_cat">28</field>
+  			<field name="feature_name">Radio/TV Tower</field>
+  			<field name="feature_opts"></field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">99</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Relation</field>
+  			<field name="feature_opts">Attached,Detached</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">100</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Access</field>
+  			<field name="feature_opts">Separate Entrance,Shared Entrance</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">101</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Parking</field>
+  			<field name="feature_opts">Shared Driveway,Separate Driveway,Shared Garage,Separate Garage</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">102</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Bedrooms</field>
+  			<field name="feature_opts">1 Bedroom,2 Bedroom,3+ Bedrooms</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">103</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Bathrooms</field>
+  			<field name="feature_opts">1 Bath,2 Bath,3+ Bath,Shared bath</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">104</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Living Space</field>
+  			<field name="feature_opts">Living Room,Shared Living Room,Dining Room,Shared Dining Room</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">105</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Kitchen</field>
+  			<field name="feature_opts">Full Kitchen,Kitchenette,Shared Kitchen</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">106</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Electric</field>
+  			<field name="feature_opts">Separate Meter,Shared Meter,Solar/Wind,Backup Power</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">107</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Septic System</field>
+  			<field name="feature_opts">Separate Cesspool,Separate Sewer,Separate Septic Tank,Separate Leaching Field,Shared Septic System</field>
+  		</item>
+  		<item>
+  			<field name="feature_idx">108</field>
+  			<field name="feature_ele">1</field>
+  			<field name="feature_cat">29</field>
+  			<field name="feature_name">Water Source</field>
+  			<field name="feature_opts">Separate Public Supply,Shared Well,Private Well,Shared Public Supply</field>
   		</item>
   	</dbTable>
   	<dbTable name="estate_group">
