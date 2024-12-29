@@ -576,6 +576,10 @@ define("EST_HLPMNU_DETAILS9b","italic text");
 define("EST_HLPMNU_DETAILS9c","underline");
 define("EST_HLPMNU_DETAILS9d","etc.");
 
+define("EST_HLPMNU_FEATURESTAB1","Add additional information about this property by selecting any appropriate Feature for each of the available Categories.");
+define("EST_HLPMNU_FEATURESTAB2","Active Features may have addional predefined information you can select in the button's drop down menu");
+define("EST_HLPMNU_FEATURESTAB3","You can edit and add new Features for each Category directly in this form. Categories can only be added in the Data Presets section of this plugin.");
+
 define("EST_HLPMNU_GALLERY1","Add, edit, or remove Media for the Main Gallery of this property.");
 define("EST_HLPMNU_GALLERY2","Click the Upload Media button to Add Media - NOTE: Media uploaded directly from the Gallery Tab is separate from other Sections of the Property Listing.");
 define("EST_HLPMNU_GALLERY3","The [b]Available Media[/b] section lists all Media for this property that is NOT included in the main gallery.");

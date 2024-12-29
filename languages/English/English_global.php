@@ -85,6 +85,7 @@ define("EST_IMG_ZOOMO","Zoom Out");
 
 
 define("EST_GEN_ACRES","Acres");
+define("EST_GEN_ACTIVE", "Active");
 define("EST_GEN_ACTIVE1", "Active - Scheduled Publication");
 define("EST_GEN_ACTIVE2", "Live Now");
 define("EST_GEN_ADD1","Add");
@@ -125,6 +126,7 @@ define("EST_GEN_BATHFULL","Full Baths");
 define("EST_GEN_BATHHALF","Half Baths");
 define("EST_GEN_BATHMAIN","Main Level Bathrooms");
 define("EST_GEN_BED","Bed");
+define("EST_GEN_BEDANDBATH","Bed & Bath Rooms");
 define("EST_GEN_BEDROOMS","Bedrooms");
 define("EST_GEN_BEDTOT","Total Bedrooms");
 define("EST_GEN_BEDMAIN","Main Level Bedrooms");
@@ -201,6 +203,10 @@ define("EST_GEN_FAX","Fax");
 define("EST_GEN_FEATURE","Feature");
 define("EST_GEN_FEATURECATS","Feature Categories");
 define("EST_GEN_FEATURES","Features");
+define("EST_GEN_FEATUREHEAD","Features Headline");
+define("EST_GEN_FEATURENOPROPID","This property must be saved before you can add additional Features");
+define("EST_GEN_FEATUREHEADHLP","A Comma (,) separated List of text that appears below the Property Name after the Listing Price. Commas will be replaced by a bullet. 255 character limit");
+define("EST_GEN_FEATURESHEADPLCHLDR","3 Bed,3 Bath,Pool,Waterfront,etc"); 
 define("EST_GEN_FILTER","Filter");
 define("EST_GEN_FILTERBY","Filter By");
 define("EST_GEN_FILE","File");
@@ -327,6 +333,7 @@ define("EST_GEN_PENDING","Pending");
 define("EST_GEN_PERMISSIONS","Permissions");
 define("EST_GEN_PLAYPAUSESLIDE","Click to Play/Pause Slideshow");
 define("EST_GEN_PLEASE","Please");
+define("EST_GEN_PLEASESAVEPROP","Please Save Property First");
 define("EST_GEN_PLUGUNAVAIL","This section of our website is currently unavailable to the public. Please check back later.");
 define("EST_GEN_PRICEHIST","Price History");
 define("EST_GEN_PRICEHISTFUT0","You can preset a change to the List Price and/or Status up to 14 days in advance.");
@@ -435,7 +442,9 @@ define("EST_GEN_WEBSITE","Website");
 define("EST_GEN_WEEKLY","Weekly");
 define("EST_GEN_WEEKS","Weeks");
 define("EST_GEN_ZONE","Zone");
+define("EST_GEN_ZONECHANGE1","A Zoning change has reset this property's available features. Please review the Features Tab");
 define("EST_GEN_ZONING","Zoning");
+
 
 
 define("EST_MSG_ADDRNOTFOUND","Address Not Found. Edit in field above and try again.");
@@ -489,8 +498,6 @@ define("EST_PROP_DATEPULL", "Pull Date");
 define("EST_PROP_DATETEASE", "Date Tease");
 define("EST_PROP_DESCRIPTIONPLCHLDR", "Full Description");
 define("EST_PROP_FEATOPTLISTPLC","A Comma (,) separated List, eg. Walk-in Closets, Pool, Washer & Dryer, etc");
-define("EST_PROP_FEATURESHLP","A Comma (,) separated List of text that appears below the Property Name after the Listing Price. Commas will be replaced by a bullet. 255 character limit");
-define("EST_PROP_FEATURESPLCHLDR","3 Bed,3 Bath,Pool,Waterfront,etc"); 
 define("EST_PROP_GEOAREA", "Geo Area");
 define("EST_PROP_HOAAPPR","HOA Approval Required");
 define("EST_PROP_HOAAPPRHLP","Does the HOA require prospective buyers to meet certain critera?");
