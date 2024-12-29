@@ -36,6 +36,8 @@ Clear Cache and check pages.
 
 DEVELOPMENT/REVISION HISTORY:
 
+December 29, 2024: Still finding bugs with some features. Many have been hammered out in this update, some still persist. Added new Preset data for Property, Community/Subdivision, and City Features. Added short codes for displaying this information. 
+
 November 27 2024: So many changes, so many fixes. Added new functions to handle PHP based Currency and Date formatting based on PHP Locale settings which can be localized for each property listing. Currency formatting can also be forced to a spcific symbol before or after the number, or omitted altogether. This is handled by a new form that replaces the old Original Price and Listing Price fields (they are still present, but hidden). Included in the new form is also a new Price History table to record changes to the listing's price or status. Added ability to save custom Listing templates for each property: these can be altered either in the Admin area or directly on a Listing's View page.
 
 
