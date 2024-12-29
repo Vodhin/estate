@@ -241,6 +241,7 @@ unset($dberr);
       $EST_PROP[$PROPID]['history'] = estGetPropHist($PROPID,$EST_PROP[$PROPID]['prop_dateupdated'],$EST_PROP[$PROPID]['prop_listprice'],$EST_PROP[$PROPID]['prop_status']);
       
       
+      
       $IDIV = estViewCSS($ESTDTA);
       $EST_SPACES = $ESTDTA[1];
       $PROPDTA[0] = $EST_PROP[$PROPID];
@@ -267,6 +268,30 @@ unset($dberr);
       if(trim($PROPDTA[0]['prop_name']) == ''){
         if(trim($PROPDTA[0]['prop_addr1']) == ''){$PROPDTA[0]['prop_name'] = $PROPDTA[0]['prop_addr1'];}
         else{$PROPDTA[0]['prop_name'] = EST_GEN_UNNAMEDPROPERTY;}
+        }
+      
+      
+      
+      $EST_PROP[$PROPID]['prop_fearurelist'] = array();
+      
+$BQRY = "SELECT #estate_featcats.*, #estate_features.* , #estate_featurelist.*
+ FROM #estate_featcats 
+ LEFT JOIN #estate_features 
+ ON feature_cat = featcat_idx 
+ LEFT JOIN #estate_featurelist ON featurelist_key = feature_idx
+ WHERE featcat_lev='1' 
+ AND featcat_zone='".intval($PROPDTA[0]['prop_zoning'])."'
+ AND featurelist_levidx = '".$PROPID."'
+ ORDER BY featcat_name ASC";
+      
+      
+      
+      if($sql->gen($BQRY)){
+        while($rowf = $sql->fetch()){
+          $EST_PROP[$PROPID]['prop_fearurelist'][$rowf['featcat_idx']]['cat'] = $rowf['featcat_name'];
+          $EST_PROP[$PROPID]['prop_fearurelist'][$rowf['featcat_idx']]['dta'][$rowf['feature_idx']]['key'] = $rowf['feature_name'];
+          $EST_PROP[$PROPID]['prop_fearurelist'][$rowf['featcat_idx']]['dta'][$rowf['feature_idx']]['val'] = $rowf['featurelist_dta'];
+          }
         }
       
       $PINS = est_map_pins();

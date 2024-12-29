@@ -265,75 +265,86 @@ class estate_shortcodes extends e_shortcode{
   
   
   function sc_prop_points($parm){
-		$tp = e107::getParser();
-    $ret = '<ul class="estDet2Cont">';
+    $ret = '';
     if($this->var['prop_type'] !== 0){
-      $ret .= '
-              <li>'.($this->var['prop_floorct'] !== 0 ? $this->var['prop_floorct'].' '.EST_GEN_STORY.' ' : '').$GLOBALS['EST_PROPTYPES'][$this->var['prop_type']].'</li>';
+      $ret .= '<li>'.($this->var['prop_floorct'] !== 0 ? $this->var['prop_floorct'].' '.EST_GEN_STORY.' ' : '').$GLOBALS['EST_PROPTYPES'][$this->var['prop_type']].'</li>';
       }
     
     //$prop_condit
       
     if($this->var['prop_zoning'] !== 0){
-      $ret .= '
-              <li>'.$GLOBALS['EST_ZONING'][$this->var['prop_zoning']].'</li>';
+      $ret .= '<li>'.$GLOBALS['EST_ZONING'][$this->var['prop_zoning']].'</li>';
       }
     if($this->var['prop_yearbuilt'] !== 0){
-      $ret .= '
-              <li>'.EST_PROP_YEARBUILT.': '.$this->var['prop_yearbuilt'].'</li>';
+      $ret .= '<li>'.EST_PROP_YEARBUILT.': '.$this->var['prop_yearbuilt'].'</li>';
       }
     if($this->var['prop_intsize'] !== 0){
-      $ret .= '
-              <li>'.EST_PROP_INTSIZE.': '.$this->var['prop_intsize'].' '.$GLOBALS['EST_DIM1UNITS'][$this->var['prop_dimu1']][0].'</li>';
+      $ret .= '<li>'.EST_PROP_INTSIZE.': '.$this->var['prop_intsize'].' '.$GLOBALS['EST_DIM1UNITS'][$this->var['prop_dimu1']][0].'</li>';
       }
     if($this->var['prop_landsize'] !== 0){
-      $ret .= '
-              <li>'.EST_PROP_LANDSIZE.': '.$this->var['prop_landsize'].' '.$GLOBALS['EST_DIM2UNITS'][$this->var['prop_dimu2']].'</li>';
+      $ret .= '<li>'.EST_PROP_LANDSIZE.': '.$this->var['prop_landsize'].' '.$GLOBALS['EST_DIM2UNITS'][$this->var['prop_dimu2']].'</li>';
       }
-    $ret .= '
-            </ul>';
-    return $ret;
+    
+    if($this->var['prop_floorno'] !== 0){
+      $ret .= '<li>'.EST_GEN_FLOORNO.': '.$this->var['prop_floorno'].'</li>';
+      }
+    if($this->var['prop_bldguc'] !== 0){
+      $ret .= '<li>'.EST_GEN_UNITSBLDG.': '.$this->var['prop_bldguc'].'</li>';
+      }
+    if($this->var['prop_complxuc'] !== 0){
+      $ret .= '<li>'.EST_GEN_UNITSCOMPLX.': '.$this->var['prop_complxuc'].'</li>';
+      }
+      
+    if(trim($ret) !== ''){
+      return e107::getParser()->toHTML('<b>'.EST_GEN_GENERAL.'</b><ul class="estDet2Cont">'.$ret.'</ul>');
+      }
     }
   
   
   function sc_prop_feature_extended($parm){
-		$tp = e107::getParser();
-    $ret = '<ul class="estDet2Cont">';
+    $ret = '';
     if($this->var['prop_bedtot'] !== 0){
-      $ret .= '
-                <li>'.EST_GEN_BEDTOT.': '.$this->var['prop_bedtot'].'</li>';
+      $ret .= '<li>'.EST_GEN_BEDTOT.': '.$this->var['prop_bedtot'].'</li>';
       }
     if($this->var['prop_bathtot'] !== 0){
-      $ret .= '
-                <li>'.EST_GEN_BATHROOMS.': '.$this->var['$prop_bathtot'].' ('.$this->var['prop_bathfull'].' '.EST_GEN_FULL.', '.$this->var['prop_bathhalf'].' '.EST_GEN_HALF.')</li>';
+      $ret .= '<li>'.EST_GEN_BATHROOMS.': '.$this->var['$prop_bathtot'].' ('.$this->var['prop_bathfull'].' '.EST_GEN_FULL.', '.$this->var['prop_bathhalf'].' '.EST_GEN_HALF.')</li>';
       }
     
     if($this->var['prop_bedmain'] !== 0){
-      $ret .= '
-                <li>'.EST_GEN_BEDMAIN.': '.$this->var['prop_bedmain'].'</li>';
+      $ret .= '<li>'.EST_GEN_BEDMAIN.': '.$this->var['prop_bedmain'].'</li>';
       }
     if($this->var['prop_bathmain'] !== 0){
-      $ret .= '
-                <li>'.EST_GEN_BATHMAIN.': '.$this->var['prop_bathmain'].'</li>';
+      $ret .= '<li>'.EST_GEN_BATHMAIN.': '.$this->var['prop_bathmain'].'</li>';
       }
     
-    if($this->var['prop_floorno'] !== 0){
-      $ret .= '
-                <li>'.EST_GEN_FLOORNO.': '.$this->var['prop_floorno'].'</li>';
-      }
-    if($this->var['prop_bldguc'] !== 0){
-      $ret .= '
-                <li>'.EST_GEN_UNITSBLDG.': '.$this->var['prop_bldguc'].'</li>';
-      }
-    if($this->var['prop_complxuc'] !== 0){
-      $ret .= '
-                <li>'.EST_GEN_UNITSCOMPLX.': '.$this->var['prop_complxuc'].'</li>';
-      }
     
-    $ret .= '
-              </ul>';
-    return $ret;
+    if(trim($ret) !== ''){
+      return e107::getParser()->toHTML('<b>'.EST_GEN_BEDANDBATH.'</b><ul class="estDet2Cont">'.$ret.'</ul>');
+      }
     }
+  
+  
+  function sc_prop_featurelist($parm){
+    //PROP_POINTS PROP_FEATURE_EXTENDED
+    if(is_array($this->var['prop_fearurelist']) && count($this->var['prop_fearurelist']) > 0){
+      foreach($this->var['prop_fearurelist'] as $fk=>$fv){
+        $txt .= '<div class="estInfoCard estFLEX45"><b>'.$fv['cat'].'</b>';
+        if(is_array($fv['dta'])){
+          $txt .= '<ul class="estDet2Cont">';
+          foreach($fv['dta'] as $sk=>$sv){
+            $txt .= '<li>'.$sv['key'].(trim($sv['val']) !== '' ? ': '.$sv['val'] : '').'</li>';
+            }
+          $txt .= '</ul>';
+          }
+        $txt .= '</div>';
+        }
+      }
+    return $txt;
+    unset($txt);
+    }
+  
+  
+  
   
   function sc_prop_nplisting($parm){
     //$ret = '['.$this->var['prop_prevIdx'].']';
@@ -727,8 +738,25 @@ class estate_shortcodes extends e_shortcode{
   
   
   
-  
-  
+  function sc_community_features($parm){
+    if(intval($this->var['prop_subdiv']) > 0){
+      $feats = $this->var['subdiv']['subd_features']['txt'];
+      if(is_array($feats)){
+        foreach($feats as $fk=>$fv){
+          if(is_array($fv)){
+            $txt .= '<b>'.$fk.'</b><ul class="estDet2Cont">';
+            foreach($fv as $sk=>$sv){$txt .= '<li>'.$sk.': '.str_replace(",",", ",$sv).'</li>';}
+            $txt .= '</ul>';
+            }
+          else{
+            $txt .= '<li>'.$fk.': '.$fv.'</li>';
+            }
+          }
+        }
+      
+      return $txt;
+      }
+    }
   
   function sc_community_slideshow($parm){
     if(is_array($this->var['subdiv']['media']) && count($this->var['subdiv']['media']) > 0){
@@ -747,7 +775,9 @@ class estate_shortcodes extends e_shortcode{
     }
   
   function sc_community_type($parm){
-    return  e107::getParser()->toHTML(EST_GEN_SUBDIVTYPE[$this->var['subdiv']['subd_type']]);
+    if(intval($this->var['prop_subdiv']) > 0){
+      return  e107::getParser()->toHTML(EST_GEN_SUBDIVTYPE[$this->var['subdiv']['subd_type']]);
+      }
     }
   
   
