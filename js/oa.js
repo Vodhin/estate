@@ -230,12 +230,8 @@
     //estSaveSpace 
     estateBuildDIMUbtns();
     estBuildGallery();
-    //estBuildSpaceList('oa load');
-    //estInitDefHrs(1);
-    //estBuildEvtTab();
     estOABuildMap();
     estPrepPropHrs();
-    
     
     $(JQDIV,{'class':'s-message alert alert-block warning alert-warning'}).html(defs.txt.notavail2).prependTo('#estEventsCont');
     
