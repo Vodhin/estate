@@ -1682,6 +1682,7 @@ function estJStext(){
   $DIMU = explode(',',$GLOBALS['EST_DIMUNITS'][0]); // <- find way to set default prop measurement units - prefs?
   
   return array(
+    'active'=>EST_GEN_ACTIVE,
     'add1'=>EST_GEN_ADD1,
     'addevent'=>EST_PROP_MSG_ADDEVENTS,
     'addnewfeat'=>LAN_EST_ADDNEWFEAT,
@@ -1821,6 +1822,7 @@ function estJStext(){
     'saves'=>EST_SAVES,
     'save2'=>EST_SAVECLOSE,
     'savefirst'=>EST_GEN_SAVEFIRST,
+    'savefirst1'=>EST_GEN_FEATURENOPROPID,
     'section'=>EST_GEN_SECTION,
     'select1'=>EST_GEN_SELECT,
     'sendingemails'=>EST_GEN_SENDINGEMAILS,

@@ -1576,7 +1576,7 @@
     }
   
   
-  function estPrepPresetsForm(){
+  function estPrepPresetsForm(mainId){
     
     $.ajax({
       url: vreFeud+'?0||0',
@@ -1591,6 +1591,8 @@
           $('body').data('defs',ret);
           estProcDefDta();
           var defs = ret;
+          
+          console.log('mainId',mainId);
           
           $('#estPresetsZoneDtaEdit').on({
             click :function(e){
@@ -1642,6 +1644,11 @@
               var id = this.value;
               $('.estPresetsTable').hide().promise().done(function(){
                 $('#estPresetsTable-'+id).show();
+                var postPath = $('#estPresetDataForm').attr('action').split('?');
+                var postkeys = postPath[1].split('&');
+                var nPath = postPath[0]+'?'+postkeys[0]+'&'+postkeys[1]+'&id='+Number(id);
+                $('#estPresetDataForm').attr('action',nPath);
+                console.log(nPath);
                 });
               }
             }).change();
@@ -1654,6 +1661,7 @@
               }
             });
           
+          if(mainId > 0){$('select[name="preset_zoneSelect"]').val(mainId).change();}
           estPrepPresetData();
           }
         },
@@ -2929,7 +2937,7 @@
       }
     
     if(mainTbl == 'estate_presets'){
-      estPrepPresetsForm();
+      estPrepPresetsForm(mainId);
       return;
       }
     
