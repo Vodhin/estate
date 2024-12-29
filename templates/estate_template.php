@@ -54,7 +54,7 @@
 if (!defined('e107_INIT')) { exit; }
 // Estate Template file:  default layout
 
-global $sc,$EST_PREF,$EST_PROP,$EST_SPACES,$IDIV;
+global $sc,$EST_PREF,$EST_PROP,$PROPID,$EST_SPACES,$IDIV;
 
 $estLoadInbox = e107::getMenu()->isLoaded('estate_inbox');
 $estLoadSidebar = e107::getMenu()->isLoaded('estate_sidebar');
@@ -133,11 +133,13 @@ if(!isset($EST_VIEW_FEATURES)){
     <div class="estInfoCard estFLEX45">
       {PROP_POINTS}
     </div>
-    <div class="estInfoCard DTH256 estFLEX45">
+    <div class="estInfoCard estFLEX45">
       {PROP_FEATURE_EXTENDED}
     </div>
   </div>
-  <div></div>';
+  <div class="estFLEXCont">
+    {PROP_FEATURELIST}
+  </div>';
   }
 
 if(!isset($EST_VIEW_HOURS)){
@@ -146,40 +148,34 @@ if(!isset($EST_VIEW_HOURS)){
   }
 
 if(!isset($EST_VIEW_COMMUNITY)){
-  $EST_VIEW_COMMUNITY = '
-  <div id="estSubDivCont">
-    {COMMUNITY_SLIDESHOW}
-    <div class="estFLEX45">
-      <h3 class="WD100">{COMMINUTY_NAME}</h3>
-      <h4 class="WD100">{COMMUNITY_TYPE}</h4>
-      <h4 class="WD100">{COMMUNITY_URL}</h4>
-      <div>{COMMUNITY_HOA}</div>
-      <div>{PROP_HOA}</div>
+  if(intval($EST_PROP[$PROPID]['prop_subdiv']) > 0){
+    $EST_VIEW_COMMUNITY = '
+    <div id="estSubDivCont">
+      {COMMUNITY_SLIDESHOW}
+      <div class="estFLEX45">
+        <h3 class="WD100">{COMMINUTY_NAME}</h3>
+        <h4 class="WD100">{COMMUNITY_TYPE}</h4>
+        <h4 class="WD100">{COMMUNITY_URL}</h4>
+        <div>{COMMUNITY_HOA}</div>
+        <div>{PROP_HOA}</div>
+        <div>{COMMUNITY_FEATURES}</div>
+      </div>
+      <div class="estFLEX100">{COMMUNITY_DESC}</div>
+      <div class="estCommSpaces">
+        <div class="estTableGroupWrapper WD100">{COMMUNITY_SPACES}</div>
+      </div>
     </div>
-    <div class="estFLEX100">{COMMUNITY_DESC}</div>
-    <div class="estCommSpaces">
-      <div class="estTableGroupWrapper WD100">{COMMUNITY_SPACES}</div>
-    </div>
-  </div>
-  <hr />
-  <div id="estCityInfoCont">
-    <h3 class="WD100">{PROP_CITYSTATE}</h3>
-    <div class="estFLEX100">{CITY_DESC}</div>
-    <div>{CITY_FEATURES}</div>
-    <div class="estCommSpaces">
-      <div class="estTableGroupWrapper WD100">{COMMUNITY_SPACES:for=city}</div>
-    </div>
-  </div>';
-  /*
-  <hr />
-  <div class="estCommSpaces">
-    <div class="estTableGroupWrapper WD100">{COMMUNITY_PROPS}</div>
-  </div>
-  <hr />
-  <div class="estCommSpaces">
-    <div class="estTableGroupWrapper WD100">{COMMUNITY_PROPS:for=city}</div>
-  </div>
-  */
+    <hr />';
+    }
+  $EST_VIEW_COMMUNITY .= '
+    <div id="estCityInfoCont">
+      <h3 class="WD100">{PROP_CITYSTATE}</h3>
+      <div class="estFLEX100">{CITY_DESC}</div>
+      <div>{CITY_FEATURES}</div>
+      <div class="estCommSpaces">
+        <div class="estTableGroupWrapper WD100">{COMMUNITY_SPACES:for=city}</div>
+      </div>
+    </div>';
   }
 
 
