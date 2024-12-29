@@ -683,7 +683,6 @@ class estateCore{
   
   public function estSectLevel(){
     return EST_SPEC_LEVS1;
-    //array(EST_GEN_COMMUNITYSUBDIV,EST_GEN_PROPERTY,EST_GEN_PROPERTYSPACES,EST_GEN_CITYSPACES.'/'.EST_GEN_TOWN,EST_GEN_COMMUNITYSPACES);
     }
   
   
@@ -2512,7 +2511,7 @@ class estateCore{
         ORDER BY featcat_lev ASC, featcat_name ASC, feature_name ASC";
       
       if($sql->gen($TQRY)){
-        $lev = EST_SPEC_LEVS1;//$this->estSectLevel();
+        $lev = EST_SPEC_LEVS1;
   			while($row = $sql->fetch()){
           $ret['name'] = $row['zoning_name'];
           $ret['ltype'][$row['listype_idx']] = $row['listype_name'];
@@ -2675,6 +2674,8 @@ class estateCore{
     
     $lev = EST_SPEC_LEVS1;
     //krsort($lev);
+    //group_name_keep
+    //featcat_keep
     
     $mct = 8;
     if(trim($newZone) !== ''){$NEWZPT = '<option value="'.$zi.'" class="estNewZoneopt">'.$tp->toHTML($newZone).'</option>';}
@@ -2699,6 +2700,7 @@ class estateCore{
     $dMx = (is_array($dtaset['ltype']) ? count($dtaset['ltype']) : 0);
     if($dMx > 0){
       foreach($dtaset['ltype'] as $lk=>$lv){
+        
         if($lk > 0){
           $dCt++;
           $text .= '
@@ -2734,7 +2736,7 @@ class estateCore{
             </tr>';
             
       
-      
+    //$levSet = array(1=>$lev[1],2=>$lev[2]);
     foreach($lev as $lk=>$lv){
       $dCt = 0;
       $grpk = $lk; 
@@ -3525,7 +3527,6 @@ class estateCore{
   
   
   
-  
   public function estCommunitySpacesForm($subd_idx,$subd_city){
     $tp = e107::getParser();
     $sql = e107::getDb();
@@ -3631,8 +3632,9 @@ class estateCore{
       2 => array('caption' => EST_GEN_COMMUNITY,'text'=>'','cg'=>2),
       3 => array('caption' => EST_GEN_SPACES,'text'=>'','cg'=>2),
       4 => array('caption' => EST_GEN_DETAILS,'text'=>'','cg'=>2),
-      5 => array('caption' => EST_GEN_GALLERY,'text'=>'','cg'=>2),
-      6 => array('caption' => EST_GEN_SCHEDULING,'text'=>'','cg'=>2)
+      5 => array('caption' => EST_GEN_FEATURES,'text'=>'','cg'=>2),
+      6 => array('caption' => EST_GEN_GALLERY,'text'=>'','cg'=>2),
+      7 => array('caption' => EST_GEN_SCHEDULING,'text'=>'','cg'=>2)
       );
     
     }
@@ -3642,7 +3644,7 @@ class estateCore{
     $tp = e107::getParser();
     $EST_PREF = e107::pref('estate');
     switch($SN){
-      case 6 :
+      case 7 :
         $text = $this->estOAFormTableStart($SN);
         $text .= $this->estOAFormTR('prop_timezone','prop_timezone',$DTA);
         $text .= $this->estOAFormTR('datetime','prop_dateprevw',$DTA);
@@ -3656,8 +3658,15 @@ class estateCore{
         $text .= $this->estOAFormTableEnd($SN,$DTA);
         break;
         
-      case 5 :
+      case 6 :
         return $this->estGalleryForm();
+        break;
+      case 5 :
+        $text = $this->estOAFormTableStart($SN);
+        $text .= $this->estOAFormTR('txtcntr','prop_features',$DTA);
+        $text .= '<tr><td></td><td><div id="estPropFeaturesTab">'.EST_GEN_PLEASESAVEPROP.'</div><div id="estpropFeatChange">'.EST_GEN_ZONECHANGE1.'</div></td></tr>';
+        $text .= $this->estOAFormTableEnd($SN,$DTA);
+        return $text;
         break;
         
       case 4 :
@@ -3667,7 +3676,6 @@ class estateCore{
         $text .= $this->estOAFormTR('textarea','prop_description',$DTA);
         $text .= $this->estOAFormTR('number','prop_bedtot',$DTA);
         $text .= $this->estOAFormTR('number','prop_bathtot',$DTA);
-        $text .= $this->estOAFormTR('txtcntr','prop_features',$DTA);
         $text .= $this->estOAFormTR('text','prop_modelname',$DTA);
         $text .= $this->estOAFormTR('text','prop_condit',$DTA);
         $text .= $this->estOAFormTR('number','prop_yearbuilt',$DTA);
@@ -3781,7 +3789,7 @@ class estateCore{
       'prop_summary'=>array('labl'=>LAN_SUMMARY,'hlp'=>EST_PROP_SUMMARYHLP),
       'prop_description'=>array('labl'=>LAN_DESCRIPTION,'hlp'=>EST_PROP_DESCRIPTIONHLP),
       'prop_modelname'=>array('labl'=>EST_GEN_MODELNAME,'hlp'=>EST_PROP_MODELNAMEHLP),
-      'prop_features'=>array('labl'=>EST_GEN_FEATURES,'cls'=>'estJSmaxchar','plch'=>EST_PROP_FEATURESPLCHLDR,'hlp'=>EST_PROP_FEATURESHLP),
+      'prop_features'=>array('labl'=>EST_GEN_FEATUREHEAD,'cls'=>'estJSmaxchar','plch'=>EST_GEN_FEATURESHEADPLCHLDR,'hlp'=>EST_GEN_FEATUREHEADHLP),
       'prop_condit'=>array('labl'=>EST_GEN_CONDITION),
       'prop_yearbuilt'=>array('labl'=>EST_PROP_YEARBUILT,'cls'=>'WD144px'),
       'prop_floorct'=>array('labl'=>EST_GEN_FLOORCT,'cls'=>'WD144px'),
@@ -3829,9 +3837,14 @@ class estateCore{
     
     switch($FLD){
       case 'prop_subdiv' :
-        $dbRow = $sql->retrieve('estate_subdiv', '*', 'WHERE subd_city="'.intval($DTA['prop_city']).'"',true);
-        if(count($dbRow)){foreach($dbRow as $k=>$v){$OPTARR[$v['subd_idx']] = $v['subd_name'];}}
-        unset($dbRow);
+        //$chkIt = '('.$FLD.': '.$DTA[$FLD].')';
+        if($DTA[$FLD] > 0){
+          if($dbRow = $sql->retrieve('estate_subdiv', '*', 'WHERE subd_city="'.intval($DTA['prop_city']).'"',true)){
+            foreach($dbRow as $k=>$v){$OPTARR[$v['subd_idx']] = $v['subd_name'];}
+            }
+          unset($dbRow);
+          }
+          
         break;
       
       case 'prop_newprice' : 
@@ -4075,7 +4088,7 @@ class estateCore{
       }
     
     unset($INFICO,$OPTARR,$LABS,$options);
-    return $text.'</td></tr>';
+    return $text.$chkIt.'</td></tr>';
     }
   
   

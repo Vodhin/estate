@@ -199,9 +199,9 @@ class estate_presets_ui extends e_admin_ui{
     //$dta = $this->getController()->getModel()->getData();
     
     $zoning = $estateCore->estGetZoning();
-        
+    
     $text = '
-    <form method="post" action="'.e_SELF.'?mode=estate_presets&action=presets" id="estPresetDataForm">
+    <form method="post" action="'.e_SELF.'?mode=estate_presets&action=presets&id=0" id="estPresetDataForm">
       <div id="estPresetsZoningPopover" class="popover fade top in editable-container editable-popup">
         <h3 class="popover-title">
           <button id="estPresetsAddZone" type="button" class="btn btn-primary btn-sm FR" title="'.EST_GEN_NEW.'">'.EST_GEN_NEW.'</button>

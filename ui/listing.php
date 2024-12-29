@@ -35,6 +35,7 @@ class estate_listing_ui extends e_admin_ui{
     EST_GEN_COMMUNITY,
     EST_GEN_SPACES,
     EST_GEN_DETAILS,
+    EST_GEN_FEATURES,
     EST_GEN_GALLERY,
     EST_GEN_SCHEDULING,
     EST_GEN_TEMPLAYOUT
@@ -800,19 +801,6 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'left',
         'thclass' => 'left',
         ),
-			'prop_features' => array (
-        'tab'=>4,
-        'title' => EST_GEN_FEATURES,
-        'type' => 'textarea',
-        'data' => 'str',
-        'width' => 'auto',
-        'nolist'=>true,
-        'help' => EST_PROP_FEATURESHLP,
-        'readParms' => array(),
-        'writeParms' => array('other'=>array('id'=>'prop-features'),'size'=>'xxlarge estJSmaxchar','counter'=>0,'rows'=>1,'maxlength'=>255,'placeholder'=>EST_PROP_FEATURESPLCHLDR),
-        'class' => 'left',
-        'thclass' => 'left',
-        ),
 			'prop_dimu1' => array (
         'tab'=>4,
         'type' => 'hidden',
@@ -965,9 +953,34 @@ class estate_listing_ui extends e_admin_ui{
         'class' => 'left',
         'thclass' => 'left',
         ),
+			'prop_features' => array (
+        'tab'=>5,
+        'title' => EST_GEN_FEATUREHEAD,
+        'type' => 'textarea',
+        'data' => 'str',
+        'width' => 'auto',
+        'nolist'=>true,
+        'help' => EST_GEN_FEATUREHEADHLP,
+        'readParms' => array(),
+        'writeParms' => array('other'=>array('id'=>'prop-features'),'size'=>'xxlarge estJSmaxchar','counter'=>0,'rows'=>1,'maxlength'=>255,'placeholder'=>EST_GEN_FEATURESHEADPLCHLDR),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
+      'prop_featuretab'=> array (
+        'tab'=>5,
+        'title' => EST_GEN_FEATURES,
+        'type' => 'method',
+        'data' => false,
+        'width' => 'auto',
+        'nolist'=>true,
+        'readParms' => array(),
+        'writeParms' => array('size' => 'small'),
+        'class' => 'left',
+        'thclass' => 'left',
+        ),
       
 			'prop_gallery' => array (
-        'tab'=>5,
+        'tab'=>6,
         'type' => 'method',
         'data' => false,
         'width' => 'auto',
@@ -979,7 +992,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
 			
 			'prop_dateupdated' => array (
-        'tab'=>6,
+        'tab'=>7,
         'title' => EST_PROP_DATEUPDATE,
         'type' => 'datestamp',
         'data' => 'str',
@@ -993,7 +1006,7 @@ class estate_listing_ui extends e_admin_ui{
         'batch' => false,
         ),
       'prop_datecreated' => array (
-        'tab'=>6,
+        'tab'=>7,
         'title' => EST_PROP_DATECREATED,
         'type' => 'datestamp',
         'data' => 'int',
@@ -1006,7 +1019,7 @@ class estate_listing_ui extends e_admin_ui{
         'filter' => true,
         ),
       'prop_timezone' => array (
-        'tab'=>6,
+        'tab'=>7,
         'title' => EST_GEN_TIMEZONE,
         'type' => 'method',
         'data' => 'str',
@@ -1021,7 +1034,7 @@ class estate_listing_ui extends e_admin_ui{
         'batch' => false,
         ),
 			'prop_datetease' => array (
-        'tab'=>6,
+        'tab'=>7,
         'title' => EST_PROP_DATETEASE,
         'type' => 'datestamp',
         'data' => 'int',
@@ -1036,7 +1049,7 @@ class estate_listing_ui extends e_admin_ui{
         'batch' => false,
         ),
 			'prop_dateprevw' => array (
-        'tab'=>6,
+        'tab'=>7,
         'title' => EST_PROP_DATEPREVW,
         'type' => 'datestamp',
         'data' => 'int',
@@ -1051,7 +1064,7 @@ class estate_listing_ui extends e_admin_ui{
         'batch' => false,
         ),
 			'prop_datelive' => array (
-        'tab'=>6,
+        'tab'=>7,
         'title' => EST_PROP_DATELIVE,
         'type' => 'datestamp',
         'data' => 'int',
@@ -1064,7 +1077,7 @@ class estate_listing_ui extends e_admin_ui{
         'filter' => true,
         ),
 			'prop_datepull' => array (
-        'tab'=>6,
+        'tab'=>7,
         'title' => EST_PROP_DATEPULL,
         'type' => 'datestamp',
         'data' => 'int',
@@ -1080,7 +1093,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'prop_hours'=>array(
-        'tab'=>6,
+        'tab'=>7,
         'title'=>EST_PROP_HRS,
         'type'=>'method',
         'data'=>'array',
@@ -1094,7 +1107,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'prop_events'=>array(
-        'tab'=>6,
+        'tab'=>7,
         'type' => 'method',
         'data' => false,
         'width' => 'auto',
@@ -1107,7 +1120,7 @@ class estate_listing_ui extends e_admin_ui{
       
       
       'prop_template_view'=>array(
-        'tab'=>7,
+        'tab'=>8,
         'title'=>EST_PREF_TEMPLATE_VIEW,
         'type'=>'dropdown',
         'data'=>'safestr',
@@ -1121,7 +1134,7 @@ class estate_listing_ui extends e_admin_ui{
         'batch' => false,
         ),
       'prop_template_view_ord'=>array(
-        'tab'=>7,
+        'tab'=>8,
         'title'=>EST_PREF_TEMPLATE_VIEWORD,
         'type'=>'method',
         'data'=>'array',
@@ -1135,7 +1148,7 @@ class estate_listing_ui extends e_admin_ui{
         ),
       
       'prop_template_menu'=>array(
-        'tab'=>7,
+        'tab'=>8,
         'title'=>EST_PREF_TEMPLATE_MENU,
         'type'=>'dropdown',
         'data'=>'safestr',
@@ -1149,7 +1162,7 @@ class estate_listing_ui extends e_admin_ui{
         'batch' => false,
         ),
       'prop_template_menu_ord'=>array(
-        'tab'=>7,
+        'tab'=>8,
         'title'=>EST_PREF_TEMPLATE_MENUORD,
         'type'=>'method',
         'data'=>'array',
@@ -1901,7 +1914,14 @@ class estate_listing_ui extends e_admin_ui{
 [u]'.EST_HLPMNU_DETAILS9c.'[/u]
 '.EST_HLPMNU_DETAILS9d.'[/code]</p>
           </div>
+          
           <div id="estEditHelp-5" class="estEditHelpSect">
+            <b>'.EST_GEN_FEATURES.'</b>
+            <p id="estHlp-gal1">'.EST_HLPMNU_FEATURESTAB1.'</p>
+            <p id="estHlp-gal1">'.EST_HLPMNU_FEATURESTAB2.'</p>
+            <p id="estHlp-gal1">'.EST_HLPMNU_FEATURESTAB3.'</p>
+          </div>
+          <div id="estEditHelp-6" class="estEditHelpSect">
             <b id="estHlp-gal0">'.EST_GEN_GALLERY.'</b>
             <p id="estHlp-gal1">'.EST_HLPMNU_GALLERY1.'</p>
             <p id="estHlp-gal2">'.EST_HLPMNU_GALLERY2.'</p>
@@ -1910,19 +1930,19 @@ class estate_listing_ui extends e_admin_ui{
             <p id="estHlp-gal5">'.EST_HLPMNU_GALLERY5.'</p>
             <p id="estHlp-gal6">'.EST_HLPMNU_GALLERY6.'</p>
           </div>
-          <div id="estEditHelp-6" class="estEditHelpSect">
+          <div id="estEditHelp-7" class="estEditHelpSect">
             <b id="estHlp-sched0">'.EST_GEN_SCHEDULING.'</b>
             <p id="estHlp-sched1">'.EST_HLPMNU_SCHED0.'</p>
             <b id="estHlp-sched5">'.EST_GEN_EVENTS.'</b>
             <p id="estHlp-sched6">'.EST_HLPMNU_SCHED5.'</p>
             <p id="estHlp-sched7">'.EST_HLPMNU_SCHED6.'</p>
           </div>
-          <div id="estEditHelp-7" class="estEditHelpSect">
+          <div id="estEditHelp-8" class="estEditHelpSect">
             <b>'.EST_PREF_TEMPLATES.'</b>
             <p>'.EST_HLPMNU_PREF_TEMPLATES02.'</p>
             <p>'.EST_HLPMNU_PREF_TEMPLATES03.'</p>
           </div>
-          <div id="estEditHelp-8" class="estEditHelpSect">
+          <div id="estEditHelp-9" class="estEditHelpSect">
           </div>';
           }
         else if($hlpactn == 'prefs'){
@@ -2547,6 +2567,13 @@ class estate_listing_form_ui extends e_admin_form_ui{
       }
     }
   
+  public function prop_featuretab($curVal,$mode){
+    switch($mode){
+			case 'write':
+        return '<div id="estPropFeaturesTab"></div><div id="estpropFeatChange">'.EST_GEN_ZONECHANGE1.'</div>';
+        break;
+      }
+    }
   
   public function prop_gallery($curVal,$mode){
     switch($mode){

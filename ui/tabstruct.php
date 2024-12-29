@@ -326,9 +326,9 @@ function estTablStruct(){
       'prop_features'=>array(
         'type'=>'commaline',
         'cls'=>'xlarge estJSmaxchar',
-        'labl'=>EST_GEN_FEATURES,
+        'labl'=>EST_GEN_FEATUREHEAD,
         'src'=>array('tbl'=>'self','idx'=>'prop_idx','map'=>array('prop_features','prop_features',',')),
-        'plch'=>EST_PROP_FEATURESPLCHLDR
+        'plch'=>EST_GEN_FEATURESHEADPLCHLDR
         ),
       'prop_zip'=>array(
         'type'=>'select',

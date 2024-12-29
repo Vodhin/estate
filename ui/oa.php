@@ -290,6 +290,7 @@ if($_POST['estPTrig']){
     }
   
   $DTA['prop']['prop_appr'] = intval($_POST['prop_appr']);
+  $DTA['prop']['prop_subdiv'] = intval($_POST['prop_subdiv']);
   
   if(intval($DTA['prop']['prop_idx']) > 0){
     $PROPIDX = intval($DTA['prop']['prop_idx']);
