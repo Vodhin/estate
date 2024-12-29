@@ -867,6 +867,7 @@ div.estCard:nth-of-type(even)>div.estCard:nth-of-type(odd){
   padding-top: 4px;
   white-space:normal;
   min-width: 20vw;
+  min-height:50px;
   }
 
 .estCardTop div{

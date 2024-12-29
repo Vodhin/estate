@@ -1610,7 +1610,7 @@ table.estateSubTable button.ui-sortable-handle{
   }
 
 
-#estFeatureMgrCont{
+#estFeatureMgrCont, .estFeatureMgrCont{
   display:block;
   position:relative;
   width:100%;
@@ -1620,7 +1620,8 @@ table.estateSubTable button.ui-sortable-handle{
   padding:0px;
   }
 
-#estFeatureMgrLcol, #estFeatureMgrRcol{
+
+#estFeatureMgrLcol, #estFeatureMgrRcol, .estFeatureMgrLcol, .estFeatureMgrRcol{
   display:block;
   position:absolute;
   top:0px;
@@ -1628,11 +1629,10 @@ table.estateSubTable button.ui-sortable-handle{
   overflow:hidden;
   padding:0px;
   }
-#estFeatureMgrLcol{width:35%;left:0px;}
-#estFeatureMgrRcol{width:65%;right:0px;}
+#estFeatureMgrLcol, .estFeatureMgrLcol{width:35%;left:0px;}
+#estFeatureMgrRcol, .estFeatureMgrRcol{width:65%;right:0px;}
 
-#estFeatureListHead,
-#estFeatureUsedHead{
+#estFeatureListHead, #estFeatureUsedHead, div.estFeatureListHead, div.estFeatureUsedHead{
   display:block;
   position:relative;
   width:100%;
@@ -1641,8 +1641,7 @@ table.estateSubTable button.ui-sortable-handle{
   }
 
 
-div.estFeatNotUsed,
-div.estFeatInUse{
+div.estFeatNotUsed, div.estFeatInUse{
   display:block;
   position:relative;
   width:100%;
@@ -1653,8 +1652,7 @@ div.estFeatInUse{
   }
 div.estFeatInUse{border-left: 1px solid rgba(64,64,64,0.5);}
 
-#estFeatureListHead button,
-#estFeatureUsedHead button{
+#estFeatureListHead button, #estFeatureUsedHead button, div.estFeatureListHead button, div.estFeatureUsedHead button{
   display:block;
   position:relative;
   width:100%;
@@ -3676,7 +3674,10 @@ button.estUserAgentEdit div span{
   
   }
 
-
+.estAgyLocTr td:first-child img,
+#estAgencyImg{
+  background-color: rgba(255,255,255, 0.85);
+  }
 
 
 #estSubDivSlideShow{
