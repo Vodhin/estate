@@ -10,7 +10,7 @@
 +----------------------------------------------------------------------------+
 */
 
-if(!defined("LAN_PREFS")){define("LAN_PREFS","Preferences");}
+//if(!defined("LAN_PREFS")){define("LAN_PREFS","Preferences");}
 
 define("EST_PLUGNAME", "Estate Agency");
 define("EST_PLUGCONFIG1", "Configure Estate Agency");
@@ -146,20 +146,19 @@ define("EST_GEN_CLICKTHE","Click the");
 define("EST_GEN_CLIENT","Client");
 define("EST_GEN_CLOSE","Close");
 define("EST_GEN_CLOSING","Closing");
-define("EST_GEN_COMMUNITY", "Community");
+define("EST_GEN_COMINGSOON","Coming Soon");
+define("EST_GEN_COMMUNITY","Community");
 define("EST_GEN_COMMUNITYOF","Community Of");
 define("EST_GEN_COMMUNITYPREVIEW", "Community Preview");
 define("EST_GEN_COMMUNITYSPACES", "Community Spaces");
 define("EST_GEN_COMMUNITYSUBDIV", "Community/Subdivision");
 define("EST_GEN_COMPANY", "Company");
 define("EST_GEN_COMPANIES", "Companies");
+define("EST_GEN_COMPLETE","Complete");
 define("EST_GEN_CONFIRMED","Confirmed");
 define("EST_GEN_CONDITION","Property Condition");
 define("EST_GEN_CONTACT","Contact");
 define("EST_GEN_CONTACTS","Contacts");
-define("EST_GEN_COMINGSOON","Coming Soon");
-define("EST_GEN_COMMUNITY","Community");
-define("EST_GEN_COMPLETE","Complete");
 define("EST_GEN_COMPLEX","Complex");
 define("EST_GEN_CREATE","Create");
 define("EST_GEN_CREATEDBY","Created By");
@@ -465,7 +464,7 @@ define("EST_PREF_DEFLOCALESEL3","Set the Locale Language and Currency Code ($, â
 
 
 
-define("EST_PROP_INTSIZE", "Interior Space");
+
 define("EST_PROP_LANDSIZE", "Property Size");
 define("EST_PROP_YEARBUILT", "Year Built");
 
@@ -525,7 +524,7 @@ define("EST_PROP_HOAUPDTA2","Reload Last Saved Values");
 define("EST_PROP_HOAUPDTA3","Update to Subdivision Values");
 define("EST_PROP_HOAUPDTA4","Update Property HOA Information?");
 define("EST_PROP_HOAWEB","HOA Website");
-define("EST_PROP_INTSIZE", "Livable Space");
+define("EST_PROP_INTSIZE", "Interior Space");
 define("EST_PROP_LANDLEASE", "Land Lease");
 define("EST_PROP_LANDLEASEHLP", "Land Lease amount. Enter zero if there is no land lease OR if a Land Lease is included in HOA Fees.");
 define("EST_PROP_LAT","Lattitude");
@@ -567,7 +566,6 @@ define("EST_PROP_ROOFSIZE", "Total Space");
 define("EST_PROP_SEF", "Friendly URL");
 define("EST_PROP_SELAGNCY", "Select Agency");
 define("EST_PROP_SELAGNT", "Select Agent");
-define("EST_PROP_SEF", "Friendly URL");
 define("EST_PROP_MAPADDR","Map Address Lookup");
 
 define("EST_PROP_STATE", "State");
@@ -634,7 +632,7 @@ define("EST_PROP_MODELNAMEHLP","Optional: Model Names can be used to filter and 
 define("EST_PROP_DATELIVEHLP", "The date the listing will become fully visible to the public");
 define("EST_PROP_DATEPREVWHLP", "The date Website Members can preview this listing as if it were live. This can be before or after the ".EST_PROP_DATETEASE." but must be before or equal to the Go Live Date date.");
 define("EST_PROP_DATEPULLHLP", "The date this listing will automatically end. Leave blank to have the listing remain until you manually change it to Inactive");
-define("EST_PROP_DATETEASEHLP", "The date this listing becomes visible, but with limited data available to the public. You can set what data will be included in the ".LAN_PREFS." form.");
+define("EST_PROP_DATETEASEHLP", "The date this listing becomes visible, but with limited data available to the public. You can set what data will be included in the Preferences form.");
 
 define("EST_PROP_ORIGPRICEHLP", "The Original Price must be a whole number (0-9).");
 define("EST_PROP_PARCELIDHLP", "Optional. The Parcel ID for this property");
@@ -750,7 +748,7 @@ define("EST_INSTR004g","NOTE: A Main Admin can control who can access the Add Ne
 
 
 
-define("EST_INSTR004g","Estate Managers have a Menu button labeled Agency Profile, which allows them to modify the Agency to whch they are assigned, inclusing adding and removing Agents for that Agency. Additionally, the Agent List Tab allows Estate Managers to Select from and Add Users to your e107 website to be assigned as Agents.");
+define("EST_INSTR004h","Estate Managers have a Menu button labeled Agency Profile, which allows them to modify the Agency to whch they are assigned, inclusing adding and removing Agents for that Agency. Additionally, the Agent List Tab allows Estate Managers to Select from and Add Users to your e107 website to be assigned as Agents.");
 define("EST_INSTR004h","The Agent List Tab lists Agents currently assigned to that Agency as well as e107 website Users not assigned to another Agency. ");
 define("EST_INSTR004i","***");
 define("EST_INSTR004j","***");
