@@ -361,7 +361,7 @@ function estHelpTabs(){
             <p>'.EST_INSTR004g.'</p>
             <hr />
             <h3>'.EST_GEN_ESTMANAGERS.'</h3>
-            <p>'.EST_INSTR004g.'</p>
+            <p>'.EST_INSTR004h.'</p>
             <h4>'.EST_INSTRHEAD11b.'</h4>
             <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagency.png" /></p>
             <p>'.EST_INSTR004h.'</p>
