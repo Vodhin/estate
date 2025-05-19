@@ -364,11 +364,10 @@ function estHelpTabs(){
             <p>'.EST_INSTR004h.'</p>
             <h4>'.EST_INSTRHEAD11b.'</h4>
             <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagency.png" /></p>
-            <p>'.EST_INSTR004h.'</p>
-            <p>'.EST_INSTR004i.'</p>
+            <br />
             <h4>'.EST_INSTRHEAD12b.'</h4>
             <p><img src="'.EST_PATHABS_IMAGES.'instr_agtagentlist.png" /></p>
-            <p>'.EST_INSTR004j.'</p>
+            <p>'.EST_INSTR004i.' '.EST_INSTR004j.'</p>
           </div>';
     
     
