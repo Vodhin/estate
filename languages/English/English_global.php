@@ -747,11 +747,9 @@ define("EST_INSTR004f","You can also quickly add a New User with a New Agent Pro
 define("EST_INSTR004g","NOTE: A Main Admin can control who can access the Add New User form from the Estate Plugin's Preferences Page. The default setting allows only Estate Main Admins and Estate Admins to access this form. You can allow your Estate Managers to also access this form, though any New User added will be assigned to the same Agency as the Manager.");
 
 
-
-define("EST_INSTR004h","Estate Managers have a Menu button labeled Agency Profile, which allows them to modify the Agency to whch they are assigned, inclusing adding and removing Agents for that Agency. Additionally, the Agent List Tab allows Estate Managers to Select from and Add Users to your e107 website to be assigned as Agents.");
-define("EST_INSTR004h","The Agent List Tab lists Agents currently assigned to that Agency as well as e107 website Users not assigned to another Agency. ");
-define("EST_INSTR004i","***");
-define("EST_INSTR004j","***");
+define("EST_INSTR004h","Estate Managers have a Menu button labeled Agency Profile, which allows them to modify the Agency to whch they are assigned, including adding and removing Agents for that Agency. Additionally, the Agent List Tab allows Estate Managers to Select from and Add Users to your e107 website to be assigned as Agents.");
+define("EST_INSTR004i","The Agent List Tab lists Agents currently assigned to that Agency as well as e107 website Users not assigned to another Agency. ");
+define("EST_INSTR004j","This is very similar to the main User List available to Admins, but is limited to that specific Agency: Managers can only assign Agents, and those Agents will be assigned to the current Angecy loaded into this form.");
 
 
 define("EST_INSTR005a","You can allow Members who have joined your website to post their own listings by enabling this feature in the Estate Preferences. This option is disabled by default. If you enable this feature, Non-Agent users can create, edit, and delete their own listings using a basic form accessable via the Front end. They do not need Admin rights and will not be able to access any part of the Admin area of your e107 website, including the Estate plugin Admin area. Non-Agent users are able to add (but not Edit) some shared-data, such as State, City, and Postal Code, but cannot add Preset Data such as Listing Type, Zoning Category, Property Type: they are forced to select from options already in the system.");
@@ -768,7 +766,7 @@ define("EST_INSTR008d","An Estate Main Admin or Estate Admin would see everythin
 define("EST_INSTR008e","Estate Managers would only see listings made by themselves and Estate Agents assigned to the same Agency that they manage (but not listings made by other Estate Managers, even if they are in the same Agency). If Non-Agent Listings have been enabled and Estate Managers are allowed to Moderate them, then an addition \"Non-Agent Listings\" Tab will be accessable.");
 define("EST_INSTR008f","Estate Agents can only access their own listings. As a reminder, this plugin utilizes the e107 Admin Permissions and User Class settings in such a way that your Estate Agents (and Estate Managers and Estate Admins) can be restricted to only the Estate Plugin's Back End and prevents access to other e107 Admin Areas.");
 
-define("EST_INSTR008g","If Private, Non-Agent Listings have been enabled and you have premissions to moderate those listings, you will see a Non-Agent Listings tab, which will display those listings is a separate table.");
+define("EST_INSTR008g","If Non-Agent Listings have been enabled in Estate Preferences and you have premissions to moderate those listings, you will see a Non-Agent Listings tab, which will display those listings is a separate table.");
 
 
 define("EST_INSTR008h","Every Admin, Manager, and Agent can Create a New Listing. This tab contains a simple form that is used to start the process. Simply fill in the Property Name and some basci information and click the Save & Continue button. This will save the new property and open the Listing Edit form where you can add more information, define special features, and upload images.");
