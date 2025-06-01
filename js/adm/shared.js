@@ -7488,11 +7488,15 @@ function propOPpct(mode=0){
 
 
 function estGetPctRound(){
+  var rndto = $('#estOPpctHead').find('button.btn-primary').data('amnt');
+  if(typeof rndto == 'undefined'){return;}
+  
   var list = Number($('input[name="listPrice"]').val());
   var orig = Number($('input[name="origPrice"]').val());
-  var rndto = $('#estOPpctHead').find('button.btn-primary').data('amnt');
   var opts = estGetEditPriceLocale();
   //var opts = {'mode':md[0],'symb':md[1],'loc':md[2],'code':md[3]};
+  
+  //console.log(list,orig,rndto,opts);
   
   $.ajax({
     url: vreFeud+'?91||0',
