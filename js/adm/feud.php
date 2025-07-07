@@ -637,22 +637,25 @@ else if($FETCH == 60){
   $RES = array();
   $sql = e107::getDB();
   $UPRES = array();
-  if(count($_POST['newzones'])){
+  $DELRES = array();
+  
+  if(is_array($_POST['newzones'])){
     foreach($_POST['newzones'] as $k=>$v){
       $zi = $sql->insert("estate_zoning","'0','".$tp->toDB($v)."'");
       if($zi > 0){$UPRES[$zi] = EST_GEN_ADDED.' '.$tp->toHTML($v);}
       }
     }
   
-  if(count($_POST['curzones'])){
+  if(is_array($_POST['curzones'])){
     foreach($_POST['curzones'] as $k=>$v){
       if($sql->update("estate_zoning", "zoning_name='".$tp->toDB($v['txt'])."' WHERE zoning_idx='".intval($v['idx'])."'")){
         $UPRES[$v['idx']] = EST_GEN_UPDATED.' '.$tp->toHTML($v['txt']);
         }
       }
     }
+    
   
-  if(count($_POST['delzones'])){
+  if(is_array($_POST['delzones'])){
     $DELRES = array();
     foreach($_POST['delzones'] as $k=>$v){
       $zidx = intval($v['idx']);
@@ -661,7 +664,7 @@ else if($FETCH == 60){
       $sql->gen("SELECT prop_idx, prop_name FROM #estate_properties WHERE prop_zoning='".$zidx."'");
       while($rows = $sql->fetch()){$DELRES[$zidx]['prop'][$rows['prop_idx']]['name'] = $rows['prop_name'];}
       
-      if(count($DELRES[$zidx]['prop']) == 0){
+      if(is_array($DELRES[$zidx]['prop']) == 0){
         $sql->gen("SELECT listype_idx, listype_name FROM #estate_listypes WHERE listype_zone='".$zidx."'");
         while($rows = $sql->fetch()){$DELRES[$zidx]['lists'][$rows['listype_idx']]['name'] = $rows['listype_name'];}
         
@@ -678,7 +681,7 @@ else if($FETCH == 60){
             $DELRES[$zidx]['lists'] = EST_GEN_DELETED.' '.EST_GEN_LISTYPES;
             }
           
-          if(count($DELRES[$zidx]['grps'])){
+          if(is_array($DELRES[$zidx]['grps'])){
             foreach($DELRES[$zidx]['grps'] as $groupId=>$grpDta){
               if($sql->delete("estate_group", "group_idx='".$groupId."'")){
                 $DELRES[$zidx]['grps'][$groupId]['name'] = ' - '.EST_GEN_DELETED;
@@ -688,12 +691,12 @@ else if($FETCH == 60){
             }
           
           
-          if(count($DELRES[$zidx]['cats'])){
+          if(is_array($DELRES[$zidx]['cats'])){
             foreach($DELRES[$zidx]['cats'] as $catId=>$catDta){
               $sql->gen("SELECT feature_idx, feature_name FROM #estate_features WHERE feature_cat='".intval($catId)."'");
               while($rows = $sql->fetch()){$DELRES[$zidx]['cats'][$catId]['feat'][$rows['feature_idx']]['name'] = $rows['feature_name'];}
               
-              if(count($DELRES[$zidx]['cats'][$catId]['feat'])){
+              if(is_array($DELRES[$zidx]['cats'][$catId]['feat'])){
                 foreach($DELRES[$zidx]['cats'][$catId]['feat'] as $featId=>$fv){
                   if($sql->delete("estate_features", "feature_idx='".intval($featId)."'")){
                     $DELRES[$zidx]['cats'][$catId]['feat'][$featId]['name'] .= ' - '.EST_GEN_DELETED;
@@ -714,11 +717,12 @@ else if($FETCH == 60){
         }
       }
     }
-  
+    
+    
   
   $text = '';
   
-  if(count($UPRES)){
+  if(count($UPRES) > 0){
     $text .= '<div class="estDelZoneDta s-message alert alert-block alert-dismissible fade in show info alert-success"><a class="close" data-dismiss="alert" aria-label="Close">×</a><i class="s-message-icon s-message-success"></i><h4 class="s-message-title">'.EST_GEN_UPDATED.' '.EST_GEN_ZONING.' '.EST_GEN_CATEGORIES.'</h4><div class="s-message-body"><ul>';
     foreach($UPRES as $zidx=>$zdta){
       $text .= '<li>'.$zdta.'</li>';
@@ -726,10 +730,10 @@ else if($FETCH == 60){
     $text .= '</ul></div></div>';
     }
   
-  if(count($DELRES)){
+  if(count($DELRES) > 0){
     foreach($DELRES as $zidx=>$zdta){
-      $propCt = count($zdta['prop']);
-      if($propCt > 0){
+      if(is_array($zdta['prop'])){
+        $propCt = count($zdta['prop']);
         $text .= '<div class="estDelZoneDta s-message alert alert-block alert-dismissible fade in show info alert-warning"><a class="close" data-dismiss="alert" aria-label="Close">×</a><i class="s-message-icon s-message-info"></i><h4 class="s-message-title">'.EST_GEN_CANTDELZONE.'</h4><div class="s-message-body"><div>'.$zdta['name'].' '.EST_GEN_ZONING.': '.$propCt.' '.($propCt == 1 ? EST_GEN_LISTING : EST_GEN_LISTINGS).' '.EST_GEN_FOUND.':<ul>';
         foreach($zdta['prop'] as $pId=>$pDta){$text .= '<li>ID: #'.$pId.' '.$pDta['name'].'</li>';}
         $text .= '</ul></div></div></div>';
@@ -737,18 +741,18 @@ else if($FETCH == 60){
       else{
         $text .= '<div class="estDelZoneDta s-message alert alert-block alert-dismissible fade in show info alert-info"><a class="close" data-dismiss="alert" aria-label="Close">×</a><i class="s-message-icon s-message-info"></i><h4 class="s-message-title">'.EST_GEN_DELZONECAT.'</h4><div class="s-message-body"><div>'.$zdta['name'].'<ul>';
         
-        if(count($zdta['lists'])){
+        if(is_array($zdta['lists'])){
           foreach($zdta['lists'] as $lId=>$lDta){$text .= '<li>'.$lDta['name'].'</li>';}
           }
         
-        if(count($zdta['grps'])){
+        if(is_array($zdta['grps'])){
           foreach($zdta['grps'] as $grpId=>$grpDta){$text .= '<li>'.$grpDta['name'].'</li>';}
           }
         
-        if(count($zdta['cats'])){
+        if(is_array($zdta['cats'])){
           foreach($zdta['cats'] as $catId=>$catDta){
             $text .= '<li>'.$catDta['name'];
-            if(count($catDta['feat'])){
+            if(is_array($catDta['feat'])){
               $text .= '<ul>';
               foreach($catDta['feat'] as $featId=>$fv){
                 $text .= '<li>'.$fv['name'].'</li>';
